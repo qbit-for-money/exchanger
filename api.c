@@ -28,7 +28,7 @@
 #include "miner.h"
 #include "util.h"
 
-#if defined(USE_BFLSC) || defined(USE_AVALON)
+#if defined(USE_BFLSC) || defined(USE_AVALON) || defined(USE_BITFURY)
 #define HAVE_AN_ASIC 1
 #endif
 
@@ -185,6 +185,9 @@ static const char *DEVICECODE = ""
 #endif
 #ifdef USE_MODMINER
 			"MMQ "
+#endif
+#ifdef USE_BITFURY
+			"BITFURY "
 #endif
 			"";
 
@@ -1193,6 +1196,10 @@ static int numascs()
 		if (devices[i]->drv->drv_id == DRIVER_BFLSC)
 			count++;
 #endif
+#ifdef USE_BITFURY
+		if (devices[i]->drv->drv_id == DRIVER_BITFURY)
+			count++;
+#endif
 	}
 	rd_unlock(&devices_lock);
 	return count;
@@ -1211,6 +1218,10 @@ static int ascdevice(int ascid)
 #endif
 #ifdef USE_BFLSC
 		if (devices[i]->drv->drv_id == DRIVER_BFLSC)
+			count++;
+#endif
+#ifdef USE_BITFURY
+		if (devices[i]->drv->drv_id == DRIVER_BITFURY)
 			count++;
 #endif
 		if (count == (ascid + 1))

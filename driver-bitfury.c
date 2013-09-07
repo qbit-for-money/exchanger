@@ -154,9 +154,9 @@ static int64_t bitfury_scanHash(struct thr_info *thr)
 			devices[chip].owork = devices[chip].work;
 			devices[chip].work = NULL;
 			hashes += 0xffffffffull * i;
+			devices[chip].matching_work += i;
 		}
 	}
-#ifdef BITFURY_ENABLE_SHORT_STAT
 	if (now.tv_sec - short_out_t > short_stat) {
 		int shares_first = 0, shares_last = 0, shares_total = 0;
 		char stat_lines[BITFURY_MAXBANKS][256] = {0};
@@ -183,11 +183,12 @@ static int64_t bitfury_scanHash(struct thr_info *thr)
 			shares_first += chip < BITFURY_BANKCHIPS/2 ? shares_found : 0;
 			shares_last += chip >= BITFURY_BANKCHIPS/2 ? shares_found : 0;
 			strange_counter += devices[chip].strange_counter;
-			devices[chip].strange_counter = 0;
+			//devices[chip].strange_counter = 0;
 		}
+#ifdef BITFURY_ENABLE_SHORT_STAT
 		sprintf(line, "vvvvwww SHORT stat %ds: wwwvvvv", short_stat);
 		applog(LOG_WARNING, line);
-		sprintf(line, "stranges: %u", strange_counter);
+		//sprintf(line, "stranges: %u", strange_counter);
 		applog(LOG_WARNING, line);
 		for(i = 0; i < BITFURY_MAXBANKS; i++)
 			if(strlen(stat_lines[i])) {
@@ -203,9 +204,9 @@ static int64_t bitfury_scanHash(struct thr_info *thr)
 				snprintf(stat_lines[i] + len, 256 - len, "- %2.1f + %2.1f = %2.1f slot %i ", gh1h, gh2h, ghsum, i);
 				applog(LOG_WARNING, stat_lines[i]);
 			}
+#endif
 		short_out_t = now.tv_sec;
 	}
-#endif
 #ifdef BITFURY_ENABLE_LONG_STAT
 	if (now.tv_sec - long_out_t > long_stat) {
 		int shares_first = 0, shares_last = 0, shares_total = 0;
@@ -295,6 +296,44 @@ static void bitfury_disable(struct thr_info *thr)
 	applog(LOG_INFO, "INFO bitfury_disable");
 }
 
+static struct api_data *bitfury_api_stats(struct cgpu_info *cgpu)
+{
+	struct api_data *root = NULL;
+	static struct bitfury_device *devices;
+	struct timeval now;
+	struct bitfury_info *info = cgpu->device_data;
+	int shares_found, i;
+	double ghash;
+	unsigned int osc_bits;
+	char mcw[24];
+
+	devices = cgpu->devices;
+	root = api_add_int(root, "chip_n", &(cgpu->chip_n),false);
+	cgtime(&now);
+
+	for (i = 0; i < cgpu->chip_n; i++) {
+		sprintf(mcw, "clock_bits%d", i);
+		osc_bits = (unsigned int)devices[i].osc6_bits;
+		root = api_add_int(root, mcw, &(devices[i].osc6_bits), false);
+	}
+	for (i = 0; i < cgpu->chip_n; i++) {
+		sprintf(mcw, "match_work_count%d", i);
+		root = api_add_uint(root, mcw, &(devices[i].matching_work), false);
+	}
+	for (i = 0; i < cgpu->chip_n; i++) {
+		sprintf(mcw, "strange_count%d", i);
+		root = api_add_uint(root, mcw, &(devices[i].strange_counter), false);
+	}
+	for (i = 0; i < cgpu->chip_n; i++) {
+		shares_found = calc_stat(devices[i].stat_ts, BITFURY_API_STATS, now);
+		ghash = shares_to_ghashes(shares_found, BITFURY_API_STATS);
+		sprintf(mcw, "ghash%d", i);
+		root = api_add_double(root, mcw, &(ghash), true);
+	}
+
+	return root;
+}
+
 struct device_drv bitfury_drv = {
 	.drv_id = DRIVER_BITFURY,
 	.dname = "bitfury",
@@ -305,5 +344,6 @@ struct device_drv bitfury_drv = {
 	.scanwork = bitfury_scanHash,
 	.thread_shutdown = bitfury_shutdown,
 	.hash_work = hash_queued_work,
+	.get_api_stats = bitfury_api_stats,
 };
 

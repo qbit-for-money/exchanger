@@ -34,8 +34,10 @@
 #define BITFURY_MAXBANKS 1
 #define BITFURY_BANKCHIPS 60
 
-#define BITFURY_ENABLE_SHORT_STAT 1
-#define BITFURY_ENABLE_LONG_STAT 1
+//#define BITFURY_ENABLE_SHORT_STAT 1
+//#define BITFURY_ENABLE_LONG_STAT 1
+
+#define BITFURY_API_STATS 300
 
 struct bitfury_payload {
 	unsigned char midstate[32];
@@ -47,7 +49,7 @@ struct bitfury_payload {
 };
 
 struct bitfury_device {
-	unsigned char osc6_bits;
+	unsigned osc6_bits;
 	unsigned newbuf[17];
 	unsigned oldbuf[17];
 	struct work * work;
@@ -80,6 +82,7 @@ struct bitfury_device {
 	unsigned slot;
 	unsigned fasync;
 	unsigned strange_counter;
+	unsigned int matching_work;
 };
 
 int libbitfury_readHashData(unsigned int *res);
