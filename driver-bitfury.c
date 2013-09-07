@@ -78,7 +78,7 @@ static int64_t bitfury_scanHash(struct thr_info *thr)
 	unsigned char line[2048];
 	int short_stat = 10;
 	static time_t short_out_t;
-	int long_stat = 1800;
+	int long_stat = 600;
 	static time_t long_out_t;
 	int long_long_stat = 60 * 30;
 	static time_t long_long_out_t;
@@ -156,12 +156,12 @@ static int64_t bitfury_scanHash(struct thr_info *thr)
 			hashes += 0xffffffffull * i;
 		}
 	}
-
+#ifdef BITFURY_ENABLE_SHORT_STAT
 	if (now.tv_sec - short_out_t > short_stat) {
 		int shares_first = 0, shares_last = 0, shares_total = 0;
-		char stat_lines[32][256] = {0};
+		char stat_lines[BITFURY_MAXBANKS][256] = {0};
 		int len, k;
-		double gh[32][8] = {0};
+		double gh[BITFURY_MAXBANKS][BITFURY_BANKCHIPS] = {0};
 		double ghsum = 0, gh1h = 0, gh2h = 0;
 		unsigned strange_counter = 0;
 
@@ -170,18 +170,18 @@ static int64_t bitfury_scanHash(struct thr_info *thr)
 			double ghash;
 			len = strlen(stat_lines[devices[chip].slot]);
 			ghash = shares_to_ghashes(shares_found, short_stat);
-			gh[devices[chip].slot][chip & 0x07] = ghash;
+			gh[devices[chip].slot][chip % BITFURY_BANKCHIPS] = ghash;
 			snprintf(stat_lines[devices[chip].slot] + len, 256 - len, "%.1f-%3.0f ", ghash, devices[chip].mhz);
 
 			if(short_out_t && ghash < 0.5) {
-				applog(LOG_WARNING, "Chip_id %d FREQ CHANGE\n", chip);
+				applog(LOG_WARNING, "Chip_id %d FREQ CHANGE", chip);
 				send_freq(devices[chip].slot, devices[chip].fasync, devices[chip].osc6_bits - 1);
 				nmsleep(1);
 				send_freq(devices[chip].slot, devices[chip].fasync, devices[chip].osc6_bits);
 			}
 			shares_total += shares_found;
-			shares_first += chip < 4 ? shares_found : 0;
-			shares_last += chip > 3 ? shares_found : 0;
+			shares_first += chip < BITFURY_BANKCHIPS/2 ? shares_found : 0;
+			shares_last += chip >= BITFURY_BANKCHIPS/2 ? shares_found : 0;
 			strange_counter += devices[chip].strange_counter;
 			devices[chip].strange_counter = 0;
 		}
@@ -189,28 +189,29 @@ static int64_t bitfury_scanHash(struct thr_info *thr)
 		applog(LOG_WARNING, line);
 		sprintf(line, "stranges: %u", strange_counter);
 		applog(LOG_WARNING, line);
-		for(i = 0; i < 32; i++)
+		for(i = 0; i < BITFURY_MAXBANKS; i++)
 			if(strlen(stat_lines[i])) {
 				len = strlen(stat_lines[i]);
 				ghsum = 0;
 				gh1h = 0;
 				gh2h = 0;
-				for(k = 0; k < 4; k++) {
+				for(k = 0; k < BITFURY_BANKCHIPS; k++) {
 					gh1h += gh[i][k];
-					gh2h += gh[i][k+4];
-					ghsum += gh[i][k] + gh[i][k+4];
+					gh2h += gh[i][k + BITFURY_BANKCHIPS/2];
+					ghsum += gh[i][k] + gh[i][k + BITFURY_BANKCHIPS/2];
 				}
 				snprintf(stat_lines[i] + len, 256 - len, "- %2.1f + %2.1f = %2.1f slot %i ", gh1h, gh2h, ghsum, i);
 				applog(LOG_WARNING, stat_lines[i]);
 			}
 		short_out_t = now.tv_sec;
 	}
-
+#endif
+#ifdef BITFURY_ENABLE_LONG_STAT
 	if (now.tv_sec - long_out_t > long_stat) {
 		int shares_first = 0, shares_last = 0, shares_total = 0;
-		char stat_lines[32][256] = {0};
+		char stat_lines[BITFURY_MAXBANKS][256] = {0};
 		int len, k;
-		double gh[32][8] = {0};
+		double gh[BITFURY_MAXBANKS][BITFURY_BANKCHIPS] = {0};
 		double ghsum = 0, gh1h = 0, gh2h = 0;
 
 		for (chip = 0; chip < chip_n; chip++) {
@@ -218,32 +219,31 @@ static int64_t bitfury_scanHash(struct thr_info *thr)
 			double ghash;
 			len = strlen(stat_lines[devices[chip].slot]);
 			ghash = shares_to_ghashes(shares_found, long_stat);
-			gh[devices[chip].slot][chip & 0x07] = ghash;
+			gh[devices[chip].slot][chip % BITFURY_BANKCHIPS] = ghash;
 			snprintf(stat_lines[devices[chip].slot] + len, 256 - len, "%.1f-%3.0f ", ghash, devices[chip].mhz);
-
 			shares_total += shares_found;
-			shares_first += chip < 4 ? shares_found : 0;
-			shares_last += chip > 3 ? shares_found : 0;
+			shares_first += chip < BITFURY_BANKCHIPS/2 ? shares_found : 0;
+			shares_last += chip >= BITFURY_BANKCHIPS/2 ? shares_found : 0;
 		}
 		sprintf(line, "!!!_________ LONG stat %ds: ___________!!!", long_stat);
 		applog(LOG_WARNING, line);
-		for(i = 0; i < 32; i++)
+		for(i = 0; i < BITFURY_MAXBANKS; i++)
 			if(strlen(stat_lines[i])) {
 				len = strlen(stat_lines[i]);
 				ghsum = 0;
 				gh1h = 0;
 				gh2h = 0;
-				for(k = 0; k < 4; k++) {
+				for(k = 0; k < BITFURY_BANKCHIPS/2; k++) {
 					gh1h += gh[i][k];
-					gh2h += gh[i][k+4];
-					ghsum += gh[i][k] + gh[i][k+4];
+					gh2h += gh[i][k + BITFURY_BANKCHIPS/2];
+					ghsum += gh[i][k] + gh[i][k + BITFURY_BANKCHIPS/2];
 				}
 				snprintf(stat_lines[i] + len, 256 - len, "- %2.1f + %2.1f = %2.1f slot %i ", gh1h, gh2h, ghsum, i);
 				applog(LOG_WARNING, stat_lines[i]);
 			}
 		long_out_t = now.tv_sec;
 	}
-
+#endif
 	return hashes;
 }
 

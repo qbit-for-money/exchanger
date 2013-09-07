@@ -337,7 +337,7 @@ int detect_chip(int chip_n) {
 int libbitfury_detectChips(struct bitfury_device *devices) {
 	int n = 0;
 	int i;
-	static slot_on[32];
+	static slot_on[BITFURY_MAXBANKS];
 	struct timespec t1, t2;
 
 	if (tm_i2c_init() < 0) {
@@ -345,18 +345,21 @@ int libbitfury_detectChips(struct bitfury_device *devices) {
 		return(1);
 	}
 
-	for (i = 0; i < 32; i++) {
+	for (i = 0; i < BITFURY_MAXBANKS; i++) {
 		slot_on[i] = 0;
 	}
+
 	clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t1);
-	for (i = 0; i < 32; i++) {
+	for (i = 0; i < BITFURY_MAXBANKS; i++) {
 		int slot_detected = tm_i2c_detect(i) != -1;
 		slot_on[i] = slot_detected;
 		tm_i2c_clear_oe(i);
 		nmsleep(1);
 	}
 
-	for (i = 0; i < 32; i++) {
+	slot_on[0] = 1; // hack
+
+	for (i = 0; i < BITFURY_MAXBANKS; i++) {
 		if (slot_on[i]) {
 			int chip_n = 0;
 			int chip_detected;
