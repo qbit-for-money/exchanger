@@ -91,7 +91,7 @@ static int64_t bitfury_scanHash(struct thr_info *thr)
 	if (!first) {
 		for (i = 0; i < chip_n; i++) {
 			if(i==9 || i==38) // manual chip tuning :)
-				devices[i].osc6_bits = 54;
+				devices[i].osc6_bits = 53;
 			else
 				devices[i].osc6_bits = 54;
 		}
@@ -334,6 +334,7 @@ static struct api_data *bitfury_api_stats(struct cgpu_info *cgpu)
 		sprintf(mcw, "ghash%d", i);
 		root = api_add_double(root, mcw, &(ghash), true);
 	}
+	api_add_double(root, "ghash_total", &(ghash_sum), true);
 	ghash_sum /= cgpu->chip_n;
 	api_add_double(root, "ghash_avg", &(ghash_sum), true);
 
