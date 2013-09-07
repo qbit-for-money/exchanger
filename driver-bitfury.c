@@ -90,7 +90,10 @@ static int64_t bitfury_scanHash(struct thr_info *thr)
 
 	if (!first) {
 		for (i = 0; i < chip_n; i++) {
-			devices[i].osc6_bits = 54;
+			if(i==9 || i==38) // manual chip tuning :)
+				devices[i].osc6_bits = 54;
+			else
+				devices[i].osc6_bits = 54;
 		}
 		for (i = 0; i < chip_n; i++) {
 			send_reinit(devices[i].slot, devices[i].fasync, devices[i].osc6_bits);
@@ -174,7 +177,7 @@ static int64_t bitfury_scanHash(struct thr_info *thr)
 			snprintf(stat_lines[devices[chip].slot] + len, 256 - len, "%.1f-%3.0f ", ghash, devices[chip].mhz);
 
 			if(short_out_t && ghash < 0.5) {
-				applog(LOG_WARNING, "Chip_id %d FREQ CHANGE", chip);
+				//applog(LOG_WARNING, "Chip_id %d FREQ CHANGE", chip);
 				send_freq(devices[chip].slot, devices[chip].fasync, devices[chip].osc6_bits - 1);
 				nmsleep(1);
 				send_freq(devices[chip].slot, devices[chip].fasync, devices[chip].osc6_bits);
@@ -303,7 +306,7 @@ static struct api_data *bitfury_api_stats(struct cgpu_info *cgpu)
 	struct timeval now;
 	struct bitfury_info *info = cgpu->device_data;
 	int shares_found, i;
-	double ghash;
+	double ghash, ghash_sum = 0.0;
 	unsigned int osc_bits;
 	char mcw[24];
 
@@ -327,9 +330,12 @@ static struct api_data *bitfury_api_stats(struct cgpu_info *cgpu)
 	for (i = 0; i < cgpu->chip_n; i++) {
 		shares_found = calc_stat(devices[i].stat_ts, BITFURY_API_STATS, now);
 		ghash = shares_to_ghashes(shares_found, BITFURY_API_STATS);
+		ghash_sum += ghash;
 		sprintf(mcw, "ghash%d", i);
 		root = api_add_double(root, mcw, &(ghash), true);
 	}
+	ghash_sum /= cgpu->chip_n;
+	api_add_double(root, "ghash_avg", &(ghash_sum), true);
 
 	return root;
 }
