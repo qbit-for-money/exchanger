@@ -315,23 +315,23 @@ static struct api_data *bitfury_api_stats(struct cgpu_info *cgpu)
 	cgtime(&now);
 
 	for (i = 0; i < cgpu->chip_n; i++) {
-		sprintf(mcw, "clock_bits%d", i);
+		sprintf(mcw, "clock_bits_%d_%d", devices[i].slot, devices[i].fasync);
 		osc_bits = (unsigned int)devices[i].osc6_bits;
 		root = api_add_int(root, mcw, &(devices[i].osc6_bits), false);
 	}
 	for (i = 0; i < cgpu->chip_n; i++) {
-		sprintf(mcw, "match_work_count%d", i);
+		sprintf(mcw, "match_work_count_%d_%d", devices[i].slot, devices[i].fasync);
 		root = api_add_uint(root, mcw, &(devices[i].matching_work), false);
 	}
 	for (i = 0; i < cgpu->chip_n; i++) {
-		sprintf(mcw, "strange_count%d", i);
+		sprintf(mcw, "strange_count_%d_%d", devices[i].slot, devices[i].fasync);
 		root = api_add_uint(root, mcw, &(devices[i].strange_counter), false);
 	}
 	for (i = 0; i < cgpu->chip_n; i++) {
 		shares_found = calc_stat(devices[i].stat_ts, BITFURY_API_STATS, now);
 		ghash = shares_to_ghashes(shares_found, BITFURY_API_STATS);
 		ghash_sum += ghash;
-		sprintf(mcw, "ghash%d", i);
+		sprintf(mcw, "ghash_%d_%d", devices[i].slot, devices[i].fasync);
 		root = api_add_double(root, mcw, &(ghash), true);
 	}
 	api_add_double(root, "ghash_total", &(ghash_sum), true);
