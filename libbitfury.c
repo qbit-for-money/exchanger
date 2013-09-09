@@ -465,7 +465,7 @@ void work_to_payload(struct bitfury_payload *p, struct work *w) {
 	p->nbits = bswap_32(*(unsigned *)(flipped_data + 72));
 }
 
-int libbitfury_sendHashData(struct bitfury_device *bf, int chip_n) {
+int libbitfury_sendHashData(struct thr_info *thr, struct bitfury_device *bf, int chip_n) {
 	int chip_id;
 	int buf_diff;
 	static unsigned second_run;
@@ -559,17 +559,8 @@ int libbitfury_sendHashData(struct bitfury_device *bf, int chip_n) {
 					s |= rehash(op->midstate, op->m7, op->ntime, op->nbits, pn+0x02C00000) ? pn + 0x02C00000 : 0;
 					s |= rehash(op->midstate, op->m7, op->ntime, op->nbits, pn+0x00400000) ? pn + 0x00400000 : 0;
 					if (s) {
-						int k;
-						int dup = 0;
-						for (k = 0; k < results_num; k++) {
-							if (results[k] == bswap_32(s)) {
-								dup = 1;
-							}
-						}
-						if (!dup) {
-							results[results_num++] = bswap_32(s);
-							found++;
-						}
+						results[results_num++] = bswap_32(s);
+						found++;
 					}
 
 					s = 0;
@@ -599,7 +590,8 @@ int libbitfury_sendHashData(struct bitfury_device *bf, int chip_n) {
 					}
 					if (!found) {
 						//printf("AAA Strange: %08x, chip_id: %d\n", pn, chip_id);
-						d->strange_counter++;
+						d->hw_errors++;
+						inc_hw_errors(thr);
 					}
 				}
 			}

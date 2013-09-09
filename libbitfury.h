@@ -81,12 +81,14 @@ struct bitfury_device {
 	double ns;
 	unsigned slot;
 	unsigned fasync;
-	unsigned strange_counter;
+	unsigned hw_errors;
 	unsigned int matching_work;
+	unsigned int nonces[32];
+	int current_nonce;
 };
 
 int libbitfury_readHashData(unsigned int *res);
-int libbitfury_sendHashData(struct bitfury_device *bf, int chip_n);
+int libbitfury_sendHashData(struct thr_info *thr, struct bitfury_device *bf, int chip_n);
 void work_to_payload(struct bitfury_payload *p, struct work *w);
 struct timespec t_diff(struct timespec start, struct timespec end);
 int libbitfury_detectChips(struct bitfury_device *devices);

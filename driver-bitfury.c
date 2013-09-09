@@ -68,9 +68,32 @@ static uint32_t bitfury_checkNonce(struct work *work, uint32_t nonce)
 	applog(LOG_INFO, "INFO: bitfury_checkNonce");
 }
 
+static void bitfury_submitNonce(struct thr_info *thr, struct bitfury_device *device, struct timeval *now, struct work *owork, uint32_t nonce)
+{
+	int i;
+	int is_dupe = 0;
+
+	for(i=0; i<32; i++) {
+		if(device->nonces[i] == nonce) {
+		    is_dupe = 1;
+		    break;
+		}
+	}
+
+	if(!is_dupe) {
+		submit_nonce(thr, owork, nonce);
+		device->nonces[device->current_nonce++] = nonce;
+		if(device->current_nonce > 32)
+			device->current_nonce = 0;
+		device->stat_ts[device->stat_counter++] = now->tv_sec;
+		if (device->stat_counter == BITFURY_STAT_N)
+			device->stat_counter = 0;
+	}
+}
+
 static int64_t bitfury_scanHash(struct thr_info *thr)
 {
-	static struct bitfury_device *devices; // TODO Move somewhere to appropriate place
+	static struct bitfury_device *devices, *dev; // TODO Move somewhere to appropriate place
 	int chip_n;
 	int chip;
 	uint64_t hashes = 0;
@@ -90,9 +113,11 @@ static int64_t bitfury_scanHash(struct thr_info *thr)
 
 	if (!first) {
 		for (i = 0; i < chip_n; i++) {
-			if(i==9 || i==38) // manual chip tuning :)
+#if 0
+			if(i==9 || i==38) // manual chip tuning example :)
 				devices[i].osc6_bits = 53;
 			else
+#endif
 				devices[i].osc6_bits = 54;
 		}
 		for (i = 0; i < chip_n; i++) {
@@ -102,62 +127,59 @@ static int64_t bitfury_scanHash(struct thr_info *thr)
 	first = 1;
 
 	for (chip = 0; chip < chip_n; chip++) {
-		devices[chip].job_switched = 0;
-		if(!devices[chip].work) {
-			devices[chip].work = get_queued(thr->cgpu);
-			if (devices[chip].work == NULL) {
+		dev = &devices[chip];
+		dev->job_switched = 0;
+		if(!dev->work) {
+			dev->work = get_queued(thr->cgpu);
+			if (dev->work == NULL) {
 				return 0;
 			}
-			work_to_payload(&(devices[chip].payload), devices[chip].work);
+			work_to_payload(&(dev->payload), dev->work);
 		}
 	}
 
-	libbitfury_sendHashData(devices, chip_n);
+	libbitfury_sendHashData(thr, devices, chip_n);
 	nmsleep(5);
 
 	cgtime(&now);
 	chip = 0;
 	for (;chip < chip_n; chip++) {
-		if (devices[chip].job_switched) {
+		dev = &devices[chip];
+		if (dev->job_switched) {
 			int i,j;
-			int *res = devices[chip].results;
-			struct work *work = devices[chip].work;
-			struct work *owork = devices[chip].owork;
-			struct work *o2work = devices[chip].o2work;
-			i = devices[chip].results_n;
+			int *res = dev->results;
+			struct work *work = dev->work;
+			struct work *owork = dev->owork;
+			struct work *o2work = dev->o2work;
+			i = dev->results_n;
 			for (j = i - 1; j >= 0; j--) {
 				if (owork) {
-					submit_nonce(thr, owork, bswap_32(res[j]));
-					devices[chip].stat_ts[devices[chip].stat_counter++] =
-						now.tv_sec;
-					if (devices[chip].stat_counter == BITFURY_STAT_N) {
-						devices[chip].stat_counter = 0;
-					}
+					bitfury_submitNonce(thr, dev, &now, owork, bswap_32(res[j]));
 				}
 				if (o2work) {
 					// TEST
 					//submit_nonce(thr, owork, bswap_32(res[j]));
 				}
 			}
-			devices[chip].results_n = 0;
-			devices[chip].job_switched = 0;
-			if (devices[chip].old_nonce && o2work) {
-					submit_nonce(thr, o2work, bswap_32(devices[chip].old_nonce));
+			dev->results_n = 0;
+			dev->job_switched = 0;
+			if (dev->old_nonce && o2work) {
+					bitfury_submitNonce(thr, dev, &now, o2work, bswap_32(dev->old_nonce));
 					i++;
 			}
-			if (devices[chip].future_nonce) {
-					submit_nonce(thr, work, bswap_32(devices[chip].future_nonce));
+			if (dev->future_nonce) {
+					bitfury_submitNonce(thr, dev, &now, work, bswap_32(dev->future_nonce));
 					i++;
 			}
 
 			if (o2work)
 				work_completed(thr->cgpu, o2work);
 
-			devices[chip].o2work = devices[chip].owork;
-			devices[chip].owork = devices[chip].work;
-			devices[chip].work = NULL;
+			dev->o2work = dev->owork;
+			dev->owork = dev->work;
+			dev->work = NULL;
 			hashes += 0xffffffffull * i;
-			devices[chip].matching_work += i;
+			dev->matching_work += i;
 		}
 	}
 	if (now.tv_sec - short_out_t > short_stat) {
@@ -169,24 +191,25 @@ static int64_t bitfury_scanHash(struct thr_info *thr)
 		unsigned strange_counter = 0;
 
 		for (chip = 0; chip < chip_n; chip++) {
-			int shares_found = calc_stat(devices[chip].stat_ts, short_stat, now);
+			dev = &devices[chip];
+			int shares_found = calc_stat(dev->stat_ts, short_stat, now);
 			double ghash;
-			len = strlen(stat_lines[devices[chip].slot]);
+			len = strlen(stat_lines[dev->slot]);
 			ghash = shares_to_ghashes(shares_found, short_stat);
-			gh[devices[chip].slot][chip % BITFURY_BANKCHIPS] = ghash;
-			snprintf(stat_lines[devices[chip].slot] + len, 256 - len, "%.1f-%3.0f ", ghash, devices[chip].mhz);
+			gh[dev->slot][chip % BITFURY_BANKCHIPS] = ghash;
+			snprintf(stat_lines[dev->slot] + len, 256 - len, "%.1f-%3.0f ", ghash, dev->mhz);
 
 			if(short_out_t && ghash < 0.5) {
 				//applog(LOG_WARNING, "Chip_id %d FREQ CHANGE", chip);
-				send_freq(devices[chip].slot, devices[chip].fasync, devices[chip].osc6_bits - 1);
+				send_freq(dev->slot, dev->fasync, dev->osc6_bits - 1);
 				nmsleep(1);
-				send_freq(devices[chip].slot, devices[chip].fasync, devices[chip].osc6_bits);
+				send_freq(dev->slot, dev->fasync, dev->osc6_bits);
 			}
 			shares_total += shares_found;
 			shares_first += chip < BITFURY_BANKCHIPS/2 ? shares_found : 0;
 			shares_last += chip >= BITFURY_BANKCHIPS/2 ? shares_found : 0;
-			strange_counter += devices[chip].strange_counter;
-			//devices[chip].strange_counter = 0;
+			strange_counter += dev->hw_errors;
+			//dev->strange_counter = 0;
 		}
 #ifdef BITFURY_ENABLE_SHORT_STAT
 		sprintf(line, "vvvvwww SHORT stat %ds: wwwvvvv", short_stat);
@@ -219,12 +242,13 @@ static int64_t bitfury_scanHash(struct thr_info *thr)
 		double ghsum = 0, gh1h = 0, gh2h = 0;
 
 		for (chip = 0; chip < chip_n; chip++) {
-			int shares_found = calc_stat(devices[chip].stat_ts, long_stat, now);
+			dev = &devices[chip];
+			int shares_found = calc_stat(dev->stat_ts, long_stat, now);
 			double ghash;
-			len = strlen(stat_lines[devices[chip].slot]);
+			len = strlen(stat_lines[dev->slot]);
 			ghash = shares_to_ghashes(shares_found, long_stat);
-			gh[devices[chip].slot][chip % BITFURY_BANKCHIPS] = ghash;
-			snprintf(stat_lines[devices[chip].slot] + len, 256 - len, "%.1f-%3.0f ", ghash, devices[chip].mhz);
+			gh[dev->slot][chip % BITFURY_BANKCHIPS] = ghash;
+			snprintf(stat_lines[dev->slot] + len, 256 - len, "%.1f-%3.0f ", ghash, dev->mhz);
 			shares_total += shares_found;
 			shares_first += chip < BITFURY_BANKCHIPS/2 ? shares_found : 0;
 			shares_last += chip >= BITFURY_BANKCHIPS/2 ? shares_found : 0;
@@ -252,7 +276,8 @@ static int64_t bitfury_scanHash(struct thr_info *thr)
 }
 
 double shares_to_ghashes(int shares, int seconds) {
-	return (double)shares / (double)seconds * 4.84387;  //orig: 4.77628
+	return ( (double)shares * 4.294967296 ) / ( (double)seconds );
+
 }
 
 int calc_stat(time_t * stat_ts, time_t stat, struct timeval now) {
@@ -309,6 +334,7 @@ static struct api_data *bitfury_api_stats(struct cgpu_info *cgpu)
 	double ghash, ghash_sum = 0.0;
 	unsigned int osc_bits;
 	char mcw[24];
+	uint64_t total_hw = 0;
 
 	devices = cgpu->devices;
 	root = api_add_int(root, "chip_n", &(cgpu->chip_n),false);
@@ -324,8 +350,9 @@ static struct api_data *bitfury_api_stats(struct cgpu_info *cgpu)
 		root = api_add_uint(root, mcw, &(devices[i].matching_work), false);
 	}
 	for (i = 0; i < cgpu->chip_n; i++) {
-		sprintf(mcw, "strange_count_%d_%d", devices[i].slot, devices[i].fasync);
-		root = api_add_uint(root, mcw, &(devices[i].strange_counter), false);
+		sprintf(mcw, "hw_errors_%d_%d", devices[i].slot, devices[i].fasync);
+		root = api_add_uint(root, mcw, &(devices[i].hw_errors), false);
+		total_hw += devices[i].hw_errors;
 	}
 	for (i = 0; i < cgpu->chip_n; i++) {
 		shares_found = calc_stat(devices[i].stat_ts, BITFURY_API_STATS, now);
@@ -334,9 +361,10 @@ static struct api_data *bitfury_api_stats(struct cgpu_info *cgpu)
 		sprintf(mcw, "ghash_%d_%d", devices[i].slot, devices[i].fasync);
 		root = api_add_double(root, mcw, &(ghash), true);
 	}
-	api_add_double(root, "ghash_total", &(ghash_sum), true);
+	api_add_uint64(root, "total_hw", &(total_hw), false);
+	api_add_double(root, "total_gh", &(ghash_sum), true);
 	ghash_sum /= cgpu->chip_n;
-	api_add_double(root, "ghash_avg", &(ghash_sum), true);
+	api_add_double(root, "avg_gh_per_chip", &(ghash_sum), true);
 
 	return root;
 }
