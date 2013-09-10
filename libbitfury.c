@@ -285,11 +285,6 @@ int detect_chip(int chip_n) {
 	memset(newbuf, 0, 17 * 4);
 	memset(oldbuf, 0, 17 * 4);
 
-	ms3_compute(&atrvec[0]);
-	ms3_compute(&atrvec[20]);
-	ms3_compute(&atrvec[40]);
-	spi_init();
-
 
 	spi_clear_buf();
 	spi_emit_break(); /* First we want to break chain! Otherwise we'll get all of traffic bounced to output */
@@ -344,6 +339,11 @@ int libbitfury_detectChips(struct bitfury_device *devices) {
 		printf("I2C init error\n");
 		return(1);
 	}
+
+	ms3_compute(&atrvec[0]);
+	ms3_compute(&atrvec[20]);
+	ms3_compute(&atrvec[40]);
+	spi_init();
 
 	for (i = 0; i < BITFURY_MAXBANKS; i++) {
 		slot_on[i] = 0;

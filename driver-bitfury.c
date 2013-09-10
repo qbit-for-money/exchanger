@@ -29,6 +29,7 @@
 #include <sha2.h>
 #include "libbitfury.h"
 #include "util.h"
+#include "config.h"
 
 #define GOLDEN_BACKLOG 5
 
@@ -39,6 +40,7 @@ static void bitfury_disable(struct thr_info* thr);
 static bool bitfury_prepare(struct thr_info *thr);
 int calc_stat(time_t * stat_ts, time_t stat, struct timeval now);
 double shares_to_ghashes(int shares, int seconds);
+static void get_options(struct cgpu_info *cgpu);
 
 static void bitfury_detect(void)
 {
@@ -116,12 +118,7 @@ static int64_t bitfury_scanHash(struct thr_info *thr)
 
 	if (!first) {
 		for (i = 0; i < chip_n; i++) {
-#if 0
-			if(i==9 || i==38) // manual chip tuning example :)
-				devices[i].osc6_bits = 53;
-			else
-#endif
-				devices[i].osc6_bits = 54;
+				devices[i].osc6_bits = devices[i].osc6_bits_setpoint;
 		}
 		for (i = 0; i < chip_n; i++) {
 			send_reinit(devices[i].slot, devices[i].fasync, devices[i].osc6_bits);
@@ -304,6 +301,8 @@ static bool bitfury_prepare(struct thr_info *thr)
 	cgtime(&now);
 	get_datestamp(cgpu->init, &now);
 
+	get_options(cgpu);
+
 	applog(LOG_INFO, "INFO bitfury_prepare");
 	return true;
 }
@@ -324,6 +323,73 @@ static void bitfury_disable(struct thr_info *thr)
 	applog(LOG_INFO, "INFO bitfury_disable");
 }
 
+static int bitfury_findChip(struct bitfury_device *devices, int chip_n, int slot, int fs) {
+	int n;
+	for (n = 0; n < chip_n; n++) {
+		if ( (devices[n].slot == slot) && (devices[n].fasync == fs) )
+			return n;
+	}
+	return -1;
+}
+
+static void get_options(struct cgpu_info *cgpu)
+{
+	char buf[BUFSIZ+1];
+	char *ptr, *comma, *colon, *colon2;
+	size_t max = 0;
+	int i, slot, fs, bits, chip, def_bits;
+
+	for(i=0; i<cgpu->chip_n; i++)
+		cgpu->devices[i].osc6_bits_setpoint = 54; // this is default value
+
+	if (opt_bitfury_clockbits == NULL) {
+		buf[0] = '\0';
+		return;
+	}
+
+	ptr = opt_bitfury_clockbits;
+
+	do {
+		comma = strchr(ptr, ',');
+		if (comma == NULL)
+			max = strlen(ptr);
+		else
+			max = comma - ptr;
+		if (max > BUFSIZ)
+			max = BUFSIZ;
+		strncpy(buf, ptr, max);
+		buf[max] = '\0';
+
+		if (*buf) {
+			colon = strchr(buf, ':');
+			if (colon) {
+				*(colon++) = '\0';
+				colon2 = strchr(colon, ':');
+				if (colon2)
+					*(colon2++) = '\0';
+				if (*buf && *colon && *colon2) {
+					slot = atoi(buf);
+					fs = atoi(colon);
+					bits = atoi(colon2);
+					chip = bitfury_findChip(cgpu->devices, cgpu->chip_n, slot, fs);
+					if(chip > 0 && chip < cgpu->chip_n && bits >= 48 && bits <= 56) {
+						cgpu->devices[chip].osc6_bits_setpoint = bits;
+						applog(LOG_INFO, "Set clockbits: slot=%d chip=%d bits=%d", slot, fs, bits);
+					}
+				}
+			} else {
+				def_bits = atoi(buf);
+				if(def_bits >= 48 && def_bits <= 56) {
+					for(i=0; i<cgpu->chip_n; i++)
+						cgpu->devices[i].osc6_bits_setpoint = def_bits;
+				}
+			}
+		}
+		if(comma != NULL)
+			ptr = ++comma;
+	} while (comma != NULL);
+}
+
 static struct api_data *bitfury_api_stats(struct cgpu_info *cgpu)
 {
 	struct api_data *root = NULL;
@@ -332,7 +398,6 @@ static struct api_data *bitfury_api_stats(struct cgpu_info *cgpu)
 	struct bitfury_info *info = cgpu->device_data;
 	int shares_found, i;
 	double ghash, ghash_sum = 0.0;
-	unsigned int osc_bits;
 	char mcw[24];
 	uint64_t total_hw = 0;
 
@@ -342,7 +407,6 @@ static struct api_data *bitfury_api_stats(struct cgpu_info *cgpu)
 
 	for (i = 0; i < cgpu->chip_n; i++) {
 		sprintf(mcw, "clock_bits_%d_%d", devices[i].slot, devices[i].fasync);
-		osc_bits = (unsigned int)devices[i].osc6_bits;
 		root = api_add_int(root, mcw, &(devices[i].osc6_bits), false);
 	}
 	for (i = 0; i < cgpu->chip_n; i++) {
@@ -354,6 +418,10 @@ static struct api_data *bitfury_api_stats(struct cgpu_info *cgpu)
 		root = api_add_uint(root, mcw, &(devices[i].hw_errors), false);
 		total_hw += devices[i].hw_errors;
 	}
+//	for (i = 0; i < cgpu->chip_n; i++) {
+//		sprintf(mcw, "mhz_%d_%d", devices[i].slot, devices[i].fasync);
+//		root = api_add_double(root, mcw, &(devices[i].mhz), false);
+//	}
 	for (i = 0; i < cgpu->chip_n; i++) {
 		shares_found = calc_stat(devices[i].stat_ts, BITFURY_API_STATS, now);
 		ghash = shares_to_ghashes(shares_found, BITFURY_API_STATS);

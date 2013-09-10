@@ -41,10 +41,33 @@ static volatile unsigned *gpio;
 void spi_init(void)
 {
 	int fd;
+
+	if(system("modprobe i2c-dev")) {
+		perror("FATAL, modprobe i2c-dev failed (must be root)\n");
+		exit(1);
+	}
+	if(system("modprobe i2c-bcm2708")) {
+		perror("FATAL, modprobe i2c-bcm2708 failed (must be root)\n");
+		exit(1);
+	}
+	if(system("modprobe spidev")) {
+		perror("FATAL, modprobe spidev failed (must be root)\n");
+		exit(1);
+	}
+	if(system("modprobe spi-bcm2708")) {
+		perror("FATAL, modprobe spi-bcm2708 failed (must be root)\n");
+		exit(1);
+	}
 	fd = open("/dev/mem",O_RDWR|O_SYNC);
-	if (fd < 0) { perror("/dev/mem trouble"); exit(1); }
+	if (fd < 0) {
+		perror("FATAL, /dev/mem trouble (must be roor)\n");
+		exit(1);
+	}
 	gpio = mmap(0,4096,PROT_READ|PROT_WRITE,MAP_SHARED,fd,0x20200000);
-	if (gpio == MAP_FAILED) { perror("gpio mmap trouble"); exit(1); }
+	if (gpio == MAP_FAILED) {
+		perror("FATAL, gpio mmap trouble (must be root)\n");
+		exit(1);
+	}
 	close(fd);
 }
 

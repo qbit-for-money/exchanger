@@ -872,6 +872,9 @@ extern bool opt_worktime;
 #ifdef USE_AVALON
 extern char *opt_avalon_options;
 #endif
+#ifdef USE_BITFURY
+extern char *opt_bitfury_clockbits;
+#endif
 #ifdef USE_USBUTILS
 extern char *opt_usb_select;
 extern int opt_usbdump;

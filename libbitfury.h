@@ -50,6 +50,7 @@ struct bitfury_payload {
 
 struct bitfury_device {
 	unsigned osc6_bits;
+	unsigned osc6_bits_setpoint;
 	unsigned newbuf[17];
 	unsigned oldbuf[17];
 	struct work * work;
@@ -85,6 +86,7 @@ struct bitfury_device {
 	unsigned int matching_work;
 	unsigned int nonces[32];
 	int current_nonce;
+	double gh_stat[8];
 };
 
 int libbitfury_readHashData(unsigned int *res);
