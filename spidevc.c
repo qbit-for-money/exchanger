@@ -154,7 +154,7 @@ int spi_txrx(const char *wrbuf, char *rdbuf, int bufsz)
 
 	memset(&tr,0,sizeof(tr));
 
-	spi_reset(1024);
+	spi_reset(2048);
 
 	rv = 0;
 	while (bufsz >= 4096) {

@@ -269,7 +269,7 @@ static int64_t bitfury_scanHash(struct thr_info *thr)
 		long_out_t = now.tv_sec;
 	}
 #endif
-	nmsleep(150);
+	nmsleep(100);
 
 	return hashes;
 }
