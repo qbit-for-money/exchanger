@@ -501,6 +501,10 @@ int libbitfury_sendHashData(struct thr_info *thr, struct bitfury_device *bf, int
 			d->otimer1 = d->timer1;
 			d->timer1 = time;
 			d->ocounter1 = d->counter1;
+			if (d->osc6_bits != d->osc6_req) {
+                          send_freq(d->slot, d->fasync, d->osc6_req);
+                          d->osc6_bits = d->osc6_req;
+                        }
 			/* Programming next value */
 			tm_i2c_set_oe(slot);
 			spi_clear_buf(); spi_emit_break();
