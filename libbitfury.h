@@ -49,6 +49,7 @@ struct bitfury_payload {
 };
 
 struct bitfury_device {
+	unsigned osc6_req;
 	unsigned osc6_bits;
 	unsigned osc6_bits_setpoint;
 	unsigned newbuf[17];
