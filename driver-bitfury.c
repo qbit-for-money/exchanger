@@ -139,7 +139,7 @@ static int64_t bitfury_scanHash(struct thr_info *thr)
 	}
 
 	libbitfury_sendHashData(thr, devices, chip_n);
-	nmsleep(5);
+//	nmsleep(100);
 
 	cgtime(&now);
 	chip = 0;
@@ -179,6 +179,7 @@ static int64_t bitfury_scanHash(struct thr_info *thr)
 			dev->matching_work += nonces_cnt;
 		}
 	}
+#ifdef BITFURY_ENABLE_SHORT_STAT
 	if (now.tv_sec - short_out_t > short_stat) {
 		int shares_first = 0, shares_last = 0, shares_total = 0;
 		char stat_lines[BITFURY_MAXBANKS][256] = {0};
@@ -208,7 +209,6 @@ static int64_t bitfury_scanHash(struct thr_info *thr)
 			strange_counter += dev->hw_errors;
 			//dev->strange_counter = 0;
 		}
-#ifdef BITFURY_ENABLE_SHORT_STAT
 		sprintf(line, "vvvvwww SHORT stat %ds: wwwvvvv", short_stat);
 		applog(LOG_WARNING, line);
 		//sprintf(line, "stranges: %u", strange_counter);
@@ -219,7 +219,7 @@ static int64_t bitfury_scanHash(struct thr_info *thr)
 				ghsum = 0;
 				gh1h = 0;
 				gh2h = 0;
-				for(k = 0; k < BITFURY_BANKCHIPS; k++) {
+				for(k = 0; k < BITFURY_BANKCHIPS/2; k++) {
 					gh1h += gh[i][k];
 					gh2h += gh[i][k + BITFURY_BANKCHIPS/2];
 					ghsum += gh[i][k] + gh[i][k + BITFURY_BANKCHIPS/2];
@@ -227,9 +227,9 @@ static int64_t bitfury_scanHash(struct thr_info *thr)
 				snprintf(stat_lines[i] + len, 256 - len, "- %2.1f + %2.1f = %2.1f slot %i ", gh1h, gh2h, ghsum, i);
 				applog(LOG_WARNING, stat_lines[i]);
 			}
-#endif
 		short_out_t = now.tv_sec;
 	}
+#endif
 #ifdef BITFURY_ENABLE_LONG_STAT
 	if (now.tv_sec - long_out_t > long_stat) {
 		int shares_first = 0, shares_last = 0, shares_total = 0;
@@ -269,6 +269,8 @@ static int64_t bitfury_scanHash(struct thr_info *thr)
 		long_out_t = now.tv_sec;
 	}
 #endif
+	nmsleep(150);
+
 	return hashes;
 }
 
