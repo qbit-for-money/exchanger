@@ -415,6 +415,11 @@ static const char *JSON_PARAMETER = "parameter";
 #define MSG_ASCNOID 114
 #endif
 #define MSG_ASCUSBNODEV 115
+#ifdef USE_BITFURY
+#define MSG_OSCBITSRANGE 116
+#define MSG_CHIPRANGE 117
+#define MSG_SETOSCBITS 118
+#endif
 
 enum code_severity {
 	SEVERITY_ERR,
@@ -611,6 +616,11 @@ struct CODES {
  { SEVERITY_ERR,   MSG_ASCUNW,	PARAM_ASC,	"ASC %d is not flagged WELL, cannot enable" },
  { SEVERITY_SUCC,  MSG_ASCIDENT,PARAM_ASC,	"Identify command sent to ASC%d" },
  { SEVERITY_WARN,  MSG_ASCNOID,	PARAM_ASC,	"ASC%d does not support identify" },
+#endif
+#ifdef USE_BITFURY
+ { SEVERITY_ERR,   MSG_OSCBITSRANGE, PARAM_NONE,  "Clock-bit range error (must be 52-56)" },
+ { SEVERITY_ERR,   MSG_OSCBITSRANGE, PARAM_INT,   "Chip index range error (%d chips at all)" },
+ { SEVERITY_SUCC,  MSG_SETOSCBITS, PARAM_INT,     "Clock-bit setted to %d" },
 #endif
  { SEVERITY_FAIL, 0, 0, NULL }
 };
@@ -3662,6 +3672,43 @@ static void asccount(struct io_data *io_data, __maybe_unused SOCKETTYPE c, __may
 		io_close(io_data);
 }
 
+#ifdef USE_BITFURY
+static void set_clock_bits(struct io_data *io_data, __maybe_unused SOCKETTYPE c, char *param, bool isjson, __maybe_unused char group) //++++++++++++++++++++++++++++
+{
+  struct cgpu_info *cgpu;
+  static struct bitfury_device *devices;
+  int value;
+  int chip_idx;
+  int osc_bits;
+  char *tc = NULL;
+  int i = 0;
+  while (param[i] != 0) {
+        i++;
+        if (param[i] != ',') continue;
+        tc = param+i+1;
+        param[i] = 0;
+        break;
+  }
+  if (!tc) return;
+  chip_idx = atoi(param);
+  osc_bits = atoi(tc);
+  if (osc_bits < 52 || osc_bits > 56) {
+        message(io_data, MSG_OSCBITSRANGE, 0, NULL, isjson);
+        return;
+  }
+  cgpu = get_devices(0);
+  if (chip_idx < 0 || chip_idx >= cgpu->chip_n) {
+        message(io_data, MSG_CHIPRANGE, (int) cgpu->chip_n, NULL, isjson);
+        return;
+  }
+  devices = cgpu->devices;
+  value = (unsigned int)devices[chip_idx].osc6_bits;
+  devices[chip_idx].osc6_req = osc_bits;
+
+  message(io_data, MSG_SETOSCBITS, osc_bits, NULL, isjson);
+}
+#endif
+
 static void checkcommand(struct io_data *io_data, __maybe_unused SOCKETTYPE c, char *param, bool isjson, char group);
 
 struct CMDS {
@@ -3726,6 +3773,9 @@ struct CMDS {
 	{ "ascidentify",	ascidentify,	true },
 #endif
 	{ "asccount",		asccount,	false },
+#ifdef USE_BITFURY
+        { "setclkb",            set_clock_bits, false },
+#endif
 	{ NULL,			NULL,		false }
 };
 
