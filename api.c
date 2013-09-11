@@ -3678,8 +3678,10 @@ static void set_clock_bits(struct io_data *io_data, __maybe_unused SOCKETTYPE c,
   struct cgpu_info *cgpu;
   static struct bitfury_device *devices;
   int value;
+  int slot_idx;
   int chip_idx;
   int osc_bits;
+  char *to = NULL;
   char *tc = NULL;
   int i = 0;
   while (param[i] != 0) {
@@ -3687,23 +3689,40 @@ static void set_clock_bits(struct io_data *io_data, __maybe_unused SOCKETTYPE c,
         if (param[i] != ',') continue;
         tc = param+i+1;
         param[i] = 0;
+        int k = 0;
+        while (tc[k] != 0) {
+                k++;
+                if (tc[k] != ',') continue;
+                to = tc+k+1;
+                tc[k] = 0;
+                break;
+        }
         break;
   }
-  if (!tc) return;
-  chip_idx = atoi(param);
-  osc_bits = atoi(tc);
+  if (!tc || !to) return;
+  slot_idx = atoi(param);
+  chip_idx = atoi(tc);
+  osc_bits = atoi(to);
   if (osc_bits < 52 || osc_bits > 56) {
         message(io_data, MSG_OSCBITSRANGE, 0, NULL, isjson);
         return;
   }
   cgpu = get_devices(0);
-  if (chip_idx < 0 || chip_idx >= cgpu->chip_n) {
+  devices = cgpu->devices;
+  int index = -1;
+  i = 0;
+  for (; i < cgpu->chip_n; i++) {
+        if ( (devices[i].slot == slot_idx) && (devices[i].fasync == chip_idx) )$
+                index = i;
+                break;
+        }
+  }
+  if (index < 0 || index >= cgpu->chip_n) {
         message(io_data, MSG_CHIPRANGE, (int) cgpu->chip_n, NULL, isjson);
         return;
   }
-  devices = cgpu->devices;
-  value = (unsigned int)devices[chip_idx].osc6_bits;
-  devices[chip_idx].osc6_req = osc_bits;
+  value = (unsigned int)devices[index].osc6_bits;
+  devices[index].osc6_req = osc_bits;
 
   message(io_data, MSG_SETOSCBITS, osc_bits, NULL, isjson);
 }
