@@ -3712,7 +3712,7 @@ static void set_clock_bits(struct io_data *io_data, __maybe_unused SOCKETTYPE c,
   int index = -1;
   i = 0;
   for (; i < cgpu->chip_n; i++) {
-        if ( (devices[i].slot == slot_idx) && (devices[i].fasync == chip_idx) )$
+        if ( (devices[i].slot == slot_idx) && (devices[i].fasync == chip_idx) ) {
                 index = i;
                 break;
         }
