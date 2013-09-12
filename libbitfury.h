@@ -31,8 +31,8 @@
 
 #define BITFURY_STAT_N 1024
 #define BITFURY_MAXCHIPS 256
-#define BITFURY_MAXBANKS 1
-#define BITFURY_BANKCHIPS 60
+#define BITFURY_MAXBANKS 16
+#define BITFURY_BANKCHIPS 8
 
 //#define BITFURY_ENABLE_SHORT_STAT 1
 //#define BITFURY_ENABLE_LONG_STAT 1
@@ -49,6 +49,7 @@ struct bitfury_payload {
 };
 
 struct bitfury_device {
+	unsigned osc6_req;
 	unsigned osc6_bits;
 	unsigned osc6_bits_setpoint;
 	unsigned newbuf[17];

@@ -118,7 +118,8 @@ static int64_t bitfury_scanHash(struct thr_info *thr)
 
 	if (!first) {
 		for (i = 0; i < chip_n; i++) {
-				devices[i].osc6_bits = devices[i].osc6_bits_setpoint;
+			devices[i].osc6_bits = devices[i].osc6_bits_setpoint;
+			devices[i].osc6_req = devices[i].osc6_bits_setpoint;
 		}
 		for (i = 0; i < chip_n; i++) {
 			send_reinit(devices[i].slot, devices[i].fasync, devices[i].osc6_bits);
