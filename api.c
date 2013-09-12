@@ -419,6 +419,7 @@ static const char *JSON_PARAMETER = "parameter";
 #define MSG_OSCBITSRANGE 116
 #define MSG_CHIPRANGE 117
 #define MSG_SETOSCBITS 118
+#define MSG_SETOSCBITS_NOPAR 119
 #endif
 
 enum code_severity {
@@ -618,9 +619,10 @@ struct CODES {
  { SEVERITY_WARN,  MSG_ASCNOID,	PARAM_ASC,	"ASC%d does not support identify" },
 #endif
 #ifdef USE_BITFURY
- { SEVERITY_ERR,   MSG_OSCBITSRANGE, PARAM_NONE,  "Clock-bit range error (must be 52-56)" },
- { SEVERITY_ERR,   MSG_OSCBITSRANGE, PARAM_INT,   "Chip index range error (%d chips at all)" },
- { SEVERITY_SUCC,  MSG_SETOSCBITS, PARAM_INT,     "Clock-bit setted to %d" },
+ { SEVERITY_ERR,   MSG_OSCBITSRANGE, PARAM_NONE,  "Clock-bit range error (must be in range 52-56)" },
+ { SEVERITY_ERR,   MSG_OSCBITSRANGE, PARAM_INT,   "Chip index range error (%d chips max)" },
+ { SEVERITY_SUCC,  MSG_SETOSCBITS, PARAM_INT,     "Clock-bit set to %d" },
+ { SEVERITY_ERR,   MSG_SETOSCBITS_NOPAR, PARAM_NONE,   "Parameter required (<slot>,<chip>,<bits>)" },
 #endif
  { SEVERITY_FAIL, 0, 0, NULL }
 };
@@ -3675,56 +3677,63 @@ static void asccount(struct io_data *io_data, __maybe_unused SOCKETTYPE c, __may
 #ifdef USE_BITFURY
 static void set_clock_bits(struct io_data *io_data, __maybe_unused SOCKETTYPE c, char *param, bool isjson, __maybe_unused char group) //++++++++++++++++++++++++++++
 {
-  struct cgpu_info *cgpu;
-  static struct bitfury_device *devices;
-  int value;
-  int slot_idx;
-  int chip_idx;
-  int osc_bits;
-  char *to = NULL;
-  char *tc = NULL;
-  int i = 0;
-  while (param[i] != 0) {
-        i++;
-        if (param[i] != ',') continue;
-        tc = param+i+1;
-        param[i] = 0;
-        int k = 0;
-        while (tc[k] != 0) {
-                k++;
-                if (tc[k] != ',') continue;
-                to = tc+k+1;
-                tc[k] = 0;
-                break;
-        }
-        break;
-  }
-  if (!tc || !to) return;
-  slot_idx = atoi(param);
-  chip_idx = atoi(tc);
-  osc_bits = atoi(to);
-  if (osc_bits < 52 || osc_bits > 56) {
-        message(io_data, MSG_OSCBITSRANGE, 0, NULL, isjson);
-        return;
-  }
-  cgpu = get_devices(0);
-  devices = cgpu->devices;
-  int index = -1;
-  i = 0;
-  for (; i < cgpu->chip_n; i++) {
-        if ( (devices[i].slot == slot_idx) && (devices[i].fasync == chip_idx) ) {
-                index = i;
-                break;
-        }
-  }
-  if (index < 0 || index >= cgpu->chip_n) {
-        message(io_data, MSG_CHIPRANGE, (int) cgpu->chip_n, NULL, isjson);
-        return;
-  }
-  value = (unsigned int)devices[index].osc6_bits;
-  devices[index].osc6_req = osc_bits;
+	struct cgpu_info *cgpu;
+	static struct bitfury_device *devices;
+	int value;
+	int slot_idx;
+	int chip_idx;
+	int osc_bits;
+	char *to = NULL;
+	char *tc = NULL;
+	int i = 0;
 
-  message(io_data, MSG_SETOSCBITS, osc_bits, NULL, isjson);
+	if(param == NULL) {
+		message(io_data, MSG_SETOSCBITS_NOPAR, 0, NULL, isjson);
+		return;
+	}
+
+	while (param[i] != '\0') {
+		i++;
+		if (param[i] != ',') continue;
+		tc = param+i+1;
+		param[i] = 0;
+		int k = 0;
+		while (tc[k] != '\0') {
+			k++;
+			if (tc[k] != ',') continue;
+			to = tc+k+1;
+			tc[k] = '\0';
+			break;
+		}
+		break;
+	}
+	if (!tc || !to)
+		return;
+	slot_idx = atoi(param);
+	chip_idx = atoi(tc);
+	osc_bits = atoi(to);
+	if (osc_bits < 52 || osc_bits > 56) {
+		message(io_data, MSG_OSCBITSRANGE, 0, NULL, isjson);
+		return;
+	}
+	cgpu = get_devices(0);
+	devices = cgpu->devices;
+	int index = -1;
+	i = 0;
+	for (; i < cgpu->chip_n; i++) {
+		if ( (devices[i].slot == slot_idx) && (devices[i].fasync == chip_idx) ) {
+			index = i;
+			break;
+		}
+	}
+	if (index < 0 || index >= cgpu->chip_n) {
+		message(io_data, MSG_CHIPRANGE, (int) cgpu->chip_n, NULL, isjson);
+		return;
+	}
+	value = (unsigned int)devices[index].osc6_bits;
+	devices[index].osc6_req = osc_bits;
+
+	message(io_data, MSG_SETOSCBITS, osc_bits, NULL, isjson);
 }
 #endif
 
