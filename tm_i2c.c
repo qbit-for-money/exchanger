@@ -4,6 +4,8 @@
 #include <linux/i2c-dev.h>
 #include "tm_i2c.h"
 
+#include "bitfury-config.h"
+
 float tm_i2c_Data2Temp(unsigned int ans) {
 	float t = ans;
 	return (t / 1023.0 * 3.3 * 2-2.73) * 100.0;
