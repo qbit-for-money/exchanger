@@ -27,17 +27,28 @@
 #ifndef __LIBBITFURY_H__
 #define __LIBBITFURY_H__
 
-#include "miner.h"
+#include "bitfury-config.h"
 
-#define BITFURY_STAT_N 1024
+#ifdef BITFURY_METABANK
+
 #define BITFURY_MAXCHIPS 256
 #define BITFURY_MAXBANKS 32
 #define BITFURY_BANKCHIPS 8
+#define BITFURY_SCANHASH_DELAY 60
 
-//#define BITFURY_ENABLE_SHORT_STAT 1
-//#define BITFURY_ENABLE_LONG_STAT 1
+#endif
 
-#define BITFURY_API_STATS 300
+#ifdef BITFURY_NEEDBMW_NOMUX
+
+#define BITFURY_MAXCHIPS 100
+#define BITFURY_MAXBANKS 1
+#define BITFURY_BANKCHIPS 100
+#define BITFURY_SCANHASH_DELAY 100
+
+#endif
+
+#include "miner.h"
+
 
 struct bitfury_payload {
 	unsigned char midstate[32];

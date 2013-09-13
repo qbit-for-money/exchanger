@@ -140,7 +140,6 @@ static int64_t bitfury_scanHash(struct thr_info *thr)
 	}
 
 	libbitfury_sendHashData(thr, devices, chip_n);
-//	nmsleep(100);
 
 	cgtime(&now);
 	chip = 0;
@@ -270,7 +269,8 @@ static int64_t bitfury_scanHash(struct thr_info *thr)
 		long_out_t = now.tv_sec;
 	}
 #endif
-	nmsleep(100);
+
+	nmsleep(BITFURY_SCANHASH_DELAY);
 
 	return hashes;
 }
