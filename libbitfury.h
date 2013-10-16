@@ -47,6 +47,15 @@
 
 #endif
 
+#ifdef BITFURY_ARES
+
+#define BITFURY_MAXCHIPS 180
+#define BITFURY_MAXBANKS 10
+#define BITFURY_BANKCHIPS 18
+#define BITFURY_SCANHASH_DELAY 60
+
+#endif
+
 #include "miner.h"
 
 

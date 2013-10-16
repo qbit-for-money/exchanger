@@ -36,14 +36,13 @@
 #include <linux/i2c-dev.h>
 #include <sys/stat.h>
 
+#include "gpio.h"
 #include "bitfury-config.h"
 
-static volatile unsigned *gpio;
 static int fd;
 
 void spi_init(void)
 {
-	int mem_fd;
 	int mode = 0, bits = 8, speed = 500000;
 
 	if(system("modprobe i2c-dev")) {
@@ -60,17 +59,6 @@ void spi_init(void)
 	}
 	if(system("modprobe spi-bcm2708")) {
 		perror("FATAL, modprobe spi-bcm2708 failed (must be root)");
-		exit(1);
-	}
-	mem_fd = open("/dev/mem",O_RDWR|O_SYNC);
-	if (mem_fd < 0) {
-		perror("FATAL, /dev/mem trouble (must be roor)");
-		exit(1);
-	}
-	gpio = mmap(0,4096,PROT_READ|PROT_WRITE,MAP_SHARED,mem_fd,0x20200000);
-	if (gpio == MAP_FAILED) {
-		perror("FATAL, gpio mmap trouble (must be root)");
-		close(mem_fd);
 		exit(1);
 	}
 
@@ -110,13 +98,6 @@ void spi_init(void)
 		exit(1);
 	}
 }
-
-#define INP_GPIO(g) *(gpio+((g)/10)) &= ~(7<<(((g)%10)*3))
-#define OUT_GPIO(g) *(gpio+((g)/10)) |=  (1<<(((g)%10)*3))
-#define SET_GPIO_ALT(g,a) *(gpio+(((g)/10))) |= (((a)<=3?(a)+4:(a)==4?3:2)<<(((g)%10)*3))
-
-#define GPIO_SET *(gpio+7)  // sets   bits which are 1 ignores bits which are 0
-#define GPIO_CLR *(gpio+10) // clears bits which are 1 ignores bits which are 0
 
 // Bit-banging reset, to reset more chips in chain - toggle for longer period... Each 3 reset cycles reset first chip in chain
 int spi_reset(int a)
