@@ -37,6 +37,10 @@
 #include "spidevc.h"
 #include "sha2.h"
 
+#include "gpio.h"
+
+#include "bank.h"
+
 #include <time.h>
 
 #define BITFURY_REFRESH_DELAY 100
@@ -220,9 +224,9 @@ void send_reinit(int slot, int chip_n, int n) {
 	set_freq(n);
 	send_conf();
 	send_init();
-	tm_i2c_set_oe(slot);
+	select_bank(slot);
 	spi_txrx(spi_gettxbuf(), spi_getrxbuf(), spi_getbufsz());
-	tm_i2c_clear_oe(slot);
+	clear_bank_selection();
 }
 
 void send_shutdown(int slot, int chip_n) {
@@ -230,9 +234,9 @@ void send_shutdown(int slot, int chip_n) {
 	spi_emit_break();
 	spi_emit_fasync(chip_n);
 	config_reg(4,0); /* Disable slow oscillator */
-	tm_i2c_set_oe(slot);
+	select_bank(slot);
 	spi_txrx(spi_gettxbuf(), spi_getrxbuf(), spi_getbufsz());
-	tm_i2c_clear_oe(slot);
+	clear_bank_selection();
 }
 
 void send_freq(int slot, int chip_n, int bits) {
@@ -240,9 +244,9 @@ void send_freq(int slot, int chip_n, int bits) {
 	spi_emit_break();
 	spi_emit_fasync(chip_n);
 	set_freq(bits);
-	tm_i2c_set_oe(slot);
+	select_bank(slot);
 	spi_txrx(spi_gettxbuf(), spi_getrxbuf(), spi_getbufsz());
-	tm_i2c_clear_oe(slot);
+	clear_bank_selection();
 }
 
 unsigned int c_diff(unsigned ocounter, unsigned counter) {
@@ -335,14 +339,18 @@ int libbitfury_detectChips(struct bitfury_device *devices) {
 	static slot_on[BITFURY_MAXBANKS];
 	struct timespec t1, t2;
 
+#ifndef BITFURY_ARES
 	if (tm_i2c_init() < 0) {
 		printf("I2C init error\n");
 		return(1);
 	}
+#endif
 
 	ms3_compute(&atrvec[0]);
 	ms3_compute(&atrvec[20]);
 	ms3_compute(&atrvec[40]);
+
+	gpio_init();
 	spi_init();
 
 	for (i = 0; i < BITFURY_MAXBANKS; i++) {
@@ -351,9 +359,9 @@ int libbitfury_detectChips(struct bitfury_device *devices) {
 
 	clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t1);
 	for (i = 0; i < BITFURY_MAXBANKS; i++) {
-		int slot_detected = tm_i2c_detect(i) != -1;
+		int slot_detected = select_bank(i) != -1;
 		slot_on[i] = slot_detected;
-		tm_i2c_clear_oe(i);
+		clear_bank_selection();
 		nmsleep(1);
 	}
 
@@ -361,7 +369,7 @@ int libbitfury_detectChips(struct bitfury_device *devices) {
 //		if (slot_on[i]) {
 			int chip_n = 0;
 			int chip_detected;
-			tm_i2c_set_oe(i);
+			select_bank(i);
 			do {
 				chip_detected = detect_chip(chip_n);
 				if (chip_detected) {
@@ -372,7 +380,7 @@ int libbitfury_detectChips(struct bitfury_device *devices) {
 					chip_n++;
 				}
 			} while (chip_detected);
-			tm_i2c_clear_oe(i);
+			clear_bank_selection();
 //		}
 	}
 
@@ -387,7 +395,9 @@ int libbitfury_shutdownChips(struct bitfury_device *devices, int chip_n) {
 	for (i = 0; i < chip_n; i++) {
 		send_shutdown(devices[i].slot, devices[i].fasync);
 	}
+#ifndef BITFURY_ARES
 	tm_i2c_close();
+#endif
 }
 
 unsigned decnonce(unsigned in)
@@ -506,7 +516,7 @@ int libbitfury_sendHashData(struct thr_info *thr, struct bitfury_device *bf, int
                           d->osc6_bits = d->osc6_req;
                         }
 			/* Programming next value */
-			tm_i2c_set_oe(slot);
+			select_bank(slot);
 			spi_clear_buf(); spi_emit_break();
 			spi_emit_fasync(chip);
 			spi_emit_data(0x3000, (void*)&atrvec[0], 19*4);
@@ -537,7 +547,7 @@ int libbitfury_sendHashData(struct thr_info *thr, struct bitfury_device *bf, int
 				}
 			}
 
-			tm_i2c_clear_oe(slot);
+			clear_bank_selection();
 
 			d->job_switched = newbuf[16] != oldbuf[16];
 
@@ -698,9 +708,9 @@ int libbitfury_sendHashData(struct thr_info *thr, struct bitfury_device *bf, int
 				if (smart) {
 					config_reg(3,1);
 				}
-				tm_i2c_set_oe(slot);
+				select_bank(slot);
 				spi_txrx(spi_gettxbuf(), spi_getrxbuf(), spi_getbufsz());
-				tm_i2c_clear_oe(slot);
+				clear_bank_selection();
 				memcpy(newbuf, spi_getrxbuf()+4 + chip, 17*4);
 				d->counter2 = get_counter(newbuf, oldbuf);
 
