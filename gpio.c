@@ -14,8 +14,6 @@
 #include <unistd.h>
 #include <sys/stat.h>
 
-#include "gpio.h"
-
 volatile unsigned *gpio;
 
 void gpio_init(void)

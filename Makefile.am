@@ -43,6 +43,10 @@ cgminer_SOURCES	+= elist.h miner.h compat.h bench_block.h	\
 		   util.c util.h uthash.h logging.h		\
 		   sha2.c sha2.h api.c usbutils.h
 
+cgminer_SOURCES	+= gpio.c gpio.h
+
+cgminer_SOURCES	+= bank.c bank.h
+
 cgminer_SOURCES	+= logging.c
 
 # GPU sources, TODO: make them selectable

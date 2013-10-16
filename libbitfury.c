@@ -351,6 +351,7 @@ int libbitfury_detectChips(struct bitfury_device *devices) {
 	ms3_compute(&atrvec[40]);
 
 	gpio_init();
+	banks_init();
 	spi_init();
 
 	for (i = 0; i < BITFURY_MAXBANKS; i++) {
@@ -359,7 +360,7 @@ int libbitfury_detectChips(struct bitfury_device *devices) {
 
 	clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t1);
 	for (i = 0; i < BITFURY_MAXBANKS; i++) {
-		int slot_detected = select_bank(i) != -1;
+		int slot_detected = detect_bank(i) != -1;
 		slot_on[i] = slot_detected;
 		clear_bank_selection();
 		nmsleep(1);
