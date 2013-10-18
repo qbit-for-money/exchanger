@@ -168,19 +168,11 @@
 	"buffers":
 	[
 		{
-			"file": "libbitfury.c",
-			"settings":
-			{
-				"buffer_size": 23556,
-				"line_ending": "Windows"
-			}
-		},
-		{
 			"file": "bank.h",
 			"settings":
 			{
-				"buffer_size": 131,
-				"line_ending": "Windows",
+				"buffer_size": 212,
+				"line_ending": "Unix",
 				"name": "bank.h"
 			}
 		},
@@ -188,25 +180,17 @@
 			"file": "bank.c",
 			"settings":
 			{
-				"buffer_size": 122,
-				"line_ending": "Windows",
+				"buffer_size": 750,
+				"line_ending": "Unix",
 				"name": "bank.c"
 			}
 		},
 		{
-			"file": "tm_i2c.c",
+			"file": "libbitfury.c",
 			"settings":
 			{
-				"buffer_size": 2831,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "gpio.h",
-			"settings":
-			{
-				"buffer_size": 469,
-				"line_ending": "Windows"
+				"buffer_size": 23571,
+				"line_ending": "Unix"
 			}
 		}
 	],
@@ -286,16 +270,29 @@
 	"file_history":
 	[
 		"/D/works/miner/cgminer/gpio.c",
-		"/D/works/miner/cgminer/spidevc.c",
-		"/D/works/miner/cgminer/spidevc.h",
-		"/D/works/miner/cgminer/tm_i2c.c",
-		"/D/works/miner/cgminer/driver-bitfury.c",
-		"/D/works/miner/cgminer/libbitfury.h",
-		"/D/works/miner/cgminer/bitfury-config.h",
 		"/D/works/miner/cgminer/gpio.h",
-		"/D/works/miner/cgminer/compat/jansson/config.h",
-		"/D/works/miner/cgminer/configure.ac",
+		"/D/works/miner/cgminer/spidevc.c",
+		"/D/works/miner/cgminer/tm_i2c.c",
+		"/D/works/miner/cgminer/libbitfury.h",
+		"/D/works/miner/cgminer/libbitfury.c",
+		"/D/works/miner/cgminer/elist.h",
+		"/D/works/miner/cgminer/findnonce.h",
+		"/D/works/miner/cgminer/Makefile.am",
+		"/D/works/miner/cgminer/tm_i2c.h",
+		"/D/works/miner/cgminer/driver-bitfury.c",
+		"/D/works/miner/cgminer/bitfury-config.h",
+		"/D/works/miner/cgminer/autogen.sh",
+		"/D/works/miner/cgminer/adl_functions.h",
+		"/C/Users/Александр/AppData/Roaming/Sublime Text 3/Packages/User/Preferences.sublime-settings",
+		"/D/works/miner/cgminer/adl.c",
+		"/D/works/miner/cgminer/adl.h",
+		"/D/works/miner/cgminer/.gitattributes",
+		"/D/works/miner/cgminer/01-cgminer.rules",
+		"/D/works/miner/cgminer/README",
 		"/D/works/miner/cgminer/cgminer.sublime-project",
+		"/D/works/miner/cgminer/configure.ac",
+		"/D/works/miner/cgminer/spidevc.h",
+		"/D/works/miner/cgminer/compat/jansson/config.h",
 		"/D/works/Ruscode_AdSalesPro/web/js/adsalespro/adjustment/create/controller.js",
 		"/D/works/Ruscode_AdSalesPro/web/js/adsalespro/adjustment/create/view.js",
 		"/D/works/Ruscode_AdSalesPro/ant/buildNum.properties",
@@ -399,24 +396,11 @@
 		"/D/works/Ruscode_AdSalesPro/web/js/adsalespro/booking/common/view-dates.js",
 		"/D/works/Ruscode_AdSalesPro/web/js/adsalespro/util/modelUtils-base.js",
 		"/D/works/Ruscode_AdSalesPro/web/js/adsalespro/util/viewUtils-render.js",
-		"/D/works/Ruscode_AdSalesPro/web/WEB-INF/jsp/booking/inner/buttons.jsp",
-		"/C/Users/Alexander_Alexandrov/Desktop/ASP.bat",
-		"/D/works/Ruscode_AdSalesPro/ant/build.bat",
-		"/D/tools/java/apache-tomcat-6.0.26/bin/catalina.bat",
-		"/D/tools/java/apache-tomcat-6.0.26/bin/startup.bat",
-		"/D/works/Ruscode_AdSalesPro/web/js/adsalespro/booking/classified/view.js",
-		"/D/works/Ruscode_AdSalesPro/web/js/adsalespro/booking/print/view.js",
-		"/D/works/Ruscode_AdSalesPro/web/js/adsalespro/widget/styleConstraint.js",
-		"/D/works/Ruscode_AdSalesPro/web/js/adsalespro/widget/constraint.js",
-		"/D/works/2.0.143/web/js/adsalespro/booking/controller.js",
-		"/D/works/2.0.143/web/js/adsalespro/booking/view.js",
-		"/D/works/2.0.143/web/js/adsalespro/booking/common/view-adschedule.js",
-		"/D/works/2.0.143/web/js/adsalespro/util/viewUtils-aview.js",
-		"/D/works/2.0.143/ant/build.bat"
+		"/D/works/Ruscode_AdSalesPro/web/WEB-INF/jsp/booking/inner/buttons.jsp"
 	],
 	"find":
 	{
-		"height": 35.0
+		"height": 34.0
 	},
 	"find_in_files":
 	{
@@ -436,6 +420,14 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"HAS_BITFURY",
+			"cgminer-spidevc",
+			"spidevc.o",
+			"spidevc.c",
+			"spidev.c",
+			"cc",
+			"tm_i2c_detect",
+			"tm_i2c",
 			"tm_i2c_",
 			"tm_i2c",
 			"tm_i2c_detect(",
@@ -555,15 +547,7 @@
 			"showSaveOrderDialog",
 			"getOrderInfoValidationException(",
 			"validateBean(",
-			"bindFormErrors =",
-			"BaseDigitalAdScheduleInfo.updateDigitalFormProperty(",
-			"handleOrderValidationException =",
-			"handleOrderValidationException =-",
-			"getOrderInfoValidationException",
-			"valida",
-			"generateConstraintsForField",
-			"generateCon",
-			"BaseDigitalAdScheduleInfo.generateConstraintsForField("
+			"bindFormErrors ="
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -583,52 +567,24 @@
 	"groups":
 	[
 		{
-			"selected": 3,
+			"selected": 2,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "libbitfury.c",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 23556,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								23293,
-								23293
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++/C++.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 12922.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 1,
 					"file": "bank.h",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 131,
+						"buffer_size": 212,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								100,
-								120
+								79,
+								90
 							]
 						],
 						"settings":
@@ -643,20 +599,20 @@
 					"type": "text"
 				},
 				{
-					"buffer": 2,
+					"buffer": 1,
 					"file": "bank.c",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 122,
+						"buffer_size": 750,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								48,
-								59
+								436,
+								436
 							]
 						],
 						"settings":
@@ -665,26 +621,26 @@
 							"syntax": "Packages/C++/C++.tmLanguage"
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 162.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
-					"buffer": 3,
-					"file": "tm_i2c.c",
+					"buffer": 2,
+					"file": "libbitfury.c",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 2831,
+						"buffer_size": 23571,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								0,
-								0
+								11849,
+								11849
 							]
 						],
 						"settings":
@@ -693,34 +649,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 1653.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "gpio.h",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 469,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								130,
-								130
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++/C++.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 6372.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -774,6 +703,14 @@
 		"height": 0.0,
 		"selected_items":
 		[
+			[
+				"libbit",
+				"libbitfury.c"
+			],
+			[
+				"spidev",
+				"spidevc.c"
+			],
 			[
 				"libbitfury",
 				"libbitfury.h"
@@ -1277,14 +1214,6 @@
 			[
 				"chargeentryattributeinfoconverter",
 				"src/com/mediaspectrum/adsalespro/bean/payment/converter/ChargeEntryAttributeInfoToChargeAttributesConverter.java"
-			],
-			[
-				"customeradmin",
-				"src/com/mediaspectrum/adsalespro/delegate/sapi/CustomerAdminManagerDelegate.java"
-			],
-			[
-				"tobookedinser",
-				"src/com/mediaspectrum/adsalespro/bean/payment/converter/RtChargeEntryDetailsToBookedInsertionInfo.java"
 			]
 		],
 		"width": 0.0
@@ -1312,7 +1241,7 @@
 	"show_open_files": false,
 	"show_tabs": true,
 	"side_bar_visible": true,
-	"side_bar_width": 378.0,
+	"side_bar_width": 290.0,
 	"status_bar_visible": true,
 	"template_settings":
 	{
