@@ -168,6 +168,14 @@
 	"buffers":
 	[
 		{
+			"file": "libbitfury.c",
+			"settings":
+			{
+				"buffer_size": 23571,
+				"line_ending": "Unix"
+			}
+		},
+		{
 			"file": "bank.h",
 			"settings":
 			{
@@ -269,6 +277,8 @@
 	},
 	"file_history":
 	[
+		"/D/works/miner/cgminer/Makefile.am",
+		"/D/works/miner/cgminer/configure.ac",
 		"/D/works/miner/cgminer/gpio.c",
 		"/D/works/miner/cgminer/gpio.h",
 		"/D/works/miner/cgminer/spidevc.c",
@@ -281,14 +291,8 @@
 		"/D/works/miner/cgminer/tm_i2c.h",
 		"/D/works/miner/cgminer/driver-bitfury.c",
 		"/D/works/miner/cgminer/bitfury-config.h",
-		"/D/works/miner/cgminer/autogen.sh",
-		"/D/works/miner/cgminer/adl_functions.h",
-		"/C/Users/Александр/AppData/Roaming/Sublime Text 3/Packages/User/Preferences.sublime-settings",
-		"/D/works/miner/cgminer/adl.c",
-		"/D/works/miner/cgminer/adl.h",
-		"/D/works/miner/cgminer/.gitattributes",
-		"/D/works/miner/cgminer/01-cgminer.rules",
-		"/D/works/miner/cgminer/README",
+		"/D/works/miner/cgminer/gpio.h",
+		"/D/works/miner/cgminer/compat/jansson/config.h",
 		"/D/works/miner/cgminer/cgminer.sublime-project",
 		"/D/works/miner/cgminer/configure.ac",
 		"/D/works/miner/cgminer/spidevc.h",
@@ -396,7 +400,19 @@
 		"/D/works/Ruscode_AdSalesPro/web/js/adsalespro/booking/common/view-dates.js",
 		"/D/works/Ruscode_AdSalesPro/web/js/adsalespro/util/modelUtils-base.js",
 		"/D/works/Ruscode_AdSalesPro/web/js/adsalespro/util/viewUtils-render.js",
-		"/D/works/Ruscode_AdSalesPro/web/WEB-INF/jsp/booking/inner/buttons.jsp"
+		"/D/works/Ruscode_AdSalesPro/web/WEB-INF/jsp/booking/inner/buttons.jsp",
+		"/C/Users/Alexander_Alexandrov/Desktop/ASP.bat",
+		"/D/works/Ruscode_AdSalesPro/ant/build.bat",
+		"/D/tools/java/apache-tomcat-6.0.26/bin/catalina.bat",
+		"/D/tools/java/apache-tomcat-6.0.26/bin/startup.bat",
+		"/D/works/Ruscode_AdSalesPro/web/js/adsalespro/booking/classified/view.js",
+		"/D/works/Ruscode_AdSalesPro/web/js/adsalespro/booking/print/view.js",
+		"/D/works/Ruscode_AdSalesPro/web/js/adsalespro/widget/styleConstraint.js",
+		"/D/works/Ruscode_AdSalesPro/web/js/adsalespro/widget/constraint.js",
+		"/D/works/2.0.143/web/js/adsalespro/booking/controller.js",
+		"/D/works/2.0.143/web/js/adsalespro/booking/view.js",
+		"/D/works/2.0.143/web/js/adsalespro/booking/common/view-adschedule.js",
+		"/D/works/2.0.143/web/js/adsalespro/util/viewUtils-aview.js"
 	],
 	"find":
 	{
@@ -572,6 +588,34 @@
 			[
 				{
 					"buffer": 0,
+					"file": "libbitfury.c",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 23571,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								711,
+								711
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 1026.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
 					"file": "bank.h",
 					"semi_transient": false,
 					"settings":
@@ -583,8 +627,8 @@
 						"selection":
 						[
 							[
-								79,
-								90
+								0,
+								0
 							]
 						],
 						"settings":
@@ -611,8 +655,9 @@
 						"selection":
 						[
 							[
-								436,
-								436
+
+								134,
+								134
 							]
 						],
 						"settings":
@@ -1223,6 +1268,10 @@
 		"height": 500.0,
 		"selected_items":
 		[
+			[
+				"",
+				"D:\\works\\Ruscode_AdSalesPro\\asp.sublime-project"
+			]
 		],
 		"width": 380.0
 	},
