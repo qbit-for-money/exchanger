@@ -44,3 +44,5 @@ lib/warn-on-use.h
 mkinstalldirs
 
 *.swp
+
+cgminer.sublime-workspace
