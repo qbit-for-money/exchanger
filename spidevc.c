@@ -44,6 +44,7 @@ static int fd;
 void spi_init(void)
 {
 	int mode = 0, bits = 8, speed = 500000;
+	//int mode = 0, bits = 8, speed = 500000;
 
 	if(system("modprobe i2c-dev")) {
 		perror("FATAL, modprobe i2c-dev failed (must be root)");
