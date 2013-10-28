@@ -31,7 +31,16 @@
 #include "util.h"
 #include "config.h"
 
+#ifdef HAVE_CURSES
+#include <curses.h>
+#include <stdarg.h>
+#endif
+
 #define GOLDEN_BACKLOG 5
+
+#ifdef HAVE_CURSES
+extern WINDOW *mainwin, *statuswin, *per_dev_stat_win, *logwin;
+#endif
 
 struct device_drv bitfury_drv;
 
@@ -266,6 +275,37 @@ static int64_t bitfury_scanHash(struct thr_info *thr)
 				snprintf(stat_lines[i] + len, 256 - len, "- %2.1f + %2.1f = %2.1f slot %i ", gh1h, gh2h, ghsum, i);
 				applog(LOG_WARNING, stat_lines[i]);
 			}
+		long_out_t = now.tv_sec;
+	}
+#endif
+#ifdef BITFURY_ENABLE_PER_DEV_STAT
+	if (now.tv_sec - short_out_t > short_stat) {
+		char stat_line[BITFURY_PER_DEV_STAT_LINE_LEN] = {0};
+		int len = 0;
+		double ghsum = 0;
+		int n = 0;
+		for (chip = 0; chip < chip_n; chip++) {
+			dev = &devices[chip];
+			if (dev->slot != BITFURY_PER_DEV_STAT_BANK_NUM) {
+				continue;
+			}
+			int shares_found = calc_stat(dev->stat_ts, long_stat, now);
+			double ghash = shares_to_ghashes(shares_found, long_stat);
+			len = strlen(stat_line);
+			if (n > 0) {
+				snprintf(stat_line + len, BITFURY_PER_DEV_STAT_LINE_LEN - len, ",");
+				len++;
+			}
+			snprintf(stat_line + len, BITFURY_PER_DEV_STAT_LINE_LEN - len, "%2.1f", ghash);
+			if ((n > 0) && (n % BITFURY_PER_DEV_STAT_DEVS_GROUP_SIZE == 0)) {
+				len = strlen(stat_line);
+				snprintf(stat_line + len, BITFURY_PER_DEV_STAT_LINE_LEN - len, "|");
+			}
+			ghsum += ghash;
+			n++;
+		}
+		mvwprintw(per_dev_stat_win, 0, 0, stat_line);
+		mvwprintw(per_dev_stat_win, 1, 0, "CT: %.1fGhs", ghsum);
 		long_out_t = now.tv_sec;
 	}
 #endif

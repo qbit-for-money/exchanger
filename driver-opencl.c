@@ -37,7 +37,7 @@
 /* TODO: cleanup externals ********************/
 
 #ifdef HAVE_CURSES
-extern WINDOW *mainwin, *statuswin, *logwin;
+extern WINDOW *mainwin, *statuswin, *per_dev_stat_win, *logwin;
 extern void enable_curses(void);
 #endif
 

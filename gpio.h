@@ -1,7 +1,7 @@
 #ifndef __GPIO_H__
 #define __GPIO_H__
 
-extern unsigned *gpio;
+extern volatile unsigned *gpio;
 
 extern void gpio_init(void);
 

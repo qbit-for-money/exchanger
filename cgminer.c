@@ -1924,7 +1924,7 @@ static int total_staged(void)
 }
 
 #ifdef HAVE_CURSES
-WINDOW *mainwin, *statuswin, *logwin;
+WINDOW *mainwin, *statuswin, *per_dev_stat_win, *logwin;
 #endif
 double total_secs = 1.0;
 static char statusline[256];
@@ -2224,7 +2224,7 @@ static inline void change_logwinsize(void)
 			statusy = y - 2;
 		else
 			statusy = logstart;
-		logcursor = statusy + 1;
+		logcursor = statusy + 3;
 		mvwin(logwin, logcursor, 0);
 		wresize(statuswin, statusy, x);
 	}
@@ -2249,7 +2249,7 @@ static void check_winsizes(void)
 			statusy = LINES - 2;
 		else
 			statusy = logstart;
-		logcursor = statusy + 1;
+		logcursor = statusy + 3;
 		wresize(statuswin, statusy, x);
 		getmaxyx(mainwin, y, x);
 		y -= logcursor;
@@ -2264,10 +2264,10 @@ static void switch_logsize(void)
 	if (curses_active_locked()) {
 		if (opt_compact) {
 			logstart = devcursor + 1;
-			logcursor = logstart + 1;
+			logcursor = logstart + 3;
 		} else {
 			logstart = devcursor + most_devices + 1;
-			logcursor = logstart + 1;
+			logcursor = logstart + 3;
 		}
 		unlock_curses();
 	}
@@ -6996,6 +6996,9 @@ void enable_curses(void) {
 	getmaxyx(mainwin, y, x);
 	statuswin = newwin(logstart, x, 0, 0);
 	leaveok(statuswin, true);
+	per_dev_stat_win = newwin(2, x, logstart, 0);
+	leaveok(per_dev_stat_win, true);
+	wattron(per_dev_stat_win, A_BOLD);
 	logwin = newwin(y - logcursor, 0, logcursor, 0);
 	idlok(logwin, true);
 	scrollok(logwin, true);
@@ -7429,7 +7432,7 @@ int main(int argc, char *argv[])
 
 	devcursor = 8;
 	logstart = devcursor + 1;
-	logcursor = logstart + 1;
+	logcursor = logstart + 3;
 
 	block = calloc(sizeof(struct block), 1);
 	if (unlikely(!block))
@@ -7629,7 +7632,7 @@ int main(int argc, char *argv[])
 
 	if (!opt_compact) {
 		logstart += most_devices;
-		logcursor = logstart + 1;
+		logcursor = logstart + 3;
 #ifdef HAVE_CURSES
 		check_winsizes();
 #endif
