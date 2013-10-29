@@ -43,8 +43,17 @@
 
 #include <time.h>
 
+#ifdef HAVE_CURSES
+#include <curses.h>
+#include <stdarg.h>
+#endif
+
 #define BITFURY_REFRESH_DELAY 100
 #define BITFURY_DETECT_TRIES 3000 / BITFURY_REFRESH_DELAY
+
+#ifdef HAVE_CURSES
+extern WINDOW *mainwin, *statuswin, *per_dev_stat_win, *logwin;
+#endif
 
 // 0 .... 31 bit
 // 1000 0011 0101 0110 1001 1010 1100 0111
@@ -373,6 +382,7 @@ int libbitfury_detectChips(struct bitfury_device *devices) {
 			select_bank(i);
 			do {
 				chip_detected = detect_chip(chip_n);
+				//if (chip_detected || n == 0) {
 				if (chip_detected) {
 					applog(LOG_WARNING, "BITFURY slot: %d, chip #%d detected", i, n);
 					devices[n].slot = i;

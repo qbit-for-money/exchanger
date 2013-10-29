@@ -2224,16 +2224,17 @@ static inline void change_logwinsize(void)
 			statusy = y - 2;
 		else
 			statusy = logstart;
-		logcursor = statusy + 3;
+		logcursor = statusy + 1;
+		mvwin(per_dev_stat_win, y - 2, 0);
 		mvwin(logwin, logcursor, 0);
 		wresize(statuswin, statusy, x);
 	}
 
-	y -= logcursor;
+	/*y -= logcursor;
 	getmaxyx(logwin, logy, logx);
-	/* Detect screen size change */
 	if (x != logx || y != logy)
 		wresize(logwin, y, x);
+	*/
 }
 
 static void check_winsizes(void)
@@ -2249,12 +2250,14 @@ static void check_winsizes(void)
 			statusy = LINES - 2;
 		else
 			statusy = logstart;
-		logcursor = statusy + 3;
+		logcursor = statusy + 1;
 		wresize(statuswin, statusy, x);
 		getmaxyx(mainwin, y, x);
-		y -= logcursor;
-		wresize(logwin, y, x);
+		wresize(per_dev_stat_win, 2, x);
+		mvwin(per_dev_stat_win, y - 2, 0);
+		wresize(logwin, y - logcursor - 2, x);
 		mvwin(logwin, logcursor, 0);
+		
 		unlock_curses();
 	}
 }
@@ -2264,10 +2267,10 @@ static void switch_logsize(void)
 	if (curses_active_locked()) {
 		if (opt_compact) {
 			logstart = devcursor + 1;
-			logcursor = logstart + 3;
+			logcursor = logstart + 1;
 		} else {
 			logstart = devcursor + most_devices + 1;
-			logcursor = logstart + 3;
+			logcursor = logstart + 1;
 		}
 		unlock_curses();
 	}
@@ -2875,11 +2878,13 @@ static void disable_curses(void)
 		use_curses = false;
 		curses_active = false;
 		leaveok(logwin, false);
+		leaveok(per_dev_stat_win, false);
 		leaveok(statuswin, false);
 		leaveok(mainwin, false);
 		nocbreak();
 		echo();
 		delwin(logwin);
+		delwin(per_dev_stat_win);
 		delwin(statuswin);
 		delwin(mainwin);
 		endwin();
@@ -6534,6 +6539,8 @@ static void *watchdog_thread(void __maybe_unused *userdata)
 #endif
 			touchwin(statuswin);
 			wrefresh(statuswin);
+			touchwin(per_dev_stat_win);
+			wrefresh(per_dev_stat_win);
 			touchwin(logwin);
 			wrefresh(logwin);
 			unlock_curses();
@@ -6996,13 +7003,13 @@ void enable_curses(void) {
 	getmaxyx(mainwin, y, x);
 	statuswin = newwin(logstart, x, 0, 0);
 	leaveok(statuswin, true);
-	per_dev_stat_win = newwin(2, x, logstart, 0);
-	leaveok(per_dev_stat_win, true);
-	wattron(per_dev_stat_win, A_BOLD);
-	logwin = newwin(y - logcursor, 0, logcursor, 0);
+	logwin = newwin(y - logcursor - 2, 0, logcursor, 0);
 	idlok(logwin, true);
 	scrollok(logwin, true);
 	leaveok(logwin, true);
+	per_dev_stat_win = newwin(2, x, y - 2, 0);
+	idlok(per_dev_stat_win, true);
+	leaveok(per_dev_stat_win, true);
 	cbreak();
 	noecho();
 	curses_active = true;
@@ -7432,7 +7439,7 @@ int main(int argc, char *argv[])
 
 	devcursor = 8;
 	logstart = devcursor + 1;
-	logcursor = logstart + 3;
+	logcursor = logstart + 1;
 
 	block = calloc(sizeof(struct block), 1);
 	if (unlikely(!block))
@@ -7632,7 +7639,7 @@ int main(int argc, char *argv[])
 
 	if (!opt_compact) {
 		logstart += most_devices;
-		logcursor = logstart + 3;
+		logcursor = logstart + 1;
 #ifdef HAVE_CURSES
 		check_winsizes();
 #endif

@@ -304,7 +304,7 @@ static int64_t bitfury_scanHash(struct thr_info *thr)
 			ghsum += ghash;
 			n++;
 		}
-		mvwprintw(per_dev_stat_win, 0, 0, stat_line);
+		mvwprintw(per_dev_stat_win, 0, 0, "%s", stat_line);
 		mvwprintw(per_dev_stat_win, 1, 0, "CT: %.1fGhs", ghsum);
 		long_out_t = now.tv_sec;
 	}
