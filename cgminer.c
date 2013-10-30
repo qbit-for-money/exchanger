@@ -2219,22 +2219,23 @@ static inline void change_logwinsize(void)
 	if (x < 80 || y < 25)
 		return;
 
-	if (y > statusy + 2 && statusy < logstart) {
-		if (y - 2 < logstart)
-			statusy = y - 2;
+	if (y > (statusy + 2 + 3) && statusy < logstart) {
+		if ((y - 2 - 3) < logstart)
+			statusy = y - 2 - 3;
 		else
 			statusy = logstart;
 		logcursor = statusy + 1;
-		mvwin(per_dev_stat_win, y - 2, 0);
+		mvwin(per_dev_stat_win, y - 3, 0);
 		mvwin(logwin, logcursor, 0);
 		wresize(statuswin, statusy, x);
 	}
 
-	/*y -= logcursor;
 	getmaxyx(logwin, logy, logx);
-	if (x != logx || y != logy)
-		wresize(logwin, y, x);
-	*/
+	if (x != logx || (y - logcursor - 3) != logy) {
+		mvwin(per_dev_stat_win, y - 3, 0);
+		wresize(per_dev_stat_win, 3, x);
+		wresize(logwin, y - logcursor - 3, x);
+	}
 }
 
 static void check_winsizes(void)
@@ -2253,9 +2254,9 @@ static void check_winsizes(void)
 		logcursor = statusy + 1;
 		wresize(statuswin, statusy, x);
 		getmaxyx(mainwin, y, x);
-		wresize(per_dev_stat_win, 2, x);
-		mvwin(per_dev_stat_win, y - 2, 0);
-		wresize(logwin, y - logcursor - 2, x);
+		wresize(per_dev_stat_win, 3, x);
+		mvwin(per_dev_stat_win, y - 3, 0);
+		wresize(logwin, y - logcursor - 3, x);
 		mvwin(logwin, logcursor, 0);
 		
 		unlock_curses();
@@ -7003,11 +7004,11 @@ void enable_curses(void) {
 	getmaxyx(mainwin, y, x);
 	statuswin = newwin(logstart, x, 0, 0);
 	leaveok(statuswin, true);
-	logwin = newwin(y - logcursor - 2, 0, logcursor, 0);
+	logwin = newwin(y - logcursor - 3, 0, logcursor, 0);
 	idlok(logwin, true);
 	scrollok(logwin, true);
 	leaveok(logwin, true);
-	per_dev_stat_win = newwin(2, x, y - 2, 0);
+	per_dev_stat_win = newwin(3, x, y - 3, 0);
 	idlok(per_dev_stat_win, true);
 	leaveok(per_dev_stat_win, true);
 	cbreak();

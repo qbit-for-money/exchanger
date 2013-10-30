@@ -280,9 +280,12 @@ static int64_t bitfury_scanHash(struct thr_info *thr)
 #endif
 #ifdef BITFURY_ENABLE_PER_DEV_STAT
 	if (now.tv_sec - short_out_t > short_stat) {
-		char stat_line[BITFURY_PER_DEV_STAT_LINE_LEN] = {0};
-		int len = 0;
+		char nums_line[BITFURY_PER_DEV_STAT_LINE_LEN] = {0};
+		char ghs_line[BITFURY_PER_DEV_STAT_LINE_LEN] = {0};
+		char hw_line[BITFURY_PER_DEV_STAT_LINE_LEN] = {};
+		int len;
 		double ghsum = 0;
+		int hwsum = 0;
 		int n = 0;
 		for (chip = 0; chip < chip_n; chip++) {
 			dev = &devices[chip];
@@ -291,21 +294,23 @@ static int64_t bitfury_scanHash(struct thr_info *thr)
 			}
 			int shares_found = calc_stat(dev->stat_ts, long_stat, now);
 			double ghash = shares_to_ghashes(shares_found, long_stat);
-			len = strlen(stat_line);
-			if (n > 0) {
-				snprintf(stat_line + len, BITFURY_PER_DEV_STAT_LINE_LEN - len, ",");
-				len++;
-			}
-			snprintf(stat_line + len, BITFURY_PER_DEV_STAT_LINE_LEN - len, "%2.1f", ghash);
-			if ((n > 0) && (n % BITFURY_PER_DEV_STAT_DEVS_GROUP_SIZE == 0)) {
-				len = strlen(stat_line);
-				snprintf(stat_line + len, BITFURY_PER_DEV_STAT_LINE_LEN - len, "|");
-			}
+			len = strlen(ghs_line);
+			snprintf(ghs_line + len, BITFURY_PER_DEV_STAT_LINE_LEN - len, "%2.1f|", ghash);
+			len = strlen(nums_line);
+			snprintf(nums_line + len, BITFURY_PER_DEV_STAT_LINE_LEN - len, "#%2d|", n);
+			len = strlen(hw_line);
+			snprintf(hw_line + len, BITFURY_PER_DEV_STAT_LINE_LEN - len, "%3d|", dev->hw_errors);
 			ghsum += ghash;
+			hwsum += dev->hw_errors;
 			n++;
 		}
-		mvwprintw(per_dev_stat_win, 0, 0, "%s", stat_line);
-		mvwprintw(per_dev_stat_win, 1, 0, "CT: %.1fGhs", ghsum);
+		len = strlen(ghs_line);
+		snprintf(ghs_line + len, BITFURY_PER_DEV_STAT_LINE_LEN - len, "=%.1f", ghsum);
+		len = strlen(hw_line);
+		snprintf(hw_line + len, BITFURY_PER_DEV_STAT_LINE_LEN - len, "=%d", hwsum);
+		mvwprintw(per_dev_stat_win, 0, 0, nums_line);
+		mvwprintw(per_dev_stat_win, 1, 0, ghs_line);
+		mvwprintw(per_dev_stat_win, 2, 0, hw_line);
 		long_out_t = now.tv_sec;
 	}
 #endif
