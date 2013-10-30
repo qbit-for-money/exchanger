@@ -305,9 +305,9 @@ static int64_t bitfury_scanHash(struct thr_info *thr)
 			n++;
 		}
 		len = strlen(ghs_line);
-		snprintf(ghs_line + len, BITFURY_PER_DEV_STAT_LINE_LEN - len, "=%.1f", ghsum);
+		snprintf(ghs_line + len, BITFURY_PER_DEV_STAT_LINE_LEN - len, "=%.1f ghs", ghsum);
 		len = strlen(hw_line);
-		snprintf(hw_line + len, BITFURY_PER_DEV_STAT_LINE_LEN - len, "=%d", hwsum);
+		snprintf(hw_line + len, BITFURY_PER_DEV_STAT_LINE_LEN - len, "=%d err", hwsum);
 		mvwprintw(per_dev_stat_win, 0, 0, nums_line);
 		mvwprintw(per_dev_stat_win, 1, 0, ghs_line);
 		mvwprintw(per_dev_stat_win, 2, 0, hw_line);
