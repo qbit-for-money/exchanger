@@ -132,52 +132,56 @@ int spi_reset(int a)
 
 int spi_txrx(const char *wrbuf, char *rdbuf, int bufsz)
 {
-	int mode, bits, speed, rv, i, j;
+	int mode = 0, bits = 8, speed = 500 * 1000;
+	int rv, i, j;
 	struct timespec tv;
 	struct spi_ioc_transfer tr[16];
 
-	memset(&tr,0,sizeof(tr));
+	memset(&tr, 0, sizeof(tr));
 
 	spi_reset(2048);
 
 	rv = 0;
 	while (bufsz >= 4096) {
-                tr[rv].tx_buf = (uintptr_t) wrbuf;
-                tr[rv].rx_buf = (uintptr_t) rdbuf;
-                tr[rv].len = 4096;
-                tr[rv].delay_usecs = 1;
-                tr[rv].speed_hz = speed;
-                tr[rv].bits_per_word = bits;
-                bufsz -= 4096;
-                wrbuf += 4096; rdbuf += 4096; rv ++;
-        }
-        if (bufsz > 0) {
-                tr[rv].tx_buf = (uintptr_t) wrbuf;
-                tr[rv].rx_buf = (uintptr_t) rdbuf;
-                tr[rv].len = (unsigned)bufsz;
-                tr[rv].delay_usecs = 1;
-                tr[rv].speed_hz = speed;
-                tr[rv].bits_per_word = bits;
-                rv ++;
-        }
+		tr[rv].tx_buf = (uintptr_t) wrbuf;
+		tr[rv].rx_buf = (uintptr_t) rdbuf;
+		tr[rv].len = 4096;
+		tr[rv].delay_usecs = 1;
+		tr[rv].speed_hz = speed;
+		tr[rv].bits_per_word = bits;
+		bufsz -= 4096;
+		wrbuf += 4096; rdbuf += 4096; rv ++;
+	}
+	if (bufsz > 0) {
+		tr[rv].tx_buf = (uintptr_t) wrbuf;
+		tr[rv].rx_buf = (uintptr_t) rdbuf;
+		tr[rv].len = (unsigned)bufsz;
+		tr[rv].delay_usecs = 1;
+		tr[rv].speed_hz = speed;
+		tr[rv].bits_per_word = bits;
+		rv ++;
+	}
 
-        i = rv;
-        for (j = 0; j < i; j++) {
-                rv = (int)ioctl(fd, SPI_IOC_MESSAGE(1), (intptr_t)&tr[j]);
-                if (rv < 0) {
+	i = rv;
+	for (j = 0; j < i; j++) {
+		rv = (int) ioctl(fd, SPI_IOC_MESSAGE(1), (intptr_t) &tr[j]);
+		if (rv < 0) {
 			perror("WTF! Unable to SPI_IOC_MESSAGE");
 			return -1; 
 		}
-        }
+	}
 
 #ifdef BITFURY_METABANK
+	spi_reset(4096);
+#endif
+#ifdef BITFURY_ARES
 	spi_reset(4096);
 #endif
 
 	return 0;
 }
 
-#define SPIMAXSZ 256*1024
+#define SPIMAXSZ 256 * 1024
 static unsigned char spibuf[SPIMAXSZ], spibuf_rx[SPIMAXSZ];
 static unsigned spibufsz;
 

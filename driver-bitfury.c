@@ -279,7 +279,7 @@ static int64_t bitfury_scanHash(struct thr_info *thr)
 	}
 #endif
 #ifdef BITFURY_ENABLE_PER_DEV_STAT
-	if (now.tv_sec - short_out_t > short_stat) {
+	if (now.tv_sec - long_out_t > long_stat) {
 		char nums_line[BITFURY_PER_DEV_STAT_LINE_LEN] = {0};
 		char ghs_line[BITFURY_PER_DEV_STAT_LINE_LEN] = {0};
 		char hw_line[BITFURY_PER_DEV_STAT_LINE_LEN] = {};
