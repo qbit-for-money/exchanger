@@ -175,7 +175,7 @@ int spi_txrx(const char *wrbuf, char *rdbuf, int bufsz)
 	spi_reset(4096);
 #endif
 #ifdef BITFURY_ARES
-	spi_reset(4096);
+	//spi_reset(4096);
 #endif
 
 	return 0;
