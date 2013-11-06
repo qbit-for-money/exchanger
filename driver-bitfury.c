@@ -292,8 +292,8 @@ static int64_t bitfury_scanHash(struct thr_info *thr)
 			if (dev->slot != BITFURY_PER_DEV_STAT_BANK_NUM) {
 				continue;
 			}
-			int shares_found = calc_stat(dev->stat_ts, long_stat, now);
-			double ghash = shares_to_ghashes(shares_found, long_stat);
+			int shares_found = calc_stat(dev->stat_ts, short_stat, now);
+			double ghash = shares_to_ghashes(shares_found, short_stat);
 			len = strlen(ghs_line);
 			snprintf(ghs_line + len, BITFURY_PER_DEV_STAT_LINE_LEN - len, "%2.1f|", ghash);
 			len = strlen(nums_line);
