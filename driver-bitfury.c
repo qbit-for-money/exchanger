@@ -279,7 +279,7 @@ static int64_t bitfury_scanHash(struct thr_info *thr)
 	}
 #endif
 #ifdef BITFURY_ENABLE_PER_DEV_STAT
-	if (now.tv_sec - long_out_t > long_stat) {
+	if (now.tv_sec - short_out_t > short_stat) {
 		char nums_line[BITFURY_PER_DEV_STAT_LINE_LEN] = {0};
 		char ghs_line[BITFURY_PER_DEV_STAT_LINE_LEN] = {0};
 		char hw_line[BITFURY_PER_DEV_STAT_LINE_LEN] = {};
@@ -311,7 +311,7 @@ static int64_t bitfury_scanHash(struct thr_info *thr)
 		mvwprintw(per_dev_stat_win, 0, 0, nums_line);
 		mvwprintw(per_dev_stat_win, 1, 0, ghs_line);
 		mvwprintw(per_dev_stat_win, 2, 0, hw_line);
-		long_out_t = now.tv_sec;
+		short_out_t = now.tv_sec;
 	}
 #endif
 
