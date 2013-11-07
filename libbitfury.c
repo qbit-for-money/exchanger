@@ -381,8 +381,8 @@ int libbitfury_detectChips(struct bitfury_device *devices) {
 			int chip_detected;
 			select_bank(i);
 			do {
-				chip_detected = detect_chip(chip_n);
-				//chip_detected = n < 18;
+				//chip_detected = detect_chip(chip_n);
+				chip_detected = n < 18;
 				if (chip_detected) {
 					applog(LOG_WARNING, "BITFURY slot: %d, chip #%d detected", i, n);
 					devices[n].slot = i;

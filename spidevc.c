@@ -174,9 +174,6 @@ int spi_txrx(const char *wrbuf, char *rdbuf, int bufsz)
 #ifdef BITFURY_METABANK
 	spi_reset(4096);
 #endif
-#ifdef BITFURY_ARES
-	//spi_reset(4096);
-#endif
 
 	return 0;
 }

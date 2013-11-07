@@ -118,14 +118,14 @@ static int64_t bitfury_scanHash(struct thr_info *thr)
 	static time_t long_out_t;
 	int long_long_stat = 60 * 30;
 	static time_t long_long_out_t;
-	static first = 0; //TODO Move to detect()
+	static first = 1; //TODO Move to detect()
 	int i;
 	int nonces_cnt;
 
 	devices = thr->cgpu->devices;
 	chip_n = thr->cgpu->chip_n;
 
-	if (!first) {
+	if (first) {
 		for (i = 0; i < chip_n; i++) {
 			devices[i].osc6_bits = devices[i].osc6_bits_setpoint;
 			devices[i].osc6_req = devices[i].osc6_bits_setpoint;
@@ -134,7 +134,7 @@ static int64_t bitfury_scanHash(struct thr_info *thr)
 			send_reinit(devices[i].slot, devices[i].fasync, devices[i].osc6_bits);
 		}
 	}
-	first = 1;
+	first = 0;
 
 	for (chip = 0; chip < chip_n; chip++) {
 		dev = &devices[chip];
@@ -280,22 +280,29 @@ static int64_t bitfury_scanHash(struct thr_info *thr)
 #endif
 #ifdef BITFURY_ENABLE_PER_DEV_STAT
 	if (now.tv_sec - short_out_t > short_stat) {
-		char nums_line[BITFURY_PER_DEV_STAT_LINE_LEN] = {0};
-		char ghs_line[BITFURY_PER_DEV_STAT_LINE_LEN] = {0};
-		char hw_line[BITFURY_PER_DEV_STAT_LINE_LEN] = {};
-		int len;
+		static char separator_line[BITFURY_PER_DEV_STAT_LINE_LEN] = {0};
+		static char nums_line[BITFURY_PER_DEV_STAT_LINE_LEN] = {0};
+		static char ghs_line[BITFURY_PER_DEV_STAT_LINE_LEN] = {0};
+		static char hw_line[BITFURY_PER_DEV_STAT_LINE_LEN] = {0};
+		static unsigned bank_num = 0;
+
+		int i, len;
 		double ghsum = 0;
 		int hwsum = 0;
 		int n = 0;
+		int max_bank_num = 0;
 		for (chip = 0; chip < chip_n; chip++) {
 			dev = &devices[chip];
-			if (dev->slot != BITFURY_PER_DEV_STAT_BANK_NUM) {
+			if (dev->slot > max_bank_num) {
+				max_bank_num = dev->slot;
+			}
+			if (dev->slot != bank_num) {
 				continue;
 			}
 			int shares_found = calc_stat(dev->stat_ts, short_stat, now);
 			double ghash = shares_to_ghashes(shares_found, short_stat);
 			len = strlen(ghs_line);
-			snprintf(ghs_line + len, BITFURY_PER_DEV_STAT_LINE_LEN - len, "%2.1f|", ghash);
+			snprintf(ghs_line + len, BITFURY_PER_DEV_STAT_LINE_LEN - len, "%3.1f|", ghash);
 			len = strlen(nums_line);
 			snprintf(nums_line + len, BITFURY_PER_DEV_STAT_LINE_LEN - len, "#%2d|", n);
 			len = strlen(hw_line);
@@ -308,10 +315,17 @@ static int64_t bitfury_scanHash(struct thr_info *thr)
 		snprintf(ghs_line + len, BITFURY_PER_DEV_STAT_LINE_LEN - len, "=%.1f ghs", ghsum);
 		len = strlen(hw_line);
 		snprintf(hw_line + len, BITFURY_PER_DEV_STAT_LINE_LEN - len, "=%d err", hwsum);
-		mvwprintw(per_dev_stat_win, 0, 0, nums_line);
-		mvwprintw(per_dev_stat_win, 1, 0, ghs_line);
-		mvwprintw(per_dev_stat_win, 2, 0, hw_line);
+		len = strlen(nums_line);
+		mvwhline(per_dev_stat_win, 0, 0, '-', 80);
+		for (i = 1; i <= 3; i++) {
+			mvwhline(per_dev_stat_win, i, 0, ' ', BITFURY_PER_DEV_STAT_LINE_LEN);
+		}
+		mvwprintw(per_dev_stat_win, 0, (len - 8) / 2, "Bank #%2d", bank_num % (max_bank_num + 1));
+		mvwprintw(per_dev_stat_win, 1, 0, nums_line);
+		mvwprintw(per_dev_stat_win, 2, 0, ghs_line);
+		mvwprintw(per_dev_stat_win, 3, 0, hw_line);
 		short_out_t = now.tv_sec;
+		bank_num++;
 	}
 #endif
 

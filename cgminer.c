@@ -13,6 +13,7 @@
 
 #ifdef HAVE_CURSES
 #include <curses.h>
+#define PER_DEV_STAT_WIN_H 4
 #endif
 
 #include <stdio.h>
@@ -2219,22 +2220,22 @@ static inline void change_logwinsize(void)
 	if (x < 80 || y < 25)
 		return;
 
-	if (y > (statusy + 2 + 3) && statusy < logstart) {
-		if ((y - 2 - 3) < logstart)
-			statusy = y - 2 - 3;
+	if (y > (statusy + 2 + PER_DEV_STAT_WIN_H) && statusy < logstart) {
+		if ((y - 2 - PER_DEV_STAT_WIN_H) < logstart)
+			statusy = y - 2 - PER_DEV_STAT_WIN_H;
 		else
 			statusy = logstart;
 		logcursor = statusy + 1;
-		mvwin(per_dev_stat_win, y - 3, 0);
+		mvwin(per_dev_stat_win, y - PER_DEV_STAT_WIN_H, 0);
 		mvwin(logwin, logcursor, 0);
 		wresize(statuswin, statusy, x);
 	}
 
 	getmaxyx(logwin, logy, logx);
-	if (x != logx || (y - logcursor - 3) != logy) {
-		mvwin(per_dev_stat_win, y - 3, 0);
-		wresize(per_dev_stat_win, 3, x);
-		wresize(logwin, y - logcursor - 3, x);
+	if (x != logx || (y - logcursor - PER_DEV_STAT_WIN_H) != logy) {
+		mvwin(per_dev_stat_win, y - PER_DEV_STAT_WIN_H, 0);
+		wresize(per_dev_stat_win, PER_DEV_STAT_WIN_H, x);
+		wresize(logwin, y - logcursor - PER_DEV_STAT_WIN_H, x);
 	}
 }
 
@@ -2254,9 +2255,9 @@ static void check_winsizes(void)
 		logcursor = statusy + 1;
 		wresize(statuswin, statusy, x);
 		getmaxyx(mainwin, y, x);
-		wresize(per_dev_stat_win, 3, x);
-		mvwin(per_dev_stat_win, y - 3, 0);
-		wresize(logwin, y - logcursor - 3, x);
+		wresize(per_dev_stat_win, PER_DEV_STAT_WIN_H, x);
+		mvwin(per_dev_stat_win, y - PER_DEV_STAT_WIN_H, 0);
+		wresize(logwin, y - logcursor - PER_DEV_STAT_WIN_H, x);
 		mvwin(logwin, logcursor, 0);
 		
 		unlock_curses();
@@ -7004,11 +7005,11 @@ void enable_curses(void) {
 	getmaxyx(mainwin, y, x);
 	statuswin = newwin(logstart, x, 0, 0);
 	leaveok(statuswin, true);
-	logwin = newwin(y - logcursor - 3, 0, logcursor, 0);
+	logwin = newwin(y - logcursor - PER_DEV_STAT_WIN_H, 0, logcursor, 0);
 	idlok(logwin, true);
 	scrollok(logwin, true);
 	leaveok(logwin, true);
-	per_dev_stat_win = newwin(3, x, y - 3, 0);
+	per_dev_stat_win = newwin(PER_DEV_STAT_WIN_H, x, y - PER_DEV_STAT_WIN_H, 0);
 	idlok(per_dev_stat_win, true);
 	leaveok(per_dev_stat_win, true);
 	cbreak();
