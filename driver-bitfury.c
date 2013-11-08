@@ -26,6 +26,7 @@
 
 #include "miner.h"
 #include <unistd.h>
+#include <stdlib.h>
 #include <sha2.h>
 #include "libbitfury.h"
 #include "util.h"
@@ -280,17 +281,19 @@ static int64_t bitfury_scanHash(struct thr_info *thr)
 #endif
 #ifdef BITFURY_ENABLE_PER_DEV_STAT
 	if (now.tv_sec - short_out_t > short_stat) {
-		static char separator_line[BITFURY_PER_DEV_STAT_LINE_LEN] = {0};
 		static char nums_line[BITFURY_PER_DEV_STAT_LINE_LEN] = {0};
+		nums_line[0] = 0;
 		static char ghs_line[BITFURY_PER_DEV_STAT_LINE_LEN] = {0};
+		ghs_line[0] = 0;
 		static char hw_line[BITFURY_PER_DEV_STAT_LINE_LEN] = {0};
+		hw_line[0] = 0;
 		static unsigned bank_num = 0;
 
-		int i, len;
+		unsigned i, len;
 		double ghsum = 0;
-		int hwsum = 0;
-		int n = 0;
-		int max_bank_num = 0;
+		unsigned hwsum = 0;
+		unsigned n = 0;
+		unsigned max_bank_num = 0;
 		for (chip = 0; chip < chip_n; chip++) {
 			dev = &devices[chip];
 			if (dev->slot > max_bank_num) {
@@ -304,12 +307,11 @@ static int64_t bitfury_scanHash(struct thr_info *thr)
 			len = strlen(ghs_line);
 			snprintf(ghs_line + len, BITFURY_PER_DEV_STAT_LINE_LEN - len, "%3.1f|", ghash);
 			len = strlen(nums_line);
-			snprintf(nums_line + len, BITFURY_PER_DEV_STAT_LINE_LEN - len, "#%2d|", n);
+			snprintf(nums_line + len, BITFURY_PER_DEV_STAT_LINE_LEN - len, "#%2d|", n++);
 			len = strlen(hw_line);
 			snprintf(hw_line + len, BITFURY_PER_DEV_STAT_LINE_LEN - len, "%3d|", dev->hw_errors);
 			ghsum += ghash;
 			hwsum += dev->hw_errors;
-			n++;
 		}
 		len = strlen(ghs_line);
 		snprintf(ghs_line + len, BITFURY_PER_DEV_STAT_LINE_LEN - len, "=%.1f ghs", ghsum);
@@ -317,15 +319,12 @@ static int64_t bitfury_scanHash(struct thr_info *thr)
 		snprintf(hw_line + len, BITFURY_PER_DEV_STAT_LINE_LEN - len, "=%d err", hwsum);
 		len = strlen(nums_line);
 		mvwhline(per_dev_stat_win, 0, 0, '-', 80);
-		for (i = 1; i <= 3; i++) {
-			mvwhline(per_dev_stat_win, i, 0, ' ', BITFURY_PER_DEV_STAT_LINE_LEN);
-		}
-		mvwprintw(per_dev_stat_win, 0, (len - 8) / 2, "Bank #%2d", bank_num % (max_bank_num + 1));
+		mvwprintw(per_dev_stat_win, 0, (len - 8) / 2, "Bank #%2d", bank_num);
 		mvwprintw(per_dev_stat_win, 1, 0, nums_line);
 		mvwprintw(per_dev_stat_win, 2, 0, ghs_line);
 		mvwprintw(per_dev_stat_win, 3, 0, hw_line);
 		short_out_t = now.tv_sec;
-		bank_num++;
+		bank_num = (bank_num + 1) % (max_bank_num + 1);
 	}
 #endif
 
