@@ -105,6 +105,45 @@ static int bitfury_submitNonce(struct thr_info *thr, struct bitfury_device *devi
 	return(!is_dupe);
 }
 
+static void reset_chip(struct bitfury_device *device) {
+	applog(LOG_WARNING, "START HARD RESET> chip #%d_%d", device->slot, device->fasync);
+	select_bank(device->slot);
+	detect_chip(device->fasync);
+	clear_bank_selection();
+	device->osc6_bits = device->osc6_bits_setpoint;
+	device->osc6_req = device->osc6_bits_setpoint;
+	send_reinit(device->slot, device->fasync, device->osc6_bits);		
+	applog(LOG_WARNING, "END HARD RESET> chip #%d_%d", device->slot, device->fasync);
+}
+
+static void reset_chips_if_needed(struct thr_info *thr, struct timeval now) {
+	static struct bitfury_device *devices, *dev;
+	int chip_n, chip;
+
+	devices = thr->cgpu->devices;
+	chip_n = thr->cgpu->chip_n;
+
+	int long_stat = 3 * 60;
+	double ghash_th = 1.0;
+	static time_t long_out_t = 0;
+	if (!long_out_t) {
+		long_out_t = now.tv_sec;
+	}
+
+	if (now.tv_sec - long_out_t > long_stat) {
+		for (chip = 0; chip < chip_n; chip++) {
+			dev = &devices[chip];
+			int shares_found = calc_stat(dev->stat_ts, long_stat, now);
+			double ghash = shares_to_ghashes(shares_found, long_stat);
+			if (ghash <= ghash_th) {
+				applog(LOG_WARNING, "... chip #%d_%d %2.1f ghs", dev->slot, dev->fasync, ghash);
+				reset_chip(dev);
+			}
+		}
+		long_out_t = now.tv_sec;
+	}
+}
+
 static int64_t bitfury_scanHash(struct thr_info *thr)
 {
 	static struct bitfury_device *devices, *dev; // TODO Move somewhere to appropriate place
@@ -112,13 +151,10 @@ static int64_t bitfury_scanHash(struct thr_info *thr)
 	int chip;
 	uint64_t hashes = 0;
 	struct timeval now;
-	unsigned char line[2048];
 	int short_stat = 10;
 	static time_t short_out_t;
 	int long_stat = 600;
 	static time_t long_out_t;
-	int long_long_stat = 60 * 30;
-	static time_t long_long_out_t;
 	static first = 1; //TODO Move to detect()
 	int i;
 	int nonces_cnt;
@@ -190,6 +226,7 @@ static int64_t bitfury_scanHash(struct thr_info *thr)
 		}
 	}
 #ifdef BITFURY_ENABLE_SHORT_STAT
+	static unsigned char line[2048] = {0};
 	if (now.tv_sec - short_out_t > short_stat) {
 		int shares_first = 0, shares_last = 0, shares_total = 0;
 		char stat_lines[BITFURY_MAXBANKS][256] = {0};
@@ -241,6 +278,7 @@ static int64_t bitfury_scanHash(struct thr_info *thr)
 	}
 #endif
 #ifdef BITFURY_ENABLE_LONG_STAT
+	static unsigned char line[2048] = {0};
 	if (now.tv_sec - long_out_t > long_stat) {
 		int shares_first = 0, shares_last = 0, shares_total = 0;
 		char stat_lines[BITFURY_MAXBANKS][256] = {0};
@@ -328,6 +366,8 @@ static int64_t bitfury_scanHash(struct thr_info *thr)
 	}
 #endif
 
+	reset_chips_if_needed(thr, now);
+
 	nmsleep(BITFURY_SCANHASH_DELAY);
 
 	return hashes;
@@ -335,7 +375,6 @@ static int64_t bitfury_scanHash(struct thr_info *thr)
 
 double shares_to_ghashes(int shares, int seconds) {
 	return ( (double)shares * 4.294967296 ) / ( (double)seconds );
-
 }
 
 int calc_stat(time_t * stat_ts, time_t stat, struct timeval now) {
