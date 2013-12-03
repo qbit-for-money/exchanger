@@ -1,16 +1,16 @@
 #include "gpio.h"
 
-//#define BITFURY_MAXBANKS 10
-#define BITFURY_MAXBANKS 1
+#define BITFURY_MAXBANKS 10
+//#define BITFURY_MAXBANKS 1
 
 // http://elinux.org/Rpi_Low-level_peripherals
 static const unsigned BANK_NUM_TO_PORT_NUM_MAP[BITFURY_MAXBANKS] = {
-	18/*, 23, 24, 25,			// top
+	18, 23, 24, 25,			// top
 #ifdef RPI_PIN_NAME_REV2
 	2, 3, 4, 17, 27, 22		// bottom
 #else
 	0, 1, 4, 17, 21, 22		// bottom
-#endif*/
+#endif
 };
 
 static unsigned ALL_BANK_PORT_NUMS = 0;
@@ -30,16 +30,19 @@ void banks_init(void)
 
 int detect_bank(unsigned char bank_num)
 {
+	//return tm_i2c_detect(bank_num);
 	return 0;
 }
 
 void select_bank(unsigned char bank_num)
 {
+	//tm_i2c_set_oe(bank_num);
 	clear_bank_selection();
 	GPIO_SET = (1 << BANK_NUM_TO_PORT_NUM_MAP[bank_num]);
 }
 
 void clear_bank_selection(void)
 {
+	//tm_i2c_clear_oe();
 	GPIO_CLR = ALL_BANK_PORT_NUMS;
 }

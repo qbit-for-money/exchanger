@@ -151,6 +151,8 @@ char *opt_avalon_options = NULL;
 #endif
 #ifdef USE_BITFURY
 char *opt_bitfury_clockbits = NULL;
+extern int opt_bitfury_reset_period;
+extern int opt_bitfury_reset_th;
 #endif
 #ifdef USE_USBUTILS
 char *opt_usb_select = NULL;
@@ -1093,6 +1095,12 @@ static struct opt_table opt_config_table[] = {
 	OPT_WITH_ARG("--bitfury-clockbits",
 		     set_bitfury_clockbits, NULL, NULL,
 		     "Set bitfury clockbits options chip:bits,chip:bits,..."),
+	OPT_WITH_ARG("--bitfury-reset-period",
+		     opt_set_intval, NULL, &opt_bitfury_reset_period,
+		     "Set bitfury reset polling period (in seconds)"),
+	OPT_WITH_ARG("--bitfury-reset-th",
+		     opt_set_intval, NULL, &opt_bitfury_reset_th,
+		     "Set bitfury reset threshold (in Mhs)"),
 #endif
 	OPT_WITHOUT_ARG("--load-balance",
 		     set_loadbalance, &pool_strategy,

@@ -45,6 +45,9 @@ extern WINDOW *mainwin, *statuswin, *per_dev_stat_win, *logwin;
 
 struct device_drv bitfury_drv;
 
+int opt_bitfury_reset_period = 10;
+int opt_bitfury_reset_th = 500;
+
 // Forward declarations
 static void bitfury_disable(struct thr_info* thr);
 static bool bitfury_prepare(struct thr_info *thr);
@@ -105,7 +108,8 @@ static int bitfury_submitNonce(struct thr_info *thr, struct bitfury_device *devi
 	return(!is_dupe);
 }
 
-static void reset_chip(struct bitfury_device *device) {
+static void reset_chip(struct bitfury_device *device)
+{
 	applog(LOG_WARNING, "START HARD RESET> chip #%d_%d", device->slot, device->fasync);
 	select_bank(device->slot);
 	detect_chip(device->fasync);
@@ -116,31 +120,32 @@ static void reset_chip(struct bitfury_device *device) {
 	applog(LOG_WARNING, "END HARD RESET> chip #%d_%d", device->slot, device->fasync);
 }
 
-static void reset_chips_if_needed(struct thr_info *thr, struct timeval now) {
+static void reset_chips_if_needed(struct thr_info *thr, struct timeval now)
+{
 	static struct bitfury_device *devices, *dev;
 	int chip_n, chip;
 
 	devices = thr->cgpu->devices;
 	chip_n = thr->cgpu->chip_n;
 
-	int long_stat = 3 * 60;
-	double ghash_th = 1.0;
-	static time_t long_out_t = 0;
-	if (!long_out_t) {
-		long_out_t = now.tv_sec;
+	double ghash_th = ((double) opt_bitfury_reset_th) / 1000.0;
+
+	static time_t out_t = 0;
+	if (!out_t) {
+		out_t = now.tv_sec;
 	}
 
-	if (now.tv_sec - long_out_t > long_stat) {
+	if (now.tv_sec - out_t > opt_bitfury_reset_period) {
 		for (chip = 0; chip < chip_n; chip++) {
 			dev = &devices[chip];
-			int shares_found = calc_stat(dev->stat_ts, long_stat, now);
-			double ghash = shares_to_ghashes(shares_found, long_stat);
+			int shares_found = calc_stat(dev->stat_ts, opt_bitfury_reset_period, now);
+			double ghash = shares_to_ghashes(shares_found, opt_bitfury_reset_period);
 			if (ghash <= ghash_th) {
 				applog(LOG_WARNING, "... chip #%d_%d %2.1f ghs", dev->slot, dev->fasync, ghash);
 				reset_chip(dev);
 			}
 		}
-		long_out_t = now.tv_sec;
+		out_t = now.tv_sec;
 	}
 }
 
