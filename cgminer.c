@@ -1096,10 +1096,10 @@ static struct opt_table opt_config_table[] = {
 		     set_bitfury_clockbits, NULL, NULL,
 		     "Set bitfury clockbits options chip:bits,chip:bits,..."),
 	OPT_WITH_ARG("--bitfury-reset-period",
-		     opt_set_intval, NULL, &opt_bitfury_reset_period,
+		     set_int_0_to_9999, NULL, &opt_bitfury_reset_period,
 		     "Set bitfury reset polling period (in seconds)"),
 	OPT_WITH_ARG("--bitfury-reset-th",
-		     opt_set_intval, NULL, &opt_bitfury_reset_th,
+		     set_int_0_to_9999, NULL, &opt_bitfury_reset_th,
 		     "Set bitfury reset threshold (in Mhs)"),
 #endif
 	OPT_WITHOUT_ARG("--load-balance",
