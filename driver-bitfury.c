@@ -136,6 +136,7 @@ static void reset_chips_if_needed(struct thr_info *thr, struct timeval now)
 	}
 
 	if (now.tv_sec - out_t > opt_bitfury_reset_period) {
+		applog(LOG_WARNING, "!!! %ds / %dMhs", opt_bitfury_reset_period, opt_bitfury_reset_th);
 		for (chip = 0; chip < chip_n; chip++) {
 			dev = &devices[chip];
 			int shares_found = calc_stat(dev->stat_ts, opt_bitfury_reset_period, now);

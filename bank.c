@@ -1,15 +1,15 @@
 #include "gpio.h"
 
-#define BITFURY_MAXBANKS 10
-//#define BITFURY_MAXBANKS 1
+//#define BITFURY_MAXBANKS 10
+#define BITFURY_MAXBANKS 1
 
 // http://elinux.org/Rpi_Low-level_peripherals
 static const unsigned BANK_NUM_TO_PORT_NUM_MAP[BITFURY_MAXBANKS] = {
-	18, 23, 24, 25,			// top
+	18/*, 23, 24, 25,*/			// top
 #ifdef RPI_PIN_NAME_REV2
-	2, 3, 4, 17, 27, 22		// bottom
+	//2, 3, 4, 17, 27, 22		// bottom
 #else
-	0, 1, 4, 17, 21, 22		// bottom
+	//0, 1, 4, 17, 21, 22		// bottom
 #endif
 };
 
