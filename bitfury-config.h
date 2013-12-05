@@ -30,7 +30,7 @@
 
 // #define BITFURY_METABANK 1
 // #define BITFURY_NEEDBMW_NOMUX 1
-#define BITFURY_ARES 1
+#define BITFURY_QBIT 1
 
 
 /* Set stats options */

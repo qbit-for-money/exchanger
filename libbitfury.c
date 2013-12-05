@@ -348,7 +348,7 @@ int libbitfury_detectChips(struct bitfury_device *devices) {
 	static slot_on[BITFURY_MAXBANKS];
 	struct timespec t1, t2;
 
-#ifndef BITFURY_ARES
+#ifndef BITFURY_QBIT
 	if (tm_i2c_init() < 0) {
 		printf("I2C init error\n");
 		return(1);
@@ -406,7 +406,7 @@ int libbitfury_shutdownChips(struct bitfury_device *devices, int chip_n) {
 	for (i = 0; i < chip_n; i++) {
 		send_shutdown(devices[i].slot, devices[i].fasync);
 	}
-#ifndef BITFURY_ARES
+#ifndef BITFURY_QBIT
 	tm_i2c_close();
 #endif
 }

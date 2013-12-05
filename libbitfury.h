@@ -47,7 +47,7 @@
 
 #endif
 
-#ifdef BITFURY_ARES
+#ifdef BITFURY_QBIT
 
 /*#define BITFURY_MAXCHIPS 180
 #define BITFURY_MAXBANKS 10
