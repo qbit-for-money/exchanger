@@ -1,0 +1,13 @@
+This readme contains info about extended version of cgminer (configured to work with bitfury devices).
+New features:
+	1. Options to control chip reset logic:
+		--bitfury-reset-th to set bitfury reset threshold (in Mhs)
+		--bitfury-reset-period to set bitfury reset polling period (in seconds)
+		For example:
+		sudo ./cgminer ... --bitfury-reset-th 500 --bitfury-reset-period 10
+		This will configure cgminer to check hashrate of each chip every 10 seconds.
+		If hashrate of appropriate chip is lower than 0.5Ghs, then send hard reset sequence (to this chip).
+		These options will help you to make average hashrate higher.
+	2. Slot (bank or chip chain) selection logic moved to separate module "bank.c".
+	3. Detailed statistics in the bottom part of cgminer window.
+	
