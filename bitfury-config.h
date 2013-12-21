@@ -32,7 +32,6 @@
 // #define BITFURY_NEEDBMW_NOMUX 1
 #define BITFURY_QBIT 1
 
-
 /* Set stats options */
 
 //#define BITFURY_ENABLE_SHORT_STAT 1

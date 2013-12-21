@@ -45,6 +45,8 @@ cgminer_SOURCES	+= elist.h miner.h compat.h bench_block.h	\
 
 cgminer_SOURCES	+= gpio.c gpio.h
 
+cgminer_SOURCES	+= pwr_mng.c pwr_mng.h
+
 cgminer_SOURCES	+= bank.c bank.h
 
 cgminer_SOURCES	+= logging.c
@@ -99,5 +101,5 @@ dist_bitstreams_DATA = $(top_srcdir)/bitstreams/*
 endif
 
 if HAS_BITFURY
-cgminer_SOURCES += driver-bitfury.c libbitfury.c libbitfury.h spidevc.h spidevc.c tm_i2c.h tm_i2c.c
+cgminer_SOURCES += driver-bitfury.c libbitfury.c libbitfury.h libbitfury-config.h spidevc.h spidevc.c tm_i2c.h tm_i2c.c
 endif

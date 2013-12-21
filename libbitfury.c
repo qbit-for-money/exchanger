@@ -39,6 +39,8 @@
 
 #include "gpio.h"
 
+#include "pwr_mng.h"
+
 #include "bank.h"
 
 #include <time.h>
@@ -360,6 +362,7 @@ int libbitfury_detectChips(struct bitfury_device *devices) {
 	ms3_compute(&atrvec[40]);
 
 	gpio_init();
+	pwr_level_init();
 	banks_init();
 	spi_init();
 
