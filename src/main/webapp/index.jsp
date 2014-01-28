@@ -1,12 +1,13 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<html>
+<!DOCTYPE html>
+<html ng-app>
 	<head>
-		<jsp:include page="jsp/header.jsp"/>
+		<jsp:include page="WEB-INF/jsp/header.jsp"/>
 	</head>
-	<body>
-		<h2>Jersey RESTful Web Application!</h2>
-		<p><a href="webapi/myresource">Jersey resource</a>
-		<p>Visit <a href="http://jersey.java.net">Project Jersey website</a>
-			for more information on Jersey!
+	<body ng-controller="Common">
+		<div class="container">
+			<span class="label label-danger pull-right" ng-show="env.demoEnabled">demo</span>
+			<p class="lead text-center">Use this document as a way to quickly start any new project.</p>
+		</div>
 	</body>
 </html>
