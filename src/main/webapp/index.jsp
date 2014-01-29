@@ -6,7 +6,7 @@
 	</head>
 	<body ng-controller="Common">
 		<div class="container">
-			<span class="label label-danger pull-right" ng-show="env.demoEnabled">demo</span>
+			<span class="label label-danger pull-right ng-hide" ng-show="env.demoEnabled">demo</span>
 			<p class="lead text-center">Use this document as a way to quickly start any new project.</p>
 		</div>
 	</body>
