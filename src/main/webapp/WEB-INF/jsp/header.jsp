@@ -3,11 +3,11 @@
 
 <c:url value="/" var="context" />
 
-<link rel="stylesheet" type="text/css" href="${context}resources/bootstrap/css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="${context}resources/lib/bootstrap/core/css/bootstrap.min.css">
 
-<script type="text/javascript" src="${context}resources/jquery/jquery-2.1.0.min.js"></script>
-<script type="text/javascript" src="${context}resources/bootstrap/js/bootstrap.min.js"></script>
-<script type="text/javascript" src="${context}resources/angular/angular.min.js"></script>
+<script type="text/javascript" src="${context}resources/lib/jquery/jquery-2.1.0.min.js"></script>
+<script type="text/javascript" src="${context}resources/lib/bootstrap/core/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="${context}resources/lib/angular/angular.min.js"></script>
 
 <script type="text/javascript">
 	// Global constants
@@ -16,6 +16,6 @@
 	
 </script>
 
-<script type="text/javascript" src="${context}resources/app.js"></script>
-<script type="text/javascript" src="${context}resources/common/common-service.js"></script>
-<script type="text/javascript" src="${context}resources/common/common-controller.js"></script>
+<script type="text/javascript" src="${context}resources/js/app.js"></script>
+<script type="text/javascript" src="${context}resources/js/common/common-service.js"></script>
+<script type="text/javascript" src="${context}resources/js/common/common-controller.js"></script>
