@@ -1,4 +1,4 @@
-package com.qbit.exchanger;
+package com.qbit.exchanger.env;
 
 import java.io.IOException;
 import java.util.Properties;
