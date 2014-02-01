@@ -1,4 +1,4 @@
-package com.qbit.exchanger;
+package com.qbit.exchanger.env;
 
 import javax.inject.Inject;
 import javax.ws.rs.GET;

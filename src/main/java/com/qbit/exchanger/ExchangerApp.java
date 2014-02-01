@@ -1,5 +1,6 @@
 package com.qbit.exchanger;
 
+import com.qbit.exchanger.env.Env;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.ws.rs.core.Application;
