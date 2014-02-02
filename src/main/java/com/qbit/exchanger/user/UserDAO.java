@@ -44,6 +44,9 @@ public class UserDAO {
 	}
 
 	public UserInfo edit(UserInfo user) {
+		if (user == null) {
+			return null;
+		}
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 		try {
 			entityManager.getTransaction().begin();

@@ -87,6 +87,6 @@ public class UserInfo implements Serializable {
 
 	@Override
 	public String toString() {
-		return "UserInfo{" + "publicKey=" + publicKey + '}';
+		return "UserInfo{" + "publicKey=" + publicKey + ", registrationDate=" + registrationDate + ", name=" + name + ", email=" + email + '}';
 	}
 }

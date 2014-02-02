@@ -1,5 +1,6 @@
 package com.qbit.exchanger.user;
 
+import com.qbit.exchanger.mail.MailService;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -20,6 +21,9 @@ public class UserResource {
 	@Inject
 	private UserDAO userDAO;
 	
+	@Inject
+	private MailService mailService;
+	
 	@GET
     @Path("{publicKey}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -37,7 +41,21 @@ public class UserResource {
     @Path("{publicKey}")
     @Consumes(MediaType.APPLICATION_JSON)
 	public void edit(@PathParam("publicKey") String publicKey, UserInfo userInfo) {
+		if (userInfo == null) {
+			return;
+		}
 		userInfo.setPublicKey(publicKey);
 		userDAO.edit(userInfo);
+		sendMailAboutRegistration(userInfo);
+	}
+	
+	private void sendMailAboutRegistration(UserInfo userInfo) {
+		if ((userInfo.getEmail() != null) && !userInfo.getEmail().isEmpty()) {
+			mailService.send(userInfo.getEmail(), "Welcome to Bitgates",
+					"Welcome to Bitgates\n\n"
+					+ "Hello, " + userInfo.getEmail() + ".\n"
+					+ "Your public key: " + userInfo.getPublicKey() + "\n\n"
+					+ "http://bitgates.com/");
+		}
 	}
 }
