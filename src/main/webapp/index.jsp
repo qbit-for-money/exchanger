@@ -22,9 +22,7 @@
 				</div>
 				<!-- Collect the nav links, forms, and other content for toggling -->
 				<div class="collapse navbar-collapse" collapse="isNavbarCollapsed">
-					
-						<%@ include file="WEB-INF/jspf/user.jspf" %>
-					</form>
+					<%@ include file="WEB-INF/jspf/user.jspf" %>
 				</div><!-- /.navbar-collapse -->
 			</div><!-- /.container-fluid -->
 		</nav>
