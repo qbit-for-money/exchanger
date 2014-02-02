@@ -1,0 +1,37 @@
+<%@ page pageEncoding="UTF-8" %>
+<div class="row" style="padding-top: 2px;">
+	<div class="col-lg-8 col-md-6 hidden-sm hidden-xs">&nbsp;</div>
+	<div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
+		<div class="input-group input-group-sm"
+			 ng-class="{'has-error': !publicKeyUnderCheck && (publicKey !== user.publicKey),
+						'has-success': !publicKeyUnderCheck && (publicKey === user.publicKey)}">
+			<div class="input-group-btn">
+				<button type="button" class="btn btn-default"
+						ng-class="{'active': userUnderEdit}" ng-click="userUnderEdit = !userUnderEdit">
+					<span class="glyphicon glyphicon-user"></span>
+				</button>
+			</div>
+			<input type="text" class="form-control" ng-model="publicKey"
+				   ng-change="changeUser()" ng-blur="publicKey = user.publicKey" />
+			<div class="input-group-btn">
+				<button type="button" class="btn btn-default" ng-click="createUser()">
+					<span class="glyphicon glyphicon-random"></span>
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="row ng-hide " ng-show="user.publicKey && userUnderEdit">
+	<div class="col-lg-8 col-md-6 hidden-sm hidden-xs">&nbsp;</div>
+	<div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
+		<div class="panel panel-default">
+			<div class="panel-body">
+				<div class="input-group input-group-sm">
+					<span class="input-group-addon"><span class="glyphicon glyphicon-envelope"></span></span>
+					<input type="email" class="form-control" ng-model="user.email"
+						   ng-change="editUser()" placeholder="Email"/>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

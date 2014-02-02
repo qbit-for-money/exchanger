@@ -2,8 +2,11 @@ package com.qbit.exchanger;
 
 import com.qbit.exchanger.env.Env;
 import com.qbit.exchanger.services.yandex.YandexMoneyService;
+import com.qbit.exchanger.user.UserDAO;
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 import javax.ws.rs.core.Application;
 import org.glassfish.hk2.api.DynamicConfiguration;
 import org.glassfish.hk2.api.ServiceLocator;
@@ -19,9 +22,12 @@ public class ExchangerApp extends Application {
 	public ExchangerApp(ServiceLocator serviceLocator) {
 		DynamicConfiguration configuration = getConfiguration(serviceLocator);
 
-		// singleton binding
 		addBinding(newBinder(Env.class).to(Env.class).in(Singleton.class), configuration);
 		addBinding(newBinder(YandexMoneyService.class).to(YandexMoneyService.class), configuration);
+		addBinding(newBinder(Persistence.createEntityManagerFactory("exchangerPU"))
+				.to(EntityManagerFactory.class), configuration);
+		
+		addBinding(newBinder(UserDAO.class).to(UserDAO.class).in(Singleton.class), configuration);
 
 		// commits changes
 		configuration.commit();
