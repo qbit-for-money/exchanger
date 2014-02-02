@@ -1,48 +1,44 @@
 package com.qbit.exchanger.services.yandex;
 
+import com.qbit.exchanger.services.core.OperationStatus;
+import com.qbit.exchanger.services.core.OperationResult;
+import com.qbit.exchanger.services.core.ProcessingException;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Collections;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.CoreProtocolPNames;
-import org.apache.http.params.HttpConnectionParams;
-import ru.yandex.money.api.ApiCommandsFacade;
-import ru.yandex.money.api.ApiCommandsFacadeImpl;
-import ru.yandex.money.api.TestUrlHolder;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import ru.yandex.money.api.YandexMoney;
 import ru.yandex.money.api.YandexMoneyImpl;
 import ru.yandex.money.api.enums.Destination;
+import ru.yandex.money.api.response.AccountInfoResponse;
 import ru.yandex.money.api.response.ProcessPaymentResponse;
 import ru.yandex.money.api.response.ReceiveOAuthTokenResponse;
 import ru.yandex.money.api.response.RequestPaymentResponse;
+import ru.yandex.money.api.rights.AccountInfo;
+import ru.yandex.money.api.rights.IdentifierType;
+import ru.yandex.money.api.rights.OperationDetails;
+import ru.yandex.money.api.rights.OperationHistory;
 import ru.yandex.money.api.rights.Payment;
+import ru.yandex.money.api.rights.PaymentP2P;
 import ru.yandex.money.api.rights.Permission;
 
 public class YandexMoneyService {
 
-	private static final String CLIENT_ID = "469EAE5558DA3258EB004866286C7EE56E6BFDA2A9660E8D3F0343F1DA77F62C";
-	private static final String REDIRECT_URI = "https://localhost:8443/yandex/tempCode";
-	private static final String STORE_WALLET = "410011982465483";
-	private static final String STORE_TOKEN = "410011982465483.6B199D52FE91DE3B45FFF4DA2DBC851E55228984B15A66B978B8CCA"
-			+ "452FF36B8F3BC3BB1D6665CE4C34B816B666593F75CAFAE32AF77D0939EC328363162D70B2CCB2809FA425E8790585B471DB8604E"
-			+ "1DFC19884B383DE6E8BA6426E5DC02916D2362AD633E24F3B59AFF335B3FE85A686414210A0DDF973CBA00C1DA29D15D";
-	private static final String OPERATION_DESCRIPTION = "sample";
+	private static final String CLIENT_ID = "B83AF6B23CA9C5E0CA7AAFC2F1B98CDAEEAD59A49DED9A4BEE52B8F85A19D20B";
+	private static final String REDIRECT_URI = "https://localhost:8443/exchanger/webapi/yandex/receive";
+	private static final String STORE_WALLET = "41001954722279";
+	private static final String STORE_TOKEN = "41001954722279.41FA1CFDB8228302CA23314BFEF423E2A3A719994AFE60A5"
+			+ "6CB63DC438FE08B94CD8AFFC231EEE9404A19F0943D1D2B15E211561AD73A899951C62FE0C9891A761641F089F9C57D0"
+			+ "6D5955FCDDB2DA609F6B7986E09EDFDFA580C5F543F4EA2091093BE448338B4D5E93D58D3F484BB804342607C48D1B7C5DF9AF1A86B271C6";
+	private static final String OPERATION_DESCRIPTION = "test";
 
 	private YandexMoney yandexMoney;
 
-	private ApiCommandsFacade apiCommandsFacade; // use this for payments in test mode
-	private TestUrlHolder urlHolder; // use this to change test mode parameters
-
 	public YandexMoneyService() {
 		yandexMoney = new YandexMoneyImpl(CLIENT_ID);
-
-		// !!! TEST MODE; one does not simply enable test mode in yamolib :(
-		urlHolder = new TestUrlHolder();
-		DefaultHttpClient httpClient = new DefaultHttpClient();
-		httpClient.getParams().setParameter(CoreProtocolPNames.USER_AGENT, "yamolib");
-		HttpConnectionParams.setConnectionTimeout(httpClient.getParams(), 4000);
-		HttpConnectionParams.setSoTimeout(httpClient.getParams(), 60100);
-		apiCommandsFacade = new ApiCommandsFacadeImpl(httpClient, urlHolder);
 	}
 
 	public String getAuthorizeUri(Boolean mobile, BigDecimal amount) {
@@ -55,7 +51,7 @@ public class YandexMoneyService {
 		return yandexMoney.authorizeUri(scope, REDIRECT_URI, mobile);
 	}
 
-	public void receiveMoney(String code, BigDecimal amount) throws Exception {
+	public OperationResult receiveMoney(String code, BigDecimal amount) throws ProcessingException {
 //		String token = receiveToken(code);
 //        String accountNumber = parseToken(token);
 //        List<Operation> operations = paymentRepository.findInProgress(accountNumber);
@@ -72,28 +68,55 @@ public class YandexMoneyService {
 //                // TODO error
 //            }
 //        }
+		OperationResult result = new OperationResult(OperationStatus.IN_PROGRESS);
+		String token = receiveToken(code);
+		RequestPaymentResponse p2pResponse = requestPayment(token, STORE_WALLET, amount, OPERATION_DESCRIPTION);
+		if (p2pResponse != null && p2pResponse.isSuccess()) {
+			ProcessPaymentResponse processResponse = processPayment(token, p2pResponse.getRequestId());
+			if (processResponse != null && processResponse.isSuccess()) {
+				result.setStatus(OperationStatus.SUCCESS);
+			} else {
+				result.setStatus(OperationStatus.ERROR);
+				result.setText(processResponse != null ? processResponse.getError().getCode() : "");
+			}
+		} else {
+			result.setText(p2pResponse != null ? p2pResponse.getError().getCode() : "");
+		}
+		return result;
 	}
 
-	public void sendMoney(String wallet, BigDecimal amount) throws Exception {
+	public OperationResult sendMoney(String wallet, BigDecimal amount) throws ProcessingException {
+		OperationResult result = new OperationResult(OperationStatus.IN_PROGRESS);
 		try {
 			RequestPaymentResponse response = requestPayment(STORE_TOKEN, wallet, amount, OPERATION_DESCRIPTION);
 			if (response != null && response.isSuccess()) {
 				ProcessPaymentResponse paymentResponse = processPayment(STORE_TOKEN, response.getRequestId());
 				if (paymentResponse != null && paymentResponse.isSuccess()) {
-					// TODO success
+					result.setStatus(OperationStatus.SUCCESS);
 				} else {
-					// TODO error
+					result.setStatus(OperationStatus.ERROR);
+					result.setText(paymentResponse != null ? paymentResponse.getError().getCode() : "");
 				}
 			} else {
-				// TODO error
+				result.setStatus(OperationStatus.ERROR);
+				result.setText(response != null ? response.getError().getCode() : "");
 			}
 		} catch (Exception e) {
-			// TODO error
-			throw new Exception(e.getMessage());
+			throw new ProcessingException(e.getMessage());
+		}
+		return result;
+	}
+
+	public BigDecimal getBalanceInfo() throws ProcessingException {
+		try {
+			AccountInfoResponse response = yandexMoney.accountInfo(STORE_TOKEN);
+			return response.getBalance();
+		} catch (Exception e) {
+			throw new ProcessingException(e.getMessage());
 		}
 	}
 
-	private String receiveToken(String code) throws Exception {
+	private String receiveToken(String code) throws ProcessingException {
 		String token = null;
 		try {
 			ReceiveOAuthTokenResponse tokenResponse = yandexMoney.receiveOAuthToken(code, REDIRECT_URI);
@@ -101,31 +124,44 @@ public class YandexMoneyService {
 				token = tokenResponse.getAccessToken();
 			}
 		} catch (Exception e) {
-			throw new Exception(e.getMessage());
+			throw new ProcessingException(e.getMessage());
 		}
 		return token;
 	}
 
-	private RequestPaymentResponse requestPayment(String token, String wallet, BigDecimal amount, String description) throws Exception {
+	private RequestPaymentResponse requestPayment(String token, String wallet, BigDecimal amount, String description) throws ProcessingException {
 		RequestPaymentResponse response = null;
 		try {
-//			response = yandexMoney.requestPaymentP2P(token, wallet, amount, description, description);
-			response = apiCommandsFacade.requestPaymentP2P(token, wallet, amount, description, description); // test payment
+			response = yandexMoney.requestPaymentP2PDue(token, wallet, IdentifierType.account, amount, description, description, null);
 		} catch (Exception e) {
-			throw new Exception(e.getMessage());
+			Logger.getLogger(YandexMoneyService.class.getName()).log(Level.SEVERE, null, e);
+			throw new ProcessingException(e.getMessage());
 		}
 		return response;
 	}
 
-	private ProcessPaymentResponse processPayment(String token, String requestId) throws Exception {
+	private ProcessPaymentResponse processPayment(String token, String requestId) throws ProcessingException {
 		ProcessPaymentResponse response = null;
 		try {
-//			response = yandexMoney.processPaymentByWallet(token, requestId);
-			response = apiCommandsFacade.processPaymentByWallet(token, requestId); // test payment
+			response = yandexMoney.processPaymentByWallet(token, requestId);
 		} catch (Exception e) {
-			throw new Exception(e.getMessage());
+			throw new ProcessingException(e.getMessage());
 		}
 		return response;
+	}
+
+	/**
+	 * Creates permissions for this application.
+	 * 
+	 * @return 
+	 */
+	private Collection<Permission> getAppPaymentScope() {
+		List<Permission> permissions = new LinkedList<>();
+		permissions.add(new PaymentP2P());
+		permissions.add(new AccountInfo());
+		permissions.add(new OperationDetails());
+		permissions.add(new OperationHistory());
+		return Collections.unmodifiableList(permissions);
 	}
 
 	private Collection<Permission> getPaymentScope(BigDecimal sum) {

@@ -1,6 +1,7 @@
 package com.qbit.exchanger;
 
 import com.qbit.exchanger.env.Env;
+import com.qbit.exchanger.services.yandex.YandexMoneyService;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.ws.rs.core.Application;
@@ -20,6 +21,7 @@ public class ExchangerApp extends Application {
 
 		// singleton binding
 		addBinding(newBinder(Env.class).to(Env.class).in(Singleton.class), configuration);
+		addBinding(newBinder(YandexMoneyService.class).to(YandexMoneyService.class), configuration);
 
 		// commits changes
 		configuration.commit();
