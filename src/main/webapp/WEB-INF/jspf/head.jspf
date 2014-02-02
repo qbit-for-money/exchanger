@@ -4,6 +4,7 @@
 <c:url value="/" var="context" />
 
 <link rel="stylesheet" type="text/css" href="${context}resources/lib/bootstrap/core/css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="${context}resources/css/common.css">
 
 <script type="text/javascript" src="${context}resources/lib/jquery/jquery-2.1.0.min.js"></script>
 <script type="text/javascript" src="${context}resources/lib/angular/angular.min.js"></script>
