@@ -152,8 +152,8 @@ public class YandexMoneyService {
 
 	/**
 	 * Creates permissions for this application.
-	 * 
-	 * @return 
+	 *
+	 * @return
 	 */
 	private Collection<Permission> getAppPaymentScope() {
 		List<Permission> permissions = new LinkedList<>();
