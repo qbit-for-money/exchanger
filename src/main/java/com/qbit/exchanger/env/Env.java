@@ -1,7 +1,8 @@
-package com.qbit.exchanger;
+package com.qbit.exchanger.env;
 
 import java.io.IOException;
 import java.util.Properties;
+import javax.inject.Singleton;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -10,18 +11,13 @@ import javax.xml.bind.annotation.XmlRootElement;
  * 
  * @author Alexander_Alexandrov
  */
+@Singleton
 @XmlRootElement
 public class Env {
 
-	private static final Env INST = new Env();
-	
-	public static Env inst() {
-		return INST;
-	}
-	
 	private final Properties properties;
 	
-	private Env() {
+	public Env() {
 		properties = new Properties();
 		try {
 			properties.load(Env.class.getResourceAsStream("/com/qbit/exchanger/exchanger.properties"));
