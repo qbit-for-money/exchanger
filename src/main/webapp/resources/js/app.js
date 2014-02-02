@@ -1,6 +1,3 @@
-angular.module("common", []);
+angular.module("common", ["ngResource"]);
 
-angular.module("main", ["common"]).config(function ($parseProvider) {
-	$parseProvider.unwrapPromises(true);
-	$parseProvider.logPromiseWarnings(false);
-});
+angular.module("main", ["common", "ngRoute", "ui.bootstrap"]);
