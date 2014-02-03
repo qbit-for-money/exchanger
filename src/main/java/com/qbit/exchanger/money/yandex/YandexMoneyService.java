@@ -1,4 +1,4 @@
-package com.qbit.exchanger.services.yandex;
+package com.qbit.exchanger.money.yandex;
 
 import com.qbit.exchanger.services.core.OperationStatus;
 import com.qbit.exchanger.services.core.OperationResult;
