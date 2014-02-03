@@ -45,4 +45,12 @@ public class YandexMoneyResource {
 		OperationResult result = yandexMoneyService.sendMoney("41001960727686", BigDecimal.valueOf(5));
 		return result;
 	}
+
+	@GET
+	@Path("balance")
+	@Produces(MediaType.TEXT_PLAIN)
+	public String getBalance() throws ProcessingException {
+		BigDecimal balance = yandexMoneyService.getBalanceInfo();
+		return balance.toString();
+	}
 }
