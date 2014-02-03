@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import ru.yandex.money.api.YandexMoney;
@@ -52,45 +53,33 @@ public class YandexMoneyService {
 	}
 
 	public OperationResult receiveMoney(String code, BigDecimal amount) throws ProcessingException {
-//		String token = receiveToken(code);
-//        String accountNumber = parseToken(token);
-//        List<Operation> operations = paymentRepository.findInProgress(accountNumber);
-//        for(Operation operation : operations) {
-//            RequestPaymentResponse p2pResponse = paymentP2P(token, STORE_WALLET, operation.getAmount(), operation.getDescription());
-//            if (p2pResponse != null && p2pResponse.isSuccess()) {
-//                ProcessPaymentResponse processResponse = processPayment(token, p2pResponse.getRequestId());
-//                if(processResponse != null && processResponse.isSuccess()) {
-//                    // TODO success
-//                } else {
-//                    // TODO error
-//                }
-//            } else {
-//                // TODO error
-//            }
-//        }
-		OperationResult result = new OperationResult(OperationStatus.IN_PROGRESS);
-		String token = receiveToken(code);
-		RequestPaymentResponse p2pResponse = requestPayment(token, STORE_WALLET, amount, OPERATION_DESCRIPTION);
-		if (p2pResponse != null && p2pResponse.isSuccess()) {
-			ProcessPaymentResponse processResponse = processPayment(token, p2pResponse.getRequestId());
-			if (processResponse != null && processResponse.isSuccess()) {
-				result.setStatus(OperationStatus.SUCCESS);
+		OperationResult result = new OperationResult();
+		try {
+			String token = receiveToken(code);
+			RequestPaymentResponse p2pResponse = yandexMoney.requestPaymentP2PDue(token, STORE_WALLET, IdentifierType.account, amount, OPERATION_DESCRIPTION, OPERATION_DESCRIPTION, null);
+			if (p2pResponse != null && p2pResponse.isSuccess()) {
+				ProcessPaymentResponse processResponse = yandexMoney.processPaymentByWallet(token, p2pResponse.getRequestId());
+				if (processResponse != null && processResponse.isSuccess()) {
+					result.setStatus(OperationStatus.SUCCESS);
+				} else {
+					result.setStatus(OperationStatus.ERROR);
+					result.setText(processResponse != null ? processResponse.getError().getCode() : "");
+				}
 			} else {
-				result.setStatus(OperationStatus.ERROR);
-				result.setText(processResponse != null ? processResponse.getError().getCode() : "");
+				result.setText(p2pResponse != null ? p2pResponse.getError().getCode() : "");
 			}
-		} else {
-			result.setText(p2pResponse != null ? p2pResponse.getError().getCode() : "");
+		} catch (Exception ex) {
+			throw new ProcessingException(ex.getMessage());
 		}
 		return result;
 	}
 
 	public OperationResult sendMoney(String wallet, BigDecimal amount) throws ProcessingException {
-		OperationResult result = new OperationResult(OperationStatus.IN_PROGRESS);
+		OperationResult result = new OperationResult();
 		try {
-			RequestPaymentResponse response = requestPayment(STORE_TOKEN, wallet, amount, OPERATION_DESCRIPTION);
+			RequestPaymentResponse response = yandexMoney.requestPaymentP2PDue(STORE_TOKEN, wallet, IdentifierType.account, amount, OPERATION_DESCRIPTION, OPERATION_DESCRIPTION, null);
 			if (response != null && response.isSuccess()) {
-				ProcessPaymentResponse paymentResponse = processPayment(STORE_TOKEN, response.getRequestId());
+				ProcessPaymentResponse paymentResponse = yandexMoney.processPaymentByWallet(STORE_TOKEN, response.getRequestId());
 				if (paymentResponse != null && paymentResponse.isSuccess()) {
 					result.setStatus(OperationStatus.SUCCESS);
 				} else {
@@ -129,25 +118,37 @@ public class YandexMoneyService {
 		return token;
 	}
 
-	private RequestPaymentResponse requestPayment(String token, String wallet, BigDecimal amount, String description) throws ProcessingException {
-		RequestPaymentResponse response = null;
+	public OperationResult requestPayment(String token, String wallet, BigDecimal amount, String description) throws ProcessingException {
+		OperationResult result = new OperationResult();
 		try {
-			response = yandexMoney.requestPaymentP2PDue(token, wallet, IdentifierType.account, amount, description, description, null);
+			RequestPaymentResponse response = yandexMoney.requestPaymentP2PDue(token, wallet, IdentifierType.account, amount, description, description, null);
+			if (response != null && response.isSuccess()) {
+				result.setStatus(OperationStatus.SUCCESS);
+				result.setText(response.getRequestId());
+			} else {
+				result.setStatus(OperationStatus.ERROR);
+				result.setText(response != null ? response.getError().getCode() : "");
+			}
 		} catch (Exception e) {
-			Logger.getLogger(YandexMoneyService.class.getName()).log(Level.SEVERE, null, e);
 			throw new ProcessingException(e.getMessage());
 		}
-		return response;
+		return result;
 	}
 
-	private ProcessPaymentResponse processPayment(String token, String requestId) throws ProcessingException {
-		ProcessPaymentResponse response = null;
+	public OperationResult processPayment(String token, String requestId) throws ProcessingException {
+		OperationResult result = new OperationResult();
 		try {
-			response = yandexMoney.processPaymentByWallet(token, requestId);
+			ProcessPaymentResponse response = yandexMoney.processPaymentByWallet(token, requestId);
+			if (response != null && response.isSuccess()) {
+				result.setStatus(OperationStatus.SUCCESS);
+			} else {
+				result.setStatus(OperationStatus.ERROR);
+				result.setText(response != null ? response.getError().getCode() : "");
+			}
 		} catch (Exception e) {
 			throw new ProcessingException(e.getMessage());
 		}
-		return response;
+		return result;
 	}
 
 	/**
@@ -174,5 +175,13 @@ public class YandexMoneyService {
 		scope.toAccount(STORE_WALLET);
 		Permission result = scope;
 		return Collections.singletonList(result);
+	}
+
+	private String parseToken(String token) {
+		if (token == null) {
+			return null;
+		}
+		StringTokenizer tokenizer = new StringTokenizer(token, ".", false);
+		return tokenizer.nextToken();
 	}
 }
