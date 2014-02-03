@@ -1,19 +1,19 @@
-package com.qbit.exchanger.services.core;
+package com.qbit.exchanger.money.core;
 
 /**
  * Transaction money bean
  *
  * @author Ivan_Rakitnyh
  */
-public class Money {
+public class Transfer {
 
     private String address;
     private int coins;
     private int cents;
 
-    private Money() {}
+    private Transfer() {}
 
-	public Money(String address, int coins, int cents) {
+	public Transfer(String address, int coins, int cents) {
 		this.address = address;
 		this.coins = coins;
 		this.cents = cents;

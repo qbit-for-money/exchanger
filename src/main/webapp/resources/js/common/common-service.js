@@ -10,6 +10,22 @@ commonModule.factory("localStorage", function() {
 	};
 });
 
+commonModule.factory("delayedProxy", function($timeout) {
+	return function(f, delay) {
+			var proxy = function() {
+				if (proxy.promise) {
+					$timeout.cancel(proxy.promise);
+				}
+				var self = this;
+				var args = arguments;
+				proxy.promise = $timeout(function() {
+						f.apply(self, args);
+					}, delay);
+			};
+			return proxy;
+		};
+});
+
 commonModule.factory("envResource", function($resource) {
 	return $resource(window.context + "webapi/env");
 });
@@ -27,9 +43,6 @@ commonModule.factory("userService", function(localStorage, userResource) {
 		return userResource.get({publicKey: publicKey});
 	}
 	function change(publicKey) {
-		if (!publicKey) {
-			return;
-		}
 		var user = userResource.get({publicKey: publicKey}, function() {
 				if (publicKey === user.publicKey) {
 					localStorage.setItem("publicKey", user.publicKey);

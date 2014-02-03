@@ -1,4 +1,4 @@
-package com.qbit.exchanger.services.bitcoin;
+package com.qbit.exchanger.money.bitcoin;
 
 import com.google.bitcoin.core.*;
 import com.google.bitcoin.core.Wallet;
@@ -6,13 +6,15 @@ import com.google.bitcoin.crypto.KeyCrypterException;
 import com.google.bitcoin.kits.WalletAppKit;
 import com.google.bitcoin.params.MainNetParams;
 import com.google.bitcoin.params.TestNet3Params;
+import com.google.bitcoin.script.Script;
 import com.google.bitcoin.utils.BriefLogFormatter;
 import com.google.common.util.concurrent.ForwardingService;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.MoreExecutors;
-import com.qbit.exchanger.services.core.Money;
-import com.qbit.exchanger.services.core.MoneyService;
+import com.qbit.exchanger.money.core.MoneyTransferCallback;
+import com.qbit.exchanger.money.core.Transfer;
+import com.qbit.exchanger.money.core.MoneyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,6 +22,8 @@ import java.io.File;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.google.bitcoin.core.Utils.bytesToHexString;
 
 /**
  * BITCOIN
@@ -54,20 +58,37 @@ public class Bitcoin implements MoneyService {
 	}
 
 	@Override
-	public void receiveMoney(Money moneyToRecive, Money moneyToSend, MoneyService sendService) {
+	public void receiveMoney(Transfer transfer, MoneyTransferCallback callback){
 		AbstractWalletEventListener listener = new AbstractWalletEventListener() {
 			@Override
 			public void onCoinsReceived(Wallet w, Transaction tx, BigInteger prevBalance, BigInteger newBalance) {
 
-				if (thisAddress == moneyToRecive.getAddress()) {
-					BigInteger waitValue = Utils.toNanoCoins(moneyToRecive.getCoins(), moneyToRecive.getCents());
-					BigInteger receivedValue = tx.getValueSentToMe(w);
-					if (waitValue == receivedValue) {
-						sendService.sendMoney(moneyToSend);
+				BigInteger receivedValue = tx.getValueSentToMe(w);
+				for (TransactionOutput out : tx.getOutputs()) {
+					try {
+						Script scriptPubKey = out.getScriptPubKey();
+						if (scriptPubKey.isSentToAddress()) {
+							System.out.println(scriptPubKey.getToAddress(parameters).toString());
+						} else if (scriptPubKey.isSentToRawPubKey()) {
+							System.out.println("[pubkey:");
+							System.out.println(bytesToHexString(scriptPubKey.getPubKey()));
+							System.out.println("]");
+						} else {
+							System.out.println(scriptPubKey);
+						}
+					} catch (ScriptException e) {
+						e.printStackTrace();
 					}
 				}
+//				if (thisAddress == transferToRecive.getAddress()) {
+//					BigInteger waitValue = Utils.toNanoCoins(transferToRecive.getCoins(), transferToRecive.getCents());
+//					BigInteger receivedValue = tx.getValueSentToMe(w);
+//					if (waitValue == receivedValue) {
+//						sendService.sendMoney(transferToSend);
+//					}
+//				}
 
-				logger.info("Received tx for " + Utils.bitcoinValueToFriendlyString(value) + ": " + tx);
+				logger.info("Received tx for " + Utils.bitcoinValueToFriendlyString(receivedValue) + ": " + tx);
 				logger.info("Transaction will be forwarded after it confirms.");
 
 				Futures.addCallback(tx.getConfidence().getDepthFuture(1), new FutureCallback<Transaction>() {
@@ -83,17 +104,18 @@ public class Bitcoin implements MoneyService {
 				});
 			}
 		};
+		getWallet().addEventListener(listener);
 	}
 
 	@Override
-	public void sendMoney(Money moneyToSend) throws AddressFormatException {
-		if(moneyToSend.getAddress() == null || moneyToSend.getCoins() < 0 || moneyToSend.getCents() < 0) {
-			// SOMTHING WRONG
-			throw new AddressFormatException("Empty address or wrong money value");
+	public void sendMoney(Transfer transfer, MoneyTransferCallback callback){
+		if(transfer.getAddress() == null || transfer.getCoins() < 0 || transfer.getCents() < 0) {
+			callback.error("Empty address or wrong money value");
 		}
-		Address forwardingAddress = new Address(parameters, moneyToSend.getAddress());
 		try {
-			BigInteger value = Utils.toNanoCoins(moneyToSend.getCoins(), moneyToSend.getCents());
+			Address forwardingAddress = new Address(parameters, transfer.getAddress());
+
+			BigInteger value = Utils.toNanoCoins(transfer.getCoins(), transfer.getCents());
 
 			logger.info("Forwarding " + Utils.bitcoinValueToFriendlyString(value) + " BTC");
 
@@ -103,6 +125,8 @@ public class Bitcoin implements MoneyService {
 			logger.info("Sending ...");
 
 			assert sendResult != null;
+
+			callback.success();
 
 			// A future that will complete once the transaction message has been successfully
 			sendResult.broadcastComplete.addListener(new Runnable() {
@@ -114,7 +138,20 @@ public class Bitcoin implements MoneyService {
 
 		} catch (KeyCrypterException e) {
 			throw new RuntimeException(e);
+
+		}  catch (AddressFormatException e) {
+			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public void testSend(Transfer transfer, MoneyTransferCallback callback){
+
+	}
+
+	@Override
+	public void testReceive(Transfer transfer, MoneyTransferCallback callback){
+
 	}
 
 	public String getNewAddress() {

@@ -1,6 +1,9 @@
 package com.qbit.exchanger;
 
 import com.qbit.exchanger.env.Env;
+import com.qbit.exchanger.mail.MailService;
+import com.qbit.exchanger.order.OrderDAO;
+import com.qbit.exchanger.order.OrderService;
 import com.qbit.exchanger.user.UserDAO;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -23,10 +26,15 @@ public class ExchangerApp extends Application {
 
 		addBinding(newBinder(Env.class).to(Env.class).in(Singleton.class), configuration);
 		
+		addBinding(newBinder(MailService.class).to(MailService.class).in(Singleton.class), configuration);
+		
 		addBinding(newBinder(Persistence.createEntityManagerFactory("exchangerPU"))
 				.to(EntityManagerFactory.class), configuration);
 		
 		addBinding(newBinder(UserDAO.class).to(UserDAO.class).in(Singleton.class), configuration);
+		
+		addBinding(newBinder(OrderDAO.class).to(OrderDAO.class).in(Singleton.class), configuration);
+		addBinding(newBinder(OrderService.class).to(OrderService.class).in(Singleton.class), configuration);
 
 		// commits changes
 		configuration.commit();
