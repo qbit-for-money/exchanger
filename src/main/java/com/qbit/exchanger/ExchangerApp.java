@@ -2,8 +2,8 @@ package com.qbit.exchanger;
 
 import com.qbit.exchanger.env.Env;
 import com.qbit.exchanger.mail.MailService;
-import com.qbit.exchanger.order.OrderDAO;
-import com.qbit.exchanger.order.OrderService;
+import com.qbit.exchanger.order.dao.OrderBufferTypeDAO;
+import com.qbit.exchanger.order.dao.OrderDAO;
 import com.qbit.exchanger.user.UserDAO;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -33,8 +33,8 @@ public class ExchangerApp extends Application {
 		
 		addBinding(newBinder(UserDAO.class).to(UserDAO.class).in(Singleton.class), configuration);
 		
+		addBinding(newBinder(OrderBufferTypeDAO.class).to(OrderBufferTypeDAO.class).in(Singleton.class), configuration);
 		addBinding(newBinder(OrderDAO.class).to(OrderDAO.class).in(Singleton.class), configuration);
-		addBinding(newBinder(OrderService.class).to(OrderService.class).in(Singleton.class), configuration);
 
 		// commits changes
 		configuration.commit();

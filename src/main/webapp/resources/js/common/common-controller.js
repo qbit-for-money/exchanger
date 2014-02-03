@@ -7,7 +7,7 @@ commonModule.controller("EnvController", function($scope, envResource) {
 	});
 });
 
-commonModule.controller("UserController", function($scope, delayedProxy, userService) {
+commonModule.controller("UserController", function($scope, delayedProxy, usersService) {
 	function setUser(user) {
 		if (user && user.publicKey) {
 			$scope.user = user;
@@ -15,12 +15,12 @@ commonModule.controller("UserController", function($scope, delayedProxy, userSer
 		}
 	}
 	
-	var user = userService.get();
+	var user = usersService.get();
 	user.$promise.then(function() {
 			if (user.publicKey) {
 				setUser(user);
 			} else {
-				user = userService.create();
+				user = usersService.create();
 				user.$promise.then(function() {
 						setUser(user);
 					});
@@ -29,7 +29,7 @@ commonModule.controller("UserController", function($scope, delayedProxy, userSer
 		
 	$scope.changeUser = function() {
 		$scope.publicKeyUnderCheck = true;
-		var user = userService.change($scope.publicKey);
+		var user = usersService.change($scope.publicKey);
 		user.$promise.then(function() {
 				setUser(user);
 			}).finally(function() {
@@ -37,7 +37,7 @@ commonModule.controller("UserController", function($scope, delayedProxy, userSer
 			});
 	};
 	$scope.createUser = function() {
-		var user = userService.create();
+		var user = usersService.create();
 		user.$promise.then(function() {
 				setUser(user);
 			});

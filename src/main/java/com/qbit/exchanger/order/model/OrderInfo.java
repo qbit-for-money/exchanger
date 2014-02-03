@@ -1,14 +1,18 @@
-package com.qbit.exchanger.order;
+package com.qbit.exchanger.order.model;
 
+import com.qbit.exchanger.common.model.Identifiable;
+import com.qbit.exchanger.common.model.Money;
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Objects;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -18,32 +22,42 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author Александр
  */
 @Entity
+@NamedQueries({
+	@NamedQuery(name = "OrderInfo.findByExternalId",
+			query = "SELECT o FROM OrderInfo o WHERE o.externalId = :externalId"),
+	@NamedQuery(name = "OrderInfo.findActiveByUser",
+			query = "SELECT o FROM OrderInfo o WHERE o.status = com.qbit.exchanger.order.model.OrderStatus.ACTIVE"
+			+ " and o.userPublicKey = :userPublicKey")})
 @XmlRootElement
-public class OrderInfo implements Serializable {
-	
+public class OrderInfo implements Identifiable<String>, Serializable {
+
 	private static final long serialVersionUID = 1L;
-	
+
 	@Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private String id;
-	
+
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date creationDate;
-	
+
 	private String userPublicKey;
-	
+
 	@ManyToOne
 	private OrderBufferType sourceBufferType;
-	
+
 	@ManyToOne
 	private OrderBufferType targetBufferType;
-	
-	private BigDecimal amount;
-	
+
+	@Embedded
+	private Money amount;
+
+	private OrderStatus status;
+
 	private String externalId;
-	
+
 	private String additionalId;
-	
+
+	@Override
 	public String getId() {
 		return id;
 	}
@@ -84,12 +98,20 @@ public class OrderInfo implements Serializable {
 		this.targetBufferType = targetBufferType;
 	}
 
-	public BigDecimal getAmount() {
+	public Money getAmount() {
 		return amount;
 	}
 
-	public void setAmount(BigDecimal amount) {
+	public void setAmount(Money amount) {
 		this.amount = amount;
+	}
+
+	public OrderStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(OrderStatus status) {
+		this.status = status;
 	}
 
 	public String getExternalId() {
@@ -132,6 +154,6 @@ public class OrderInfo implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Order{" + "id=" + id + '}';
+		return "OrderInfo{" + "id=" + id + ", creationDate=" + creationDate + ", userPublicKey=" + userPublicKey + ", sourceBufferType=" + sourceBufferType + ", targetBufferType=" + targetBufferType + ", amount=" + amount + ", status=" + status + ", externalId=" + externalId + ", additionalId=" + additionalId + '}';
 	}
 }

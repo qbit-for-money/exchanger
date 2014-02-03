@@ -15,8 +15,8 @@ import javax.ws.rs.core.MediaType;
  *
  * @author Александр
  */
-@Path("user")
-public class UserResource {
+@Path("users")
+public class UsersResource {
 	
 	@Inject
 	private UserDAO userDAO;
@@ -28,7 +28,7 @@ public class UserResource {
     @Path("{publicKey}")
     @Produces(MediaType.APPLICATION_JSON)
 	public UserInfo get(@PathParam("publicKey") String publicKey) {
-		return userDAO.get(publicKey);
+		return userDAO.find(publicKey);
 	}
 
 	@POST
@@ -46,10 +46,10 @@ public class UserResource {
 		}
 		userInfo.setPublicKey(publicKey);
 		userDAO.edit(userInfo);
-		sendMailAboutRegistration(userInfo);
+		sendMailAboutUserProfileUpdate(userInfo);
 	}
 	
-	private void sendMailAboutRegistration(UserInfo userInfo) {
+	private void sendMailAboutUserProfileUpdate(UserInfo userInfo) {
 		if ((userInfo.getEmail() != null) && !userInfo.getEmail().isEmpty()) {
 			mailService.send(userInfo.getEmail(), "Welcome to Bitgates",
 					"Welcome to Bitgates\n\n"
