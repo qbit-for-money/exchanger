@@ -1,4 +1,4 @@
-package com.qbit.exchanger.services.yandex;
+package com.qbit.exchanger.money.yandex;
 
 import com.qbit.exchanger.services.core.OperationStatus;
 import com.qbit.exchanger.services.core.OperationResult;
@@ -30,7 +30,7 @@ public class YandexMoneyResource {
 	public OperationResult proceedPayment(@QueryParam("code") String tempCode, @QueryParam("error") String error) throws ProcessingException {
 		OperationResult result = new OperationResult(OperationStatus.IN_PROGRESS);
 		if (tempCode != null) {
-			result = yandexMoneyService.receiveMoney(tempCode, BigDecimal.valueOf(5));
+			result = yandexMoneyService.receiveMoneyOld(tempCode, BigDecimal.valueOf(5));
 		} else {
 			result.setStatus(OperationStatus.ERROR);
 			result.setText(error);
@@ -42,7 +42,7 @@ public class YandexMoneyResource {
 	@Path("send")
 	@Produces(MediaType.APPLICATION_JSON)
 	public OperationResult send() throws ProcessingException {
-		OperationResult result = yandexMoneyService.sendMoney("41001960727686", BigDecimal.valueOf(5));
+		OperationResult result = yandexMoneyService.sendMoneyOld("41001960727686", BigDecimal.valueOf(5));
 		return result;
 	}
 

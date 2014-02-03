@@ -1,8 +1,8 @@
 package com.qbit.exchanger;
 
 import com.qbit.exchanger.env.Env;
-import com.qbit.exchanger.services.yandex.YandexMoneyService;
 import com.qbit.exchanger.mail.MailService;
+import com.qbit.exchanger.money.yandex.YandexMoneyService;
 import com.qbit.exchanger.order.OrderDAO;
 import com.qbit.exchanger.order.OrderService;
 import com.qbit.exchanger.user.UserDAO;

@@ -1,5 +1,8 @@
 package com.qbit.exchanger.money.yandex;
 
+import com.qbit.exchanger.money.core.MoneyService;
+import com.qbit.exchanger.money.core.MoneyTransferCallback;
+import com.qbit.exchanger.money.core.Transfer;
 import com.qbit.exchanger.services.core.OperationStatus;
 import com.qbit.exchanger.services.core.OperationResult;
 import com.qbit.exchanger.services.core.ProcessingException;
@@ -9,8 +12,6 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import ru.yandex.money.api.YandexMoney;
 import ru.yandex.money.api.YandexMoneyImpl;
 import ru.yandex.money.api.enums.Destination;
@@ -26,7 +27,7 @@ import ru.yandex.money.api.rights.Payment;
 import ru.yandex.money.api.rights.PaymentP2P;
 import ru.yandex.money.api.rights.Permission;
 
-public class YandexMoneyService {
+public class YandexMoneyService implements MoneyService {
 
 	private static final String CLIENT_ID = "B83AF6B23CA9C5E0CA7AAFC2F1B98CDAEEAD59A49DED9A4BEE52B8F85A19D20B";
 	private static final String REDIRECT_URI = "https://localhost:8443/exchanger/webapi/yandex/receive";
@@ -52,7 +53,7 @@ public class YandexMoneyService {
 		return yandexMoney.authorizeUri(scope, REDIRECT_URI, mobile);
 	}
 
-	public OperationResult receiveMoney(String code, BigDecimal amount) throws ProcessingException {
+	public OperationResult receiveMoneyOld(String code, BigDecimal amount) throws ProcessingException {
 		OperationResult result = new OperationResult();
 		try {
 			String token = receiveToken(code);
@@ -74,7 +75,7 @@ public class YandexMoneyService {
 		return result;
 	}
 
-	public OperationResult sendMoney(String wallet, BigDecimal amount) throws ProcessingException {
+	public OperationResult sendMoneyOld(String wallet, BigDecimal amount) throws ProcessingException {
 		OperationResult result = new OperationResult();
 		try {
 			RequestPaymentResponse response = yandexMoney.requestPaymentP2PDue(STORE_TOKEN, wallet, IdentifierType.account, amount, OPERATION_DESCRIPTION, OPERATION_DESCRIPTION, null);
@@ -118,37 +119,24 @@ public class YandexMoneyService {
 		return token;
 	}
 
-	public OperationResult requestPayment(String token, String wallet, BigDecimal amount, String description) throws ProcessingException {
-		OperationResult result = new OperationResult();
+	public RequestPaymentResponse requestPayment(String token, String wallet, BigDecimal amount, String description) throws ProcessingException {
+		RequestPaymentResponse response = null;
 		try {
-			RequestPaymentResponse response = yandexMoney.requestPaymentP2PDue(token, wallet, IdentifierType.account, amount, description, description, null);
-			if (response != null && response.isSuccess()) {
-				result.setStatus(OperationStatus.SUCCESS);
-				result.setText(response.getRequestId());
-			} else {
-				result.setStatus(OperationStatus.ERROR);
-				result.setText(response != null ? response.getError().getCode() : "");
-			}
+			response = yandexMoney.requestPaymentP2PDue(token, wallet, IdentifierType.account, amount, description, description, null);
 		} catch (Exception e) {
 			throw new ProcessingException(e.getMessage());
 		}
-		return result;
+		return response;
 	}
 
-	public OperationResult processPayment(String token, String requestId) throws ProcessingException {
-		OperationResult result = new OperationResult();
+	public ProcessPaymentResponse processPayment(String token, String requestId) throws ProcessingException {
+		ProcessPaymentResponse response = null;
 		try {
-			ProcessPaymentResponse response = yandexMoney.processPaymentByWallet(token, requestId);
-			if (response != null && response.isSuccess()) {
-				result.setStatus(OperationStatus.SUCCESS);
-			} else {
-				result.setStatus(OperationStatus.ERROR);
-				result.setText(response != null ? response.getError().getCode() : "");
-			}
+			response = yandexMoney.processPaymentByWallet(token, requestId);
 		} catch (Exception e) {
 			throw new ProcessingException(e.getMessage());
 		}
-		return result;
+		return response;
 	}
 
 	/**
@@ -183,5 +171,25 @@ public class YandexMoneyService {
 		}
 		StringTokenizer tokenizer = new StringTokenizer(token, ".", false);
 		return tokenizer.nextToken();
+	}
+
+	@Override
+	public void receiveMoney(Transfer transfer, MoneyTransferCallback callback) {
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	@Override
+	public void sendMoney(Transfer transfer, MoneyTransferCallback callback) {
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	@Override
+	public void testSend(Transfer transfer, MoneyTransferCallback callback) {
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	@Override
+	public void testReceive(Transfer transfer, MoneyTransferCallback callback) {
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 }
