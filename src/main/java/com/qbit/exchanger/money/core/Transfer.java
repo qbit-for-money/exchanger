@@ -1,22 +1,24 @@
 package com.qbit.exchanger.money.core;
 
+import com.qbit.exchanger.common.model.Amount;
+import java.io.Serializable;
+
 /**
  * Transaction money bean
  *
  * @author Ivan_Rakitnyh
  */
-public class Transfer {
+public class Transfer implements Serializable {
 
     private String address;
-    private int coins;
-    private int cents;
+	
+    private Amount amount;
 
-    private Transfer() {}
+    public Transfer() {}
 
-	public Transfer(String address, int coins, int cents) {
+	public Transfer(String address, Amount amount) {
 		this.address = address;
-		this.coins = coins;
-		this.cents = cents;
+		this.amount = amount;
 	}
 
 	public String getAddress() {
@@ -27,19 +29,23 @@ public class Transfer {
         this.address = address;
     }
 
-    public int getCoins() {
-        return coins;
-    }
+	public Amount getAmount() {
+		return amount;
+	}
 
-    public void setCoins(int coins) {
-        this.coins = coins;
-    }
+	public void setAmount(Amount amount) {
+		this.amount = amount;
+	}
 
-    public int getCents() {
-        return cents;
-    }
+	public int getCoins() {
+		return amount.getCoins();
+	}
 
-    public void setCents(int cents) {
-        this.cents = cents;
-    }
+	public int getCents() {
+		return amount.getCents();
+	}
+	
+	public boolean isValid() {
+		return ((address != null) && (amount != null) && amount.isValid());
+	}
 }

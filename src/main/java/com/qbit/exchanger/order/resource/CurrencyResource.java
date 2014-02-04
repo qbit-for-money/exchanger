@@ -1,7 +1,7 @@
 package com.qbit.exchanger.order.resource;
 
-import com.qbit.exchanger.order.dao.OrderBufferTypeDAO;
-import com.qbit.exchanger.order.model.OrderBufferType;
+import com.qbit.exchanger.order.dao.CurrencyDAO;
+import com.qbit.exchanger.order.model.Currency;
 import java.util.List;
 import javax.inject.Inject;
 import javax.ws.rs.GET;
@@ -14,22 +14,22 @@ import javax.ws.rs.core.MediaType;
  *
  * @author Александр
  */
-@Path("orderBufferTypes")
-public class OrderBufferTypesResource {
+@Path("currency")
+public class CurrencyResource {
 	
 	@Inject
-	private OrderBufferTypeDAO orderBufferTypeDAO;
+	private CurrencyDAO currencyDAO;
 	
 	@GET
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
-	public OrderBufferType get(@PathParam("id") String id) {
-		return orderBufferTypeDAO.find(id);
+	public Currency get(@PathParam("id") String id) {
+		return currencyDAO.find(id);
 	}
 	
 	@GET
     @Produces(MediaType.APPLICATION_JSON)
-	public List<OrderBufferType> findAll() {
-		return orderBufferTypeDAO.findAll();
+	public List<Currency> findAll() {
+		return currencyDAO.findAll();
 	}
 }

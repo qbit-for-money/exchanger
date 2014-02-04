@@ -1,7 +1,7 @@
 package com.qbit.exchanger.order.model;
 
 import com.qbit.exchanger.common.model.Identifiable;
-import com.qbit.exchanger.common.model.Money;
+import com.qbit.exchanger.common.model.Amount;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
@@ -43,13 +43,13 @@ public class OrderInfo implements Identifiable<String>, Serializable {
 	private String userPublicKey;
 
 	@ManyToOne
-	private OrderBufferType sourceBufferType;
+	private Currency sourceCurrency;
 
 	@ManyToOne
-	private OrderBufferType targetBufferType;
+	private Currency targetCurrency;
 
 	@Embedded
-	private Money amount;
+	private Amount amount;
 
 	private OrderStatus status;
 
@@ -82,27 +82,27 @@ public class OrderInfo implements Identifiable<String>, Serializable {
 		this.userPublicKey = userPublicKey;
 	}
 
-	public OrderBufferType getSourceBufferType() {
-		return sourceBufferType;
+	public Currency getSourceCurrency() {
+		return sourceCurrency;
 	}
 
-	public void setSourceBufferType(OrderBufferType sourceBufferType) {
-		this.sourceBufferType = sourceBufferType;
+	public void setSourceCurrency(Currency sourceCurrency) {
+		this.sourceCurrency = sourceCurrency;
 	}
 
-	public OrderBufferType getTargetBufferType() {
-		return targetBufferType;
+	public Currency getTargetCurrency() {
+		return targetCurrency;
 	}
 
-	public void setTargetBufferType(OrderBufferType targetBufferType) {
-		this.targetBufferType = targetBufferType;
+	public void setTargetCurrency(Currency targetCurrency) {
+		this.targetCurrency = targetCurrency;
 	}
 
-	public Money getAmount() {
+	public Amount getAmount() {
 		return amount;
 	}
 
-	public void setAmount(Money amount) {
+	public void setAmount(Amount amount) {
 		this.amount = amount;
 	}
 
@@ -154,6 +154,6 @@ public class OrderInfo implements Identifiable<String>, Serializable {
 
 	@Override
 	public String toString() {
-		return "OrderInfo{" + "id=" + id + ", creationDate=" + creationDate + ", userPublicKey=" + userPublicKey + ", sourceBufferType=" + sourceBufferType + ", targetBufferType=" + targetBufferType + ", amount=" + amount + ", status=" + status + ", externalId=" + externalId + ", additionalId=" + additionalId + '}';
+		return "OrderInfo{" + "id=" + id + ", creationDate=" + creationDate + ", userPublicKey=" + userPublicKey + ", sourceCurrency=" + sourceCurrency + ", targetCurrency=" + targetCurrency + ", amount=" + amount + ", status=" + status + ", externalId=" + externalId + ", additionalId=" + additionalId + '}';
 	}
 }

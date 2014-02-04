@@ -1,8 +1,8 @@
 package com.qbit.exchanger.order.dao;
 
-import com.qbit.exchanger.common.model.Money;
+import com.qbit.exchanger.common.model.Amount;
 import com.qbit.exchanger.order.model.OrderStatus;
-import com.qbit.exchanger.order.model.OrderBufferType;
+import com.qbit.exchanger.order.model.Currency;
 import com.qbit.exchanger.order.model.OrderInfo;
 import com.qbit.exchanger.utils.DAOUtils;
 import java.util.Date;
@@ -56,14 +56,13 @@ public class OrderDAO {
 	}
 
 	public OrderInfo create(OrderInfo orderInfo) {
-		return create(orderInfo.getUserPublicKey(), orderInfo.getSourceBufferType(), orderInfo.getTargetBufferType(),
+		return create(orderInfo.getUserPublicKey(), orderInfo.getSourceCurrency(), orderInfo.getTargetCurrency(),
 				orderInfo.getAmount(), orderInfo.getExternalId(), orderInfo.getAdditionalId());
 	}
 
-	public OrderInfo create(String userPublicKey, OrderBufferType sourceBufferType,
-			OrderBufferType targetBufferType, Money amount,
-			String externalId, String additionalId) {
-		if ((userPublicKey == null) || (sourceBufferType == null) || (targetBufferType == null)
+	public OrderInfo create(String userPublicKey, Currency sourceCurrency, Currency targetCurrency,
+			Amount amount, String externalId, String additionalId) {
+		if ((userPublicKey == null) || (sourceCurrency == null) || (targetCurrency == null)
 				|| (amount == null)) {
 			return null;
 		}
@@ -73,8 +72,8 @@ public class OrderDAO {
 			OrderInfo order = new OrderInfo();
 			order.setCreationDate(new Date());
 			order.setUserPublicKey(userPublicKey);
-			order.setSourceBufferType(sourceBufferType);
-			order.setTargetBufferType(targetBufferType);
+			order.setSourceCurrency(sourceCurrency);
+			order.setTargetCurrency(targetCurrency);
 			order.setAmount(amount);
 			order.setStatus(OrderStatus.ACTIVE);
 			order.setExternalId(externalId);

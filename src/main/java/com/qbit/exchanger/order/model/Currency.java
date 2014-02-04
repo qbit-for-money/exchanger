@@ -1,8 +1,9 @@
 package com.qbit.exchanger.order.model;
 
-import com.qbit.exchanger.common.model.Money;
+import com.qbit.exchanger.common.model.Amount;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -15,7 +16,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @Entity
 @XmlRootElement
-public class OrderBufferType implements Serializable {
+public class Currency implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	@Id
@@ -23,11 +24,11 @@ public class OrderBufferType implements Serializable {
 	
 	@Embedded
 	@Column(name = "MIN_SIGNIFICANT_AMOUNT")
-	private Money minSignificantAmount = new Money(0, 1);
+	private Amount minSignificantAmount;
 	
 	@Embedded
 	@Column(name = "MAX_TRANSACTION_AMOUNT")
-	private Money maxTransactionAmount = Money.ZERO;
+	private Amount maxTransactionAmount;
 	
 	public String getId() {
 		return id;
@@ -37,37 +38,39 @@ public class OrderBufferType implements Serializable {
 		this.id = id;
 	}
 
-	public Money getMinSignificantAmount() {
+	public Amount getMinSignificantAmount() {
 		return minSignificantAmount;
 	}
 
-	public void setMinSignificantAmount(Money minSignificantAmount) {
+	public void setMinSignificantAmount(Amount minSignificantAmount) {
 		this.minSignificantAmount = minSignificantAmount;
 	}
 
-	public Money getMaxTransactionAmount() {
+	public Amount getMaxTransactionAmount() {
 		return maxTransactionAmount;
 	}
 
-	public void setMaxTransactionAmount(Money maxTransactionAmount) {
+	public void setMaxTransactionAmount(Amount maxTransactionAmount) {
 		this.maxTransactionAmount = maxTransactionAmount;
 	}
 
 	@Override
 	public int hashCode() {
-		int hash = 0;
-		hash += (id != null ? id.hashCode() : 0);
+		int hash = 3;
+		hash = 61 * hash + Objects.hashCode(this.id);
 		return hash;
 	}
 
 	@Override
-	public boolean equals(Object object) {
-		// TODO: Warning - this method won't work in the case the id fields are not set
-		if (!(object instanceof OrderBufferType)) {
+	public boolean equals(Object obj) {
+		if (obj == null) {
 			return false;
 		}
-		OrderBufferType other = (OrderBufferType) object;
-		if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		final Currency other = (Currency) obj;
+		if (!Objects.equals(this.id, other.id)) {
 			return false;
 		}
 		return true;
@@ -75,6 +78,6 @@ public class OrderBufferType implements Serializable {
 
 	@Override
 	public String toString() {
-		return "OrderBufferType{" + "id=" + id + ", minSignificantAmount=" + minSignificantAmount + ", maxTransactionAmount=" + maxTransactionAmount + '}';
+		return "Currency{" + "id=" + id + ", minSignificantAmount=" + minSignificantAmount + ", maxTransactionAmount=" + maxTransactionAmount + '}';
 	}
 }

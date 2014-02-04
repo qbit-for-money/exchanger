@@ -8,5 +8,6 @@ package com.qbit.exchanger.money.core;
 public interface MoneyTransferCallback {
 
 	void success();
+
 	void error(String msg);
 }

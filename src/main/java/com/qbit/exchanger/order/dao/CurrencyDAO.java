@@ -1,6 +1,6 @@
 package com.qbit.exchanger.order.dao;
 
-import com.qbit.exchanger.order.model.OrderBufferType;
+import com.qbit.exchanger.order.model.Currency;
 import com.qbit.exchanger.utils.DAOUtils;
 import java.util.List;
 import javax.inject.Inject;
@@ -13,26 +13,26 @@ import javax.persistence.EntityManagerFactory;
  * @author Александр
  */
 @Singleton
-public class OrderBufferTypeDAO {
+public class CurrencyDAO {
 
 	@Inject
 	private EntityManagerFactory entityManagerFactory;
-	
-	public OrderBufferType find(String id) {
+
+	public Currency find(String id) {
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 		try {
 			return DAOUtils.find(entityManagerFactory.createEntityManager(),
-					OrderBufferType.class, id, null);
+					Currency.class, id, null);
 		} finally {
 			entityManager.close();
 		}
 	}
-	
-	public List<OrderBufferType> findAll() {
+
+	public List<Currency> findAll() {
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 		try {
 			return DAOUtils.findAll(entityManagerFactory.createEntityManager(),
-					OrderBufferType.class);
+					Currency.class);
 		} finally {
 			entityManager.close();
 		}

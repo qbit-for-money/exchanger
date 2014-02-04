@@ -8,15 +8,12 @@ import com.google.bitcoin.params.MainNetParams;
 import com.google.bitcoin.params.TestNet3Params;
 import com.google.bitcoin.script.Script;
 import com.google.bitcoin.utils.BriefLogFormatter;
-import com.google.common.util.concurrent.ForwardingService;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.qbit.exchanger.money.core.MoneyTransferCallback;
 import com.qbit.exchanger.money.core.Transfer;
 import com.qbit.exchanger.money.core.MoneyService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.math.BigInteger;
@@ -24,6 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.google.bitcoin.core.Utils.bytesToHexString;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * BITCOIN
@@ -31,8 +30,8 @@ import static com.google.bitcoin.core.Utils.bytesToHexString;
  * @author Ivan_Rakitnyh
  */
 public class Bitcoin implements MoneyService {
-
-	private static Logger logger = LoggerFactory.getLogger(ForwardingService.class);
+	
+	private static final Logger logger = Logger.getLogger(Bitcoin.class.getName());
 
 	private static final String WALLET_PATH = "./src/main/resources/bitcoin";
 
@@ -46,7 +45,7 @@ public class Bitcoin implements MoneyService {
 
 	private void init(boolean testnet) {
 		BriefLogFormatter.init();
-		if(testnet) {
+		if (testnet) {
 			parameters = TestNet3Params.get();
 		} else {
 			parameters = MainNetParams.get();
@@ -58,7 +57,7 @@ public class Bitcoin implements MoneyService {
 	}
 
 	@Override
-	public void receiveMoney(Transfer transfer, MoneyTransferCallback callback){
+	public void receiveMoney(Transfer transfer, MoneyTransferCallback callback) {
 		AbstractWalletEventListener listener = new AbstractWalletEventListener() {
 			@Override
 			public void onCoinsReceived(Wallet w, Transaction tx, BigInteger prevBalance, BigInteger newBalance) {
@@ -76,8 +75,8 @@ public class Bitcoin implements MoneyService {
 						} else {
 							System.out.println(scriptPubKey);
 						}
-					} catch (ScriptException e) {
-						e.printStackTrace();
+					} catch (ScriptException ex) {
+						logger.severe(ex.getMessage());
 					}
 				}
 //				if (thisAddress == transferToRecive.getAddress()) {
@@ -88,7 +87,7 @@ public class Bitcoin implements MoneyService {
 //					}
 //				}
 
-				logger.info("Received tx for " + Utils.bitcoinValueToFriendlyString(receivedValue) + ": " + tx);
+				logger.log(Level.INFO, "Received tx for {0}: {1}", new Object[]{Utils.bitcoinValueToFriendlyString(receivedValue), tx});
 				logger.info("Transaction will be forwarded after it confirms.");
 
 				Futures.addCallback(tx.getConfidence().getDepthFuture(1), new FutureCallback<Transaction>() {
@@ -108,8 +107,8 @@ public class Bitcoin implements MoneyService {
 	}
 
 	@Override
-	public void sendMoney(Transfer transfer, MoneyTransferCallback callback){
-		if(transfer.getAddress() == null || transfer.getCoins() < 0 || transfer.getCents() < 0) {
+	public void sendMoney(Transfer transfer, MoneyTransferCallback callback) {
+		if ((transfer == null) || !transfer.isValid()) {
 			callback.error("Empty address or wrong money value");
 		}
 		try {
@@ -117,7 +116,7 @@ public class Bitcoin implements MoneyService {
 
 			BigInteger value = Utils.toNanoCoins(transfer.getCoins(), transfer.getCents());
 
-			logger.info("Forwarding " + Utils.bitcoinValueToFriendlyString(value) + " BTC");
+			logger.log(Level.INFO, "Forwarding {0} BTC", Utils.bitcoinValueToFriendlyString(value));
 
 			final BigInteger amountToSend = value.subtract(Transaction.REFERENCE_DEFAULT_MIN_TX_FEE);
 			final Wallet.SendResult sendResult = kit.wallet().sendCoins(kit.peerGroup(), forwardingAddress, amountToSend);
@@ -130,27 +129,27 @@ public class Bitcoin implements MoneyService {
 
 			// A future that will complete once the transaction message has been successfully
 			sendResult.broadcastComplete.addListener(new Runnable() {
+				
 				@Override
 				public void run() {
-					logger.info("Sent coins onwards! Transaction hash is " + sendResult.tx.getHashAsString());
+					logger.log(Level.INFO, "Sent coins onwards! Transaction hash is {0}", sendResult.tx.getHashAsString());
 				}
 			}, MoreExecutors.sameThreadExecutor());
 
 		} catch (KeyCrypterException e) {
 			throw new RuntimeException(e);
-
-		}  catch (AddressFormatException e) {
-			e.printStackTrace();
+		} catch (AddressFormatException ex) {
+			logger.severe(ex.getMessage());
 		}
 	}
 
 	@Override
-	public void testSend(Transfer transfer, MoneyTransferCallback callback){
+	public void testSend(Transfer transfer, MoneyTransferCallback callback) {
 
 	}
 
 	@Override
-	public void testReceive(Transfer transfer, MoneyTransferCallback callback){
+	public void testReceive(Transfer transfer, MoneyTransferCallback callback) {
 
 	}
 
@@ -163,8 +162,8 @@ public class Bitcoin implements MoneyService {
 
 	public List<String> getWalletAddress() {
 		List<ECKey> keys = getWallet().getKeys();
-		List<String> result = new ArrayList<String>(keys.size());
-		for(ECKey key : keys) {
+		List<String> result = new ArrayList<>(keys.size());
+		for (ECKey key : keys) {
 			Address address = key.toAddress(parameters);
 			result.add(address.toString());
 		}
@@ -177,6 +176,6 @@ public class Bitcoin implements MoneyService {
 	}
 
 	private Wallet getWallet() {
-		return  kit.wallet();
+		return kit.wallet();
 	}
 }
