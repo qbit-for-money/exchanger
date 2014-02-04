@@ -1,7 +1,10 @@
-package com.qbit.exchanger.order;
+package com.qbit.exchanger.order.model;
 
+import com.qbit.exchanger.common.model.Money;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -18,9 +21,13 @@ public class OrderBufferType implements Serializable {
 	@Id
 	private String id;
 	
-	private BigDecimal minSignificantAmount = new BigDecimal("0.01");
+	@Embedded
+	@Column(name = "MIN_SIGNIFICANT_AMOUNT")
+	private Money minSignificantAmount = new Money(0, 1);
 	
-	private BigDecimal maxTransactionAmount = BigDecimal.ZERO;
+	@Embedded
+	@Column(name = "MAX_TRANSACTION_AMOUNT")
+	private Money maxTransactionAmount = Money.ZERO;
 	
 	public String getId() {
 		return id;
@@ -30,19 +37,19 @@ public class OrderBufferType implements Serializable {
 		this.id = id;
 	}
 
-	public BigDecimal getMinSignificantAmount() {
+	public Money getMinSignificantAmount() {
 		return minSignificantAmount;
 	}
 
-	public void setMinSignificantAmount(BigDecimal minSignificantAmount) {
+	public void setMinSignificantAmount(Money minSignificantAmount) {
 		this.minSignificantAmount = minSignificantAmount;
 	}
 
-	public BigDecimal getMaxTransactionAmount() {
+	public Money getMaxTransactionAmount() {
 		return maxTransactionAmount;
 	}
 
-	public void setMaxTransactionAmount(BigDecimal maxTransactionAmount) {
+	public void setMaxTransactionAmount(Money maxTransactionAmount) {
 		this.maxTransactionAmount = maxTransactionAmount;
 	}
 
@@ -68,7 +75,6 @@ public class OrderBufferType implements Serializable {
 
 	@Override
 	public String toString() {
-		return "com.qbit.exchanger.order.BufferType[ id=" + id + " ]";
+		return "OrderBufferType{" + "id=" + id + ", minSignificantAmount=" + minSignificantAmount + ", maxTransactionAmount=" + maxTransactionAmount + '}';
 	}
-	
 }

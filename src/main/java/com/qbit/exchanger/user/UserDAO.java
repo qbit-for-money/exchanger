@@ -18,10 +18,10 @@ public class UserDAO {
 	@Inject
 	private EntityManagerFactory entityManagerFactory;
 
-	public UserInfo get(String publicKey) {
+	public UserInfo find(String publicKey) {
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 		try {
-			return DAOUtils.get(entityManagerFactory.createEntityManager(),
+			return DAOUtils.find(entityManagerFactory.createEntityManager(),
 					UserInfo.class, publicKey, UserInfo.EMPTY);
 		} finally {
 			entityManager.close();
@@ -37,6 +37,7 @@ public class UserDAO {
 			user.setRegistrationDate(new Date());
 			entityManager.persist(user);
 			entityManager.getTransaction().commit();
+			entityManager.detach(user);
 			return user;
 		} finally {
 			entityManager.close();
@@ -52,6 +53,7 @@ public class UserDAO {
 			entityManager.getTransaction().begin();
 			user = entityManager.merge(user);
 			entityManager.getTransaction().commit();
+			entityManager.detach(user);
 			return user;
 		} finally {
 			entityManager.close();

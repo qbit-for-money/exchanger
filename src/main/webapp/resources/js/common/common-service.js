@@ -30,20 +30,20 @@ commonModule.factory("envResource", function($resource) {
 	return $resource(window.context + "webapi/env");
 });
 
-commonModule.factory("userResource", function($resource) {
-	return $resource(window.context + "webapi/user/:publicKey", {publicKey: ""}, {
+commonModule.factory("usersResource", function($resource) {
+	return $resource(window.context + "webapi/users/:publicKey", {publicKey: ""}, {
 			create: {method: "POST"},
 			edit: {method: "PUT"}
 		});
 });
 
-commonModule.factory("userService", function(localStorage, userResource) {
+commonModule.factory("usersService", function(localStorage, usersResource) {
 	function get() {
 		var publicKey = localStorage.getItem("publicKey");
-		return userResource.get({publicKey: publicKey});
+		return usersResource.get({publicKey: publicKey});
 	}
 	function change(publicKey) {
-		var user = userResource.get({publicKey: publicKey}, function() {
+		var user = usersResource.get({publicKey: publicKey}, function() {
 				if (publicKey === user.publicKey) {
 					localStorage.setItem("publicKey", user.publicKey);
 				}
@@ -51,7 +51,7 @@ commonModule.factory("userService", function(localStorage, userResource) {
 		return user;
 	}
 	function create() {
-		var user = userResource.create({}, function() {
+		var user = usersResource.create({}, function() {
 				localStorage.setItem("publicKey", user.publicKey);
 			});
 		return user;

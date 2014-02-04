@@ -1,5 +1,6 @@
 package com.qbit.exchanger.user;
 
+import com.qbit.exchanger.common.model.Identifiable;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
@@ -15,7 +16,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @Entity
 @XmlRootElement
-public class UserInfo implements Serializable {
+public class UserInfo implements Identifiable<String>, Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -30,6 +31,11 @@ public class UserInfo implements Serializable {
 	private String name;
 	
 	private String email;
+	
+	@Override
+	public String getId() {
+		return publicKey;
+	}
 
 	public String getPublicKey() {
 		return publicKey;
