@@ -2,7 +2,6 @@ package com.qbit.exchanger;
 
 import com.qbit.exchanger.env.Env;
 import com.qbit.exchanger.mail.MailService;
-import com.qbit.exchanger.money.yandex.YandexMoneyService;
 import com.qbit.exchanger.order.dao.OrderBufferTypeDAO;
 import com.qbit.exchanger.order.dao.OrderDAO;
 import com.qbit.exchanger.user.UserDAO;
@@ -26,7 +25,6 @@ public class ExchangerApp extends Application {
 		DynamicConfiguration configuration = getConfiguration(serviceLocator);
 
 		addBinding(newBinder(Env.class).to(Env.class).in(Singleton.class), configuration);
-		addBinding(newBinder(YandexMoneyService.class).to(YandexMoneyService.class), configuration);
 		addBinding(newBinder(MailService.class).to(MailService.class).in(Singleton.class), configuration);
 		addBinding(newBinder(Persistence.createEntityManagerFactory("exchangerPU"))
 				.to(EntityManagerFactory.class), configuration);
