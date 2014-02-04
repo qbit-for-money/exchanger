@@ -25,14 +25,14 @@ public class ExchangerApp extends Application {
 		DynamicConfiguration configuration = getConfiguration(serviceLocator);
 
 		addBinding(newBinder(Env.class).to(Env.class).in(Singleton.class), configuration);
-		
+
 		addBinding(newBinder(MailService.class).to(MailService.class).in(Singleton.class), configuration);
-		
+
 		addBinding(newBinder(Persistence.createEntityManagerFactory("exchangerPU"))
 				.to(EntityManagerFactory.class), configuration);
-		
+
 		addBinding(newBinder(UserDAO.class).to(UserDAO.class).in(Singleton.class), configuration);
-		
+
 		addBinding(newBinder(CurrencyDAO.class).to(CurrencyDAO.class).in(Singleton.class), configuration);
 		addBinding(newBinder(OrderDAO.class).to(OrderDAO.class).in(Singleton.class), configuration);
 
