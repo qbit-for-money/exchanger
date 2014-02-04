@@ -10,11 +10,12 @@ import java.io.Serializable;
  */
 public class Transfer implements Serializable {
 
-    private String address;
-	
-    private Amount amount;
+	private String address;
 
-    public Transfer() {}
+	private Amount amount;
+
+	public Transfer() {
+	}
 
 	public Transfer(String address, Amount amount) {
 		this.address = address;
@@ -22,12 +23,12 @@ public class Transfer implements Serializable {
 	}
 
 	public String getAddress() {
-        return address;
-    }
+		return address;
+	}
 
-    public void setAddress(String address) {
-        this.address = address;
-    }
+	public void setAddress(String address) {
+		this.address = address;
+	}
 
 	public Amount getAmount() {
 		return amount;
@@ -44,7 +45,7 @@ public class Transfer implements Serializable {
 	public int getCents() {
 		return amount.getCents();
 	}
-	
+
 	public boolean isValid() {
 		return ((address != null) && (amount != null) && amount.isValid());
 	}

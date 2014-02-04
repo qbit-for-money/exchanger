@@ -30,7 +30,7 @@ import java.util.logging.Logger;
  * @author Ivan_Rakitnyh
  */
 public class Bitcoin implements MoneyService {
-	
+
 	private static final Logger logger = Logger.getLogger(Bitcoin.class.getName());
 
 	private static final String WALLET_PATH = "./src/main/resources/bitcoin";
@@ -129,7 +129,7 @@ public class Bitcoin implements MoneyService {
 
 			// A future that will complete once the transaction message has been successfully
 			sendResult.broadcastComplete.addListener(new Runnable() {
-				
+
 				@Override
 				public void run() {
 					logger.log(Level.INFO, "Sent coins onwards! Transaction hash is {0}", sendResult.tx.getHashAsString());

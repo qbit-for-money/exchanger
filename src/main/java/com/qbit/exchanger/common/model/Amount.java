@@ -10,24 +10,24 @@ import javax.persistence.Embeddable;
  */
 @Embeddable
 public class Amount implements Serializable {
-	
+
 	public static int CENTS_IN_COIN = 1000 * 1000 * 1000;
-	
+
 	public static Amount ZERO = new Amount(0, 0);
-	
+
 	public static Amount ONE = new Amount(1, 0);
 
 	private int coins, cents;
-	
+
 	private int centsInCoin;
 
 	public Amount() {
 	}
-	
+
 	public Amount(int coins, int cents) {
 		this(coins, cents, CENTS_IN_COIN);
 	}
-	
+
 	public Amount(int coins, int cents, int centsInCoin) {
 		this.coins = coins;
 		this.cents = (int) (CENTS_IN_COIN * (long) cents / centsInCoin);
@@ -49,7 +49,15 @@ public class Amount implements Serializable {
 	public void setCents(int cents) {
 		this.cents = cents;
 	}
-	
+
+	public int getCentsInCoin() {
+		return centsInCoin;
+	}
+
+	public void setCentsInCoin(int centsInCoin) {
+		this.centsInCoin = centsInCoin;
+	}
+
 	public boolean isValid() {
 		return (coins >= 0) && (cents >= 0);
 	}

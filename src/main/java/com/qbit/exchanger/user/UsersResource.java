@@ -50,12 +50,12 @@ public class UsersResource {
 	}
 	
 	private void sendMailAboutUserProfileUpdate(UserInfo userInfo) {
-		if ((userInfo.getEmail() != null) && !userInfo.getEmail().isEmpty()) {
-			mailService.send(userInfo.getEmail(), "Welcome to Bitgates",
-					"Welcome to Bitgates\n\n"
-					+ "Hello, " + userInfo.getEmail() + ".\n"
-					+ "Your public key: " + userInfo.getPublicKey() + "\n\n"
-					+ "http://bitgates.com/");
-		}
+//		if ((userInfo.getEmail() != null) && !userInfo.getEmail().isEmpty()) {
+//			mailService.send(userInfo.getEmail(), "Welcome to Bitgates",
+//					"Welcome to Bitgates\n\n"
+//					+ "Hello, " + userInfo.getEmail() + ".\n"
+//					+ "Your public key: " + userInfo.getPublicKey() + "\n\n"
+//					+ "http://bitgates.com/");
+//		}
 	}
 }

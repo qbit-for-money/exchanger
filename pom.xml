@@ -66,6 +66,23 @@
 			<artifactId>yamolib</artifactId>
 			<version>${yandex.version}</version>
 		</dependency>
+                <dependency>
+                    <groupId>org.apache.httpcomponents</groupId>
+                    <artifactId>httpclient</artifactId>
+                    <version>4.1.2</version>
+                    <scope>compile</scope>
+                </dependency>
+                <dependency>
+                    <groupId>com.google.code.gson</groupId>
+                    <artifactId>gson</artifactId>
+                    <version>2.0</version>
+                    <scope>compile</scope>
+                </dependency>
+                <dependency>
+                    <groupId>commons-codec</groupId>
+                    <artifactId>commons-codec</artifactId>
+                    <version>1.8</version>
+                </dependency>
 
 		 <dependency>
 			<groupId>com.google</groupId>
@@ -87,20 +104,18 @@
 			<groupId>org.eclipse.persistence</groupId>
 			<artifactId>org.eclipse.persistence.jpa.modelgen.processor</artifactId>
 			<version>${eclipselink.version}</version>
-			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>commons-email</groupId>
 			<artifactId>commons-email</artifactId>
 			<version>1.1</version>
-			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 	
 	<properties>
 		<jersey.version>2.5.1</jersey.version>
-		<yandex.version>1.2.3-SNAPSHOT</yandex.version>
+		<yandex.version>1.2.4-SNAPSHOT</yandex.version>
 		<bitcoinj-version>0.10.3</bitcoinj-version>
 		<eclipselink.version>2.5.0</eclipselink.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
