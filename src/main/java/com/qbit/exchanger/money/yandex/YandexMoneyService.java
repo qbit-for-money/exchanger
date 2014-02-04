@@ -182,11 +182,34 @@ public class YandexMoneyService implements MoneyService {
 
 	@Override
 	public void testSend(Transfer transfer, MoneyTransferCallback callback) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		if ((transfer != null) && transfer.isValid()) {
+//			String address = parseToken(transfer.getAddress());
+			try {
+				RequestPaymentResponse response = requestPayment(STORE_TOKEN, transfer.getAddress(), transfer.getAmount().toBigDecimal(), OPERATION_DESCRIPTION);
+				if ((response != null) && response.isSuccess()) {
+					callback.success();
+				} else {
+					callback.error(response != null ? response.getError().getCode() : null);
+				}
+			} catch (Exception e) {
+				callback.error(e.getMessage());
+			}
+		}
 	}
 
 	@Override
 	public void testReceive(Transfer transfer, MoneyTransferCallback callback) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		if ((transfer != null) && transfer.isValid()) {
+			try {
+				RequestPaymentResponse response = requestPayment(transfer.getAddress(), STORE_WALLET, transfer.getAmount().toBigDecimal(), OPERATION_DESCRIPTION);
+				if ((response != null) && response.isSuccess()) {
+					callback.success();
+				} else {
+					callback.error(response != null ? response.getError().getCode() : null);
+				}
+			} catch (Exception e) {
+				callback.error(e.getMessage());
+			}
+		}
 	}
 }
