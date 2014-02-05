@@ -50,7 +50,7 @@ public class OrderInfo implements Identifiable<String>, Serializable {
 		@AttributeOverride(name = "currency", column = @Column(name = "IN_TRR_CUR")),
 		@AttributeOverride(name = "address", column = @Column(name = "IN_TRR_ADDR")),
 		@AttributeOverride(name = "amount.coins", column = @Column(name = "IN_TRR_COINS")),
-		@AttributeOverride(name = "amount.cents", column = @Column(name = "IN_TRRC_CENTS")),
+		@AttributeOverride(name = "amount.cents", column = @Column(name = "IN_TRR_CENTS")),
 		@AttributeOverride(name = "amount.centsInCoin", column = @Column(name = "IN_TRR_CENTS_IN_COIN")),
 	})
 	private Transfer inTransfer;
