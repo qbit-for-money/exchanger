@@ -1,4 +1,4 @@
-package com.qbit.exchanger.common.model;
+package com.qbit.exchanger.money.model;
 
 import java.io.Serializable;
 import java.math.BigDecimal;

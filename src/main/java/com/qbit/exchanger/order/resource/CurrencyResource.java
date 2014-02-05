@@ -1,9 +1,6 @@
 package com.qbit.exchanger.order.resource;
 
-import com.qbit.exchanger.order.dao.CurrencyDAO;
-import com.qbit.exchanger.order.model.Currency;
-import java.util.List;
-import javax.inject.Inject;
+import com.qbit.exchanger.money.model.Currency;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -17,19 +14,16 @@ import javax.ws.rs.core.MediaType;
 @Path("currency")
 public class CurrencyResource {
 	
-	@Inject
-	private CurrencyDAO currencyDAO;
-	
 	@GET
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
 	public Currency get(@PathParam("id") String id) {
-		return currencyDAO.find(id);
+		return Currency.valueOf(id);
 	}
 	
 	@GET
     @Produces(MediaType.APPLICATION_JSON)
-	public List<Currency> findAll() {
-		return currencyDAO.findAll();
+	public Currency[] findAll() {
+		return Currency.values();
 	}
 }

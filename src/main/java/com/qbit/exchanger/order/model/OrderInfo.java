@@ -1,16 +1,18 @@
 package com.qbit.exchanger.order.model;
 
 import com.qbit.exchanger.common.model.Identifiable;
-import com.qbit.exchanger.common.model.Amount;
+import com.qbit.exchanger.money.model.Transfer;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
+import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Temporal;
@@ -24,7 +26,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Entity
 @NamedQueries({
 	@NamedQuery(name = "OrderInfo.findByExternalId",
-			query = "SELECT o FROM OrderInfo o WHERE o.externalId = :externalId"),
+			query = "SELECT o FROM OrderInfo o WHERE o.externalId = :externalId and o.userPublicKey = :userPublicKey"),
 	@NamedQuery(name = "OrderInfo.findActiveByUser",
 			query = "SELECT o FROM OrderInfo o WHERE o.status = com.qbit.exchanger.order.model.OrderStatus.ACTIVE"
 			+ " and o.userPublicKey = :userPublicKey")})
@@ -42,14 +44,27 @@ public class OrderInfo implements Identifiable<String>, Serializable {
 
 	private String userPublicKey;
 
-	@ManyToOne
-	private Currency sourceCurrency;
-
-	@ManyToOne
-	private Currency targetCurrency;
+	@Embedded
+	@AttributeOverrides({
+		@AttributeOverride(name = "type", column = @Column(name = "IN_TRR_TYPE")),
+		@AttributeOverride(name = "currency", column = @Column(name = "IN_TRR_CUR")),
+		@AttributeOverride(name = "address", column = @Column(name = "IN_TRR_ADDR")),
+		@AttributeOverride(name = "amount.coins", column = @Column(name = "IN_TRR_COINS")),
+		@AttributeOverride(name = "amount.cents", column = @Column(name = "IN_TRRC_CENTS")),
+		@AttributeOverride(name = "amount.centsInCoin", column = @Column(name = "IN_TRR_CENTS_IN_COIN")),
+	})
+	private Transfer inTransfer;
 
 	@Embedded
-	private Amount amount;
+	@AttributeOverrides({
+		@AttributeOverride(name = "type", column = @Column(name = "OUT_TRR_TYPE")),
+		@AttributeOverride(name = "currency", column = @Column(name = "OUT_TRR_CUR")),
+		@AttributeOverride(name = "address", column = @Column(name = "OUT_TRR_ADDR")),
+		@AttributeOverride(name = "amount.coins", column = @Column(name = "OUT_TRR_COINS")),
+		@AttributeOverride(name = "amount.cents", column = @Column(name = "OUT_TRR_CENTS")),
+		@AttributeOverride(name = "amount.centsInCoin", column = @Column(name = "OUT_TRR_CENTS_IN_COIN")),
+	})
+	private Transfer outTransfer;
 
 	private OrderStatus status;
 
@@ -82,28 +97,20 @@ public class OrderInfo implements Identifiable<String>, Serializable {
 		this.userPublicKey = userPublicKey;
 	}
 
-	public Currency getSourceCurrency() {
-		return sourceCurrency;
+	public Transfer getInTransfer() {
+		return inTransfer;
 	}
 
-	public void setSourceCurrency(Currency sourceCurrency) {
-		this.sourceCurrency = sourceCurrency;
+	public void setInTransfer(Transfer inTransfer) {
+		this.inTransfer = inTransfer;
 	}
 
-	public Currency getTargetCurrency() {
-		return targetCurrency;
+	public Transfer getOutTransfer() {
+		return outTransfer;
 	}
 
-	public void setTargetCurrency(Currency targetCurrency) {
-		this.targetCurrency = targetCurrency;
-	}
-
-	public Amount getAmount() {
-		return amount;
-	}
-
-	public void setAmount(Amount amount) {
-		this.amount = amount;
+	public void setOutTransfer(Transfer outTransfer) {
+		this.outTransfer = outTransfer;
 	}
 
 	public OrderStatus getStatus() {
@@ -154,6 +161,6 @@ public class OrderInfo implements Identifiable<String>, Serializable {
 
 	@Override
 	public String toString() {
-		return "OrderInfo{" + "id=" + id + ", creationDate=" + creationDate + ", userPublicKey=" + userPublicKey + ", sourceCurrency=" + sourceCurrency + ", targetCurrency=" + targetCurrency + ", amount=" + amount + ", status=" + status + ", externalId=" + externalId + ", additionalId=" + additionalId + '}';
+		return "OrderInfo{" + "id=" + id + ", creationDate=" + creationDate + ", userPublicKey=" + userPublicKey + ", inTransfer=" + inTransfer + ", outTransfer=" + outTransfer + ", status=" + status + ", externalId=" + externalId + ", additionalId=" + additionalId + '}';
 	}
 }

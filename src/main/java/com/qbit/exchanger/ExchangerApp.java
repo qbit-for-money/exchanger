@@ -2,7 +2,6 @@ package com.qbit.exchanger;
 
 import com.qbit.exchanger.env.Env;
 import com.qbit.exchanger.mail.MailService;
-import com.qbit.exchanger.order.dao.CurrencyDAO;
 import com.qbit.exchanger.order.dao.OrderDAO;
 import com.qbit.exchanger.user.UserDAO;
 import javax.inject.Inject;
@@ -33,7 +32,6 @@ public class ExchangerApp extends Application {
 
 		addBinding(newBinder(UserDAO.class).to(UserDAO.class).in(Singleton.class), configuration);
 
-		addBinding(newBinder(CurrencyDAO.class).to(CurrencyDAO.class).in(Singleton.class), configuration);
 		addBinding(newBinder(OrderDAO.class).to(OrderDAO.class).in(Singleton.class), configuration);
 
 		// commits changes

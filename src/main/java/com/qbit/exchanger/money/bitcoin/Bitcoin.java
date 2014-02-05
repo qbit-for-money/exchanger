@@ -12,7 +12,6 @@ import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.qbit.exchanger.money.core.MoneyTransferCallback;
-import com.qbit.exchanger.money.core.Transfer;
 import com.qbit.exchanger.money.core.MoneyService;
 
 import java.io.File;
@@ -21,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.google.bitcoin.core.Utils.bytesToHexString;
+import com.qbit.exchanger.money.model.Transfer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -55,8 +55,19 @@ public class Bitcoin implements MoneyService {
 		// AbstractWalletEventListener listener = getPaymentListener();
 		//getWallet().addEventListener(listener);
 	}
-
+	
 	@Override
+	public void process(Transfer transfer, MoneyTransferCallback callback) {
+		switch (transfer.getType()) {
+			case IN:
+				receiveMoney(transfer, callback);
+				break;
+			case OUT:
+				sendMoney(transfer, callback);
+				break;
+		}
+	}
+
 	public void receiveMoney(Transfer transfer, MoneyTransferCallback callback) {
 		AbstractWalletEventListener listener = new AbstractWalletEventListener() {
 			@Override
@@ -106,7 +117,6 @@ public class Bitcoin implements MoneyService {
 		getWallet().addEventListener(listener);
 	}
 
-	@Override
 	public void sendMoney(Transfer transfer, MoneyTransferCallback callback) {
 		if ((transfer == null) || !transfer.isValid()) {
 			callback.error("Empty address or wrong money value");
@@ -144,13 +154,8 @@ public class Bitcoin implements MoneyService {
 	}
 
 	@Override
-	public void testSend(Transfer transfer, MoneyTransferCallback callback) {
-
-	}
-
-	@Override
-	public void testReceive(Transfer transfer, MoneyTransferCallback callback) {
-
+	public void test(Transfer transfer, MoneyTransferCallback callback) {
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
 	public String getNewAddress() {

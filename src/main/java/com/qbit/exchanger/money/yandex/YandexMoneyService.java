@@ -2,7 +2,7 @@ package com.qbit.exchanger.money.yandex;
 
 import com.qbit.exchanger.money.core.MoneyService;
 import com.qbit.exchanger.money.core.MoneyTransferCallback;
-import com.qbit.exchanger.money.core.Transfer;
+import com.qbit.exchanger.money.model.Transfer;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Collections;
@@ -34,7 +34,7 @@ public class YandexMoneyService implements MoneyService {
 			+ "6D5955FCDDB2DA609F6B7986E09EDFDFA580C5F543F4EA2091093BE448338B4D5E93D58D3F484BB804342607C48D1B7C5DF9AF1A86B271C6";
 	private static final String OPERATION_DESCRIPTION = "test";
 
-	private YandexMoney yandexMoney;
+	private final YandexMoney yandexMoney;
 
 	public YandexMoneyService() {
 		yandexMoney = new YandexMoneyImpl(CLIENT_ID);
@@ -171,22 +171,12 @@ public class YandexMoneyService implements MoneyService {
 	}
 
 	@Override
-	public void receiveMoney(Transfer transfer, MoneyTransferCallback callback) {
+	public void process(Transfer transfer, MoneyTransferCallback callback) {
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
 	@Override
-	public void sendMoney(Transfer transfer, MoneyTransferCallback callback) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
-
-	@Override
-	public void testSend(Transfer transfer, MoneyTransferCallback callback) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
-
-	@Override
-	public void testReceive(Transfer transfer, MoneyTransferCallback callback) {
+	public void test(Transfer transfer, MoneyTransferCallback callback) {
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 }
