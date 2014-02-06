@@ -5,13 +5,16 @@
 
 <link rel="stylesheet" type="text/css" href="${context}resources/lib/bootstrap/core/css/bootstrap.min.css">
 <link rel="stylesheet" type="text/css" href="${context}resources/css/common.css">
+<link rel="stylesheet" type="text/css" href="${context}resources/css/main-menu.css">
+<link rel="stylesheet" type="text/css" href="${context}resources/lib/angular/angular-carousel.min.css">
 
 <script type="text/javascript" src="${context}resources/lib/jquery/jquery-2.1.0.min.js"></script>
 <script type="text/javascript" src="${context}resources/lib/angular/angular.min.js"></script>
 <script type="text/javascript" src="${context}resources/lib/angular/angular-route.min.js"></script>
 <script type="text/javascript" src="${context}resources/lib/angular/angular-resource.min.js"></script>
 <script type="text/javascript" src="${context}resources/lib/bootstrap/core/js/ui-bootstrap-tpls-0.10.0.min.js"></script>
-
+<script type="text/javascript" src="${context}resources/lib/angular/angular-carousel.min.js"></script>
+<script type="text/javascript" src="${context}resources/lib/angular/angular-touch.min.js"></script>
 <script type="text/javascript">
 	// Global constants
 	
@@ -22,3 +25,4 @@
 <script type="text/javascript" src="${context}resources/js/app.js"></script>
 <script type="text/javascript" src="${context}resources/js/common/common-service.js"></script>
 <script type="text/javascript" src="${context}resources/js/common/common-controller.js"></script>
+<script type="text/javascript" src="${context}resources/js/main-menu.js"></script>
