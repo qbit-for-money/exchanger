@@ -6,8 +6,11 @@
 	position: relative;
 }
 
-.convert-direction-btn {
-	font-size: 4em;
-	color: #10e887;
+.convert-direction {
 	text-align: center;
+	
+}
+
+.convert-direction-btn {
+	font-size: 1.5em;
 }
