@@ -3,6 +3,7 @@ package com.qbit.exchanger.money.yandex;
 import com.qbit.exchanger.money.core.MoneyService;
 import com.qbit.exchanger.money.core.MoneyTransferCallback;
 import com.qbit.exchanger.money.model.Transfer;
+import com.qbit.exchanger.money.model.TransferType;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Collections;
@@ -170,7 +171,7 @@ public class YandexMoneyService implements MoneyService {
 		return tokenizer.nextToken();
 	}
 
-	public void receiveMoney(Transfer transfer, MoneyTransferCallback callback) {
+	private void receiveMoney(Transfer transfer, MoneyTransferCallback callback) {
 		try {
 			RequestPaymentResponse response = requestPayment(transfer.getAddress(), STORE_WALLET, transfer.getAmount().toBigDecimal(), OPERATION_DESCRIPTION);
 			if (response != null && response.isSuccess()) {
@@ -188,7 +189,7 @@ public class YandexMoneyService implements MoneyService {
 		}
 	}
 
-	public void sendMoney(Transfer transfer, MoneyTransferCallback callback) {
+	private void sendMoney(Transfer transfer, MoneyTransferCallback callback) {
 		try {
 			RequestPaymentResponse response = requestPayment(STORE_TOKEN, transfer.getAddress(), transfer.getAmount().toBigDecimal(), OPERATION_DESCRIPTION);
 			if (response != null && response.isSuccess()) {
@@ -206,7 +207,7 @@ public class YandexMoneyService implements MoneyService {
 		}
 	}
 
-	public void testSend(Transfer transfer, MoneyTransferCallback callback) {
+	private void testSend(Transfer transfer, MoneyTransferCallback callback) {
 		if ((transfer != null) && transfer.isValid()) {
 //			String address = parseToken(transfer.getAddress());
 			try {
@@ -222,7 +223,7 @@ public class YandexMoneyService implements MoneyService {
 		}
 	}
 
-	public void testReceive(Transfer transfer, MoneyTransferCallback callback) {
+	private void testReceive(Transfer transfer, MoneyTransferCallback callback) {
 		if ((transfer != null) && transfer.isValid()) {
 			try {
 				RequestPaymentResponse response = requestPayment(transfer.getAddress(), STORE_WALLET, transfer.getAmount().toBigDecimal(), OPERATION_DESCRIPTION);
@@ -239,11 +240,19 @@ public class YandexMoneyService implements MoneyService {
 
 	@Override
 	public void process(Transfer transfer, MoneyTransferCallback callback) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		if (TransferType.IN.equals(transfer.getType())) {
+			receiveMoney(transfer, callback);
+		} else {
+			sendMoney(transfer, callback);
+		}
 	}
 
 	@Override
 	public void test(Transfer transfer, MoneyTransferCallback callback) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		if (TransferType.IN.equals(transfer.getType())) {
+			testReceive(transfer, callback);
+		} else {
+			testSend(transfer, callback);
+		}
 	}
 }
