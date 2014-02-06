@@ -1,8 +1,7 @@
 package com.qbit.exchanger.order.dao;
 
-import com.qbit.exchanger.common.model.Amount;
+import com.qbit.exchanger.money.model.Transfer;
 import com.qbit.exchanger.order.model.OrderStatus;
-import com.qbit.exchanger.order.model.Currency;
 import com.qbit.exchanger.order.model.OrderInfo;
 import com.qbit.exchanger.utils.DAOUtils;
 import java.util.Date;
@@ -33,10 +32,11 @@ public class OrderDAO {
 		}
 	}
 	
-	public List<OrderInfo> findByExternalId(String externalId) {
+	public List<OrderInfo> findByExternalId(String userPublicKey, String externalId) {
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 		try {
 			TypedQuery<OrderInfo> query = entityManager.createNamedQuery("OrderInfo.findByExternalId", OrderInfo.class);
+			query.setParameter("userPublicKey", userPublicKey);
 			query.setParameter("externalId", externalId);
 			return query.getResultList();
 		} finally {
@@ -56,14 +56,13 @@ public class OrderDAO {
 	}
 
 	public OrderInfo create(OrderInfo orderInfo) {
-		return create(orderInfo.getUserPublicKey(), orderInfo.getSourceCurrency(), orderInfo.getTargetCurrency(),
-				orderInfo.getAmount(), orderInfo.getExternalId(), orderInfo.getAdditionalId());
+		return create(orderInfo.getUserPublicKey(), orderInfo.getInTransfer(), orderInfo.getOutTransfer(),
+				orderInfo.getExternalId(), orderInfo.getAdditionalId());
 	}
 
-	public OrderInfo create(String userPublicKey, Currency sourceCurrency, Currency targetCurrency,
-			Amount amount, String externalId, String additionalId) {
-		if ((userPublicKey == null) || (sourceCurrency == null) || (targetCurrency == null)
-				|| (amount == null)) {
+	public OrderInfo create(String userPublicKey, Transfer inTransfer, Transfer outTransfer,
+			String externalId, String additionalId) {
+		if ((userPublicKey == null) || (inTransfer == null) || (outTransfer == null)) {
 			return null;
 		}
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
@@ -72,9 +71,8 @@ public class OrderDAO {
 			OrderInfo order = new OrderInfo();
 			order.setCreationDate(new Date());
 			order.setUserPublicKey(userPublicKey);
-			order.setSourceCurrency(sourceCurrency);
-			order.setTargetCurrency(targetCurrency);
-			order.setAmount(amount);
+			order.setInTransfer(inTransfer);
+			order.setOutTransfer(outTransfer);
 			order.setStatus(OrderStatus.ACTIVE);
 			order.setExternalId(externalId);
 			order.setAdditionalId(additionalId);

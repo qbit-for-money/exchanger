@@ -1,0 +1,13 @@
+#main-menu-carousel {
+	height: 500px;
+}
+
+.currencies-list {
+	position: relative;
+}
+
+.convert-direction-btn {
+	font-size: 4em;
+	color: #10e887;
+	text-align: center;
+}
