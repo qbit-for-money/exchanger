@@ -4,7 +4,6 @@
     <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
     <class>com.qbit.exchanger.user.UserInfo</class>
     <class>com.qbit.exchanger.order.model.OrderInfo</class>
-    <class>com.qbit.exchanger.order.model.Currency</class>
     <exclude-unlisted-classes>false</exclude-unlisted-classes>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/test?zeroDateTimeBehavior=convertToNull"/>

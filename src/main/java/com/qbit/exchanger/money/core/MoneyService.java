@@ -1,5 +1,7 @@
 package com.qbit.exchanger.money.core;
 
+import com.qbit.exchanger.money.model.Transfer;
+
 /**
  * Core interface for payment methods
  *
@@ -7,11 +9,7 @@ package com.qbit.exchanger.money.core;
  */
 public interface MoneyService {
 
-    void receiveMoney(Transfer transfer, MoneyTransferCallback callback);
+    void process(Transfer transfer, MoneyTransferCallback callback);
 
-    void sendMoney(Transfer transfer, MoneyTransferCallback callback);
-
-	void testSend(Transfer transfer, MoneyTransferCallback callback);
-
-	void testReceive(Transfer transfer, MoneyTransferCallback callback);
+	void test(Transfer transfer, MoneyTransferCallback callback);
 }

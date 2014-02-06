@@ -26,17 +26,11 @@ public class OrdersResource {
 	private OrderDAO orderDAO;
 	
 	@GET
-    @Path("{id}")
-    @Produces(MediaType.APPLICATION_JSON)
-	public OrderInfo get(@PathParam("id") String id) {
-		return orderDAO.find(id);
-	}
-	
-	@GET
 	@Path("external/{externalId}")
     @Produces(MediaType.APPLICATION_JSON)
-	public List<OrderInfo> findByExternalId(@PathParam("externalId") String externalId) {
-		return orderDAO.findByExternalId(externalId);
+	public List<OrderInfo> findByExternalId(@QueryParam("userPublicKey") String userPublicKey, 
+			@PathParam("externalId") String externalId) {
+		return orderDAO.findByExternalId(userPublicKey, externalId);
 	}
 	
 	@GET

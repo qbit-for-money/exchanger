@@ -26,9 +26,12 @@
 				</div><!-- /.navbar-collapse -->
 			</div><!-- /.container-fluid -->
 		</nav>
-		<div class="container">
-			<div class="jumbotron">
-				<h1>Use this document as a way to quickly start any new project.</h1>
+		<div class="container">		
+			<div ng-controller="MainMenuContoller" class="rn-carousel-container">
+				<ul rn-carousel rn-carousel-indicator="true" id="main-menu-carousel">
+					<li class="rn-carousel-slide"><%@ include file="WEB-INF/jspf/currency-picker.jspf" %></li>
+					<li class="rn-carousel-slide">Something is gonna appear here soon!</li>
+				</ul>
 			</div>
 		</div>
 	</body>
