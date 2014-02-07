@@ -29,7 +29,7 @@
 		<div class="container">		
 			<div ng-controller="MainMenuContoller" class="rn-carousel-container">
 				<ul rn-carousel rn-carousel-indicator="true" id="main-menu-carousel">
-					<li class="rn-carousel-slide"><%@ include file="WEB-INF/jspf/currency-picker.jspf" %></li>
+					<li class="rn-carousel-slide" qb-currency-picker></li>
 					<li class="rn-carousel-slide">Something is gonna appear here soon!</li>
 				</ul>
 			</div>
