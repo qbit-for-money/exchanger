@@ -51,50 +51,6 @@ public class YandexMoneyService implements MoneyService {
 		return yandexMoney.authorizeUri(scope, REDIRECT_URI, mobile);
 	}
 
-//	public OperationResult receiveMoneyOld(String code, BigDecimal amount) throws ProcessingException {
-//		OperationResult result = new OperationResult();
-//		try {
-//			String token = receiveToken(code);
-//			RequestPaymentResponse p2pResponse = yandexMoney.requestPaymentP2PDue(token, STORE_WALLET, IdentifierType.account, amount, OPERATION_DESCRIPTION, OPERATION_DESCRIPTION, null);
-//			if (p2pResponse != null && p2pResponse.isSuccess()) {
-//				ProcessPaymentResponse processResponse = yandexMoney.processPaymentByWallet(token, p2pResponse.getRequestId());
-//				if (processResponse != null && processResponse.isSuccess()) {
-//					result.setStatus(OperationStatus.SUCCESS);
-//				} else {
-//					result.setStatus(OperationStatus.ERROR);
-//					result.setText(processResponse != null ? processResponse.getError().getCode() : "");
-//				}
-//			} else {
-//				result.setText(p2pResponse != null ? p2pResponse.getError().getCode() : "");
-//			}
-//		} catch (Exception ex) {
-//			throw new ProcessingException(ex.getMessage());
-//		}
-//		return result;
-//	}
-//
-//	public OperationResult sendMoneyOld(String wallet, BigDecimal amount) throws ProcessingException {
-//		OperationResult result = new OperationResult();
-//		try {
-//			RequestPaymentResponse response = yandexMoney.requestPaymentP2PDue(STORE_TOKEN, wallet, IdentifierType.account, amount, OPERATION_DESCRIPTION, OPERATION_DESCRIPTION, null);
-//			if (response != null && response.isSuccess()) {
-//				ProcessPaymentResponse paymentResponse = yandexMoney.processPaymentByWallet(STORE_TOKEN, response.getRequestId());
-//				if (paymentResponse != null && paymentResponse.isSuccess()) {
-//					result.setStatus(OperationStatus.SUCCESS);
-//				} else {
-//					result.setStatus(OperationStatus.ERROR);
-//					result.setText(paymentResponse != null ? paymentResponse.getError().getCode() : "");
-//				}
-//			} else {
-//				result.setStatus(OperationStatus.ERROR);
-//				result.setText(response != null ? response.getError().getCode() : "");
-//			}
-//		} catch (Exception e) {
-//			throw new ProcessingException(e.getMessage());
-//		}
-//		return result;
-//	}
-
 	public BigDecimal getBalanceInfo() throws RuntimeException {
 		try {
 			AccountInfoResponse response = yandexMoney.accountInfo(STORE_TOKEN);
@@ -104,7 +60,25 @@ public class YandexMoneyService implements MoneyService {
 		}
 	}
 
-	private String receiveToken(String code) throws RuntimeException {
+	@Override
+	public void process(Transfer transfer, MoneyTransferCallback callback) {
+		if (TransferType.IN.equals(transfer.getType())) {
+			receiveMoney(transfer, callback);
+		} else {
+			sendMoney(transfer, callback);
+		}
+	}
+
+	@Override
+	public void test(Transfer transfer, MoneyTransferCallback callback) {
+		if (TransferType.IN.equals(transfer.getType())) {
+			testReceive(transfer, callback);
+		} else {
+			testSend(transfer, callback);
+		}
+	}
+
+	public String receiveToken(String code) throws RuntimeException {
 		String token = null;
 		try {
 			ReceiveOAuthTokenResponse tokenResponse = yandexMoney.receiveOAuthToken(code, REDIRECT_URI);
@@ -235,24 +209,6 @@ public class YandexMoneyService implements MoneyService {
 			} catch (Exception e) {
 				callback.error(e.getMessage());
 			}
-		}
-	}
-
-	@Override
-	public void process(Transfer transfer, MoneyTransferCallback callback) {
-		if (TransferType.IN.equals(transfer.getType())) {
-			receiveMoney(transfer, callback);
-		} else {
-			sendMoney(transfer, callback);
-		}
-	}
-
-	@Override
-	public void test(Transfer transfer, MoneyTransferCallback callback) {
-		if (TransferType.IN.equals(transfer.getType())) {
-			testReceive(transfer, callback);
-		} else {
-			testSend(transfer, callback);
 		}
 	}
 }
