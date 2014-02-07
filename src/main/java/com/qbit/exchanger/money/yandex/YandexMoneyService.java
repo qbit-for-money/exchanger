@@ -137,7 +137,7 @@ public class YandexMoneyService implements MoneyService {
 		return Collections.singletonList(result);
 	}
 
-	private String parseToken(String token) {
+	private String getWalletFromToken(String token) {
 		if (token == null) {
 			return null;
 		}
@@ -165,7 +165,8 @@ public class YandexMoneyService implements MoneyService {
 
 	private void sendMoney(Transfer transfer, MoneyTransferCallback callback) {
 		try {
-			RequestPaymentResponse response = requestPayment(STORE_TOKEN, transfer.getAddress(), transfer.getAmount().toBigDecimal(), OPERATION_DESCRIPTION);
+			String address = getWalletFromToken(transfer.getAddress());
+			RequestPaymentResponse response = requestPayment(STORE_TOKEN, address, transfer.getAmount().toBigDecimal(), OPERATION_DESCRIPTION);
 			if (response != null && response.isSuccess()) {
 				ProcessPaymentResponse paymentResponse = processPayment(STORE_TOKEN, response.getRequestId());
 				if (paymentResponse != null && paymentResponse.isSuccess()) {
@@ -183,9 +184,9 @@ public class YandexMoneyService implements MoneyService {
 
 	private void testSend(Transfer transfer, MoneyTransferCallback callback) {
 		if ((transfer != null) && transfer.isValid()) {
-//			String address = parseToken(transfer.getAddress());
 			try {
-				RequestPaymentResponse response = requestPayment(STORE_TOKEN, transfer.getAddress(), transfer.getAmount().toBigDecimal(), OPERATION_DESCRIPTION);
+				String address = getWalletFromToken(transfer.getAddress());
+				RequestPaymentResponse response = requestPayment(STORE_TOKEN, address, transfer.getAmount().toBigDecimal(), OPERATION_DESCRIPTION);
 				if ((response != null) && response.isSuccess()) {
 					callback.success();
 				} else {
@@ -194,6 +195,8 @@ public class YandexMoneyService implements MoneyService {
 			} catch (Exception e) {
 				callback.error(e.getMessage());
 			}
+		} else {
+			callback.error("Invalid transfer");
 		}
 	}
 
@@ -209,6 +212,8 @@ public class YandexMoneyService implements MoneyService {
 			} catch (Exception e) {
 				callback.error(e.getMessage());
 			}
+		} else {
+			callback.error("Invalid transfer");
 		}
 	}
 }
