@@ -1,13 +1,9 @@
 package com.qbit.exchanger.money.model;
 
-import com.qbit.exchanger.money.model.serialization.CurrencyAdapter;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
 /**
  *
  * @author Александр
  */
-@XmlJavaTypeAdapter(CurrencyAdapter.class)
 public enum Currency {
 	
 	YANDEX_RUB(new Amount(0, 1, 100), "RUR"), 
