@@ -1,11 +1,13 @@
 package com.qbit.exchanger.order.resource;
 
 import com.qbit.exchanger.money.model.Currency;
+import com.qbit.exchanger.money.model.serialization.CurrencyAdapter;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  *

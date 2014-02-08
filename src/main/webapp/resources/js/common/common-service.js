@@ -62,3 +62,23 @@ commonModule.factory("usersService", function(localStorage, usersResource) {
 		create: create
 	};
 });
+
+commonModule.factory("currencyResource", function($resource) {
+	return $resource(window.context + "webapi/currency/:id", {id: ""}, {
+			get: {method: "GET"},
+			findAll: {method: "GET", isArray: true}
+		});
+});
+
+commonModule.factory("currencyService", function(currencyResource) {
+	function get(id) {
+		return currencyResource.get({id: id});
+	}
+	function findAll() {
+		return currencyResource.query();
+	}
+	return {
+		get: get,
+		findAll: findAll
+	};
+});
