@@ -46,4 +46,9 @@ public class Env {
 	public String getMailHost() {
 		return properties.getProperty("mail.host");
 	}
+	
+	@XmlElement
+	public int getOrderWorkerPeriodSecs() {
+		return Integer.parseInt(properties.getProperty("order.worker.period.secs"));
+	}
 }

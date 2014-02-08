@@ -27,6 +27,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 @NamedQueries({
 	@NamedQuery(name = "OrderInfo.findByExternalId",
 			query = "SELECT o FROM OrderInfo o WHERE o.externalId = :externalId and o.userPublicKey = :userPublicKey"),
+	@NamedQuery(name = "OrderInfo.findActive",
+			query = "SELECT o FROM OrderInfo o WHERE o.status = com.qbit.exchanger.order.model.OrderStatus.ACTIVE"),
 	@NamedQuery(name = "OrderInfo.findActiveByUser",
 			query = "SELECT o FROM OrderInfo o WHERE o.status = com.qbit.exchanger.order.model.OrderStatus.ACTIVE"
 			+ " and o.userPublicKey = :userPublicKey")})

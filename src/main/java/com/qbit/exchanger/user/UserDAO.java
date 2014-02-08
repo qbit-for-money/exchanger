@@ -1,6 +1,6 @@
 package com.qbit.exchanger.user;
 
-import com.qbit.exchanger.utils.DAOUtils;
+import com.qbit.exchanger.util.DAOUtil;
 import java.util.Date;
 import java.util.UUID;
 import javax.inject.Inject;
@@ -21,7 +21,7 @@ public class UserDAO {
 	public UserInfo find(String publicKey) {
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 		try {
-			return DAOUtils.find(entityManagerFactory.createEntityManager(),
+			return DAOUtil.find(entityManagerFactory.createEntityManager(),
 					UserInfo.class, publicKey, UserInfo.EMPTY);
 		} finally {
 			entityManager.close();

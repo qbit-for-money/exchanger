@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
+import javax.inject.Singleton;
 import ru.yandex.money.api.YandexMoney;
 import ru.yandex.money.api.YandexMoneyImpl;
 import ru.yandex.money.api.enums.Destination;
@@ -24,6 +25,7 @@ import ru.yandex.money.api.rights.Payment;
 import ru.yandex.money.api.rights.PaymentP2P;
 import ru.yandex.money.api.rights.Permission;
 
+@Singleton
 public class YandexMoneyService implements MoneyService {
 
 	private static final String CLIENT_ID = "B83AF6B23CA9C5E0CA7AAFC2F1B98CDAEEAD59A49DED9A4BEE52B8F85A19D20B";

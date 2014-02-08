@@ -3,7 +3,7 @@ package com.qbit.exchanger.order.dao;
 import com.qbit.exchanger.money.model.Transfer;
 import com.qbit.exchanger.order.model.OrderStatus;
 import com.qbit.exchanger.order.model.OrderInfo;
-import com.qbit.exchanger.utils.DAOUtils;
+import com.qbit.exchanger.util.DAOUtil;
 import java.util.Date;
 import java.util.List;
 import javax.inject.Inject;
@@ -25,7 +25,7 @@ public class OrderDAO {
 	public OrderInfo find(String id) {
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 		try {
-			return DAOUtils.find(entityManagerFactory.createEntityManager(),
+			return DAOUtil.find(entityManagerFactory.createEntityManager(),
 					OrderInfo.class, id, null);
 		} finally {
 			entityManager.close();
@@ -38,6 +38,16 @@ public class OrderDAO {
 			TypedQuery<OrderInfo> query = entityManager.createNamedQuery("OrderInfo.findByExternalId", OrderInfo.class);
 			query.setParameter("userPublicKey", userPublicKey);
 			query.setParameter("externalId", externalId);
+			return query.getResultList();
+		} finally {
+			entityManager.close();
+		}
+	}
+	
+	public List<OrderInfo> findActive() {
+		EntityManager entityManager = entityManagerFactory.createEntityManager();
+		try {
+			TypedQuery<OrderInfo> query = entityManager.createNamedQuery("OrderInfo.findActive", OrderInfo.class);
 			return query.getResultList();
 		} finally {
 			entityManager.close();
