@@ -3,7 +3,7 @@
 	<div class="col-md-2 col-sm-3 col-xs-5">
 		<div class="dropdown open">
 			<ul class="dropdown-menu currencies-list" data-ng-model="leftCurrency">
-				<li data-ng-repeat="currency in currencies" data-ng-click="selectCurrency('left', {{currency}})"><a>{{currency.value}}</a></li>
+				<li data-ng-repeat="currency in currencies" data-ng-click="selectCurrency('left', {{currency}})"><a>{{currency.code}}</a></li>
 			</ul>
 		</div>
 	</div>
@@ -15,7 +15,7 @@
 	<div class="col-md-2 col-sm-3 col-xs-5">
 		<div class="dropdown open">
 			<ul class="dropdown-menu currencies-list">
-				<li data-ng-repeat="currency in currencies" data-ng-click="selectCurrency('right', {{currency}})"><a>{{currency.value}}</a></li>
+				<li data-ng-repeat="currency in currencies" data-ng-click="selectCurrency('right', {{currency}})"><a>{{currency.code}}</a></li>
 			</ul>
 		</div>
 	</div>
