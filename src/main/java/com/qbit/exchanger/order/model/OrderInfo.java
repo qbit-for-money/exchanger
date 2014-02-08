@@ -2,6 +2,7 @@ package com.qbit.exchanger.order.model;
 
 import com.qbit.exchanger.common.model.Identifiable;
 import com.qbit.exchanger.money.model.Transfer;
+import com.qbit.exchanger.money.model.TransferType;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
@@ -28,9 +29,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 	@NamedQuery(name = "OrderInfo.findByExternalId",
 			query = "SELECT o FROM OrderInfo o WHERE o.externalId = :externalId and o.userPublicKey = :userPublicKey"),
 	@NamedQuery(name = "OrderInfo.findActive",
-			query = "SELECT o FROM OrderInfo o WHERE o.status = com.qbit.exchanger.order.model.OrderStatus.ACTIVE"),
-	@NamedQuery(name = "OrderInfo.findActiveByUser",
 			query = "SELECT o FROM OrderInfo o WHERE o.status = com.qbit.exchanger.order.model.OrderStatus.ACTIVE"
+			+ " or o.status = com.qbit.exchanger.order.model.OrderStatus.PAYED"),
+	@NamedQuery(name = "OrderInfo.findActiveByUser",
+			query = "SELECT o FROM OrderInfo o WHERE (o.status = com.qbit.exchanger.order.model.OrderStatus.ACTIVE"
+			+ " or o.status = com.qbit.exchanger.order.model.OrderStatus.PAYED)"
 			+ " and o.userPublicKey = :userPublicKey")})
 @XmlRootElement
 public class OrderInfo implements Identifiable<String>, Serializable {
@@ -53,8 +56,7 @@ public class OrderInfo implements Identifiable<String>, Serializable {
 		@AttributeOverride(name = "address", column = @Column(name = "IN_TRR_ADDR")),
 		@AttributeOverride(name = "amount.coins", column = @Column(name = "IN_TRR_COINS")),
 		@AttributeOverride(name = "amount.cents", column = @Column(name = "IN_TRR_CENTS")),
-		@AttributeOverride(name = "amount.centsInCoin", column = @Column(name = "IN_TRR_CENTS_IN_COIN")),
-	})
+		@AttributeOverride(name = "amount.centsInCoin", column = @Column(name = "IN_TRR_CENTS_IN_COIN")),})
 	private Transfer inTransfer;
 
 	@Embedded
@@ -64,8 +66,7 @@ public class OrderInfo implements Identifiable<String>, Serializable {
 		@AttributeOverride(name = "address", column = @Column(name = "OUT_TRR_ADDR")),
 		@AttributeOverride(name = "amount.coins", column = @Column(name = "OUT_TRR_COINS")),
 		@AttributeOverride(name = "amount.cents", column = @Column(name = "OUT_TRR_CENTS")),
-		@AttributeOverride(name = "amount.centsInCoin", column = @Column(name = "OUT_TRR_CENTS_IN_COIN")),
-	})
+		@AttributeOverride(name = "amount.centsInCoin", column = @Column(name = "OUT_TRR_CENTS_IN_COIN")),})
 	private Transfer outTransfer;
 
 	private OrderStatus status;
@@ -137,6 +138,13 @@ public class OrderInfo implements Identifiable<String>, Serializable {
 
 	public void setAdditionalId(String additionalId) {
 		this.additionalId = additionalId;
+	}
+
+	public boolean isValid() {
+		return ((userPublicKey != null) && (inTransfer != null) && (outTransfer != null)
+				&& inTransfer.isValid() && outTransfer.isValid()
+				&& TransferType.IN.equals(inTransfer.getType())
+				&& TransferType.OUT.equals(outTransfer.getType()));
 	}
 
 	@Override

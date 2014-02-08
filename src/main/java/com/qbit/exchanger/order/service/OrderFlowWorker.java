@@ -2,8 +2,11 @@ package com.qbit.exchanger.order.service;
 
 import com.qbit.exchanger.env.Env;
 import com.qbit.exchanger.money.core.MoneyService;
+import com.qbit.exchanger.money.core.MoneyTransferCallback;
+import com.qbit.exchanger.money.model.Transfer;
 import com.qbit.exchanger.order.dao.OrderDAO;
 import com.qbit.exchanger.order.model.OrderInfo;
+import com.qbit.exchanger.order.model.OrderStatus;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -63,8 +66,50 @@ public class OrderFlowWorker implements Runnable {
 	}
 	
 	private void processActiveOrder(OrderInfo activeOrder) {
-		Logger.getLogger(OrderFlowWorker.class.getName()).log(Level.INFO, "Processing order #"
-				+ activeOrder.getId() + " ...");
-		// TODO
+		if (!activeOrder.isValid()) {
+			throw new IllegalArgumentException("Order is inconsistent.");
+		}
+		switch (activeOrder.getStatus()) {
+			case ACTIVE:
+				processInTransfer(activeOrder);
+				break;
+			case PAYED:
+				processOutTransfer(activeOrder);
+				break;
+		}
+	}
+	
+	private void processInTransfer(final OrderInfo activeOrder) {
+		final String orderId = activeOrder.getId();
+		Transfer inTransfer = activeOrder.getInTransfer();
+		moneyService.process(inTransfer, new MoneyTransferCallback() {
+
+			@Override
+			public void success() {
+				orderDAO.changeOrderStatus(orderId, OrderStatus.PAYED);
+			}
+
+			@Override
+			public void error(String msg) {
+				orderDAO.changeOrderStatus(orderId, OrderStatus.ERROR);
+			}
+		});
+	}
+	
+	private void processOutTransfer(final OrderInfo activeOrder) {
+		final String orderId = activeOrder.getId();
+		final Transfer outTransfer = activeOrder.getInTransfer();
+		moneyService.process(outTransfer, new MoneyTransferCallback() {
+
+			@Override
+			public void success() {
+				orderDAO.changeOrderStatus(orderId, OrderStatus.SUCCESS);
+			}
+
+			@Override
+			public void error(String msg) {
+				orderDAO.changeOrderStatus(orderId, OrderStatus.ERROR);
+			}
+		});
 	}
 }

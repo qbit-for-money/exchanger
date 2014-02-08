@@ -20,7 +20,6 @@ public final class DAOUtil {
 		try {
 			T result = entityManager.find(entityClass, id);
 			if (result != null) {
-				entityManager.detach(result);
 				return result;
 			} else {
 				return empty;

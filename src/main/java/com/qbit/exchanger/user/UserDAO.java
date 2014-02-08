@@ -37,7 +37,6 @@ public class UserDAO {
 			user.setRegistrationDate(new Date());
 			entityManager.persist(user);
 			entityManager.getTransaction().commit();
-			entityManager.detach(user);
 			return user;
 		} finally {
 			entityManager.close();
@@ -53,7 +52,6 @@ public class UserDAO {
 			entityManager.getTransaction().begin();
 			user = entityManager.merge(user);
 			entityManager.getTransaction().commit();
-			entityManager.detach(user);
 			return user;
 		} finally {
 			entityManager.close();

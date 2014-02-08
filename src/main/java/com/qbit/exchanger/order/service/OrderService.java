@@ -29,8 +29,8 @@ public class OrderService {
 	}
 	
 	public OrderInfo create(OrderInfo orderInfo) throws OrderServiceSecurityException {
-		if (orderInfo.getUserPublicKey() == null) {
-			throw new OrderServiceSecurityException("Can not create order. User can not be empty.");
+		if ((orderInfo == null) || !orderInfo.isValid()) {
+			throw new OrderServiceSecurityException("Can not create order. Order is inconsistent.");
 		}
 		OrderInfo activeOrder = getActiveOrder(orderInfo.getUserPublicKey());
 		if (activeOrder != null) {
