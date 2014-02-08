@@ -1,13 +1,9 @@
 <div class="row">
-	<h1 class="text-center">Convert</h1>
-</div>
-<div class="row">
 	<div class="col-md-3 col-sm-2 hidden-xs"></div>
 	<div class="col-md-2 col-sm-3 col-xs-5">
-		<h1 class="text-center">{{headers.left}}</h1>
 		<div class="dropdown open">
-			<ul class="dropdown-menu currencies-list">
-				<li data-ng-repeat="item in items"><a>{{item}}</a></li>
+			<ul class="dropdown-menu currencies-list" data-ng-model="leftCurrency">
+				<li data-ng-repeat="currency in currencies" data-ng-click="selectCurrency('left', {{currency}})"><a>{{currency.value}}</a></li>
 			</ul>
 		</div>
 	</div>
@@ -17,10 +13,9 @@
 		</button>
 	</div>
 	<div class="col-md-2 col-sm-3 col-xs-5">
-		<h1  class="text-center">{{headers.right}}</h1>
 		<div class="dropdown open">
 			<ul class="dropdown-menu currencies-list">
-				<li data-ng-repeat="item in items"><a>{{item}}</a></li>
+				<li data-ng-repeat="currency in currencies" data-ng-click="selectCurrency('right', {{currency}})"><a>{{currency.value}}</a></li>
 			</ul>
 		</div>
 	</div>
