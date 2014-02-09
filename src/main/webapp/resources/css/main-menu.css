@@ -23,6 +23,7 @@
 }
 
 .currency-list-item {
+	cursor: pointer;
 	display: table;
 }
 
