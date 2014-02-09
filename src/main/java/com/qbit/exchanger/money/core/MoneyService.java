@@ -11,5 +11,5 @@ public interface MoneyService {
 
     void process(Transfer transfer, MoneyTransferCallback callback);
 
-	void test(Transfer transfer, MoneyTransferCallback callback);
+	boolean test(Transfer transfer);
 }
