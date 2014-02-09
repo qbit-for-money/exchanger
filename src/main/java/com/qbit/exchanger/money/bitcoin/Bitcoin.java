@@ -23,12 +23,14 @@ import static com.google.bitcoin.core.Utils.bytesToHexString;
 import com.qbit.exchanger.money.model.Transfer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.inject.Singleton;
 
 /**
  * BITCOIN
  *
  * @author Ivan_Rakitnyh
  */
+@Singleton
 public class Bitcoin implements MoneyService {
 
 	private static final Logger logger = Logger.getLogger(Bitcoin.class.getName());

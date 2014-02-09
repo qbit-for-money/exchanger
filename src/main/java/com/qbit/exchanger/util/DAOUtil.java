@@ -1,4 +1,4 @@
-package com.qbit.exchanger.utils;
+package com.qbit.exchanger.util;
 
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -11,16 +11,15 @@ import javax.persistence.criteria.CriteriaQuery;
  *
  * @author Александр
  */
-public final class DAOUtils {
+public final class DAOUtil {
 	
-	private DAOUtils() {
+	private DAOUtil() {
 	}
 	
 	public static <T> T find(EntityManager entityManager, Class<T> entityClass, Object id, T empty) {
 		try {
 			T result = entityManager.find(entityClass, id);
 			if (result != null) {
-				entityManager.detach(result);
 				return result;
 			} else {
 				return empty;
