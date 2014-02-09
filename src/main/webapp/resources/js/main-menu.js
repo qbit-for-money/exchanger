@@ -1,8 +1,20 @@
 var mainMenuModule = angular.module("main-menu");
 
 mainMenuModule.controller("MainMenuController", function($scope, currencyResource) {
+	var constants = {
+		directions : {
+			ltr : "ltr",
+			rtl : "rtl"
+		},
+		panels : {
+			left : "left",
+			right : "right"
+		}
+	};	
+	$scope.constants = constants;
+	
 	$scope.convertion = {};
-	$scope.convertion.l2r = true;
+	$scope.convertion.direction = constants.directions.ltr;
 	$scope.convertion.panels = {
 		left: {},
 		right: {}
@@ -16,10 +28,23 @@ mainMenuModule.controller("MainMenuController", function($scope, currencyResourc
 		});
 			
 	$scope.selectCurrency = function(panel, item) {
-		if (!panel || !item) { return; }
-		
+		if (!(panel in constants.panels) || !item) {
+			return; 
+		}
 		var scopePanel = $scope.convertion.panels[panel];
-		if (scopePanel) { scopePanel.currency = item; }
+		var anotherPanel = (panel === constants.panels.left) ? 
+				$scope.convertion.panels.right : $scope.convertion.panels.left;
+		if (anotherPanel && (!anotherPanel.currency || anotherPanel.currency.id !== item.id)) {
+			scopePanel.currency = item;
+		}
+	};
+	
+	$scope.toggleDirection = function() {
+		if ($scope.convertion.direction === constants.directions.ltr) {
+			$scope.convertion.direction = constants.directions.rtl;
+		} else {
+			$scope.convertion.direction = constants.directions.ltr;
+		}
 	};
 });
 
