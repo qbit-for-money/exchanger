@@ -8,8 +8,13 @@ mainMenuModule.controller("MainMenuController", function($scope, currencyResourc
 		right: {}
 	};
 
-	$scope.currencies = currencyResource.findAll();
-	
+	var currenciesResponse = currencyResource.findAll();
+	currenciesResponse.$promise.then(function() {
+			if(currenciesResponse){
+				$scope.currencies = currenciesResponse.currencies;
+			}
+		});
+			
 	$scope.selectCurrency = function(panel, item) {
 		if (!panel || !item) { return; }
 		

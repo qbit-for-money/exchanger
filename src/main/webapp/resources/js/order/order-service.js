@@ -2,7 +2,7 @@ var orderModule = angular.module("order");
 
 orderModule.factory("currencyResource", function($resource) {
 	return $resource(window.context + "webapi/currency/:id", {}, {
-		findAll: {method: "GET", isArray: true}
+		findAll: {method: "GET"}
 	});
 });
 
