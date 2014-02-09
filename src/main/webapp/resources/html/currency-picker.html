@@ -1,6 +1,6 @@
 <div class="row">
-	<div class="col-md-2 hidden-sm"></div>
-	<div class="col-md-3 col-sm-5 col-xs-5">
+	<div class="col-lg-2 col-md-1 hidden-sm"></div>
+	<div class="col-lg-3 col-md-4 col-sm-5 col-xs-5">
 		<div class="dropdown open">
 			<ul class="dropdown-menu currencies-list">
 				<li data-ng-repeat="currency in currencies" 
@@ -16,7 +16,7 @@
 			</ul>
 		</div>
 	</div>
-	<div class="text-center convert-direction col-md-2 col-sm-2 col-xs-2">
+	<div class="text-center convert-direction col-md-2 col-xs-2">
 		<button class="btn btn-success btn-lg convert-direction-btn" 
 				data-ng-click="toggleDirection()">
 			<span class="glyphicon"
@@ -24,7 +24,7 @@
 									'glyphicon-arrow-left' : convertion.direction == constants.directions.rtl}"></span>
 		</button>
 	</div>
-	<div class="col-md-3 col-sm-5 col-xs-5">
+	<div class="col-lg-3 col-md-4 col-sm-5 col-xs-5">
 		<div class="dropdown open">
 			<ul class="dropdown-menu currencies-list">
 				<li data-ng-repeat="currency in currencies"
@@ -39,5 +39,5 @@
 			</ul>
 		</div>
 	</div>
-	<div class="col-md-2 hidden-sm"></div>
+	<div class="col-lg-2 col-md-1 hidden-sm"></div>
 </div>
