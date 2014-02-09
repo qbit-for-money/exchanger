@@ -156,7 +156,7 @@ public class Bitcoin implements MoneyService {
 	}
 
 	@Override
-	public void test(Transfer transfer, MoneyTransferCallback callback) {
+	public boolean test(Transfer transfer) {
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 

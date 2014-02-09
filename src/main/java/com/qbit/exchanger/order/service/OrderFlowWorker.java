@@ -91,7 +91,7 @@ public class OrderFlowWorker implements Runnable {
 
 			@Override
 			public void error(String msg) {
-				orderDAO.changeOrderStatus(orderId, OrderStatus.ERROR);
+				orderDAO.changeOrderStatus(orderId, OrderStatus.IN_FAILED);
 			}
 		});
 	}
@@ -108,7 +108,7 @@ public class OrderFlowWorker implements Runnable {
 
 			@Override
 			public void error(String msg) {
-				orderDAO.changeOrderStatus(orderId, OrderStatus.ERROR);
+				orderDAO.changeOrderStatus(orderId, OrderStatus.OUT_FAILED);
 			}
 		});
 	}

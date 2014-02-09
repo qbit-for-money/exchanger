@@ -1,10 +1,10 @@
-package com.qbit.exchanger.order.service;
+package com.qbit.exchanger.order.service.exception;
 
 /**
  *
  * @author Александр
  */
-public class OrderServiceSecurityException extends Exception {
+public class OrderServiceSecurityException extends OrderServiceException {
 
 	/**
 	 * Creates a new instance of <code>OrderServiceSecurityException</code>

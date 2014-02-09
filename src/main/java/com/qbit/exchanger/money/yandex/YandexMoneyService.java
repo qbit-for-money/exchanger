@@ -72,11 +72,11 @@ public class YandexMoneyService implements MoneyService {
 	}
 
 	@Override
-	public void test(Transfer transfer, MoneyTransferCallback callback) {
+	public boolean test(Transfer transfer) {
 		if (TransferType.IN.equals(transfer.getType())) {
-			testReceive(transfer, callback);
+			return testReceive(transfer);
 		} else {
-			testSend(transfer, callback);
+			return testSend(transfer);
 		}
 	}
 
@@ -184,38 +184,34 @@ public class YandexMoneyService implements MoneyService {
 		}
 	}
 
-	private void testSend(Transfer transfer, MoneyTransferCallback callback) {
+	private boolean testSend(Transfer transfer) {
+		boolean result = false;
 		if ((transfer != null) && transfer.isValid()) {
 			try {
 				String address = getWalletFromToken(transfer.getAddress());
 				RequestPaymentResponse response = requestPayment(STORE_TOKEN, address, transfer.getAmount().toBigDecimal(), OPERATION_DESCRIPTION);
 				if ((response != null) && response.isSuccess()) {
-					callback.success();
-				} else {
-					callback.error(response != null ? response.getError().getCode() : null);
+					result = true;
 				}
 			} catch (Exception e) {
-				callback.error(e.getMessage());
+				result = false;
 			}
-		} else {
-			callback.error("Invalid transfer");
 		}
+		return result;
 	}
 
-	private void testReceive(Transfer transfer, MoneyTransferCallback callback) {
+	private boolean testReceive(Transfer transfer) {
+		boolean result = false;
 		if ((transfer != null) && transfer.isValid()) {
 			try {
 				RequestPaymentResponse response = requestPayment(transfer.getAddress(), STORE_WALLET, transfer.getAmount().toBigDecimal(), OPERATION_DESCRIPTION);
 				if ((response != null) && response.isSuccess()) {
-					callback.success();
-				} else {
-					callback.error(response != null ? response.getError().getCode() : null);
+					result = true;
 				}
 			} catch (Exception e) {
-				callback.error(e.getMessage());
+				result = false;
 			}
-		} else {
-			callback.error("Invalid transfer");
 		}
+		return result;
 	}
 }

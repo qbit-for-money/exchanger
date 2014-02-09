@@ -10,6 +10,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import com.qbit.exchanger.money.model.serialization.CurrencyAdapter;
+import java.io.Serializable;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
@@ -18,48 +20,52 @@ import com.qbit.exchanger.money.model.serialization.CurrencyAdapter;
 @Path("currency")
 public class CurrencyResource {
 	
-	private static class CurrencyResponse {
+	@XmlRootElement
+	public static class CurrencyWrapper implements Serializable {
 		
 		@XmlJavaTypeAdapter(CurrencyAdapter.class)
 		private Currency currency;
 
+		public CurrencyWrapper() {
+		}
+
+		public CurrencyWrapper(Currency currency) {
+			this.currency = currency;
+		}
+
 		public Currency getCurrency() {
 			return currency;
 		}
-
-		public void setCurrency(Currency currency) {
-			this.currency = currency;
-		}
 	}
 	
-	private static class CurrenciesResponse {
+	@XmlRootElement
+	public static class CurrencyListWrapper implements Serializable {
 		
 		@XmlJavaTypeAdapter(CurrencyAdapter.class)
 		private List<Currency> currencies;
 
-		public List<Currency> getCurrencies() {
-			return currencies;
+		public CurrencyListWrapper() {
 		}
 
-		public void setCurrencies(List<Currency> currencies) {
+		public CurrencyListWrapper(List<Currency> currencies) {
 			this.currencies = currencies;
+		}
+
+		public List<Currency> getCurrencies() {
+			return currencies;
 		}
 	}
 	
 	@GET
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
-	public CurrencyResponse get(@PathParam("id") String id) {
-		CurrencyResponse response = new CurrencyResponse();
-		response.setCurrency(Currency.valueOf(id));
-		return response;
+	public CurrencyWrapper get(@PathParam("id") String id) {
+		return new CurrencyWrapper(Currency.valueOf(id));
 	}
 	
 	@GET
     @Produces(MediaType.APPLICATION_JSON)
-	public CurrenciesResponse findAll() {
-		CurrenciesResponse response = new CurrenciesResponse();
-		response.setCurrencies(Arrays.asList(Currency.values()));
-		return response;
+	public CurrencyListWrapper findAll() {
+		return new CurrencyListWrapper(Arrays.asList(Currency.values()));
 	}
 }

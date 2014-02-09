@@ -2,7 +2,8 @@ package com.qbit.exchanger.order.resource;
 
 import com.qbit.exchanger.order.model.OrderInfo;
 import com.qbit.exchanger.order.service.OrderService;
-import com.qbit.exchanger.order.service.OrderServiceSecurityException;
+import com.qbit.exchanger.order.service.exception.OrderServiceException;
+import com.qbit.exchanger.order.service.exception.OrderServiceSecurityException;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -32,7 +33,7 @@ public class OrdersResource {
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-	public OrderInfo create(OrderInfo order) throws OrderServiceSecurityException {
+	public OrderInfo create(OrderInfo order) throws OrderServiceException {
 		return orderService.create(order);
 	}
 }

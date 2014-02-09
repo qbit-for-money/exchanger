@@ -33,9 +33,9 @@ public class MoneyServiceFacade implements MoneyService {
 	}
 
 	@Override
-	public void test(Transfer transfer, MoneyTransferCallback callback) {
+	public boolean test(Transfer transfer) {
 		MoneyService moneyService = getMoneyService(transfer);
-		moneyService.process(transfer, callback);
+		return moneyService.test(transfer);
 	}
 
 	private MoneyService getMoneyService(Transfer transfer) {
