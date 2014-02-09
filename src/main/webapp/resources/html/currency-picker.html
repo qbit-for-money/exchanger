@@ -3,7 +3,12 @@
 	<div class="col-md-2 col-sm-3 col-xs-5">
 		<div class="dropdown open">
 			<ul class="dropdown-menu currencies-list" data-ng-model="leftCurrency">
-				<li data-ng-repeat="currency in currencies" data-ng-click="selectCurrency('left', {{currency}})"><a>{{currency.code}}</a></li>
+				<li data-ng-repeat="currency in currencies" 
+					data-ng-click="selectCurrency('left', {{currency}}, this)"
+					data-ng-class="{ active : convertion.panels.left.currency.id == '{{currency.id}}',
+									disabled : convertion.panels.right.currency.id == '{{currency.id}}'}">
+					<a>{{currency.code}}</a>
+				</li>
 			</ul>
 		</div>
 	</div>
@@ -15,7 +20,12 @@
 	<div class="col-md-2 col-sm-3 col-xs-5">
 		<div class="dropdown open">
 			<ul class="dropdown-menu currencies-list">
-				<li data-ng-repeat="currency in currencies" data-ng-click="selectCurrency('right', {{currency}})"><a>{{currency.code}}</a></li>
+				<li data-ng-repeat="currency in currencies"
+					data-ng-click="selectCurrency('right', {{currency}})"
+					data-ng-class="{ active : convertion.panels.right.currency.id == '{{currency.id}}',
+									disabled : convertion.panels.left.currency.id == '{{currency.id}}'}">
+					<a>{{currency.code}}</a>
+				</li>
 			</ul>
 		</div>
 	</div>

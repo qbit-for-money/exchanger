@@ -17,9 +17,13 @@ mainMenuModule.controller("MainMenuController", function($scope, currencyResourc
 			
 	$scope.selectCurrency = function(panel, item) {
 		if (!panel || !item) { return; }
-		
 		var scopePanel = $scope.convertion.panels[panel];
-		if (scopePanel) { scopePanel.currency = item; }
+		if (scopePanel) {
+			var anotherPanel = $scope.convertion.panels[(panel === "left" ? "right" : "left")];
+			if (anotherPanel && (!anotherPanel.currency || anotherPanel.currency.id !== item.id)) {
+				scopePanel.currency = item;
+			}
+		}
 	};
 });
 
