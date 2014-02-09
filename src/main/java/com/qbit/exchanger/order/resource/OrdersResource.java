@@ -1,14 +1,14 @@
 package com.qbit.exchanger.order.resource;
 
-import com.qbit.exchanger.order.dao.OrderDAO;
 import com.qbit.exchanger.order.model.OrderInfo;
-import java.util.List;
+import com.qbit.exchanger.order.service.OrderService;
+import com.qbit.exchanger.order.service.exception.OrderServiceException;
+import com.qbit.exchanger.order.service.exception.OrderServiceSecurityException;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
@@ -17,33 +17,23 @@ import javax.ws.rs.core.MediaType;
  *
  * @author Александр
  */
-@Path(OrdersResource.BASE_PATH)
+@Path("orders")
 public class OrdersResource {
 	
-	public static final String BASE_PATH = "orders";
-	
 	@Inject
-	private OrderDAO orderDAO;
-	
-	@GET
-	@Path("external/{externalId}")
-    @Produces(MediaType.APPLICATION_JSON)
-	public List<OrderInfo> findByExternalId(@QueryParam("userPublicKey") String userPublicKey, 
-			@PathParam("externalId") String externalId) {
-		return orderDAO.findByExternalId(userPublicKey, externalId);
-	}
+	private OrderService orderService;
 	
 	@GET
     @Path("active")
     @Produces(MediaType.APPLICATION_JSON)
-	public List<OrderInfo> findActiveByUser(@QueryParam("userPublicKey") String userPublicKey) {
-		return orderDAO.findActiveByUser(userPublicKey);
+	public OrderInfo getActiveOrder(@QueryParam("userPublicKey") String userPublicKey) throws OrderServiceSecurityException {
+		return orderService.getActiveOrder(userPublicKey);
 	}
 
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-	public OrderInfo create(OrderInfo order) {
-		return orderDAO.create(order);
+	public OrderInfo create(OrderInfo order) throws OrderServiceException {
+		return orderService.create(order);
 	}
 }

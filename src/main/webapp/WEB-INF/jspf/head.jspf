@@ -26,3 +26,4 @@
 <script type="text/javascript" src="${context}resources/js/common/common-service.js"></script>
 <script type="text/javascript" src="${context}resources/js/common/common-controller.js"></script>
 <script type="text/javascript" src="${context}resources/js/main-menu.js"></script>
+<script type="text/javascript" src="${context}resources/js/order/order-service.js"></script>

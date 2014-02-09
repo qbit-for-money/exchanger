@@ -1,4 +1,4 @@
-package com.qbit.exchanger.utils;
+package com.qbit.exchanger.util;
 
 import com.qbit.exchanger.common.model.Identifiable;
 import com.qbit.exchanger.common.model.ResourceLink;
@@ -9,9 +9,9 @@ import java.util.List;
  *
  * @author Александр
  */
-public final class RESTUtils {
+public final class RESTUtil {
 	
-	private RESTUtils() {
+	private RESTUtil() {
 	}
 	
 	public static List<ResourceLink> toLinks(String basePath, List<? extends Identifiable<?>> objs) {

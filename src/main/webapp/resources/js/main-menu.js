@@ -1,19 +1,31 @@
-var mainMenuModule = angular.module('main-menu');
+var mainMenuModule = angular.module("main-menu");
 
-mainMenuModule.controller('MainMenuContoller', function($scope) {
-	var items = [];
-        for (var i = 0; i < 20; i++) {
-		items.push("TEST" + i);
-	}
-	$scope.items = items;
-	$scope.headers = {
-		left: "From",
-		right: "To"
+mainMenuModule.controller("MainMenuController", function($scope, currencyResource) {
+	$scope.convertion = {};
+	$scope.convertion.l2r = true;
+	$scope.convertion.panels = {
+		left: {},
+		right: {}
+	};
+
+	var currenciesResponse = currencyResource.findAll();
+	currenciesResponse.$promise.then(function() {
+			if(currenciesResponse){
+				$scope.currencies = currenciesResponse.currencies;
+			}
+		});
+			
+	$scope.selectCurrency = function(panel, item) {
+		if (!panel || !item) { return; }
+		
+		var scopePanel = $scope.convertion.panels[panel];
+		if (scopePanel) { scopePanel.currency = item; }
 	};
 });
 
-mainMenuModule.directive("qbCurrencyPicker", function() {
+mainMenuModule.directive("currencyPicker", function() {
 	return {
 		templateUrl: "resources/html/currency-picker.html"
 	};
 });
+
