@@ -5,17 +5,35 @@
 .currencies-list {
 	position: relative;
 	width: 100%;
-	height: 300px;
-	max-height: 300px;
+	height: 500px;
+	max-height: 500px;
 	overflow-y: auto;
-	overflow-x: hidden;
+	overflow-x: auto;
 	
 }
 
 .convert-direction-btn {
-	font-size: 1.5em;
+	height: 75px;
+	width: 75px;
+	font-size: 3em;
 }
 
 .convert-direction {
 	padding: 15% 0%;
+}
+
+.currency-list-item {
+	display: table;
+}
+
+.currency-list-icon {
+	display: table-cell;
+	background: url('../img/currencies.png') no-repeat;
+}
+
+.currency-list-label {
+	display: table-cell;
+	vertical-align: middle;
+	font-size: 2em;
+	padding: 0 20px;
 }

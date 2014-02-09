@@ -7,6 +7,7 @@
 <link rel="stylesheet" type="text/css" href="${context}resources/css/common.css">
 <link rel="stylesheet" type="text/css" href="${context}resources/css/main-menu.css">
 <link rel="stylesheet" type="text/css" href="${context}resources/lib/angular/angular-carousel.min.css">
+<link rel="stylesheet" type="text/css" href="${context}resources/css/currencies.css">
 
 <script type="text/javascript" src="${context}resources/lib/jquery/jquery-2.1.0.min.js"></script>
 <script type="text/javascript" src="${context}resources/lib/angular/angular.min.js"></script>

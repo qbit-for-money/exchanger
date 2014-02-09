@@ -1,13 +1,17 @@
 <div class="row">
-	<div class="col-md-3 col-sm-2 hidden-xs"></div>
-	<div class="col-md-2 col-sm-3 col-xs-5">
+	<div class="col-md-2 hidden-sm"></div>
+	<div class="col-md-3 col-sm-5 col-xs-5">
 		<div class="dropdown open">
 			<ul class="dropdown-menu currencies-list">
 				<li data-ng-repeat="currency in currencies" 
 					data-ng-click="selectCurrency('left', {{currency}}, this)"
 					data-ng-class="{ active : convertion.panels.left.currency.id == '{{currency.id}}',
 									disabled : convertion.panels.right.currency.id == '{{currency.id}}'}">
-					<a>{{currency.code}}</a>
+					
+					<a class="currency-list-item">
+						<div class="currency-list-icon sprite {{currency.id}}"></div>
+						<div class="text-center currency-list-label">{{currency.code}}</div>
+					</a>
 				</li>
 			</ul>
 		</div>
@@ -20,17 +24,20 @@
 									'glyphicon-arrow-left' : convertion.direction == constants.directions.rtl}"></span>
 		</button>
 	</div>
-	<div class="col-md-2 col-sm-3 col-xs-5">
+	<div class="col-md-3 col-sm-5 col-xs-5">
 		<div class="dropdown open">
 			<ul class="dropdown-menu currencies-list">
 				<li data-ng-repeat="currency in currencies"
 					data-ng-click="selectCurrency('right', {{currency}})"
 					data-ng-class="{ active : convertion.panels.right.currency.id == '{{currency.id}}',
 									disabled : convertion.panels.left.currency.id == '{{currency.id}}'}">
-					<a>{{currency.code}}</a>
+					<a class="currency-list-item">
+						<div class="currency-list-icon sprite {{currency.id}}"></div>
+						<div class="text-center currency-list-label">{{currency.code}}</div>
+					</a>
 				</li>
 			</ul>
 		</div>
 	</div>
-	<div class="col-md-3 col-sm-2 hidden-xs"></div>
+	<div class="col-md-2 hidden-sm"></div>
 </div>
