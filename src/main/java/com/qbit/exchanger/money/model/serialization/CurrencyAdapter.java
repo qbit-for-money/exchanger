@@ -9,7 +9,7 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
  */
 public class CurrencyAdapter extends XmlAdapter<CurrencyAdapter.AdaptedCurrency, Currency> {
 	
-	public static class  AdaptedCurrency {
+	public static class AdaptedCurrency {
 	
 		private String id;
 		private String code;
