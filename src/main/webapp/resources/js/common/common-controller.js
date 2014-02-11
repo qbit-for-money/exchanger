@@ -1,26 +1,26 @@
 var commonModule = angular.module("common");
 
-commonModule.controller("EnvController", function($scope, envResource) {
-	$scope.env = {};
+commonModule.controller("EnvController", function($rootScope, envResource) {
+	$rootScope.env = {};
 	var env = envResource.get(function() {
-		$scope.env = env;
+		$rootScope.env = env;
 	});
 });
 
-commonModule.controller("UserController", function($scope, delayedProxy, usersService) {
+commonModule.controller("UserController", function($rootScope, $scope, delayedProxy, userService) {
 	function setUser(user) {
 		if (user && user.publicKey) {
-			$scope.user = user;
+			$rootScope.user = user;
 			$scope.publicKey = user.publicKey;
 		}
 	}
 	
-	var user = usersService.get();
+	var user = userService.get();
 	user.$promise.then(function() {
 			if (user.publicKey) {
 				setUser(user);
 			} else {
-				user = usersService.create();
+				user = userService.create();
 				user.$promise.then(function() {
 						setUser(user);
 					});
@@ -29,29 +29,31 @@ commonModule.controller("UserController", function($scope, delayedProxy, usersSe
 		
 	$scope.changeUser = function() {
 		$scope.publicKeyUnderCheck = true;
-		var user = usersService.change($scope.publicKey);
+		var user = userService.change($scope.publicKey);
 		user.$promise.then(function() {
 				setUser(user);
 			}).finally(function() {
 				$scope.publicKeyUnderCheck = false;
 			});
 	};
+	
 	$scope.createUser = function() {
-		var user = usersService.create();
+		var user = userService.create();
 		user.$promise.then(function() {
 				setUser(user);
 			});
 	};
+	
 	function editUser() {
-		if (!$scope.user || !$scope.user.publicKey) {
+		if (!$rootScope.user || !$rootScope.user.publicKey) {
 			return;
 		}
-		$scope.user.$edit({publicKey: $scope.user.publicKey});
+		$rootScope.user.$edit({publicKey: $rootScope.user.publicKey});
 	}
-	$scope.editUser = delayedProxy(editUser, 1000);
+	$scope.editUser = delayedProxy(editUser, 2000);
 	
 	function isPublicKeyValid() {
-		return ($scope.user && $scope.user.publicKey && ($scope.user.publicKey === $scope.publicKey));
+		return ($rootScope.user && $rootScope.user.publicKey && ($rootScope.user.publicKey === $scope.publicKey));
 	}
 	$scope.isPublicKeyValid = isPublicKeyValid;
 	
@@ -63,5 +65,5 @@ commonModule.controller("UserController", function($scope, delayedProxy, usersSe
 		}
 	}
 	$scope.$watch("publicKey", updateUserProfileButton);
-	$scope.$watch("user", updateUserProfileButton);
+	$rootScope.$watch("user", updateUserProfileButton);
 });
