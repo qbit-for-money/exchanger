@@ -34,7 +34,7 @@ public class YandexMoneyService implements MoneyService {
 
 	private static final Logger LOGGER = Logger.getLogger(YandexMoneyService.class.getName());
 	private static final String CLIENT_ID = "B83AF6B23CA9C5E0CA7AAFC2F1B98CDAEEAD59A49DED9A4BEE52B8F85A19D20B";
-	private static final String REDIRECT_URI = "https://localhost:8443/exchanger/webapi/yandex/receive";
+	private static final String REDIRECT_URI = "https://localhost:8443/exchanger/webapi/yandex/proceedAuth";
 	private static final String STORE_WALLET = "41001954722279";
 	private static final String STORE_TOKEN = "41001954722279.41FA1CFDB8228302CA23314BFEF423E2A3A719994AFE60A5"
 			+ "6CB63DC438FE08B94CD8AFFC231EEE9404A19F0943D1D2B15E211561AD73A899951C62FE0C9891A761641F089F9C57D0"
@@ -73,7 +73,7 @@ public class YandexMoneyService implements MoneyService {
 		String wallet;
 		String token;
 		if (TransferType.IN.equals(transfer.getType())) {
-			token = getToken(transfer.getAddress());
+			token = tokens.get(transfer.getAddress());
 			wallet = STORE_WALLET;
 		} else {
 			token = STORE_TOKEN;
@@ -105,7 +105,7 @@ public class YandexMoneyService implements MoneyService {
 			String wallet;
 			String token;
 			if (TransferType.IN.equals(transfer.getType())) {
-				token = getToken(transfer.getAddress());
+				token = tokens.get(transfer.getAddress());
 				wallet = STORE_WALLET;
 			} else {
 				token = STORE_TOKEN;
@@ -123,6 +123,16 @@ public class YandexMoneyService implements MoneyService {
 			}
 		}
 		return result;
+	}
+
+	public String exchangeAndStoreToken(String tempCode) {
+		String wallet = null;
+		if (tempCode != null) {
+			String token = exchangeToken(tempCode);
+			wallet = getWalletFromToken(token);
+			tokens.put(wallet, token);
+		}
+		return wallet;
 	}
 
 	private String exchangeToken(String code) throws RuntimeException {
@@ -144,15 +154,6 @@ public class YandexMoneyService implements MoneyService {
 		}
 		StringTokenizer tokenizer = new StringTokenizer(token, ".", false);
 		return tokenizer.nextToken();
-	}
-
-	private String getToken(String tempCode) {
-		String token = tokens.get(tempCode);
-		if (token == null) {
-			token = exchangeToken(token);
-			tokens.put(tempCode, token);
-		}
-		return token;
 	}
 
 	private RequestPaymentResponse requestPayment(String token, String wallet, BigDecimal amount, String description) throws RuntimeException {
