@@ -20,11 +20,20 @@ public class YandexMoneyResource {
 	@Inject
 	private YandexMoneyService yandexMoneyService;
 
+//	@GET
+//	@Path("authorizeUrl")
+//	@Produces(MediaType.TEXT_PLAIN)
+//	public String getUrl(@QueryParam("mobile") boolean mobile) {
+//		return yandexMoneyService.getAuthorizeUri(mobile);
+//	}
+	
 	@GET
 	@Path("authorizeUrl")
-	@Produces(MediaType.TEXT_PLAIN)
-	public String getUrl(@QueryParam("mobile") boolean mobile) {
-		return yandexMoneyService.getAuthorizeUri(mobile);
+	@Produces(MediaType.APPLICATION_JSON)
+	public AuthorizeUrlWrapper getUrl(@QueryParam("mobile") boolean mobile) {
+		AuthorizeUrlWrapper urlWrapper = new AuthorizeUrlWrapper();
+		urlWrapper.setUrl(yandexMoneyService.getAuthorizeUri(mobile));
+		return urlWrapper;
 	}
 
 	@GET

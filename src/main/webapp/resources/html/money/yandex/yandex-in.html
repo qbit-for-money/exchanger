@@ -1,6 +1,10 @@
-<div>
-	<span class="label-danger ng-hide" ng-show="!authorized">Authorization required</span><br>
-	<span class="label-info">Amount:</span>
-	<input class="input-sm" name="amount" /><br>
-	<span class="label-info">{{address}}</span>
+<div ng-controller="YandexController">
+	<div class="input-group">
+		<span class="control-label row">Amount:</span>
+		<input class="input-sm" ng-model="amount" required type="number" />
+		<!--FOR TESTING ONLY-->
+		<br>
+		<span class="label-danger ng-hide" ng-show="!authorized">Not authorized</span><br>
+		<button ng-click="redirect()">Redirect</button>
+	</div>
 </div>

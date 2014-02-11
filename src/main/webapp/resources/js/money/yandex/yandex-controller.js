@@ -1,19 +1,33 @@
 var moneyModule = angular.module("money");
 
-moneyModule.controller("YandexController", function($scope, $location, yandexResource, localStorage) {
+moneyModule.controller("YandexController", function($scope, $location, $window, yandexResource) {
 	$scope.authorized = false;
-	// *** TEST ***
-	var propNewWindowAuth = false;
-	// ***
 	var address;
-	if (propNewWindowAuth) {
-		address = localStorage.getItem("wallet");
-		localStorage.setItem("wallet", null);
-	} else {
-		address = $location.search()["wallet"];
-	}
+	address = $location.search()["wallet"];
 	if (address) {
 		$scope.address = address;
 		$scope.authorized = true;
+	} else {
+		// TODO redirect
 	}
+	
+	$scope.amount = 0;
+
+	$scope.redirect = function() {
+		var urlWrapper = yandexResource.getAuthorizeUrl();
+		urlWrapper.$promise.then(function() {
+			console.log(urlWrapper.url);
+			$window.location.href = urlWrapper.url;
+		});
+	};
+
+	$scope.fillInTransfer = function() {
+		// TODO
+	};
+
+	$scope.fillOutTransfer = function() {
+		// TODO
+	};
+	
+	$scope.$watch("amount", function() {console.log($scope.amount);});
 });
