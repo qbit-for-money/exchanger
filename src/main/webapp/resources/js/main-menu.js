@@ -1,6 +1,6 @@
 var mainMenuModule = angular.module("main-menu");
 
-mainMenuModule.controller("MainMenuController", function($scope, currencyResource) {
+mainMenuModule.controller("MainMenuController", function($scope, $rootScope, currencyResource) {
 	var constants = {
 		directions : {
 			ltr : "ltr",
@@ -46,6 +46,8 @@ mainMenuModule.controller("MainMenuController", function($scope, currencyResourc
 			$scope.convertion.direction = constants.directions.ltr;
 		}
 	};
+
+	$rootScope.orderInfo = {};
 });
 
 mainMenuModule.directive("currencyPicker", function() {

@@ -1,7 +1,8 @@
 <div ng-controller="YandexController">
 	<div class="input-group">
 		<span class="control-label row">Amount:</span>
-		<input class="input-sm" ng-model="amount" required type="number" />
+		<input class="input-sm" ng-readonly="false" ng-model="amount" required step="0.01" type="number" />
+		<input />
 		<!--FOR TESTING ONLY-->
 		<br>
 		<span class="label-danger ng-hide" ng-show="!authorized">Not authorized</span><br>
