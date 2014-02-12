@@ -36,6 +36,5 @@
 				</ul>
 			</div>
 		</div>
-				<ng-include src="'resources/html/money/yandex/yandex-in.html'" />
 	</body>
 </html>

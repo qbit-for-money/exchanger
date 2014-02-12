@@ -11,7 +11,10 @@ moneyModule.controller("YandexController", function($scope, $location, $window, 
 		// TODO redirect
 	}
 
-	$scope.amount = 0;
+	$scope.amount = {
+		coins: 0,
+		cents: 0
+	};
 
 	$scope.redirect = function() {
 		var urlWrapper = yandexResource.getAuthorizeUrl();
@@ -28,7 +31,7 @@ moneyModule.controller("YandexController", function($scope, $location, $window, 
 				orderInfo.inTransfer = {};
 			}
 			orderInfo.inTransfer.address = $scope.address;
-			orderInfo.inTransfer.amount = convertToOrderAmount($scope.amount);
+			orderInfo.inTransfer.amount = $scope.amount;
 		}
 	};
 	$scope.fillOutTransfer = function() {
