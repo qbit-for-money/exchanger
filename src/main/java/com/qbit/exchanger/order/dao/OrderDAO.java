@@ -57,6 +57,21 @@ public class OrderDAO {
 		}
 	}
 	
+	public List<OrderInfo> findByUserAndTimestamp(String userPublicKey, Date creationDate) {
+		if ((userPublicKey == null) || (creationDate == null)) {
+			throw new IllegalArgumentException();
+		}
+		EntityManager entityManager = entityManagerFactory.createEntityManager();
+		try {
+			TypedQuery<OrderInfo> query = entityManager.createNamedQuery("OrderInfo.findByUserAndTimestamp", OrderInfo.class);
+			query.setParameter("userPublicKey", userPublicKey);
+			query.setParameter("creationDate", creationDate);
+			return query.getResultList();
+		} finally {
+			entityManager.close();
+		}
+	}
+	
 	public void changeOrderStatus(String id, OrderStatus orderStatus) {
 		if ((id == null) || (orderStatus == null)) {
 			throw new IllegalArgumentException();
@@ -73,12 +88,10 @@ public class OrderDAO {
 	}
 
 	public OrderInfo create(OrderInfo orderInfo) {
-		return create(orderInfo.getUserPublicKey(), orderInfo.getInTransfer(), orderInfo.getOutTransfer(),
-				orderInfo.getExternalId(), orderInfo.getAdditionalId());
+		return create(orderInfo.getUserPublicKey(), orderInfo.getInTransfer(), orderInfo.getOutTransfer());
 	}
 
-	public OrderInfo create(String userPublicKey, Transfer inTransfer, Transfer outTransfer,
-			String externalId, String additionalId) {
+	public OrderInfo create(String userPublicKey, Transfer inTransfer, Transfer outTransfer) {
 		if ((userPublicKey == null) || (inTransfer == null) || (outTransfer == null)
 				|| !inTransfer.isValid() || !outTransfer.isValid()
 				|| !TransferType.IN.equals(inTransfer.getType())
@@ -94,8 +107,6 @@ public class OrderDAO {
 			order.setInTransfer(inTransfer);
 			order.setOutTransfer(outTransfer);
 			order.setStatus(OrderStatus.ACTIVE);
-			order.setExternalId(externalId);
-			order.setAdditionalId(additionalId);
 			entityManager.persist(order);
 			entityManager.getTransaction().commit();
 			return order;

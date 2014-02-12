@@ -6,9 +6,8 @@ import com.qbit.exchanger.order.service.exception.OrderServiceException;
 import com.qbit.exchanger.money.core.MoneyService;
 import com.qbit.exchanger.order.dao.OrderDAO;
 import com.qbit.exchanger.order.model.OrderInfo;
+import java.util.Date;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -27,9 +26,7 @@ public class OrderService {
 	@Named("moneyServiceFacade")
 	private MoneyService moneyService;
 	
-	private final ExecutorService executorService = Executors.newCachedThreadPool();
-	
-	public OrderInfo getActiveOrder(String userPublicKey) throws OrderServiceSecurityException {
+	public OrderInfo getActiveByUser(String userPublicKey) throws OrderServiceException {
 		List<OrderInfo> activeOrders = orderDAO.findActiveByUser(userPublicKey);
 		if ((activeOrders != null) && activeOrders.size() > 1) {
 			throw new OrderServiceSecurityException("No more than one active order per user.");
@@ -41,14 +38,26 @@ public class OrderService {
 		}
 	}
 	
+	public OrderInfo getByUserAndTimestamp(String userPublicKey, Date creationDate) throws OrderServiceException {
+		List<OrderInfo> orders = orderDAO.findByUserAndTimestamp(userPublicKey, creationDate);
+		if ((orders != null) && orders.size() > 1) {
+			throw new OrderServiceSecurityException("No more than one order per user per timestamp.");
+		}
+		if ((orders != null) && !orders.isEmpty()) {
+			return orders.get(0);
+		} else {
+			return null;
+		}
+	}
+	
 	public OrderInfo create(OrderInfo orderInfo) throws OrderServiceException {
 		if ((orderInfo == null) || !orderInfo.isValid()) {
 			throw new OrderServiceSecurityException("Can not create order. Order is inconsistent.");
 		}
 		
-		OrderInfo activeOrder = getActiveOrder(orderInfo.getUserPublicKey());
+		OrderInfo activeOrder = getActiveByUser(orderInfo.getUserPublicKey());
 		if (activeOrder != null) {
-			throw new OrderServiceSecurityException("No more than one active order per user.");
+			throw new OrderServiceSecurityException("Can not create order. No more than one active order per user.");
 		}
 		
 		if (moneyService.test(orderInfo.getOutTransfer())) {

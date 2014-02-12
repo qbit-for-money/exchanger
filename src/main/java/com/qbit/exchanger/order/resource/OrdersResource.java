@@ -4,6 +4,7 @@ import com.qbit.exchanger.order.model.OrderInfo;
 import com.qbit.exchanger.order.service.OrderService;
 import com.qbit.exchanger.order.service.exception.OrderServiceException;
 import com.qbit.exchanger.order.service.exception.OrderServiceSecurityException;
+import java.util.Date;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -26,8 +27,15 @@ public class OrdersResource {
 	@GET
     @Path("active")
     @Produces(MediaType.APPLICATION_JSON)
-	public OrderInfo getActiveOrder(@QueryParam("userPublicKey") String userPublicKey) throws OrderServiceSecurityException {
-		return orderService.getActiveOrder(userPublicKey);
+	public OrderInfo getActiveByUser(@QueryParam("userPublicKey") String userPublicKey) throws OrderServiceException {
+		return orderService.getActiveByUser(userPublicKey);
+	}
+	
+	@GET
+    @Produces(MediaType.APPLICATION_JSON)
+	public OrderInfo getByUserAndTimestamp(@QueryParam("userPublicKey") String userPublicKey,
+			@QueryParam("creationDate") Date creationDate) throws OrderServiceException {
+		return orderService.getByUserAndTimestamp(userPublicKey, creationDate);
 	}
 
 	@POST

@@ -19,6 +19,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -26,15 +27,15 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @Entity
 @NamedQueries({
-	@NamedQuery(name = "OrderInfo.findByExternalId",
-			query = "SELECT o FROM OrderInfo o WHERE o.externalId = :externalId and o.userPublicKey = :userPublicKey"),
 	@NamedQuery(name = "OrderInfo.findActive",
 			query = "SELECT o FROM OrderInfo o WHERE o.status = com.qbit.exchanger.order.model.OrderStatus.ACTIVE"
 			+ " or o.status = com.qbit.exchanger.order.model.OrderStatus.PAYED"),
 	@NamedQuery(name = "OrderInfo.findActiveByUser",
 			query = "SELECT o FROM OrderInfo o WHERE (o.status = com.qbit.exchanger.order.model.OrderStatus.ACTIVE"
 			+ " or o.status = com.qbit.exchanger.order.model.OrderStatus.PAYED)"
-			+ " and o.userPublicKey = :userPublicKey")})
+			+ " and o.userPublicKey = :userPublicKey"),
+	@NamedQuery(name = "OrderInfo.findByUserAndTimestamp",
+			query = "SELECT o FROM OrderInfo o WHERE o.userPublicKey = :userPublicKey and o.creationDate = :creationDate")})
 @XmlRootElement
 public class OrderInfo implements Identifiable<String>, Serializable {
 
@@ -42,6 +43,7 @@ public class OrderInfo implements Identifiable<String>, Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
+	@XmlTransient
 	private String id;
 
 	@Temporal(TemporalType.TIMESTAMP)
@@ -70,10 +72,6 @@ public class OrderInfo implements Identifiable<String>, Serializable {
 	private Transfer outTransfer;
 
 	private OrderStatus status;
-
-	private String externalId;
-
-	private String additionalId;
 
 	@Override
 	public String getId() {
@@ -124,22 +122,6 @@ public class OrderInfo implements Identifiable<String>, Serializable {
 		this.status = status;
 	}
 
-	public String getExternalId() {
-		return externalId;
-	}
-
-	public void setExternalId(String externalId) {
-		this.externalId = externalId;
-	}
-
-	public String getAdditionalId() {
-		return additionalId;
-	}
-
-	public void setAdditionalId(String additionalId) {
-		this.additionalId = additionalId;
-	}
-
 	public boolean isValid() {
 		return ((userPublicKey != null) && (inTransfer != null) && (outTransfer != null)
 				&& inTransfer.isValid() && outTransfer.isValid()
@@ -171,6 +153,6 @@ public class OrderInfo implements Identifiable<String>, Serializable {
 
 	@Override
 	public String toString() {
-		return "OrderInfo{" + "id=" + id + ", creationDate=" + creationDate + ", userPublicKey=" + userPublicKey + ", inTransfer=" + inTransfer + ", outTransfer=" + outTransfer + ", status=" + status + ", externalId=" + externalId + ", additionalId=" + additionalId + '}';
+		return "OrderInfo{" + "id=" + id + ", creationDate=" + creationDate + ", userPublicKey=" + userPublicKey + ", inTransfer=" + inTransfer + ", outTransfer=" + outTransfer + ", status=" + status + '}';
 	}
 }

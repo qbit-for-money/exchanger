@@ -3,9 +3,10 @@ var commonModule = angular.module("common");
 commonModule.factory("localStorage", function() {
 	return window.localStorage || {
 		getItem: function(key) {
-			return null;
+			return this[key];
 		},
 		setItem: function(key, value) {
+			this[key] = value;
 		}
 	};
 });
@@ -37,10 +38,12 @@ commonModule.factory("usersResource", function($resource) {
 		});
 });
 
-commonModule.factory("usersService", function(localStorage, usersResource) {
+commonModule.factory("userService", function(localStorage, usersResource) {
+	function getPublicKey() {
+		return localStorage.getItem("publicKey");
+	}
 	function get() {
-		var publicKey = localStorage.getItem("publicKey");
-		return usersResource.get({publicKey: publicKey});
+		return usersResource.get({publicKey: getPublicKey()});
 	}
 	function change(publicKey) {
 		var user = usersResource.get({publicKey: publicKey}, function() {
@@ -57,6 +60,7 @@ commonModule.factory("usersService", function(localStorage, usersResource) {
 		return user;
 	}
 	return {
+		getPublicKey: getPublicKey,
 		get: get,
 		change: change,
 		create: create
