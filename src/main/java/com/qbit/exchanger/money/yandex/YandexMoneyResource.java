@@ -16,6 +16,7 @@ public class YandexMoneyResource {
 
 	private static final String REDIRECT_PATH = "https://localhost:8443/exchanger/";
 	private static final String REDIRECT_ROUTE = "test";
+	private static final String WALLET_PARAM_NAME = "wallet";
 
 	@Inject
 	private YandexMoneyService yandexMoneyService;
@@ -39,15 +40,14 @@ public class YandexMoneyResource {
 	@GET
 	@Path("proceedAuth")
 	public Response proceedAuth(@QueryParam("code") String code, @QueryParam("error") String error) {
-		/*
-		 * if redirect to route works fine we need to return wallet as query parameter
-		 */
+		String wallet = null;
 		if (code != null) {
-			yandexMoneyService.exchangeAndStoreToken(code);
+			wallet = yandexMoneyService.exchangeAndStoreToken(code);
 		} else {
 			throw new RuntimeException((error != null) ? error : "code is empty!");
 		}
-		URI uri = UriBuilder.fromPath(REDIRECT_PATH).fragment("{route}").build(REDIRECT_ROUTE);
+//		URI uri = UriBuilder.fromPath(REDIRECT_PATH).fragment("{route}").build(REDIRECT_ROUTE);
+		URI uri = UriBuilder.fromPath(REDIRECT_PATH).queryParam(WALLET_PARAM_NAME, wallet).build();
 		return Response.seeOther(uri).build();
 	}
 
