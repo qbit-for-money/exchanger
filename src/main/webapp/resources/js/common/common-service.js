@@ -43,10 +43,11 @@ commonModule.factory("userService", function(localStorage, usersResource) {
 		return localStorage.getItem("publicKey");
 	}
 	function get() {
-		return usersResource.get({publicKey: getPublicKey()});
+		var publicKey = getPublicKey();
+		return usersResource.get({publicKey: (publicKey ? publicKey : "null")});
 	}
 	function change(publicKey) {
-		var user = usersResource.get({publicKey: publicKey}, function() {
+		var user = usersResource.get({publicKey: (publicKey ? publicKey : "null")}, function() {
 				if (publicKey === user.publicKey) {
 					localStorage.setItem("publicKey", user.publicKey);
 				}
