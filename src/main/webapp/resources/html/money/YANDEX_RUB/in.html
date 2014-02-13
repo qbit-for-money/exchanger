@@ -1,9 +1,9 @@
 <div ng-controller="YandexController">
+	<input />
 	<div class="input-group">
 		<span class="control-label row">Amount:</span>
 		<input class="input-sm" ng-readonly="false" ng-model="amount.coins" required step="1" type="number" />
 		<input class="input-sm" ng-readonly="false" ng-model="amount.cents" required step="1" type="number" />
-		<input />
 		<!--FOR TESTING ONLY-->
 		<br>
 		<span class="label-danger ng-hide" ng-show="!authorized">Not authorized</span><br>

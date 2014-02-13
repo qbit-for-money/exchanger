@@ -46,8 +46,6 @@ mainMenuModule.controller("MainMenuController", function($scope, $rootScope, cur
 			$scope.convertion.direction = constants.directions.ltr;
 		}
 	};
-
-	$rootScope.orderInfo = {};
 });
 
 mainMenuModule.directive("currencyPicker", function() {

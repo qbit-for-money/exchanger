@@ -7,3 +7,10 @@ angular.module("money", ["ngResource", "order", "common"], function($locationPro
 angular.module("main-menu", ["ngRoute", "angular-carousel", "ngResource", "common", "order", "money"]);
 
 angular.module("main", ["common", "ngRoute", "ui.bootstrap", "main-menu", "order", "money"]);
+
+angular.module("main").run(function($rootScope) {
+	$rootScope.orderInfo = {
+		inTransfer: {},
+		outTransfer: {}
+	};
+});
