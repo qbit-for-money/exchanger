@@ -26,15 +26,6 @@
 				</div><!-- /.navbar-collapse -->
 			</div><!-- /.container-fluid -->
 		</nav>
-		<div class="container">		
-			<div ng-controller="MainMenuController" class="rn-carousel-container">
-				<ul rn-carousel rn-carousel-indicator="true" id="main-menu-carousel">
-					<li class="rn-carousel-slide" currency-picker></li>
-					<li class="rn-carousel-slide">Something is gonna appear here soon!
-<!--					<ng-include src="'resources/html/money/YANDEX_RUB/in.html'" />-->
-					</li>
-				</ul>
-			</div>
-		</div>
+		<div class="container" ng-view></div>
 	</body>
 </html>

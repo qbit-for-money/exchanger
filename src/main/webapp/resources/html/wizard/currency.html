@@ -4,9 +4,9 @@
 		<div class="dropdown open">
 			<ul class="dropdown-menu currencies-list">
 				<li data-ng-repeat="currency in currencies" 
-					data-ng-click="selectCurrency('left', {{currency}}, this)"
-					data-ng-class="{ active : convertion.panels.left.currency.id == '{{currency.id}}',
-									disabled : convertion.panels.right.currency.id == '{{currency.id}}'}">
+					data-ng-click="selectCurrency('left', currency, this)"
+					data-ng-class="{  'active' : convertion.panels.left.currency && (convertion.panels.left.currency.id == currency.id),
+									'disabled' : convertion.panels.right.currency && (convertion.panels.right.currency.id == currency.id)}">
 					
 					<a class="currency-list-item">
 						<div class="currency-list-icon sprite {{currency.id}}"></div>
@@ -28,9 +28,9 @@
 		<div class="dropdown open">
 			<ul class="dropdown-menu currencies-list">
 				<li data-ng-repeat="currency in currencies"
-					data-ng-click="selectCurrency('right', {{currency}})"
-					data-ng-class="{ active : convertion.panels.right.currency.id == '{{currency.id}}',
-									disabled : convertion.panels.left.currency.id == '{{currency.id}}'}">
+					data-ng-click="selectCurrency('right', currency)"
+					data-ng-class="{  'active' : convertion.panels.right.currency && (convertion.panels.right.currency.id == currency.id),
+									'disabled' : convertion.panels.left.currency && (convertion.panels.left.currency.id == currency.id)}">
 					<a class="currency-list-item">
 						<div class="currency-list-icon sprite {{currency.id}}"></div>
 						<div class="text-center currency-list-label">{{currency.code}}</div>
