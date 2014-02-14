@@ -15,7 +15,7 @@ import javax.ws.rs.core.UriBuilder;
 public class YandexMoneyResource {
 
 	private static final String REDIRECT_PATH = "https://localhost:8443/exchanger/";
-	private static final String REDIRECT_ROUTE = "test";
+	private static final String REDIRECT_ROUTE = "/steps/yandex";
 	private static final String WALLET_PARAM_NAME = "wallet";
 
 	@Inject
@@ -54,7 +54,7 @@ public class YandexMoneyResource {
 	@GET
 	@Path("redirect")
 	public Response redirect() throws URISyntaxException {
-		URI uri = UriBuilder.fromPath("https://localhost:8443/exchanger/").fragment("{route}").build("test?code=asdcvbnm");
+		URI uri = UriBuilder.fromPath("https://localhost:8443/exchanger/").fragment("{route}").build(REDIRECT_ROUTE + "?" + WALLET_PARAM_NAME + "=" + 123);
 		return Response.seeOther(uri).build();
 	}
 }

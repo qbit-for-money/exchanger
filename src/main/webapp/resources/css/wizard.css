@@ -51,3 +51,11 @@
 }
 
 /* END CURRENCY STEP */
+
+/* START ORDER STEP */
+
+form input.money-input {
+	text-align: right;
+}
+
+/* END ORDER STEP */

@@ -23,10 +23,3 @@ angular.module("main").config(function($routeProvider, $locationProvider) {
 	}).otherwise({ redirectTo: "/steps/currency" });
 	//$locationProvider.html5Mode(true);
 });
-
-angular.module("main").run(function($rootScope) {
-	$rootScope.orderInfo = {
-		inTransfer: {},
-		outTransfer: {}
-	};
-});
