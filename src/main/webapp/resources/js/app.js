@@ -3,7 +3,7 @@ angular.module("common", ["ngResource"]);
 angular.module("user", ["ngResource"]);
 angular.module("order", ["ngResource"]);
 angular.module("money", ["ngResource", "order", "common"], function($locationProvider) {
-      $locationProvider.html5Mode(true);
+//      $locationProvider.html5Mode(true);
     });
 
 angular.module("wizard", ["ngRoute", "common"]);

@@ -25,12 +25,7 @@
 <script type="text/javascript" src="${context}resources/js/app.js"></script>
 <script type="text/javascript" src="${context}resources/js/common/common-service.js"></script>
 <script type="text/javascript" src="${context}resources/js/common/common-controller.js"></script>
-<<<<<<< HEAD
-<script type="text/javascript" src="${context}resources/js/main-menu.js"></script>
-<script type="text/javascript" src="${context}resources/js/order/order-service.js"></script>
-<script type="text/javascript" src="${context}resources/js/money/yandex/yandex-service.js"></script>
-<script type="text/javascript" src="${context}resources/js/money/yandex/yandex-controller.js"></script>
-=======
+
 <script type="text/javascript" src="${context}resources/js/user/user-service.js"></script>
 <script type="text/javascript" src="${context}resources/js/user/user-controller.js"></script>
 <script type="text/javascript" src="${context}resources/js/order/order-service.js"></script>
@@ -38,4 +33,7 @@
 <script type="text/javascript" src="${context}resources/js/wizard/wizard.js"></script>
 <script type="text/javascript" src="${context}resources/js/wizard/currency.js"></script>
 <script type="text/javascript" src="${context}resources/js/wizard/result.js"></script>
->>>>>>> b2f1ee2a496adf99ad00e04a0aaff94898b704db
+
+<script type="text/javascript" src="${context}resources/js/money/yandex/yandex-service.js"></script>
+<script type="text/javascript" src="${context}resources/js/money/yandex/yandex-controller.js"></script>
+
