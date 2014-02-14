@@ -126,7 +126,7 @@ public class Bitcoin implements MoneyService {
 		try {
 			Address forwardingAddress = new Address(parameters, transfer.getAddress());
 
-			BigInteger value = Utils.toNanoCoins(transfer.getCoins(), transfer.getCents());
+			BigInteger value = Utils.toNanoCoins((int) transfer.getCoins(), (int) transfer.getCents());
 
 			logger.log(Level.INFO, "Forwarding {0} BTC", Utils.bitcoinValueToFriendlyString(value));
 
