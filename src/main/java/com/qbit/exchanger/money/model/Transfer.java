@@ -53,11 +53,11 @@ public class Transfer implements Serializable {
 		this.amount = amount;
 	}
 
-	public int getCoins() {
+	public long getCoins() {
 		return amount.getCoins();
 	}
 
-	public int getCents() {
+	public long getCents() {
 		return amount.getCents();
 	}
 

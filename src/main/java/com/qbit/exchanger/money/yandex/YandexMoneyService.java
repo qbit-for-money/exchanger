@@ -7,9 +7,13 @@ import com.qbit.exchanger.money.model.TransferType;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.logging.Logger;
+import javax.inject.Singleton;
 import ru.yandex.money.api.YandexMoney;
 import ru.yandex.money.api.YandexMoneyImpl;
 import ru.yandex.money.api.enums.Destination;
@@ -25,10 +29,12 @@ import ru.yandex.money.api.rights.Payment;
 import ru.yandex.money.api.rights.PaymentP2P;
 import ru.yandex.money.api.rights.Permission;
 
+@Singleton
 public class YandexMoneyService implements MoneyService {
 
+	private static final Logger LOGGER = Logger.getLogger(YandexMoneyService.class.getName());
 	private static final String CLIENT_ID = "B83AF6B23CA9C5E0CA7AAFC2F1B98CDAEEAD59A49DED9A4BEE52B8F85A19D20B";
-	private static final String REDIRECT_URI = "https://localhost:8443/exchanger/webapi/yandex/receive";
+	private static final String REDIRECT_URI = "https://localhost:8443/exchanger/webapi/yandex/proceedAuth";
 	private static final String STORE_WALLET = "41001954722279";
 	private static final String STORE_TOKEN = "41001954722279.41FA1CFDB8228302CA23314BFEF423E2A3A719994AFE60A5"
 			+ "6CB63DC438FE08B94CD8AFFC231EEE9404A19F0943D1D2B15E211561AD73A899951C62FE0C9891A761641F089F9C57D0"
@@ -36,8 +42,10 @@ public class YandexMoneyService implements MoneyService {
 	private static final String OPERATION_DESCRIPTION = "test";
 
 	private final YandexMoney yandexMoney;
+	private final Map<String, String> tokens;
 
 	public YandexMoneyService() {
+		tokens = new HashMap<>();
 		yandexMoney = new YandexMoneyImpl(CLIENT_ID);
 	}
 
@@ -51,7 +59,7 @@ public class YandexMoneyService implements MoneyService {
 		return yandexMoney.authorizeUri(scope, REDIRECT_URI, mobile);
 	}
 
-	public BigDecimal getBalanceInfo() throws RuntimeException {
+	public BigDecimal getBalance() throws RuntimeException {
 		try {
 			AccountInfoResponse response = yandexMoney.accountInfo(STORE_TOKEN);
 			return response.getBalance();
@@ -62,23 +70,72 @@ public class YandexMoneyService implements MoneyService {
 
 	@Override
 	public void process(Transfer transfer, MoneyTransferCallback callback) {
+		String wallet;
+		String token;
 		if (TransferType.IN.equals(transfer.getType())) {
-			receiveMoney(transfer, callback);
+			token = tokens.get(transfer.getAddress());
+			wallet = STORE_WALLET;
 		} else {
-			sendMoney(transfer, callback);
+			token = STORE_TOKEN;
+			wallet = transfer.getAddress();
+		}
+
+		try {
+			RequestPaymentResponse response = requestPayment(token, wallet, transfer.getAmount().toBigDecimal(), OPERATION_DESCRIPTION);
+			if (response != null && response.isSuccess()) {
+				ProcessPaymentResponse paymentResponse = processPayment(token, response.getRequestId());
+				if (paymentResponse != null && paymentResponse.isSuccess()) {
+					callback.success();
+				} else {
+					callback.error(paymentResponse != null ? paymentResponse.getError().getCode() : null);
+				}
+			} else {
+				callback.error(response != null ? response.getError().getCode() : null);
+			}
+		} catch (Exception e) {
+			LOGGER.severe(e.getMessage());
+			callback.error(e.getMessage());
 		}
 	}
 
 	@Override
-	public void test(Transfer transfer, MoneyTransferCallback callback) {
-		if (TransferType.IN.equals(transfer.getType())) {
-			testReceive(transfer, callback);
-		} else {
-			testSend(transfer, callback);
+	public boolean test(Transfer transfer) {
+		boolean result = false;
+		if ((transfer != null) && transfer.isValid()) {
+			String wallet;
+			String token;
+			if (TransferType.IN.equals(transfer.getType())) {
+				token = tokens.get(transfer.getAddress());
+				wallet = STORE_WALLET;
+			} else {
+				token = STORE_TOKEN;
+				wallet = transfer.getAddress();
+			}
+
+			try {
+				RequestPaymentResponse response = requestPayment(token, wallet, transfer.getAmount().toBigDecimal(), OPERATION_DESCRIPTION);
+				if ((response != null) && response.isSuccess()) {
+					result = true;
+				}
+			} catch (Exception e) {
+				LOGGER.severe(e.getMessage());
+				result = false;
+			}
 		}
+		return result;
 	}
 
-	public String receiveToken(String code) throws RuntimeException {
+	public String exchangeAndStoreToken(String tempCode) {
+		String wallet = null;
+		if (tempCode != null) {
+			String token = exchangeToken(tempCode);
+			wallet = getWalletFromToken(token);
+			tokens.put(wallet, token);
+		}
+		return wallet;
+	}
+
+	private String exchangeToken(String code) throws RuntimeException {
 		String token = null;
 		try {
 			ReceiveOAuthTokenResponse tokenResponse = yandexMoney.receiveOAuthToken(code, REDIRECT_URI);
@@ -89,6 +146,14 @@ public class YandexMoneyService implements MoneyService {
 			throw new RuntimeException(e.getMessage());
 		}
 		return token;
+	}
+
+	private String getWalletFromToken(String token) {
+		if (token == null) {
+			return null;
+		}
+		StringTokenizer tokenizer = new StringTokenizer(token, ".", false);
+		return tokenizer.nextToken();
 	}
 
 	private RequestPaymentResponse requestPayment(String token, String wallet, BigDecimal amount, String description) throws RuntimeException {
@@ -135,85 +200,5 @@ public class YandexMoneyService implements MoneyService {
 		scope.toAccount(STORE_WALLET);
 		Permission result = scope;
 		return Collections.singletonList(result);
-	}
-
-	private String getWalletFromToken(String token) {
-		if (token == null) {
-			return null;
-		}
-		StringTokenizer tokenizer = new StringTokenizer(token, ".", false);
-		return tokenizer.nextToken();
-	}
-
-	private void receiveMoney(Transfer transfer, MoneyTransferCallback callback) {
-		try {
-			RequestPaymentResponse response = requestPayment(transfer.getAddress(), STORE_WALLET, transfer.getAmount().toBigDecimal(), OPERATION_DESCRIPTION);
-			if (response != null && response.isSuccess()) {
-				ProcessPaymentResponse paymentResponse = processPayment(transfer.getAddress(), response.getRequestId());
-				if (paymentResponse != null && paymentResponse.isSuccess()) {
-					callback.success();
-				} else {
-					callback.error(paymentResponse != null ? paymentResponse.getError().getCode() : null);
-				}
-			} else {
-				callback.error(response != null ? response.getError().getCode() : null);
-			}
-		} catch (Exception e) {
-			callback.error(e.getMessage());
-		}
-	}
-
-	private void sendMoney(Transfer transfer, MoneyTransferCallback callback) {
-		try {
-			String address = getWalletFromToken(transfer.getAddress());
-			RequestPaymentResponse response = requestPayment(STORE_TOKEN, address, transfer.getAmount().toBigDecimal(), OPERATION_DESCRIPTION);
-			if (response != null && response.isSuccess()) {
-				ProcessPaymentResponse paymentResponse = processPayment(STORE_TOKEN, response.getRequestId());
-				if (paymentResponse != null && paymentResponse.isSuccess()) {
-					callback.success();
-				} else {
-					callback.error(paymentResponse != null ? paymentResponse.getError().getCode() : null);
-				}
-			} else {
-				callback.error(response != null ? response.getError().getCode() : null);
-			}
-		} catch (Exception e) {
-			callback.error(e.getMessage());
-		}
-	}
-
-	private void testSend(Transfer transfer, MoneyTransferCallback callback) {
-		if ((transfer != null) && transfer.isValid()) {
-			try {
-				String address = getWalletFromToken(transfer.getAddress());
-				RequestPaymentResponse response = requestPayment(STORE_TOKEN, address, transfer.getAmount().toBigDecimal(), OPERATION_DESCRIPTION);
-				if ((response != null) && response.isSuccess()) {
-					callback.success();
-				} else {
-					callback.error(response != null ? response.getError().getCode() : null);
-				}
-			} catch (Exception e) {
-				callback.error(e.getMessage());
-			}
-		} else {
-			callback.error("Invalid transfer");
-		}
-	}
-
-	private void testReceive(Transfer transfer, MoneyTransferCallback callback) {
-		if ((transfer != null) && transfer.isValid()) {
-			try {
-				RequestPaymentResponse response = requestPayment(transfer.getAddress(), STORE_WALLET, transfer.getAmount().toBigDecimal(), OPERATION_DESCRIPTION);
-				if ((response != null) && response.isSuccess()) {
-					callback.success();
-				} else {
-					callback.error(response != null ? response.getError().getCode() : null);
-				}
-			} catch (Exception e) {
-				callback.error(e.getMessage());
-			}
-		} else {
-			callback.error("Invalid transfer");
-		}
 	}
 }

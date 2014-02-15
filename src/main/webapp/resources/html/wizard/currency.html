@@ -1,0 +1,43 @@
+<div class="row">
+	<div class="col-lg-2 col-md-1 hidden-sm"></div>
+	<div class="col-lg-3 col-md-4 col-sm-5 col-xs-5">
+		<div class="dropdown open">
+			<ul class="dropdown-menu currencies-list">
+				<li data-ng-repeat="currency in currencies" 
+					data-ng-click="selectCurrency('left', currency, this)"
+					data-ng-class="{  'active' : convertion.panels.left.currency && (convertion.panels.left.currency.id == currency.id),
+									'disabled' : convertion.panels.right.currency && (convertion.panels.right.currency.id == currency.id)}">
+					
+					<a class="currency-list-item">
+						<div class="currency-list-icon sprite {{currency.id}}"></div>
+						<div class="text-center currency-list-label">{{currency.code}}</div>
+					</a>
+				</li>
+			</ul>
+		</div>
+	</div>
+	<div class="text-center convert-direction col-md-2 col-xs-2">
+		<button class="btn btn-success btn-lg convert-direction-btn" 
+				data-ng-click="toggleDirection()">
+			<span class="glyphicon"
+				  data-ng-class="{ 'glyphicon-arrow-right' : convertion.direction == constants.directions.ltr,
+									'glyphicon-arrow-left' : convertion.direction == constants.directions.rtl}"></span>
+		</button>
+	</div>
+	<div class="col-lg-3 col-md-4 col-sm-5 col-xs-5">
+		<div class="dropdown open">
+			<ul class="dropdown-menu currencies-list">
+				<li data-ng-repeat="currency in currencies"
+					data-ng-click="selectCurrency('right', currency)"
+					data-ng-class="{  'active' : convertion.panels.right.currency && (convertion.panels.right.currency.id == currency.id),
+									'disabled' : convertion.panels.left.currency && (convertion.panels.left.currency.id == currency.id)}">
+					<a class="currency-list-item">
+						<div class="currency-list-icon sprite {{currency.id}}"></div>
+						<div class="text-center currency-list-label">{{currency.code}}</div>
+					</a>
+				</li>
+			</ul>
+		</div>
+	</div>
+	<div class="col-lg-2 col-md-1 hidden-sm"></div>
+</div>

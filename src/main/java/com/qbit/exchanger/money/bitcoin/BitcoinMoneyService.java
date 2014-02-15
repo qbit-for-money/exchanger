@@ -36,6 +36,7 @@ import java.util.logging.Logger;
  *
  * @author Ivan_Rakitnyh
  */
+@Singleton
 public class BitcoinMoneyService implements MoneyService {
 
 	private static final BigInteger COIN = new BigInteger("100000000", 10);
