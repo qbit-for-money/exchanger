@@ -20,4 +20,4 @@ angular.module("main").config(function($routeProvider, $locationProvider) {
 		controller: "ResultController"
 	}).otherwise({ redirectTo: "/steps/currency" });
 	//$locationProvider.html5Mode(true);
-});;
+});

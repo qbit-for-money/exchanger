@@ -179,6 +179,7 @@ public class YandexMoneyService implements MoneyService {
 
 	@Override
 	public boolean test(Transfer transfer) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		// For debug purposes
+		return true;
 	}
 }

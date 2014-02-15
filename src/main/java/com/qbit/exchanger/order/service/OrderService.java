@@ -9,7 +9,6 @@ import com.qbit.exchanger.order.model.OrderInfo;
 import java.util.Date;
 import java.util.List;
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Singleton;
 
 /**
@@ -23,7 +22,6 @@ public class OrderService {
 	private OrderDAO orderDAO;
 	
 	@Inject
-	@Named("moneyServiceFacade")
 	private MoneyService moneyService;
 	
 	public OrderInfo getActiveByUser(String userPublicKey) throws OrderServiceException {
@@ -60,7 +58,7 @@ public class OrderService {
 			throw new OrderServiceSecurityException("Can not create order. No more than one active order per user.");
 		}
 		
-		if (moneyService.test(orderInfo.getOutTransfer())) {
+		if (!moneyService.test(orderInfo.getOutTransfer())) {
 			throw new OrderTestException();
 		}
 		

@@ -44,6 +44,7 @@ public final class DAOUtil {
 		return query.getResultList();
 	}
 
+	@SuppressWarnings("unchecked")
 	public static <T> int count(EntityManager entityManager, Class<T> entityClass) {
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
 		CriteriaQuery criteriaQuery = criteriaBuilder.createQuery(entityClass);
