@@ -1,7 +1,6 @@
 package com.qbit.exchanger.money.yandex;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -21,13 +20,6 @@ public class YandexMoneyResource {
 	@Inject
 	private YandexMoneyService yandexMoneyService;
 
-//	@GET
-//	@Path("authorizeUrl")
-//	@Produces(MediaType.TEXT_PLAIN)
-//	public String getUrl(@QueryParam("mobile") boolean mobile) {
-//		return yandexMoneyService.getAuthorizeUri(mobile);
-//	}
-	
 	@GET
 	@Path("authorizeUrl")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -46,15 +38,11 @@ public class YandexMoneyResource {
 		} else {
 			throw new RuntimeException((error != null) ? error : "code is empty!");
 		}
-//		URI uri = UriBuilder.fromPath(REDIRECT_PATH).fragment("{route}").build(REDIRECT_ROUTE);
-		URI uri = UriBuilder.fromPath(REDIRECT_PATH).queryParam(WALLET_PARAM_NAME, wallet).build();
-		return Response.seeOther(uri).build();
-	}
 
-	@GET
-	@Path("redirect")
-	public Response redirect() throws URISyntaxException {
-		URI uri = UriBuilder.fromPath("https://localhost:8443/exchanger/").fragment("{route}").build(REDIRECT_ROUTE + "?" + WALLET_PARAM_NAME + "=" + 123);
+		// hack for angularjs without html5 mode
+		URI uri = UriBuilder.fromPath(REDIRECT_PATH).fragment("{route}").build(REDIRECT_ROUTE + "?" + WALLET_PARAM_NAME + "=" + wallet);
+
+//		URI uri = UriBuilder.fromPath(REDIRECT_PATH).queryParam(WALLET_PARAM_NAME, wallet).build();
 		return Response.seeOther(uri).build();
 	}
 }

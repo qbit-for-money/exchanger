@@ -11,6 +11,17 @@ commonModule.factory("localStorage", function() {
 	};
 });
 
+commonModule.factory("sessionStorage", function() {
+	return window.sessionStorage || {
+		getItem: function(key) {
+			return this[key];
+		},
+		setItem: function(key, value) {
+			this[key] = value;
+		}
+	};
+});
+
 commonModule.factory("delayedProxy", function($timeout) {
 	return function(f, delay) {
 			var proxy = function() {

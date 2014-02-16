@@ -54,8 +54,12 @@
 
 /* START ORDER STEP */
 
-form input.money-input {
+form input.money-amount {
 	text-align: right;
+}
+
+form input.money-wallet {
+	text-align: center;
 }
 
 /* END ORDER STEP */
