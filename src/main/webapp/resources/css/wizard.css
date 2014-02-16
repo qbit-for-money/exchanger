@@ -1,17 +1,17 @@
 /* START CURRENCY STEP */
-
-.sprite.BITCOIN { background-position: 0px 0px; width: 75px; height: 75px; }
-.sprite.DIGITALCOIN { background-position: 0px -85px; width: 75px; height: 75px; }
-.sprite.FEATHERCOIN { background-position: 0px -170px; width: 75px; height: 75px; }
-.sprite.LITECOIN { background-position: 0px -255px; width: 75px; height: 75px; }
-.sprite.NAMECOIN { background-position: 0px -340px; width: 75px; height: 75px; }
-.sprite.NOVACOIN { background-position: 0px -425px; width: 75px; height: 76px; }
-.sprite.PEERCOIN { background-position: 0px -511px; width: 75px; height: 75px; }
-.sprite.PRIMECOIN { background-position: 0px -596px; width: 75px; height: 75px; }
-.sprite.QUARKCOIN { background-position: 0px -681px; width: 75px; height: 75px; }
-.sprite.STABLECOIN { background-position: 0px -766px; width: 75px; height: 75px; }
-.sprite.YANDEX_RUB { background-position: 0px -851px; width: 75px; height: 75px; }
-.sprite.ZETACOIN { background-position: 0px -936px; width: 75px; height: 75px;  }
+.currency { background: url('../img/currencies.png') no-repeat; }
+.currency.BITCOIN { background-position: 0px 0px; width: 75px; height: 75px; }
+.currency.DIGITALCOIN { background-position: 0px -85px; width: 75px; height: 75px; }
+.currency.FEATHERCOIN { background-position: 0px -170px; width: 75px; height: 75px; }
+.currency.LITECOIN { background-position: 0px -255px; width: 75px; height: 75px; }
+.currency.NAMECOIN { background-position: 0px -340px; width: 75px; height: 75px; }
+.currency.NOVACOIN { background-position: 0px -425px; width: 75px; height: 76px; }
+.currency.PEERCOIN { background-position: 0px -511px; width: 75px; height: 75px; }
+.currency.PRIMECOIN { background-position: 0px -596px; width: 75px; height: 75px; }
+.currency.QUARKCOIN { background-position: 0px -681px; width: 75px; height: 75px; }
+.currency.STABLECOIN { background-position: 0px -766px; width: 75px; height: 75px; }
+.currency.YANDEX_RUB { background-position: 0px -851px; width: 75px; height: 75px; }
+.currency.ZETACOIN { background-position: 0px -936px; width: 75px; height: 75px;  }
 
 .currencies-list {
 	position: relative;
@@ -20,7 +20,6 @@
 	max-height: 500px;
 	overflow-y: auto;
 	overflow-x: auto;
-	
 }
 
 .convert-direction-btn {
@@ -40,7 +39,6 @@
 
 .currency-list-icon {
 	display: table-cell;
-	background: url('../img/currencies.png') no-repeat;
 }
 
 .currency-list-label {

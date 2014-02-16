@@ -8,7 +8,7 @@
 					data-ng-class="{  'active' : convertion.panels.left.currency && (convertion.panels.left.currency.id == currency.id),
 									'disabled' : convertion.panels.right.currency && (convertion.panels.right.currency.id == currency.id)}">
 					<a class="currency-list-item">
-						<div class="currency-list-icon sprite {{currency.id}}"></div>
+						<div class="currency-list-icon currency {{currency.id}}"></div>
 						<div class="text-center currency-list-label">{{currency.code}}</div>
 					</a>
 				</li>
@@ -31,7 +31,7 @@
 					data-ng-class="{  'active' : convertion.panels.right.currency && (convertion.panels.right.currency.id == currency.id),
 									'disabled' : convertion.panels.left.currency && (convertion.panels.left.currency.id == currency.id)}">
 					<a class="currency-list-item">
-						<div class="currency-list-icon sprite {{currency.id}}"></div>
+						<div class="currency-list-icon currency {{currency.id}}"></div>
 						<div class="text-center currency-list-label">{{currency.code}}</div>
 					</a>
 				</li>
