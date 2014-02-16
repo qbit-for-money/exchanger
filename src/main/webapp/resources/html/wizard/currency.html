@@ -4,7 +4,7 @@
 		<div class="dropdown open">
 			<ul class="dropdown-menu currencies-list">
 				<li data-ng-repeat="currency in currencies" 
-					data-ng-click="selectCurrency('left', currency, this)"
+					data-ng-click="selectCurrency('left', currency)"
 					data-ng-class="{  'active' : convertion.panels.left.currency && (convertion.panels.left.currency.id == currency.id),
 									'disabled' : convertion.panels.right.currency && (convertion.panels.right.currency.id == currency.id)}">
 					<a class="currency-list-item">

@@ -26,6 +26,29 @@
 				</div><!-- /.navbar-collapse -->
 			</div><!-- /.container-fluid -->
 		</nav>
-		<div class="container" ng-view></div>
+		<div class="container">
+			<div class="row">
+				<div class="wizard" ng-controller="WizardController">
+					<ul class="steps">
+						<li ng-repeat="step in steps"
+							ng-class="{'active' : step.path == location.path(),
+							'complete' : $index < getStepIndexByPath(location.path())}">
+							<a ng-href="{{$index <= getStepIndexByPath(location.path()) ? ('#' + step.path) : ''}}">
+								<span class="badge">{{$index + 1}}</span>
+								{{step.title}}
+								<span class="chevron"></span>
+							</a>
+						</li>
+					</ul>
+					<div class="actions">
+						<button class="btn btn-lg btn-success" ng-click="goToPreviousStep()">Previous</button>
+						<button class="btn btn-lg btn-success" ng-click="goToNextStep()">Next</button>
+					</div>
+				</div>
+			</div>	
+		</div>	
+		<div class="container">
+			<div ng-view></div>
+		</div>
 	</body>
 </html>
