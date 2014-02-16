@@ -6,5 +6,5 @@ package com.qbit.exchanger.order.model;
  */
 public enum OrderStatus {
 
-	ACTIVE, PAYED, SUCCESS, IN_FAILED, OUT_FAILED
+	INITIAL, PAYED, SUCCESS, IN_FAILED, OUT_FAILED
 }

@@ -2,7 +2,11 @@ package com.qbit.exchanger.util;
 
 import com.qbit.exchanger.common.model.Identifiable;
 import com.qbit.exchanger.common.model.ResourceLink;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -10,6 +14,8 @@ import java.util.List;
  * @author Александр
  */
 public final class RESTUtil {
+	
+	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
 	
 	private RESTUtil() {
 	}
@@ -22,5 +28,9 @@ public final class RESTUtil {
 			}
 		}
 		return result;
+	}
+	
+	public static Date toDate(String dateStr) throws ParseException {
+		return DATE_FORMAT.parse(dateStr);
 	}
 }

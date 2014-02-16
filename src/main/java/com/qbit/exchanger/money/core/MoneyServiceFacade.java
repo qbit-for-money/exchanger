@@ -7,7 +7,6 @@ import com.qbit.exchanger.money.yandex.YandexMoneyService;
 import java.util.HashMap;
 import java.util.Map;
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Singleton;
 
 /**
@@ -15,7 +14,6 @@ import javax.inject.Singleton;
  * @author Александр
  */
 @Singleton
-@Named("moneyServiceFacade")
 public class MoneyServiceFacade implements MoneyService {
 
 	@Inject

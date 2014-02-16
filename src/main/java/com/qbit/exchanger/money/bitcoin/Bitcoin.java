@@ -53,7 +53,8 @@ public class Bitcoin implements MoneyService {
 			parameters = MainNetParams.get();
 		}
 		kit = new WalletAppKit(parameters, new File(WALLET_PATH), "sample");
-		kit.startAndWait();
+		// For debug purposes
+		//kit.startAndWait();
 		// AbstractWalletEventListener listener = getPaymentListener();
 		//getWallet().addEventListener(listener);
 	}
@@ -157,7 +158,8 @@ public class Bitcoin implements MoneyService {
 
 	@Override
 	public boolean test(Transfer transfer) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		// For debug purposes
+		return true;
 	}
 
 	public String getNewAddress() {

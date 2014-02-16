@@ -43,6 +43,16 @@ public class OrderDAO {
 		}
 	}
 	
+	public List<OrderInfo> findActiveAndNotInProcess() {
+		EntityManager entityManager = entityManagerFactory.createEntityManager();
+		try {
+			TypedQuery<OrderInfo> query = entityManager.createNamedQuery("OrderInfo.findActiveAndNotInProcess", OrderInfo.class);
+			return query.getResultList();
+		} finally {
+			entityManager.close();
+		}
+	}
+	
 	public List<OrderInfo> findActiveByUser(String userPublicKey) {
 		if (userPublicKey == null) {
 			throw new IllegalArgumentException();
@@ -72,7 +82,7 @@ public class OrderDAO {
 		}
 	}
 	
-	public void changeOrderStatus(String id, OrderStatus orderStatus) {
+	public void changeStatus(String id, OrderStatus orderStatus, boolean inProcess) {
 		if ((id == null) || (orderStatus == null)) {
 			throw new IllegalArgumentException();
 		}
@@ -81,6 +91,7 @@ public class OrderDAO {
 			entityManager.getTransaction().begin();
 			OrderInfo orderInfo = entityManager.find(OrderInfo.class, id);
 			orderInfo.setStatus(orderStatus);
+			orderInfo.setInProcess(inProcess);
 			entityManager.getTransaction().commit();
 		} finally {
 			entityManager.close();
@@ -106,7 +117,7 @@ public class OrderDAO {
 			order.setUserPublicKey(userPublicKey);
 			order.setInTransfer(inTransfer);
 			order.setOutTransfer(outTransfer);
-			order.setStatus(OrderStatus.ACTIVE);
+			order.setStatus(OrderStatus.INITIAL);
 			entityManager.persist(order);
 			entityManager.getTransaction().commit();
 			return order;
