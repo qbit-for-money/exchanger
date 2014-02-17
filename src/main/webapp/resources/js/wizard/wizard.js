@@ -8,7 +8,7 @@ wizardModule.controller("WizardController", function($scope, wizardService, $loc
 	});
 	$scope.setCurrentStep = function(stepIndex) {
 		if (!angular.isNumber(stepIndex)) {
-			return;			
+			return;
 		}
 		if (wizardService.getStepIndexByPath($location.path()) >= stepIndex) {
 			$location.path($scope.steps[stepIndex].path);
