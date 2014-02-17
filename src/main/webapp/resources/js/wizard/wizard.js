@@ -19,9 +19,9 @@ wizardModule.controller("WizardController", function($scope, wizardService, $loc
 
 wizardModule.factory("wizardService", function() {
 	var steps = [
-		{ title: "Choose currency", path: "/steps/currency"}, 
+		{ title: "Choose Currency", path: "/steps/currency"}, 
 		{ title: "Enter Amount", path: "/steps/amount" },
-		{ title : "Result", path: "/steps/result" }		
+		{ title : "View Result", path: "/steps/result" }		
 	];
 	var getStepIndexByPath = function(path) {
 		for (var i = 0; i < steps.length; i++) {

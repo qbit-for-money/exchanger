@@ -31,8 +31,8 @@
 				<div class="wizard" ng-controller="WizardController">
 					<ul class="steps">
 						<li ng-repeat="step in steps"
-							ng-class="{'active' : step.path == location.path(),
-							'complete' : $index < getStepIndexByPath(location.path())}">
+						    ng-class="{'active' : step.path == location.path(),
+						    'complete' : $index < getStepIndexByPath(location.path())}">
 							<a ng-href="{{$index <= getStepIndexByPath(location.path()) ? ('#' + step.path) : ''}}">
 								<span class="badge">{{$index + 1}}</span>
 								{{step.title}}
@@ -41,8 +41,12 @@
 						</li>
 					</ul>
 					<div class="actions">
-						<button class="btn btn-lg btn-success" ng-click="goToPreviousStep()">Previous</button>
-						<button class="btn btn-lg btn-success" ng-click="goToNextStep()">Next</button>
+						<button class="btn btn-lg btn-success" 
+							ng-disabled="location.path() == steps[0].path"
+							ng-click="goToPreviousStep()">Previous</button>
+						<button class="btn btn-lg btn-success" 
+							ng-disabled="location.path() == steps[steps.length - 1].path"
+							ng-click="goToNextStep()">Next</button>
 					</div>
 				</div>
 			</div>	

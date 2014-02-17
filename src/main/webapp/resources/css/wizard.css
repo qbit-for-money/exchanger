@@ -13,6 +13,10 @@
 .sprite.YANDEX_RUB { background-position: 0px -851px; width: 75px; height: 75px; }
 .sprite.ZETACOIN { background-position: 0px -936px; width: 75px; height: 75px;  }
 
+.currency-step {
+	padding: 20px;
+}
+
 .currencies-list {
 	position: relative;
 	width: 100%;
