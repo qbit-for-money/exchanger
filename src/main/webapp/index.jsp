@@ -31,9 +31,9 @@
 				<div class="wizard" ng-controller="WizardController">
 					<ul class="steps">
 						<li ng-repeat="step in steps"
-						    ng-class="{'active' : step.path == location.path(),
-						    'complete' : $index < getStepIndexByPath(location.path())}">
-							<a ng-href="{{$index <= getStepIndexByPath(location.path()) ? ('#' + step.path) : ''}}">
+						    ng-class="{'active' : $index == currentStepIndex,
+						    'complete' : $index < currentStepIndex}">
+							<a href="" ng-click="setCurrentStep($index)" tabindex="-1">
 								<span class="badge">{{$index + 1}}</span>
 								{{step.title}}
 								<span class="chevron"></span>

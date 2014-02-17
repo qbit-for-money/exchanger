@@ -19,20 +19,6 @@
 	list-style: none outside none;
 }
 
-.wizard ul.previous-disabled li.complete {
-	cursor: default;
-}
-
-.wizard ul.previous-disabled li.complete:hover {
-	color: #468847;
-	cursor: default;
-	background: #f3f4f5;
-}
-
-.wizard ul.previous-disabled li.complete:hover .chevron:before {
-	border-left-color: #f3f4f5;
-}
-
 .wizard ul li {
 	position: relative;
 	float: left;
@@ -42,14 +28,17 @@
 	font-size: 16px;
 	line-height: 46px;
 	color: #999999;
-	cursor: default;
 	background: #ededed;
 }
+
 .wizard ul li a {
+	outline: none;
 	color: #999999;
 	display: block;
 	text-decoration: none;
+	cursor: default;
 }
+
 .wizard ul li .chevron {
 	position: absolute;
 	top: 0;
@@ -78,7 +67,6 @@
 }
 
 .wizard ul li.complete:hover {
-	cursor: pointer;
 	background: #e7eff8;
 }
 
@@ -91,7 +79,9 @@
 }
 
 .wizard ul li.complete a {
+	outline: none;
 	color: #468847;
+	cursor: pointer;
 }
 
 .wizard ul li.complete .badge {
@@ -104,7 +94,9 @@
 }
 
 .wizard ul li.active a {
+	outline: none;
 	color: #3a87ad;
+	cursor: pointer;
 }
 
 .wizard ul li.active .badge {
@@ -129,4 +121,8 @@
 	right: 0;
 	z-index: 1000;
 	float: right;
+}
+
+.wizard .actions .btn {
+	outline: none;
 }

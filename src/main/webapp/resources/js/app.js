@@ -22,10 +22,18 @@ angular.module("main").config(function($routeProvider, $locationProvider) {
 	}).when("/steps/result", {
 		templateUrl: "resources/html/wizard/result.html",
 		controller: "ResultController"
-	}).otherwise({ redirectTo: "/steps/currency" });
+	}).otherwise({redirectTo: "/steps/currency"});
 	//$locationProvider.html5Mode(true);
 });
 
 angular.module("main").run(function($rootScope, $location) {
-    $rootScope.location = $location;
+	$rootScope.location = $location;
+	$rootScope.orderInfo = {
+		inTransfer: {
+			type: "IN"
+		},
+		outTransfer: {
+			type: "OUT"
+		}
+	};
 });

@@ -1,15 +1,16 @@
 var currencyModule = angular.module("currency");
 
 currencyModule.controller("CurrencyController", function($scope, $rootScope, currencyResource) {
-	$scope.convertion = {};
-	$scope.convertion.ltr = true;
-	$scope.convertion.panels = {
-		left: {},
-		right: {}
+	$rootScope.convertion = $rootScope.convertion || {};
+	$rootScope.convertion.ltr = (typeof $rootScope.convertion.ltr == "boolean") ? $rootScope.convertion.ltr : true;
+	$scope.panels = {
+		left: {
+			currency: $rootScope.orderInfo[$rootScope.convertion.ltr ? "inTransfer" : "outTransfer"].currency
+		},
+		right: {
+			currency: $rootScope.orderInfo[$rootScope.convertion.ltr ? "outTransfer" : "inTransfer"].currency
+		}
 	};
-	$rootScope.transferIn = {};
-	$rootScope.transferOut = {};
-	
 	var currenciesResponse = currencyResource.findAll();
 	currenciesResponse.$promise.then(function() {
 			if(currenciesResponse){
@@ -19,13 +20,14 @@ currencyModule.controller("CurrencyController", function($scope, $rootScope, cur
 		
 	var refreshTransfers = function() {
 		if ($scope.convertion.ltr) {
-			$rootScope.transferIn.currency = $scope.convertion.panels.left.currency;
-			$rootScope.transferOut.currency = $scope.convertion.panels.right.currency;
+			$rootScope.orderInfo.inTransfer.currency = $scope.panels.left.currency;
+			$rootScope.orderInfo.outTransfer.currency = $scope.panels.right.currency;
 		} else {
-			$rootScope.transferIn.currency = $scope.convertion.panels.right.currency;
-			$rootScope.transferOut.currency = $scope.convertion.panels.left.currency;
+			$rootScope.orderInfo.inTransfer.currency = $scope.panels.right.currency;
+			$rootScope.orderInfo.outTransfer.currency = $scope.panels.left.currency;	
 		}
 	};
+	
 	$scope.selectCurrency = function(panel, item) {
 		if (panel && item) {
 			panel.currency = item;
