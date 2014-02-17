@@ -7,10 +7,6 @@ moneyModule.controller("YandexController", function($scope, $location, $window, 
 	if (address) {
 		$scope.address = address;
 		$scope.authorized = true;
-		var storedOrder = sessionStorage.getItem("orderInfo");
-		if (storedOrder) {
-			$rootScope.orderInfo = JSON.parse(storedOrder);
-		}
 	}
 
 	$scope.amount = {

@@ -14,7 +14,7 @@ import javax.ws.rs.core.UriBuilder;
 public class YandexMoneyResource {
 
 	private static final String REDIRECT_PATH = "https://localhost:8443/exchanger/";
-	private static final String REDIRECT_ROUTE = "/steps/yandex";
+	private static final String REDIRECT_ROUTE = "/steps/amount";
 	private static final String WALLET_PARAM_NAME = "wallet";
 
 	@Inject
