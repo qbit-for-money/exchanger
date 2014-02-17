@@ -1,5 +1,23 @@
-<div class="row" ng-init="order = {}">
+<div class="row ng-hide" ng-show="order && order.status">
+	<div class="col-md-1"></div>
+	<div class="col-md-4">
+		<result-transfer transfer="order.inTransfer"></result-transfer>
+	</div>
+	<div class="col-md-2 hidden-xs text-center" style="vertical-align: middle">
+		<h1><span class="label label-success"><span class="glyphicon glyphicon-arrow-right" style="vertical-align: middle"></span></span></h1>
+	</div>
+	<div class="col-md-2 visible-xs text-center" style="vertical-align: middle; margin-top: -20px;">
+		<h1><span class="label label-success"><span class="glyphicon glyphicon-arrow-down" style="vertical-align: middle"></span></span></h1>
+	</div>
+	<div class="col-md-4">
+		<result-transfer transfer="order.outTransfer"></result-transfer>
+	</div>
+	<div class="col-md-1"></div>
+</div>
+<div class="row ng-hide" ng-hide="order && order.status">
 	<div class="col-md-12">
-		
+		<div class="alert alert-warning">
+			<h3>Please choose <a href="#/steps/currency" class="alert-link">currency pair</a> first.</h3>
+		</div>
 	</div>
 </div>

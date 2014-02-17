@@ -1,6 +1,5 @@
 {
 	"creationDate": "2014-02-15T14:47:39.42",
-	"id": "51",
 	"inTransfer": {
 		"address": "1234567890",
 		"amount": {"cents": 1, "centsInCoin": 100000000, "coins": 0},

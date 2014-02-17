@@ -48,7 +48,6 @@ public class OrderInfo implements Identifiable<String>, Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@XmlTransient
 	private String id;
 
 	@Temporal(TemporalType.TIMESTAMP)
@@ -80,6 +79,7 @@ public class OrderInfo implements Identifiable<String>, Serializable {
 	private boolean inProcess;
 
 	@Override
+	@XmlTransient
 	public String getId() {
 		return id;
 	}
