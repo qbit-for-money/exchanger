@@ -3,9 +3,9 @@
 <html ng-app="main">
 	<head>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		
+
 		<link rel="stylesheet" type="text/css" href="resources/lib/bootstrap/core/css/bootstrap.min.css">
-		
+
 		<link rel="stylesheet" type="text/css" href="resources/css/common.css">
 		<link rel="stylesheet" type="text/css" href="resources/css/wizard.css">
 		<link rel="stylesheet" type="text/css" href="resources/css/wizard-widget.css">
@@ -18,8 +18,7 @@
 				<div class="wizard" ng-controller="WizardController">
 					<ul class="steps">
 						<li ng-repeat="step in steps"
-						    ng-class="{'active' : $index == currentStepIndex,
-						    'complete' : $index < currentStepIndex}">
+							ng-class="{'active': $index == currentStepIndex, 'complete': $index < currentStepIndex}">
 							<a href="" ng-click="setCurrentStep($index)" tabindex="-1">
 								<span class="badge">{{$index + 1}}</span>
 								{{step.title}}
@@ -29,19 +28,19 @@
 					</ul>
 					<div class="actions">
 						<button class="btn btn-lg btn-success" 
-							ng-disabled="location.path() == steps[0].path"
-							ng-click="goToPreviousStep()">Previous</button>
+								ng-disabled="location.path() == steps[0].path"
+								ng-click="goToPreviousStep()"><span class="glyphicon glyphicon-chevron-left"></span></button>
 						<button class="btn btn-lg btn-success" 
-							ng-disabled="location.path() == steps[steps.length - 1].path"
-							ng-click="goToNextStep()">Next</button>
+								ng-disabled="location.path() == steps[steps.length - 1].path"
+								ng-click="goToNextStep()"><span class="glyphicon glyphicon-chevron-right"></span></button>
 					</div>
 				</div>
-			</div>	
-		</div>	
+			</div>
+		</div>
 		<div class="container">
 			<div ng-view></div>
 		</div>
-		
+
 		<script type="text/javascript" src="resources/lib/jquery/jquery-2.1.0.min.js"></script>
 		<script type="text/javascript" src="resources/lib/angular/angular.min.js"></script>
 		<script type="text/javascript" src="resources/lib/angular/angular-route.min.js"></script>
@@ -51,9 +50,9 @@
 
 		<script type="text/javascript">
 			// Global constants
-	
+
 			window.context = "${context}";
-	
+
 		</script>
 
 		<script type="text/javascript" src="resources/js/app.js"></script>
