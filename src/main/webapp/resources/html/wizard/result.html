@@ -1,19 +1,19 @@
 <div class="row ng-hide" ng-show="order && order.status">
-	<div class="col-md-1"></div>
-	<div class="col-md-4">
+	<div class="col-md-12">
 		<result-transfer transfer="order.inTransfer"></result-transfer>
 	</div>
-	<div class="col-md-2 hidden-xs text-center" style="vertical-align: middle">
-		<h1><span class="label label-success"><span class="glyphicon glyphicon-arrow-right" style="vertical-align: middle"></span></span></h1>
+</div>
+<div class="row ng-hide" ng-show="order && order.status">
+	<div class="col-md-12 text-center" style="margin-bottom: 30px;">
+		<h1 style="margin-top: 0px; margin-bottom: 0px;"><span class="label label-success"><span class="glyphicon glyphicon-arrow-down" style="vertical-align: middle"></span></span></h1>
 	</div>
-	<div class="col-md-2 visible-xs text-center" style="vertical-align: middle; margin-top: -20px;">
-		<h1><span class="label label-success"><span class="glyphicon glyphicon-arrow-down" style="vertical-align: middle"></span></span></h1>
-	</div>
-	<div class="col-md-4">
+</div>
+<div class="row ng-hide" ng-show="order && order.status">
+	<div class="col-md-12">
 		<result-transfer transfer="order.outTransfer"></result-transfer>
 	</div>
-	<div class="col-md-1"></div>
 </div>
+
 <div class="row ng-hide" ng-hide="order && order.status">
 	<div class="col-md-12">
 		<div class="alert alert-warning">
