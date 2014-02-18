@@ -66,5 +66,8 @@
 		<script type="text/javascript" src="resources/js/wizard/currency.js"></script>
 		<script type="text/javascript" src="resources/js/wizard/result.js"></script>
 		<script type="text/javascript" src="resources/js/wizard/amount.js"></script>
+
+		<script type="text/javascript" src="resources/js/money/yandex/yandex-service.js"></script>
+		<script type="text/javascript" src="resources/js/money/yandex/yandex-controller.js"></script>
 	</body>
 </html>
