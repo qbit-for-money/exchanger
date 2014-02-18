@@ -1,7 +1,27 @@
-<div class="panel panel-default">
-	<div class="panel-body">
-		<div class="currency {{transfer.currency}}"></div>
-		<h1>{{transfer.amount.coins}}.{{transfer.amount.cents}}</h1>
-		<h1>{{transfer.address}}</h1>
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-md-3 col-xs-1"></div>
+		<div class="col-md-6 col-xs-10">
+			
+			<div class="panel panel-default">
+				<div class="panel-body">
+					<div class="container-fluid">
+						<div class="row">
+							<div class="col-md-2 col-xs-2">
+								<div class="currency {{transfer.currency}}"></div>
+							</div>
+							<div class="col-md-8 col-xs-8 text-center" style="vertical-align: middle;">
+								<h2>{{transfer.amount.coins}}.{{transfer.amount.cents}}</h2>
+							</div>
+							<div class="col-md-2 col-xs-2 text-right" style="vertical-align: top;">
+								<span class="glyphicon glyphicon-ok"></span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+		</div>
+		<div class="col-md-3 col-xs-1"></div>
 	</div>
 </div>

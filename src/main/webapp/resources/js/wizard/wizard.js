@@ -30,9 +30,9 @@ wizardModule.controller("WizardController", function($scope, wizardService, $loc
 
 wizardModule.factory("wizardService", function() {
 	var steps = [
-		{title: "Choose Currency", path: "/steps/currency"},
-		{title: "Enter Amount", path: "/steps/amount"},
-		{title: "View Result", path: "/steps/result"}
+		{title: "Currency", path: "/steps/currency"},
+		{title: "Amount", path: "/steps/amount"},
+		{title: "Result", path: "/steps/result"}
 	];
 	var getSteps = function() {
 		return steps;
