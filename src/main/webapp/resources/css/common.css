@@ -1,0 +1,13 @@
+span.success {
+	color: #5cb85c;
+}
+
+span.error {
+	color: #d9534f;
+}
+
+div.loader-big {
+	padding: 0px 0px; margin: 0px 0px;
+	background: url('../img/loader-big.gif') no-repeat;
+	width: 32px; height: 32px;
+}

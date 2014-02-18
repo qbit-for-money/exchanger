@@ -13,8 +13,10 @@
 							<div class="col-md-8 col-xs-8 text-center" style="vertical-align: middle;">
 								<h2>{{transfer.amount.coins}}.{{transfer.amount.cents}}</h2>
 							</div>
-							<div class="col-md-2 col-xs-2 text-right" style="vertical-align: top;">
-								<span class="glyphicon glyphicon-ok"></span>
+							<div class="col-md-2 col-xs-2 text-right" ng-switch on="status" style="vertical-align: top;">
+								<div class="loader-big pull-right" ng-switch-when="IN_PROGRESS"></div>
+								<span class="glyphicon glyphicon-ok-sign status-sign success" ng-switch-when="OK"></span>
+								<span class="glyphicon glyphicon-exclamation-sign status-sign error" ng-switch-when="ERROR"></span>
 							</div>
 						</div>
 					</div>
