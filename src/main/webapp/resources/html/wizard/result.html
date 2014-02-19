@@ -1,18 +1,18 @@
 <div class="row ng-hide" ng-show="order && order.status">
 	<div class="col-md-12">
-		<result-transfer transfer="order.inTransfer"></result-transfer>
+		<result-transfer transfer="order.inTransfer" status="inTransferStatus"></result-transfer>
 	</div>
 </div>
 <div class="row ng-hide" ng-show="order && order.status">
-	<div class="col-md-12 text-center" style="margin-bottom: 30px;">
-		<h1 style="margin-top: 0px; margin-bottom: 0px;"><span class="label label-success">
+	<div class="col-md-12 text-center" style="margin-bottom: 20px;">
+		<span class="label label-success direction-control">
 			<span class="glyphicon glyphicon-arrow-down" style="vertical-align: middle"></span>
-		</span></h1>
+		</span>
 	</div>
 </div>
 <div class="row ng-hide" ng-show="order && order.status">
 	<div class="col-md-12">
-		<result-transfer transfer="order.outTransfer"></result-transfer>
+		<result-transfer transfer="order.outTransfer" status="outTransferStatus"></result-transfer>
 	</div>
 </div>
 

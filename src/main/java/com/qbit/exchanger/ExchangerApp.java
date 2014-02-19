@@ -7,6 +7,7 @@ import com.qbit.exchanger.money.core.MoneyService;
 import com.qbit.exchanger.money.core.MoneyServiceFacade;
 import com.qbit.exchanger.money.yandex.YandexMoneyService;
 import com.qbit.exchanger.order.dao.OrderDAO;
+import com.qbit.exchanger.order.service.OrderFlowScheduler;
 import com.qbit.exchanger.order.service.OrderFlowWorker;
 import com.qbit.exchanger.order.service.OrderService;
 import com.qbit.exchanger.user.UserDAO;
@@ -44,10 +45,10 @@ public class ExchangerApp extends Application {
 		addBinding(newBinder(MoneyServiceFacade.class).to(MoneyService.class).in(Singleton.class), configuration);
 		
 		addBinding(newBinder(OrderService.class).to(OrderService.class).in(Singleton.class), configuration);
+		addBinding(newBinder(OrderFlowWorker.class).to(OrderFlowWorker.class).in(Singleton.class), configuration);
 
-		// commits changes
 		configuration.commit();
 		
-		serviceLocator.createAndInitialize(OrderFlowWorker.class);
+		serviceLocator.createAndInitialize(OrderFlowScheduler.class);
 	}
 }
