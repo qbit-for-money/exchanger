@@ -74,6 +74,7 @@ public class YandexMoneyService implements MoneyService {
 		String token;
 		if (TransferType.IN.equals(transfer.getType())) {
 			token = tokens.get(transfer.getAddress());
+			tokens.remove(transfer.getAddress());
 			wallet = STORE_WALLET;
 		} else {
 			token = STORE_TOKEN;
