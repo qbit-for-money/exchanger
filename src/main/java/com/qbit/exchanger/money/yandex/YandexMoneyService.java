@@ -45,7 +45,7 @@ public class YandexMoneyService implements MoneyService {
 	private final Map<String, String> tokens;
 
 	public YandexMoneyService() {
-		tokens = new HashMap<>();
+		tokens = new HashMap<String, String>();
 		yandexMoney = new YandexMoneyImpl(CLIENT_ID);
 	}
 
@@ -182,7 +182,7 @@ public class YandexMoneyService implements MoneyService {
 	 * @return
 	 */
 	private Collection<Permission> getAppPaymentScope() {
-		List<Permission> permissions = new LinkedList<>();
+		List<Permission> permissions = new LinkedList<Permission>();
 		permissions.add(new PaymentP2P());
 		permissions.add(new AccountInfo());
 		permissions.add(new OperationDetails());

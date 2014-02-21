@@ -26,6 +26,7 @@ import com.qbit.exchanger.money.model.Amount;
 import com.qbit.exchanger.money.model.Transfer;
 import com.qbit.exchanger.money.model.TransferType;
 
+import javax.inject.Singleton;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.logging.Level;
@@ -112,12 +113,14 @@ public class BitcoinMoneyService implements MoneyService {
 	}
 
 	@Override
-	public void test(Transfer transfer, MoneyTransferCallback callback) {
+	public boolean test(Transfer transfer) {
+		boolean result;
 		if (TransferType.IN.equals(transfer.getType())) {
-			testReceive(transfer, callback);
+			result = testReceive(transfer);
 		} else {
-			testSend(transfer, callback);
+			result = testSend(transfer);
 		}
+		return result;
 	}
 
 	private AbstractWalletEventListener getPaymentListener() {
@@ -191,7 +194,7 @@ public class BitcoinMoneyService implements MoneyService {
 		try {
 			Address forwardingAddress = new Address(parameters, transfer.getAddress());
 
-			BigInteger value = toNanoCoins(transfer.getCoins(), transfer.getCents());
+			BigInteger value = toNanoCoins(transfer.getAmount().getCoins(), transfer.getAmount().getCents());
 
 			logger.log(Level.INFO, "Forwarding {0} BTC", Utils.bitcoinValueToFriendlyString(value));
 
@@ -220,29 +223,37 @@ public class BitcoinMoneyService implements MoneyService {
 		}
 	}
 
-	private void testReceive(Transfer transfer, MoneyTransferCallback callback) {
+	private boolean testReceive(Transfer transfer) {
+		boolean result;
 		if ((transfer != null) && transfer.isValid()) {
 			if (getWalletAddress().contains(transfer.getAddress())) {
-				callback.success();
+				result = true;
 			} else {
-				callback.error("Invalid address");
+				//("Invalid address");
+				result = false;
 			}
 		} else {
-			callback.error("Invalid transfer");
+			//("Invalid transfer");
+			result = false;
 		}
+		return result;
 	}
 
-	private void testSend(Transfer transfer, MoneyTransferCallback callback) {
+	private boolean testSend(Transfer transfer) {
+		boolean result;
 		if ((transfer != null) && transfer.isValid()) {
 			BigInteger transferAmount = toNanoCoins(transfer.getAmount().getCoins(), transfer.getAmount().getCents());
 			if (transferAmount.compareTo(getWallet().getBalance().add(MIN_FEE)) == -1) {
-				callback.success();
+				result = true;
 			} else {
-				callback.error("Wallet is empty");
+				//("Wallet is empty");
+				result = false;
 			}
 		} else {
-			callback.error("Invalid transfer");
+			//("Invalid transfer");
+			result = false;
 		}
+		return result;
 	}
 
 	public String getNewAddress() {
@@ -271,7 +282,7 @@ public class BitcoinMoneyService implements MoneyService {
 		return kit.wallet();
 	}
 
-	private static BigInteger toNanoCoins(int coins, int cents) {
+	private static BigInteger toNanoCoins(long coins, long cents) {
 		checkArgument(cents < 100000000);
 		checkArgument(cents >= 0);
 		checkArgument(coins >= 0);
