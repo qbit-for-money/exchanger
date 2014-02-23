@@ -10,43 +10,34 @@ import javax.persistence.Embeddable;
  */
 @Embeddable
 public class Amount implements Serializable {
-
-	public static long CENTS_IN_COIN = 1000 * 1000 * 1000;
-
-	public static Amount ZERO = new Amount(0, 0);
-
-	public static Amount ONE = new Amount(1, 0);
-
+	
 	private long coins, cents;
 
 	private long centsInCoin;
 
 	public Amount() {
 	}
-
-	public Amount(long coins, long cents) {
-		this(coins, cents, CENTS_IN_COIN);
-	}
 	
 	public Amount(BigDecimal amount, long centsInCoin) {
 		if (amount.signum() < 0) {
 			throw new IllegalArgumentException();
 		}
-		String amountStr = amount.toPlainString();
-		int decimalPointIndex = amountStr.indexOf('.');
-		if (decimalPointIndex > 0) {
-			this.coins = Long.parseLong(amountStr.substring(0, decimalPointIndex));
-			this.cents = Long.parseLong(amountStr.substring(decimalPointIndex + 1));
+		this.coins = amount.longValue();
+		if (amount.scale() > 0) {
+			this.cents = amount.subtract(BigDecimal.valueOf(coins))
+					.multiply(BigDecimal.valueOf(centsInCoin)).longValue();
 		} else {
-			this.coins = Long.parseLong(amountStr);
 			this.cents = 0;
 		}
 		this.centsInCoin = centsInCoin;
 	}
 
 	public Amount(long coins, long cents, long centsInCoin) {
+		if ((coins < 0) || (cents < 0) || (centsInCoin < 0) || (cents > centsInCoin)) {
+			throw new IllegalArgumentException();
+		}
 		this.coins = coins;
-		this.cents = (CENTS_IN_COIN * cents / centsInCoin);
+		this.cents = cents;
 		this.centsInCoin = centsInCoin;
 	}
 	
@@ -75,11 +66,12 @@ public class Amount implements Serializable {
 	}
 
 	public boolean isValid() {
-		return (coins >= 0) && (cents >= 0) && (centsInCoin >= 0);
+		return (coins >= 0) && (cents >= 0) && (centsInCoin >= 0) && (cents <= centsInCoin);
 	}
 
 	public BigDecimal toBigDecimal() {
-		return new BigDecimal(coins + "." + (cents * centsInCoin / CENTS_IN_COIN));
+		return BigDecimal.valueOf(coins).add(BigDecimal.valueOf(cents)
+				.divide(BigDecimal.valueOf(centsInCoin)));
 	}
 
 	@Override

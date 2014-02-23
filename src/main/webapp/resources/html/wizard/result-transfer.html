@@ -11,7 +11,7 @@
 								<div class="currency {{transfer.currency}}"></div>
 							</div>
 							<div class="col-md-8 col-xs-8 text-center" style="vertical-align: middle;">
-								<h2>{{transfer.amount.coins}}.{{transfer.amount.cents}}</h2>
+								<h2>{{transfer.amount|amount}}</h2>
 							</div>
 							<div class="col-md-2 col-xs-2 text-right" ng-switch on="status" style="vertical-align: top;">
 								<div class="loader-big pull-right" ng-switch-when="IN_PROGRESS"></div>

@@ -1,6 +1,8 @@
-var currencyModule = angular.module("currency");
+var currencyModule = angular.module("wizard.currency");
 
-currencyModule.controller("CurrencyController", function($scope, $rootScope, currencyResource) {
+currencyModule.controller("CurrencyController", function($scope, $rootScope, currencyResource, resetOrderInfo) {
+	resetOrderInfo();
+	
 	$rootScope.convertion = $rootScope.convertion || {};
 	$rootScope.convertion.ltr = (typeof $rootScope.convertion.ltr == "boolean") ? $rootScope.convertion.ltr : true;
 	$scope.panels = {

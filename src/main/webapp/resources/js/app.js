@@ -4,13 +4,17 @@ angular.module("user", ["ngResource"]);
 
 angular.module("order", ["ngResource"]);
 
-angular.module("wizard", ["ngRoute", "common"]);
-angular.module("currency", ["ngRoute", "ngResource", "common", "order", "wizard"]);
-angular.module("result", ["ngRoute", "ngResource", "common", "user", "order"]);
-angular.module("amount", ["ngRoute", "ngResource", "common", "user", "order"]);
+angular.module("money", []);
+
+angular.module("exchange", ["ngResource"]);
+
+angular.module("wizard", ["ngRoute"]);
+angular.module("wizard.currency", ["common", "wizard", "order"]);
+angular.module("wizard.amount", ["common", "wizard", "order"]);
+angular.module("wizard.result", ["common", "wizard", "order"]);
 
 angular.module("main", ["ngRoute", "ui.bootstrap", "common", "user", "order",
-	"wizard", "currency", "result", "amount"]);
+	"money", "exchange", "wizard", "wizard.currency", "wizard.amount", "wizard.result"]);
 
 angular.module("main").config(function($routeProvider, $locationProvider) {
 	$routeProvider.when("/steps/currency", {
@@ -24,16 +28,6 @@ angular.module("main").config(function($routeProvider, $locationProvider) {
 		controller: "ResultController"
 	}).otherwise({redirectTo: "/steps/currency"});
 	//$locationProvider.html5Mode(true);
-});
-
-angular.module("main").run(function($rootScope, $location) {
+}).run(function($rootScope, $location) {
 	$rootScope.location = $location;
-	$rootScope.orderInfo = {
-		inTransfer: {
-			type: "IN"
-		},
-		outTransfer: {
-			type: "OUT"
-		}
-	};
 });

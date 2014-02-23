@@ -1,22 +1,28 @@
-<div class="row ng-hide" ng-show="order && order.status">
+<div class="row ng-hide" ng-show="orderInfo.status">
 	<div class="col-md-12">
-		<result-transfer transfer="order.inTransfer" status="inTransferStatus"></result-transfer>
+		<p class="text-right"><small><span class="glyphicon glyphicon-time"></span><span style="margin-left: 10px;">{{secondsInWaiting|delaySeconds}}</span></small></p>
 	</div>
 </div>
-<div class="row ng-hide" ng-show="order && order.status">
-	<div class="col-md-12 text-center" style="margin-bottom: 20px;">
-		<span class="label label-success direction-control">
+<div class="row ng-hide" ng-show="orderInfo.status">
+	<div class="col-md-12">
+		<result-transfer transfer="orderInfo.inTransfer" status="inTransferStatus"></result-transfer>
+	</div>
+</div>
+<div class="row ng-hide" ng-show="orderInfo.status" style="margin-bottom: 20px;">
+	<div class="col-md-12 text-center">
+		<span class="label label-success direction-control" popover="{{rate|rate}}"
+			  popover-placement="right" popover-trigger="mouseenter">
 			<span class="glyphicon glyphicon-arrow-down" style="vertical-align: middle"></span>
 		</span>
 	</div>
 </div>
-<div class="row ng-hide" ng-show="order && order.status">
+<div class="row ng-hide" ng-show="orderInfo.status">
 	<div class="col-md-12">
-		<result-transfer transfer="order.outTransfer" status="outTransferStatus"></result-transfer>
+		<result-transfer transfer="orderInfo.outTransfer" status="outTransferStatus"></result-transfer>
 	</div>
 </div>
 
-<div class="row ng-hide" ng-hide="order && order.status">
+<div class="row ng-hide" ng-hide="orderInfo.status">
 	<div class="col-md-12">
 		<div class="alert alert-warning">
 			<h3>Please choose <a href="#/steps/currency" class="alert-link">currency pair</a> first.</h3>
