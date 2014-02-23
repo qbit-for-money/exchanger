@@ -23,10 +23,25 @@ currencyModule.controller("CurrencyController", function($scope, $rootScope, cur
 			$rootScope.orderInfo.outTransfer.currency = $scope.panels.left.currency;
 		}
 	};
+	
+	var isCurrencySelectable = function(panelName, currency) {
+		var result = false;
+		if (panelName && currency) {
+			var panel = $scope.panels[panelName];
+			var oppositePanel = $scope.panels[panelName == "left" ? "right" : "left"];
+			if (panel && oppositePanel) {
+				result = true;
+				if (oppositePanel.currency){
+					result = oppositePanel.currency !== currency;
+				}
+			} 
+		}
+		return result;
+	};
 
 	$scope.selectCurrency = function(panel, item) {
-		if (panel && item) {
-			panel.currency = item;
+		if (isCurrencySelectable(panel, item)) {
+			$scope.panels[panel].currency = item;
 			refreshTransfers();
 		}
 	};

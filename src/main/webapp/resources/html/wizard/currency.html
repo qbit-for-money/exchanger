@@ -4,11 +4,13 @@
 		<div class="dropdown open">
 			<ul class="dropdown-menu currencies-list">
 				<li data-ng-repeat="currency in currencies" 
-				    data-ng-click="selectCurrency(panels.left, currency.id)"
+				    data-ng-click="selectCurrency('left', currency.id)"
 				    data-ng-class="{  'active' : panels.left.currency == currency.id,
 				    'disabled' : panels.right.currency == currency.id}">
 					<a class="currency-list-item">
-						<div class="currency-list-icon currency {{currency.id}}"></div>
+						<div class="currency-list-icon">
+							<div class=" currency {{currency.id}}"></div>
+						</div>
 						<div class="text-center currency-list-label">{{currency.code}}</div>
 					</a>
 				</li>
@@ -26,11 +28,13 @@
 		<div class="dropdown open">
 			<ul class="dropdown-menu currencies-list">
 				<li data-ng-repeat="currency in currencies"
-				    data-ng-click="selectCurrency(panels.right, currency.id)"
+				    data-ng-click="selectCurrency('right', currency.id)"
 				    data-ng-class="{  'active' : panels.right.currency == currency.id,
 				    'disabled' : panels.left.currency == currency.id}">
 					<a class="currency-list-item">
-						<div class="currency-list-icon currency {{currency.id}}"></div>
+						<div class="currency-list-icon">
+							<div class="currency {{currency.id}}"></div>
+						</div>
 						<div class="text-center currency-list-label">{{currency.code}}</div>
 					</a>
 				</li>
