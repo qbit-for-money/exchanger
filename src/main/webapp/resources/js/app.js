@@ -4,6 +4,7 @@ angular.module("user", ["ngResource"]);
 angular.module("order", ["ngResource"]);
 
 angular.module("money", []);
+angular.module("money.yandex", ["common"]);
 
 angular.module("exchange", ["ngResource"]);
 

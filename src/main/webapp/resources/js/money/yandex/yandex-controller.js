@@ -1,4 +1,4 @@
-var moneyModule = angular.module("amount");
+var moneyModule = angular.module("money.yandex");
 
 moneyModule.controller("YandexController", function($scope, $location, $window, $rootScope, yandexResource, sessionStorage) {
 	$scope.authorized = false;
