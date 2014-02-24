@@ -7,11 +7,11 @@ import com.qbit.exchanger.money.model.TransferType;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 import javax.inject.Singleton;
 import ru.yandex.money.api.YandexMoney;
@@ -45,7 +45,11 @@ public class YandexMoneyService implements MoneyService {
 	private final Map<String, String> tokens;
 
 	public YandexMoneyService() {
+<<<<<<< HEAD
 		tokens = new HashMap<String, String>();
+=======
+		tokens = new ConcurrentHashMap<>();
+>>>>>>> origin/Yandex-service
 		yandexMoney = new YandexMoneyImpl(CLIENT_ID);
 	}
 
@@ -95,6 +99,9 @@ public class YandexMoneyService implements MoneyService {
 		} catch (Exception e) {
 			LOGGER.severe(e.getMessage());
 			callback.error(e.getMessage());
+		} finally {
+			tokens.remove(transfer.getAddress());
+			revokeToken(token);
 		}
 	}
 
@@ -154,6 +161,14 @@ public class YandexMoneyService implements MoneyService {
 		}
 		StringTokenizer tokenizer = new StringTokenizer(token, ".", false);
 		return tokenizer.nextToken();
+	}
+
+	private void revokeToken(String token) {
+		try {
+			yandexMoney.revokeOAuthToken(token);
+		} catch (Exception ex) {
+			LOGGER.severe(ex.getMessage());
+		}
 	}
 
 	private RequestPaymentResponse requestPayment(String token, String wallet, BigDecimal amount, String description) throws RuntimeException {

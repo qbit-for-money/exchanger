@@ -8,7 +8,6 @@ orderModule.factory("currencyResource", function($resource) {
 
 orderModule.factory("ordersResource", function($resource) {
 	return $resource(window.context + "webapi/orders/", {}, {
-			getActiveByUser: {url: window.context + "webapi/orders/active", method: "GET"},
 			getByUserAndTimestamp: {method: "GET"},
 			create: {method: "POST"}
 		});

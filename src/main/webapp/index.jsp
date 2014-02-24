@@ -3,29 +3,86 @@
 <html ng-app="main">
 	<head>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<%@ include file="WEB-INF/jspf/head.jspf" %>
+
+		<link rel="stylesheet" type="text/css" href="resources/lib/bootstrap/core/css/bootstrap.min.css">
+
+		<link rel="stylesheet" type="text/css" href="resources/css/common.css">
+		<link rel="stylesheet" type="text/css" href="resources/css/wizard.css">
+		<link rel="stylesheet" type="text/css" href="resources/css/wizard-widget.css">
 	</head>
 	<body>
-		<nav class="navbar navbar-default" role="navigation" ng-controller="EnvController">
-			<div class="container-fluid">
-				<!-- Brand and toggle get grouped for better mobile display -->
-				<div class="navbar-header">
-					<button type="button" class="navbar-toggle" ng-click="isNavbarCollapsed = !isNavbarCollapsed">
-						<span class="sr-only">Toggle navigation</span>
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-					</button>
-					<a class="navbar-brand" href="#">
-						Bitgates <span class="label label-danger ng-hide" ng-show="env.demoEnabled">demo</span>
-					</a>
+		<%@ include file="WEB-INF/jspf/nav.jspf" %>
+
+		<div class="container">
+			<div class="row">
+				<div class="wizard" ng-controller="WizardController">
+					<ul class="steps">
+						<li ng-repeat="step in steps"
+							ng-class="{'active': $index == currentStepIndex, 'complete': $index < currentStepIndex}">
+							<a href="" ng-click="setCurrentStep($index)" tabindex="-1">
+								<span class="badge">{{$index + 1}}</span>
+								{{step.title}}
+								<span class="chevron"></span>
+							</a>
+						</li>
+					</ul>
+					<div class="actions">
+						<button class="btn btn-lg btn-success" 
+								ng-disabled="location.path() == steps[0].path"
+								ng-click="goToPreviousStep()"><span class="glyphicon glyphicon-chevron-left"></span></button>
+						<button class="btn btn-lg btn-success" 
+								ng-disabled="location.path() == steps[steps.length - 1].path"
+								ng-click="goToNextStep()"><span class="glyphicon glyphicon-chevron-right"></span></button>
+					</div>
 				</div>
-				<!-- Collect the nav links, forms, and other content for toggling -->
-				<div class="collapse navbar-collapse" collapse="isNavbarCollapsed">
-					<%@ include file="WEB-INF/jspf/user.jspf" %>
-				</div><!-- /.navbar-collapse -->
-			</div><!-- /.container-fluid -->
-		</nav>
-		<div class="container" ng-view></div>
+			</div>
+		</div>
+		<div class="container">
+			<div ng-view></div>
+		</div>
+
+		<script type="text/javascript" src="resources/lib/jquery/jquery-2.1.0.min.js"></script>
+		<script type="text/javascript" src="resources/lib/angular/angular.min.js"></script>
+		<script type="text/javascript" src="resources/lib/angular/angular-route.min.js"></script>
+		<script type="text/javascript" src="resources/lib/angular/angular-resource.min.js"></script>
+		<script type="text/javascript" src="resources/lib/angular/angular-touch.min.js"></script>
+		<script type="text/javascript" src="resources/lib/bootstrap/core/js/ui-bootstrap-tpls-0.10.0.min.js"></script>
+
+		<script type="text/javascript">
+			// Global constants
+
+			window.context = "${context}";
+
+		</script>
+
+		<script type="text/javascript" src="resources/js/app.js"></script>
+		
+		<script type="text/javascript" src="resources/js/common/resources.js"></script>
+		<script type="text/javascript" src="resources/js/common/services.js"></script>
+		<script type="text/javascript" src="resources/js/common/filters.js"></script>
+		
+		<script type="text/javascript" src="resources/js/user/resources.js"></script>
+		<script type="text/javascript" src="resources/js/user/services.js"></script>
+		<script type="text/javascript" src="resources/js/user/controllers.js"></script>
+		
+		<script type="text/javascript" src="resources/js/order/resources.js"></script>
+		<script type="text/javascript" src="resources/js/order/services.js"></script>
+		
+		<script type="text/javascript" src="resources/js/money/services.js"></script>
+		<script type="text/javascript" src="resources/js/money/filters.js"></script>
+		
+		<script type="text/javascript" src="resources/js/exchange/resources.js"></script>
+
+		<script type="text/javascript" src="resources/js/money/yandex/yandex-service.js"></script>
+		<script type="text/javascript" src="resources/js/money/yandex/yandex-controller.js"></script>
+		<script type="text/javascript" src="resources/js/wizard/services.js"></script>
+		<script type="text/javascript" src="resources/js/wizard/controllers.js"></script>
+		
+		<script type="text/javascript" src="resources/js/wizard/currency/controllers.js"></script>
+		
+		<script type="text/javascript" src="resources/js/wizard/amount/controllers.js"></script>
+		
+		<script type="text/javascript" src="resources/js/wizard/result/controllers.js"></script>
+		<script type="text/javascript" src="resources/js/wizard/result/directives.js"></script>
 	</body>
 </html>

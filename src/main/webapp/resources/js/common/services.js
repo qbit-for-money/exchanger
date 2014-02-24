@@ -11,6 +11,20 @@ commonModule.factory("localStorage", function() {
 	};
 });
 
+commonModule.factory("sessionStorage", function() {
+	return window.sessionStorage || {
+		getItem: function(key) {
+			return this[key];
+		},
+		setItem: function(key, value) {
+			this[key] = value;
+		},
+		removeItem: function(key) {
+			delete this[key];
+		}
+	};
+});
+
 commonModule.factory("delayedProxy", function($timeout) {
 	return function(f, delay) {
 			var proxy = function() {
@@ -25,8 +39,4 @@ commonModule.factory("delayedProxy", function($timeout) {
 			};
 			return proxy;
 		};
-});
-
-commonModule.factory("envResource", function($resource) {
-	return $resource(window.context + "webapi/env");
 });

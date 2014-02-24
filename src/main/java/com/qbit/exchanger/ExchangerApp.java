@@ -1,11 +1,20 @@
 package com.qbit.exchanger;
 
 import com.qbit.exchanger.env.Env;
+import com.qbit.exchanger.external.exchange.btce.BTCExchange;
+import com.qbit.exchanger.external.exchange.core.Exchange;
+import com.qbit.exchanger.external.exchange.core.ExchangeFacade;
 import com.qbit.exchanger.mail.MailService;
+<<<<<<< HEAD
 import com.qbit.exchanger.money.bitcoin.BitcoinMoneyService;
+=======
+import com.qbit.exchanger.money.bitcoin.Bitcoin;
+import com.qbit.exchanger.money.core.MoneyService;
+>>>>>>> origin/Yandex-service
 import com.qbit.exchanger.money.core.MoneyServiceFacade;
 import com.qbit.exchanger.money.yandex.YandexMoneyService;
 import com.qbit.exchanger.order.dao.OrderDAO;
+import com.qbit.exchanger.order.service.OrderFlowScheduler;
 import com.qbit.exchanger.order.service.OrderFlowWorker;
 import com.qbit.exchanger.order.service.OrderService;
 import com.qbit.exchanger.user.UserDAO;
@@ -32,20 +41,24 @@ public class ExchangerApp extends Application {
 
 		addBinding(newBinder(MailService.class).to(MailService.class).in(Singleton.class), configuration);
 
-		addBinding(newBinder(Persistence.createEntityManagerFactory("exchangerPU"))
-				.to(EntityManagerFactory.class), configuration);
+		EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("exchangerPU");
+		addBinding(newBinder(entityManagerFactory).to(EntityManagerFactory.class), configuration);
 
 		addBinding(newBinder(UserDAO.class).to(UserDAO.class).in(Singleton.class), configuration);
 		addBinding(newBinder(OrderDAO.class).to(OrderDAO.class).in(Singleton.class), configuration);
 
 		addBinding(newBinder(BitcoinMoneyService.class).to(BitcoinMoneyService.class).in(Singleton.class), configuration);
 		addBinding(newBinder(YandexMoneyService.class).to(YandexMoneyService.class).in(Singleton.class), configuration);
-		addBinding(newBinder(MoneyServiceFacade.class).to(MoneyServiceFacade.class).in(Singleton.class), configuration);
+		addBinding(newBinder(MoneyServiceFacade.class).to(MoneyService.class).in(Singleton.class), configuration);
 		
 		addBinding(newBinder(OrderService.class).to(OrderService.class).in(Singleton.class), configuration);
 		addBinding(newBinder(OrderFlowWorker.class).to(OrderFlowWorker.class).in(Singleton.class), configuration);
+		
+		addBinding(newBinder(BTCExchange.class).to(BTCExchange.class).in(Singleton.class), configuration);
+		addBinding(newBinder(ExchangeFacade.class).to(Exchange.class).in(Singleton.class), configuration);
 
-		// commits changes
 		configuration.commit();
+		
+		serviceLocator.createAndInitialize(OrderFlowScheduler.class);
 	}
 }

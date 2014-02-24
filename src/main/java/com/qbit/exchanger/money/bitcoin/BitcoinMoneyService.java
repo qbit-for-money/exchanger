@@ -92,12 +92,19 @@ public class BitcoinMoneyService implements MoneyService {
 			parameters = MainNetParams.get();
 		}
 		kit = new WalletAppKit(parameters, new File(WALLET_PATH), "sample");
+<<<<<<< HEAD:src/main/java/com/qbit/exchanger/money/bitcoin/BitcoinMoneyService.java
 		kit.startAndWait();
 
 		paymentQueue = new ConcurrentHashMap<String, QueueItem>();
 
 		AbstractWalletEventListener listener = getPaymentListener();
 		getWallet().addEventListener(listener);
+=======
+		// For debug purposes
+		//kit.startAndWait();
+		// AbstractWalletEventListener listener = getPaymentListener();
+		//getWallet().addEventListener(listener);
+>>>>>>> origin/Yandex-service:src/main/java/com/qbit/exchanger/money/bitcoin/Bitcoin.java
 	}
 	
 	@Override
@@ -223,6 +230,7 @@ public class BitcoinMoneyService implements MoneyService {
 		}
 	}
 
+<<<<<<< HEAD:src/main/java/com/qbit/exchanger/money/bitcoin/BitcoinMoneyService.java
 	private boolean testReceive(Transfer transfer) {
 		boolean result;
 		if ((transfer != null) && transfer.isValid()) {
@@ -254,6 +262,12 @@ public class BitcoinMoneyService implements MoneyService {
 			result = false;
 		}
 		return result;
+=======
+	@Override
+	public boolean test(Transfer transfer) {
+		// For debug purposes
+		return true;
+>>>>>>> origin/Yandex-service:src/main/java/com/qbit/exchanger/money/bitcoin/Bitcoin.java
 	}
 
 	public String getNewAddress() {
