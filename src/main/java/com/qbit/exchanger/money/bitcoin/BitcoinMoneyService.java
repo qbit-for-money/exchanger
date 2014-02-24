@@ -6,7 +6,6 @@ import com.google.bitcoin.crypto.KeyCrypterException;
 import com.google.bitcoin.kits.WalletAppKit;
 import com.google.bitcoin.params.MainNetParams;
 import com.google.bitcoin.params.TestNet3Params;
-import com.google.bitcoin.script.Script;
 import com.google.bitcoin.utils.BriefLogFormatter;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
@@ -19,7 +18,6 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.google.bitcoin.core.Utils.bytesToHexString;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import com.qbit.exchanger.money.model.Amount;
@@ -92,19 +90,12 @@ public class BitcoinMoneyService implements MoneyService {
 			parameters = MainNetParams.get();
 		}
 		kit = new WalletAppKit(parameters, new File(WALLET_PATH), "sample");
-<<<<<<< HEAD:src/main/java/com/qbit/exchanger/money/bitcoin/BitcoinMoneyService.java
 		kit.startAndWait();
 
 		paymentQueue = new ConcurrentHashMap<String, QueueItem>();
 
 		AbstractWalletEventListener listener = getPaymentListener();
 		getWallet().addEventListener(listener);
-=======
-		// For debug purposes
-		//kit.startAndWait();
-		// AbstractWalletEventListener listener = getPaymentListener();
-		//getWallet().addEventListener(listener);
->>>>>>> origin/Yandex-service:src/main/java/com/qbit/exchanger/money/bitcoin/Bitcoin.java
 	}
 	
 	@Override
@@ -230,7 +221,6 @@ public class BitcoinMoneyService implements MoneyService {
 		}
 	}
 
-<<<<<<< HEAD:src/main/java/com/qbit/exchanger/money/bitcoin/BitcoinMoneyService.java
 	private boolean testReceive(Transfer transfer) {
 		boolean result;
 		if ((transfer != null) && transfer.isValid()) {
@@ -262,12 +252,6 @@ public class BitcoinMoneyService implements MoneyService {
 			result = false;
 		}
 		return result;
-=======
-	@Override
-	public boolean test(Transfer transfer) {
-		// For debug purposes
-		return true;
->>>>>>> origin/Yandex-service:src/main/java/com/qbit/exchanger/money/bitcoin/Bitcoin.java
 	}
 
 	public String getNewAddress() {
@@ -279,7 +263,7 @@ public class BitcoinMoneyService implements MoneyService {
 
 	public List<String> getWalletAddress() {
 		List<ECKey> keys = getWallet().getKeys();
-		List<String> result = new ArrayList<String>(keys.size());
+		List<String> result = new ArrayList<>(keys.size());
 		for (ECKey key : keys) {
 			Address address = key.toAddress(parameters);
 			result.add(address.toString());

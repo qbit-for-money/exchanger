@@ -2,3 +2,4 @@
 *.iml
 /.gitignore
 target
+nb-configuration.xml
