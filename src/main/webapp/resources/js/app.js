@@ -14,7 +14,7 @@ angular.module("wizard.amount", ["common", "wizard", "order"]);
 angular.module("wizard.result", ["common", "wizard", "order"]);
 
 angular.module("main", ["ngRoute", "ui.bootstrap", "common", "user", "order",
-	"money", "exchange", "wizard", "wizard.currency", "wizard.amount", "wizard.result"]);
+	"money", "money.yandex", "exchange", "wizard", "wizard.currency", "wizard.amount", "wizard.result"]);
 
 angular.module("main").config(function($routeProvider, $locationProvider) {
 	$routeProvider.when("/steps/currency", {
