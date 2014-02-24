@@ -10,6 +10,7 @@ import com.google.bitcoin.utils.BriefLogFormatter;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.MoreExecutors;
+import com.qbit.exchanger.env.Env;
 import com.qbit.exchanger.money.core.MoneyTransferCallback;
 import com.qbit.exchanger.money.core.MoneyService;
 
@@ -24,11 +25,13 @@ import com.qbit.exchanger.money.model.Amount;
 import com.qbit.exchanger.money.model.Transfer;
 import com.qbit.exchanger.money.model.TransferType;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.annotation.PostConstruct;
 
 /**
  * BITCOIN
@@ -44,13 +47,14 @@ public class BitcoinMoneyService implements MoneyService {
 
 	private static final Logger logger = Logger.getLogger(BitcoinMoneyService.class.getName());
 
-	private static final String WALLET_PATH = "./src/main/resources/bitcoin";
-
 	private ConcurrentMap<String, QueueItem> paymentQueue;
 
 	private NetworkParameters parameters;
 
 	private WalletAppKit kit;
+
+	@Inject
+	private Env env;
 
 	private class QueueItem {
 		private Transfer transfer;
@@ -78,18 +82,17 @@ public class BitcoinMoneyService implements MoneyService {
 		}
 	}
 
-	public BitcoinMoneyService() {
-		init(true);
-	}
-
-	private void init(boolean testnet) {
+	@PostConstruct
+	public void init() {
+		boolean testnet = true;
+		
 		BriefLogFormatter.init();
 		if (testnet) {
 			parameters = TestNet3Params.get();
 		} else {
 			parameters = MainNetParams.get();
 		}
-		kit = new WalletAppKit(parameters, new File(WALLET_PATH), "sample");
+		kit = new WalletAppKit(parameters, new File(env.getBitcoinWalletPath()), "sample");
 		kit.startAndWait();
 
 		paymentQueue = new ConcurrentHashMap<String, QueueItem>();
@@ -263,7 +266,7 @@ public class BitcoinMoneyService implements MoneyService {
 
 	public List<String> getWalletAddress() {
 		List<ECKey> keys = getWallet().getKeys();
-		List<String> result = new ArrayList<>(keys.size());
+		List<String> result = new ArrayList<String>(keys.size());
 		for (ECKey key : keys) {
 			Address address = key.toAddress(parameters);
 			result.add(address.toString());

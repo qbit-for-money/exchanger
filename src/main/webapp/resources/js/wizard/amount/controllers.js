@@ -13,4 +13,8 @@ amountModule.controller("AmountController", function($rootScope, $scope, session
 		var prefix = 'resources/html/money/';
 		return prefix + $rootScope.orderInfo.inTransfer.currency + '/in.html';
 	};
+	$scope.getOutUrl = function() {
+		var prefix = 'resources/html/money/';
+		return prefix + $rootScope.orderInfo.outTransfer.currency + '/out.html';
+	};
 });
