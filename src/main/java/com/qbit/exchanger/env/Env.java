@@ -9,7 +9,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  * Exchanger properties
- * 
+ *
  * @author Alexander_Alexandrov
  */
 @Singleton
@@ -17,7 +17,7 @@ import javax.xml.bind.annotation.XmlTransient;
 public class Env {
 
 	private final Properties properties;
-	
+
 	public Env() {
 		properties = new Properties();
 		try {
@@ -26,29 +26,54 @@ public class Env {
 			throw new RuntimeException(ex);
 		}
 	}
-	
+
 	@XmlElement
 	public boolean isDemoEnabled() {
 		return Boolean.TRUE.toString().equalsIgnoreCase(properties.getProperty("demo.enabled"));
 	}
-	
+
 	@XmlElement
 	public String getMailBotAddress() {
 		return properties.getProperty("mail.bot.address");
 	}
-	
+
 	@XmlTransient
 	public String getMailBotPersonal() {
 		return properties.getProperty("mail.bot.personal");
 	}
-	
+
 	@XmlTransient
 	public String getMailHost() {
 		return properties.getProperty("mail.host");
 	}
-	
+
 	@XmlTransient
 	public int getOrderWorkerPeriodSecs() {
 		return Integer.parseInt(properties.getProperty("order.worker.period.secs"));
+	}
+
+	@XmlTransient
+	public String getYandexRedirectUrl() {
+		return properties.getProperty("money.yandex.yandexRedirectUrl");
+	}
+
+	@XmlTransient
+	public String getYandexResourceRedirectUrl() {
+		return properties.getProperty("money.yandex.resourceRedirectUrl");
+	}
+
+	@XmlTransient
+	public String getYandexResourceRedirectRoute() {
+		return properties.getProperty("money.yandex.resourceRedirectRoute");
+	}
+
+	@XmlTransient
+	public String getYandexWallet() {
+		return properties.getProperty("money.yandex.wallet");
+	}
+
+	@XmlTransient
+	public String getYandexToken() {
+		return properties.getProperty("money.yandex.token");
 	}
 }

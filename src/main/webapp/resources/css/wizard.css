@@ -63,6 +63,18 @@
 
 /* END CURRENCY STEP */
 
+/* START ORDER STEP */
+
+form input.money-amount {
+	text-align: right;
+}
+
+form input.money-wallet {
+	text-align: center;
+}
+
+/* END ORDER STEP */
+
 /* START RESULT STEP */
 
 span.status-sign {

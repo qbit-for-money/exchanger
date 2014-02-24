@@ -18,6 +18,9 @@ commonModule.factory("sessionStorage", function() {
 		},
 		setItem: function(key, value) {
 			this[key] = value;
+		},
+		removeItem: function(key) {
+			delete this[key];
 		}
 	};
 });
