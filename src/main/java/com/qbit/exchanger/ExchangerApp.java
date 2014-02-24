@@ -46,15 +46,16 @@ public class ExchangerApp extends Application {
 		addBinding(newBinder(Bitcoin.class).to(Bitcoin.class).in(Singleton.class), configuration);
 		addBinding(newBinder(YandexMoneyService.class).to(YandexMoneyService.class).in(Singleton.class), configuration);
 		addBinding(newBinder(MoneyServiceFacade.class).to(MoneyService.class).in(Singleton.class), configuration);
-		
+
 		addBinding(newBinder(OrderService.class).to(OrderService.class).in(Singleton.class), configuration);
 		addBinding(newBinder(OrderFlowWorker.class).to(OrderFlowWorker.class).in(Singleton.class), configuration);
-		
+
 		addBinding(newBinder(BTCExchange.class).to(BTCExchange.class).in(Singleton.class), configuration);
 		addBinding(newBinder(ExchangeFacade.class).to(Exchange.class).in(Singleton.class), configuration);
 
 		configuration.commit();
-		
+
 		serviceLocator.createAndInitialize(OrderFlowScheduler.class);
+		serviceLocator.createAndInitialize(YandexMoneyService.class);
 	}
 }

@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import ru.yandex.money.api.YandexMoney;
@@ -35,18 +36,16 @@ import ru.yandex.money.api.rights.Permission;
 public class YandexMoneyService implements MoneyService {
 
 	private static final Logger LOGGER = Logger.getLogger(YandexMoneyService.class.getName());
-	private static final String CLIENT_ID = "B83AF6B23CA9C5E0CA7AAFC2F1B98CDAEEAD59A49DED9A4BEE52B8F85A19D20B";
-	private static final String OPERATION_DESCRIPTION = "exchanger";
 
-	private final YandexMoney yandexMoney;
-	private final Map<String, String> tokens;
+	private YandexMoney yandexMoney;
+	private final Map<String, String> tokens = new ConcurrentHashMap<>();
 
 	@Inject
 	private Env env;
 
-	public YandexMoneyService() {
-		tokens = new ConcurrentHashMap<>();
-		yandexMoney = new YandexMoneyImpl(CLIENT_ID);
+	@PostConstruct
+	public void init() {
+		yandexMoney = new YandexMoneyImpl(env.getYandexClientId());
 	}
 
 	public String getAuthorizeUri(boolean mobile, BigDecimal amount) {
@@ -81,7 +80,7 @@ public class YandexMoneyService implements MoneyService {
 		}
 
 		try {
-			RequestPaymentResponse response = requestPayment(token, wallet, transfer.getAmount().toBigDecimal(), OPERATION_DESCRIPTION);
+			RequestPaymentResponse response = requestPayment(token, wallet, transfer.getAmount().toBigDecimal(), env.getYandexOperationDescription());
 			if (response != null && response.isSuccess()) {
 				ProcessPaymentResponse paymentResponse = processPayment(token, response.getRequestId());
 				if (paymentResponse != null && paymentResponse.isSuccess()) {
@@ -118,7 +117,7 @@ public class YandexMoneyService implements MoneyService {
 			}
 
 			try {
-				RequestPaymentResponse response = requestPayment(token, wallet, transfer.getAmount().toBigDecimal(), OPERATION_DESCRIPTION);
+				RequestPaymentResponse response = requestPayment(token, wallet, transfer.getAmount().toBigDecimal(), env.getYandexOperationDescription());
 				if ((response != null) && response.isSuccess()) {
 					result = true;
 				}

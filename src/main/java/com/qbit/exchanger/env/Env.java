@@ -76,4 +76,14 @@ public class Env {
 	public String getYandexToken() {
 		return properties.getProperty("money.yandex.token");
 	}
+
+	@XmlTransient
+	public String getYandexClientId() {
+		return properties.getProperty("money.yandex.clientId");
+	}
+
+	@XmlTransient
+	public String getYandexOperationDescription() {
+		return properties.getProperty("money.yandex.operationDescription");
+	}
 }
