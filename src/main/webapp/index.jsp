@@ -56,18 +56,33 @@
 		</script>
 
 		<script type="text/javascript" src="resources/js/app.js"></script>
-		<script type="text/javascript" src="resources/js/common/common-service.js"></script>
-		<script type="text/javascript" src="resources/js/common/common-controller.js"></script>
-		<script type="text/javascript" src="resources/js/user/user-service.js"></script>
-		<script type="text/javascript" src="resources/js/user/user-controller.js"></script>
-		<script type="text/javascript" src="resources/js/order/order-service.js"></script>
-
-		<script type="text/javascript" src="resources/js/wizard/wizard.js"></script>
-		<script type="text/javascript" src="resources/js/wizard/currency.js"></script>
-		<script type="text/javascript" src="resources/js/wizard/result.js"></script>
-		<script type="text/javascript" src="resources/js/wizard/amount.js"></script>
+		
+		<script type="text/javascript" src="resources/js/common/resources.js"></script>
+		<script type="text/javascript" src="resources/js/common/services.js"></script>
+		<script type="text/javascript" src="resources/js/common/filters.js"></script>
+		
+		<script type="text/javascript" src="resources/js/user/resources.js"></script>
+		<script type="text/javascript" src="resources/js/user/services.js"></script>
+		<script type="text/javascript" src="resources/js/user/controllers.js"></script>
+		
+		<script type="text/javascript" src="resources/js/order/resources.js"></script>
+		<script type="text/javascript" src="resources/js/order/services.js"></script>
+		
+		<script type="text/javascript" src="resources/js/money/services.js"></script>
+		<script type="text/javascript" src="resources/js/money/filters.js"></script>
+		
+		<script type="text/javascript" src="resources/js/exchange/resources.js"></script>
 
 		<script type="text/javascript" src="resources/js/money/yandex/yandex-service.js"></script>
 		<script type="text/javascript" src="resources/js/money/yandex/yandex-controller.js"></script>
+		<script type="text/javascript" src="resources/js/wizard/services.js"></script>
+		<script type="text/javascript" src="resources/js/wizard/controllers.js"></script>
+		
+		<script type="text/javascript" src="resources/js/wizard/currency/controllers.js"></script>
+		
+		<script type="text/javascript" src="resources/js/wizard/amount/controllers.js"></script>
+		
+		<script type="text/javascript" src="resources/js/wizard/result/controllers.js"></script>
+		<script type="text/javascript" src="resources/js/wizard/result/directives.js"></script>
 	</body>
 </html>

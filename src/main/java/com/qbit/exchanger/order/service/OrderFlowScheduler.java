@@ -8,6 +8,7 @@ import java.util.concurrent.TimeUnit;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import javax.persistence.EntityManagerFactory;
 
 /**
  *
@@ -15,13 +16,16 @@ import javax.inject.Singleton;
  */
 @Singleton
 public class OrderFlowScheduler {
-	
+
 	@Inject
 	private Env env;
 	
 	@Inject
+	private EntityManagerFactory entityManagerFactory;
+
+	@Inject
 	private OrderFlowWorker orderFlowWorker;
-	
+
 	private ScheduledExecutorService executorService;
 
 	@PostConstruct
@@ -35,7 +39,14 @@ public class OrderFlowScheduler {
 				return thread;
 			}
 		});
-		executorService.scheduleWithFixedDelay(orderFlowWorker, env.getOrderWorkerPeriodSecs(),
-				env.getOrderWorkerPeriodSecs(), TimeUnit.SECONDS);
+		executorService.scheduleWithFixedDelay(new Runnable() {
+
+			@Override
+			public void run() {
+				if (entityManagerFactory.isOpen()) {
+					orderFlowWorker.run();
+				}
+			}
+		}, env.getOrderWorkerPeriodSecs(), env.getOrderWorkerPeriodSecs(), TimeUnit.SECONDS);
 	}
 }

@@ -15,7 +15,9 @@ import java.util.List;
  */
 public final class RESTUtil {
 	
-	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+	private static final DateFormat DATE_TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+	
+	private static final DateFormat DATE_TIME_FORMAT_WITH_MILLIS = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
 	
 	private RESTUtil() {
 	}
@@ -31,6 +33,12 @@ public final class RESTUtil {
 	}
 	
 	public static Date toDate(String dateStr) throws ParseException {
-		return DATE_FORMAT.parse(dateStr);
+		Date result;
+		try {
+			result = DATE_TIME_FORMAT_WITH_MILLIS.parse(dateStr);
+		} catch (ParseException ex) {
+			result = DATE_TIME_FORMAT.parse(dateStr);
+		}
+		return result;
 	}
 }

@@ -40,7 +40,3 @@ commonModule.factory("delayedProxy", function($timeout) {
 			return proxy;
 		};
 });
-
-commonModule.factory("envResource", function($resource) {
-	return $resource(window.context + "webapi/env");
-});

@@ -26,6 +26,10 @@ public enum Currency {
 		this.minSignificantAmount = minSignificantAmount;
 		this.code = code;
 	}
+	
+	public long getCentsInCoin() {
+		return minSignificantAmount.getCentsInCoin();
+	}
 
 	public Amount getMinSignificantAmount() {
 		return minSignificantAmount;

@@ -1,6 +1,6 @@
 var wizardModule = angular.module("wizard");
 
-wizardModule.controller("WizardController", function($scope, wizardService, $location) {
+wizardModule.controller("WizardController", function($scope, $location, wizardService) {
 	$scope.steps = wizardService.getSteps();
 	$scope.getStepIndexByPath = wizardService.getStepIndexByPath;
 	$scope.$on('$locationChangeSuccess', function() {
@@ -25,27 +25,5 @@ wizardModule.controller("WizardController", function($scope, wizardService, $loc
 		if (currentStepIndex + 1 < $scope.steps.length) {
 			$location.path($scope.steps[currentStepIndex + 1].path);
 		}
-	};
-});
-
-wizardModule.factory("wizardService", function() {
-	var steps = [
-		{title: "Currency", path: "/steps/currency"},
-		{title: "Amount", path: "/steps/amount"},
-		{title: "Result", path: "/steps/result"}
-	];
-	var getSteps = function() {
-		return steps;
-	};
-	var getStepIndexByPath = function(path) {
-		for (var i = 0; i < steps.length; i++) {
-			if (steps[i].path === path) {
-				return i;
-			}
-		}
-	};
-	return {
-		getSteps: getSteps,
-		getStepIndexByPath: getStepIndexByPath
 	};
 });

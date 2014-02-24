@@ -1,6 +1,9 @@
 package com.qbit.exchanger;
 
 import com.qbit.exchanger.env.Env;
+import com.qbit.exchanger.external.exchange.btce.BTCExchange;
+import com.qbit.exchanger.external.exchange.core.Exchange;
+import com.qbit.exchanger.external.exchange.core.ExchangeFacade;
 import com.qbit.exchanger.mail.MailService;
 import com.qbit.exchanger.money.bitcoin.Bitcoin;
 import com.qbit.exchanger.money.core.MoneyService;
@@ -34,8 +37,8 @@ public class ExchangerApp extends Application {
 
 		addBinding(newBinder(MailService.class).to(MailService.class).in(Singleton.class), configuration);
 
-		addBinding(newBinder(Persistence.createEntityManagerFactory("exchangerPU"))
-				.to(EntityManagerFactory.class), configuration);
+		EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("exchangerPU");
+		addBinding(newBinder(entityManagerFactory).to(EntityManagerFactory.class), configuration);
 
 		addBinding(newBinder(UserDAO.class).to(UserDAO.class).in(Singleton.class), configuration);
 		addBinding(newBinder(OrderDAO.class).to(OrderDAO.class).in(Singleton.class), configuration);
@@ -46,6 +49,9 @@ public class ExchangerApp extends Application {
 		
 		addBinding(newBinder(OrderService.class).to(OrderService.class).in(Singleton.class), configuration);
 		addBinding(newBinder(OrderFlowWorker.class).to(OrderFlowWorker.class).in(Singleton.class), configuration);
+		
+		addBinding(newBinder(BTCExchange.class).to(BTCExchange.class).in(Singleton.class), configuration);
+		addBinding(newBinder(ExchangeFacade.class).to(Exchange.class).in(Singleton.class), configuration);
 
 		configuration.commit();
 		

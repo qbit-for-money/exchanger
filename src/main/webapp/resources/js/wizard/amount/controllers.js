@@ -1,6 +1,6 @@
-var resultModule = angular.module("amount");
+var amountModule = angular.module("wizard.amount");
 
-resultModule.controller("AmountController", function($rootScope, $scope, sessionStorage) {
+amountModule.controller("AmountController", function($rootScope, $scope, sessionStorage) {
 	var storedOrder = sessionStorage.getItem("orderInfo");
 	if (storedOrder) {
 		$rootScope.orderInfo = JSON.parse(storedOrder);
