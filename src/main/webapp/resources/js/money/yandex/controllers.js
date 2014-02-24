@@ -1,6 +1,7 @@
 var moneyModule = angular.module("money.yandex");
 
-moneyModule.controller("YandexController", function($scope, $location, $window, $rootScope, yandexResource, sessionStorage) {
+moneyModule.controller("YandexController", function($scope, $location, $window, $rootScope,
+		yandexResource, storeOrderInfoInSession) {
 	$scope.authorized = false;
 	var address;
 	address = $location.search()["wallet"];
@@ -18,7 +19,7 @@ moneyModule.controller("YandexController", function($scope, $location, $window, 
 	$scope.redirect = function() {
 		var urlResponse = yandexResource.getAuthorizeUrl();
 		urlResponse.$promise.then(function() {
-			sessionStorage.setItem("orderInfo", JSON.stringify($rootScope.orderInfo));
+			storeOrderInfoInSession();
 			$window.location.href = urlResponse.url;
 		});
 	};
