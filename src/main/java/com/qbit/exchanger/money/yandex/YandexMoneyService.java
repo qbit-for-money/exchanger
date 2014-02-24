@@ -49,12 +49,12 @@ public class YandexMoneyService implements MoneyService {
 		yandexMoney = new YandexMoneyImpl(CLIENT_ID);
 	}
 
-	public String getAuthorizeUri(Boolean mobile, BigDecimal amount) {
+	public String getAuthorizeUri(boolean mobile, BigDecimal amount) {
 		Collection<Permission> scope = getPaymentScope(amount);
 		return yandexMoney.authorizeUri(scope, env.getYandexRedirectUrl(), mobile);
 	}
 
-	public String getAuthorizeUri(Boolean mobile) {
+	public String getAuthorizeUri(boolean mobile) {
 		Collection<Permission> scope = getPaymentScope();
 		return yandexMoney.authorizeUri(scope, env.getYandexRedirectUrl(), mobile);
 	}

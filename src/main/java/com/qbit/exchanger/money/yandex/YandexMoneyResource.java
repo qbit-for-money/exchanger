@@ -25,7 +25,7 @@ public class YandexMoneyResource {
 	@GET
 	@Path("authorizeUrl")
 	@Produces(MediaType.APPLICATION_JSON)
-	public AuthorizeUrlWrapper getUrl(@QueryParam("mobile") boolean mobile) {
+	public AuthorizeUrlWrapper getAuthorizeUrl(@QueryParam("mobile") boolean mobile) {
 		AuthorizeUrlWrapper urlWrapper = new AuthorizeUrlWrapper();
 		urlWrapper.setUrl(yandexMoneyService.getAuthorizeUri(mobile));
 		return urlWrapper;
