@@ -71,8 +71,8 @@
 		<script type="text/javascript" src="resources/js/money/services.js"></script>
 		<script type="text/javascript" src="resources/js/money/filters.js"></script>
 
-		<script type="text/javascript" src="resources/js/money/yandex/yandex-service.js"></script>
-		<script type="text/javascript" src="resources/js/money/yandex/yandex-controller.js"></script>
+		<script type="text/javascript" src="resources/js/money/yandex/resources.js"></script>
+		<script type="text/javascript" src="resources/js/money/yandex/controllers.js"></script>
 		
 		<script type="text/javascript" src="resources/js/exchange/resources.js"></script>
 
