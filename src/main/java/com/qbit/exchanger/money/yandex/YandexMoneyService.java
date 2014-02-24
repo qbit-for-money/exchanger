@@ -96,8 +96,10 @@ public class YandexMoneyService implements MoneyService {
 			LOGGER.severe(e.getMessage());
 			callback.error(e.getMessage());
 		} finally {
-			tokens.remove(transfer.getAddress());
-			revokeToken(token);
+			String removedToken = tokens.remove(transfer.getAddress());
+			if (removedToken != null) {
+				revokeToken(removedToken);
+			}
 		}
 	}
 
