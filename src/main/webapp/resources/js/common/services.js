@@ -1,18 +1,7 @@
 var commonModule = angular.module("common");
 
-commonModule.factory("localStorage", function() {
-	return window.localStorage || {
-		getItem: function(key) {
-			return this[key];
-		},
-		setItem: function(key, value) {
-			this[key] = value;
-		}
-	};
-});
-
-commonModule.factory("sessionStorage", function() {
-	return window.sessionStorage || {
+commonModule.factory("storage", function() {
+	return {
 		getItem: function(key) {
 			return this[key];
 		},
@@ -23,6 +12,14 @@ commonModule.factory("sessionStorage", function() {
 			delete this[key];
 		}
 	};
+});
+
+commonModule.factory("localStorage", function(storage) {
+	return window.localStorage || storage;
+});
+
+commonModule.factory("sessionStorage", function(storage) {
+	return window.sessionStorage || storage;
 });
 
 commonModule.factory("delayedProxy", function($timeout) {

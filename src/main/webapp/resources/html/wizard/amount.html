@@ -1,5 +1,27 @@
-<div>
-	<!--for testing-->
-	<ng-include src="getInUrl()"></ng-include>
-	<ng-include src="getOutUrl()"></ng-include>
+<div class="row" ng-if="orderInfo.inTransfer.currency">
+	<div class="col-md-12" ng-include="'resources/html/money/' + orderInfo.inTransfer.currency + '/in.html'"></div>
+</div>
+<div class="row" ng-if="!orderInfo.inTransfer.currency">
+	<div class="col-md-12">
+		<div class="alert alert-warning">
+			<h3>Currency not supported.</h3>
+		</div>
+	</div>
+</div>
+<div class="row" style="margin-top: 20px; margin-bottom: 20px;">
+	<div class="col-md-12 text-center">
+		<span class="label label-success direction-control">
+			<span class="glyphicon glyphicon-arrow-down" style="vertical-align: middle"></span>
+		</span>
+	</div>
+</div>
+<div class="row" ng-if="orderInfo.outTransfer.currency">
+	<div class="col-md-12" ng-include="'resources/html/money/' + orderInfo.outTransfer.currency + '/out.html'"></div>
+</div>
+<div class="row" ng-if="!orderInfo.outTransfer.currency">
+	<div class="col-md-12">
+		<div class="alert alert-warning">
+			<h3>Currency not supported.</h3>
+		</div>
+	</div>
 </div>
