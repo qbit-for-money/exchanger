@@ -11,7 +11,7 @@
 	padding-bottom: 100%;
 	background-image: url("../img/currencies.png");
 	background-size: 1200%;
-	display:block;
+	display: block;
 }
 .currency.BITCOIN { background-position: 0 0; }
 .currency.PRIMECOIN { background-position: -100% 0; }
