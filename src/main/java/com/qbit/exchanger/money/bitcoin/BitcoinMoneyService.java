@@ -100,7 +100,7 @@ public class BitcoinMoneyService implements MoneyService {
 		AbstractWalletEventListener listener = getPaymentListener();
 		getWallet().addEventListener(listener);
 	}
-	
+
 	@Override
 	public void process(Transfer transfer, MoneyTransferCallback callback) {
 		switch (transfer.getType()) {
