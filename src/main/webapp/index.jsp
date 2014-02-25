@@ -82,6 +82,7 @@
 		<script type="text/javascript" src="resources/js/wizard/currency/controllers.js"></script>
 		
 		<script type="text/javascript" src="resources/js/wizard/amount/controllers.js"></script>
+		<script type="text/javascript" src="resources/js/wizard/amount/directives.js"></script>
 		
 		<script type="text/javascript" src="resources/js/wizard/result/controllers.js"></script>
 		<script type="text/javascript" src="resources/js/wizard/result/directives.js"></script>

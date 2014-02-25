@@ -13,6 +13,7 @@ public class CurrencyAdapter extends XmlAdapter<CurrencyAdapter.AdaptedCurrency,
 	
 		private String id;
 		private String code;
+		private boolean supported;
 
 		public String getId() {
 			return id;
@@ -28,7 +29,15 @@ public class CurrencyAdapter extends XmlAdapter<CurrencyAdapter.AdaptedCurrency,
 
 		public void setCode(String code) {
 			this.code = code;
-		}	
+		}
+
+		public boolean isSupported() {
+			return supported;
+		}
+
+		public void setSupported(boolean supported) {
+			this.supported = supported;
+		}
 	}
 	
 	@Override
@@ -47,6 +56,7 @@ public class CurrencyAdapter extends XmlAdapter<CurrencyAdapter.AdaptedCurrency,
 			result = new AdaptedCurrency();
 			result.setId(currency.name());
 			result.setCode(currency.getCode());
+			result.setSupported(currency.isSupported());
 		}
 		return result;
 	}
