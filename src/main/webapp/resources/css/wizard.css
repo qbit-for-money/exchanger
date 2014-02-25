@@ -7,11 +7,11 @@
 /* START CURRENCY STEP */
 .currency { 
 	width: 100%;
+	max-width: 75px;
 	height: 0;
 	padding-bottom: 100%;
 	background-image: url("../img/currencies.png");
 	background-size: 1200%;
-	display: block;
 }
 .currency.BITCOIN { background-position: 0 0; }
 .currency.PRIMECOIN { background-position: -100% 0; }
@@ -27,7 +27,7 @@
 .currency.YANDEX_RUB { background-position: -1100% 0; }
 
 .currency-step {
-	padding: 5%;
+	/* padding: 5%; */
 }
 
 .currencies-list {
@@ -64,14 +64,6 @@
 /* END CURRENCY STEP */
 
 /* START ORDER STEP */
-
-form input.money-amount {
-	text-align: right;
-}
-
-form input.money-wallet {
-	text-align: center;
-}
 
 /* END ORDER STEP */
 
