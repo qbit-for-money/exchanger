@@ -12,6 +12,13 @@ public class BitcoinResource {
 	@Inject
 	private BitcoinMoneyService bitcoinMoneyService;
 
+//	@GET
+//	@Path("getNewAddress")
+//	@Produces(MediaType.APPLICATION_JSON)
+//	public StringWrapper getNewAddress() {
+//		return new StringWrapper(bitcoinMoneyService.getNewAddress());
+//	}
+
 	@GET
 	@Path("getNewAddress")
 	@Produces(MediaType.TEXT_PLAIN)

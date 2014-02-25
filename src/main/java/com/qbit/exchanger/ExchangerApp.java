@@ -56,7 +56,5 @@ public class ExchangerApp extends Application {
 		configuration.commit();
 
 		serviceLocator.createAndInitialize(OrderFlowScheduler.class);
-		serviceLocator.createAndInitialize(YandexMoneyService.class);
-		serviceLocator.createAndInitialize(BitcoinMoneyService.class);
 	}
 }
