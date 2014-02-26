@@ -84,10 +84,8 @@ public class BitcoinMoneyService implements MoneyService {
 
 	@PostConstruct
 	public void init() {
-		boolean testnet = true;
-		
 		BriefLogFormatter.init();
-		if (testnet) {
+		if (env.isBitcoinTestnet()) {
 			parameters = TestNet3Params.get();
 		} else {
 			parameters = MainNetParams.get();

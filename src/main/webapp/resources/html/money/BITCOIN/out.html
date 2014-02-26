@@ -19,9 +19,9 @@
 		</div>
 	</div>
 	<div class="row">
-		<div class="col-md-offset-4">
+		<div class="col-md-offset-3">
 			<form name="walletForm" novalidate>
-				<div class="form-group col-md-4" ng-class="{'has-error': walletForm.wallet.$invalid}">
+				<div class="form-group col-md-8" ng-class="{'has-error': walletForm.wallet.$invalid}">
 					<label for="bitcoinWallet">Wallet</label>
 					<input class="form-control input-lg money-wallet" ng-model="address"
 						   ng-pattern="/^[0-9]\d*$/" required type="text" name="wallet" id="bitcoinWallet" placeholder="Wallet" />

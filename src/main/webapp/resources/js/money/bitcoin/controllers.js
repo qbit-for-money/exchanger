@@ -19,11 +19,10 @@ bitcoinModule.controller("BitcoinController", function($scope, $rootScope, bitco
 
 	if ($rootScope.orderInfo.inTransfer.currency === "BITCOIN") {
 		$scope.$watch("amount", $scope.fillInTransfer);
-		var address = bitcoinResource.getNewAddress();
-		address.$promise.then(function() {
+		var walletAddress = bitcoinResource.getNewAddress();
+		walletAddress.$promise.then(function() {
 			console.log(arguments);
-			$scope.address = address.str;
-//			$scope.address = address.getString();
+			$scope.address = walletAddress.address;
 			$rootScope.orderInfo.inTransfer.address = $scope.address;
 		});
 	} else {

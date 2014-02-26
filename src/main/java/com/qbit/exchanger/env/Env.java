@@ -91,4 +91,9 @@ public class Env {
 	public String getBitcoinWalletPath() {
 		return properties.getProperty("money.bitcoin.wallet.path");
 	}
+
+	@XmlTransient
+	public boolean isBitcoinTestnet() {
+		return Boolean.TRUE.toString().equalsIgnoreCase(properties.getProperty("money.bitcoin.testnet"));
+	}
 }
