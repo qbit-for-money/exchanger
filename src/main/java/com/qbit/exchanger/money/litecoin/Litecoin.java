@@ -31,11 +31,14 @@ import com.google.litecoin.crypto.KeyCrypterException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
+import javax.inject.Singleton;
 
 /**
- *
+ * LITECOIN
+ * 
  * @author Alexander_Sergeev
  */
+@Singleton
 public class Litecoin implements MoneyService {
 
         private static final Logger logger = Logger.getLogger(Litecoin.class.getName());
