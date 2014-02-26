@@ -58,7 +58,7 @@ public class Litecoin implements MoneyService {
                         parameters = MainNetParams.get();
                 }
                 kit = new WalletAppKit(parameters, new File(WALLET_PATH), "sample");
-                
+
                 // For debug purposes
                 //kit.startAndWait();
         }

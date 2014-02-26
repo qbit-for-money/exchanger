@@ -153,7 +153,9 @@ public class Bitcoin implements MoneyService {
 			throw new RuntimeException(e);
 		} catch (AddressFormatException ex) {
 			logger.severe(ex.getMessage());
-		}
+		} catch (InsufficientMoneyException ex) {
+                        Logger.getLogger(Bitcoin.class.getName()).log(Level.SEVERE, null, ex);
+                }
 	}
 
 	@Override
