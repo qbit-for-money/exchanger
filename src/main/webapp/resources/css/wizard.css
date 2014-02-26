@@ -5,26 +5,46 @@
 }
 
 /* START CURRENCY STEP */
-.currency { 
-	width: 100%;
-	max-width: 75px;
-	height: 0;
-	padding-bottom: 100%;
-	background-image: url("../img/currencies.png");
-	background-size: 1200%;
+/* Smartphones (portrait) ----------- */
+@media only screen 
+and (max-width : 767px) {
+	.currency { 
+		background: url('../img/currencies-50x50.png') no-repeat top left;
+		width: 50px; height: 50px;
+	} 
+	.currency.BITCOIN { background-position: 0px 0px; } 
+	.currency.DIGITALCOIN { background-position: -60px 0px; } 
+	.currency.FEATHERCOIN { background-position: -120px 0px; } 
+	.currency.LITECOIN { background-position: -180px 0px; } 
+	.currency.NAMECOIN { background-position: -240px 0px; } 
+	.currency.NOVACOIN { background-position: -300px 0px; } 
+	.currency.PEERCOIN { background-position: -359px 0px; } 
+	.currency.PRIMECOIN { background-position: -419px 0px; } 
+	.currency.QUARKCOIN { background-position: -479px 0px; } 
+	.currency.STABLECOIN { background-position: -539px 0px; } 
+	.currency.YANDEX_RUB { background-position: -599px 0px; } 
+	.currency.ZETACOIN { background-position: -659px 0px; } }
+
+/* Larger screens ----------- */
+@media only screen 
+and (min-width : 768px) {
+	.currency { 
+		background: url('../img/currencies-75x75.png') no-repeat top left;
+		width: 75px; height: 75px;
+	} 
+	.currency.BITCOIN { background-position: 0px 0px; } 
+	.currency.DIGITALCOIN { background-position: -85px 0px; } 
+	.currency.FEATHERCOIN { background-position: -170px 0px; } 
+	.currency.LITECOIN { background-position: -255px 0px; } 
+	.currency.NAMECOIN { background-position: -340px 0px; } 
+	.currency.NOVACOIN { background-position: -425px 0px; width: 75px; height: 76px;  } 
+	.currency.PEERCOIN { background-position: -510px 0px; } 
+	.currency.PRIMECOIN { background-position: -595px 0px; } 
+	.currency.QUARKCOIN { background-position: -680px 0px; } 
+	.currency.STABLECOIN { background-position: -765px 0px; } 
+	.currency.YANDEX_RUB { background-position: -850px 0px; } 
+	.currency.ZETACOIN { background-position: -935px 0px; } 
 }
-.currency.BITCOIN { background-position: 0 0; }
-.currency.PRIMECOIN { background-position: -100% 0; }
-.currency.DIGITALCOIN { background-position: -200% 0; }
-.currency.NAMECOIN { background-position: -300% 0; }
-.currency.LITECOIN {background-position: -400% 0; }
-.currency.NOVACOIN { background-position: -500% 0; }
-.currency.FEATHERCOIN { background-position: -600% 0; }
-.currency.PEERCOIN { background-position: -700% 0; }
-.currency.QUARKCOIN { background-position: -800% 0; }
-.currency.STABLECOIN { background-position: -900% 0; }
-.currency.ZETACOIN { background-position: -1000% 0;  }
-.currency.YANDEX_RUB { background-position: -1100% 0; }
 
 .currency-step {
 	/* padding: 5%; */
