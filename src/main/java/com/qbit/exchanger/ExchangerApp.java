@@ -8,6 +8,7 @@ import com.qbit.exchanger.mail.MailService;
 import com.qbit.exchanger.money.bitcoin.Bitcoin;
 import com.qbit.exchanger.money.core.MoneyService;
 import com.qbit.exchanger.money.core.MoneyServiceFacade;
+import com.qbit.exchanger.money.litecoin.Litecoin;
 import com.qbit.exchanger.money.yandex.YandexMoneyService;
 import com.qbit.exchanger.order.dao.OrderDAO;
 import com.qbit.exchanger.order.service.OrderFlowScheduler;
