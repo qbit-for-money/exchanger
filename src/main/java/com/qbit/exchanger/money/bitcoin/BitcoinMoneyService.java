@@ -32,6 +32,7 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 
 /**
  * BITCOIN
@@ -83,7 +84,7 @@ public class BitcoinMoneyService implements MoneyService {
 	}
 
 	@PostConstruct
-	public void init() {
+	private void init() {
 		BriefLogFormatter.init();
 		if (env.isBitcoinTestnet()) {
 			parameters = TestNet3Params.get();
@@ -97,6 +98,11 @@ public class BitcoinMoneyService implements MoneyService {
 
 		AbstractWalletEventListener listener = getPaymentListener();
 		getWallet().addEventListener(listener);
+	}
+
+	@PreDestroy
+	private void destroy() {
+		kit.stopAndWait();
 	}
 
 	@Override

@@ -14,6 +14,8 @@ import com.qbit.exchanger.order.service.OrderFlowScheduler;
 import com.qbit.exchanger.order.service.OrderFlowWorker;
 import com.qbit.exchanger.order.service.OrderService;
 import com.qbit.exchanger.user.UserDAO;
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.persistence.EntityManagerFactory;
@@ -30,7 +32,13 @@ import static org.glassfish.jersey.internal.inject.Injections.*;
 public class ExchangerApp extends Application {
 
 	@Inject
-	public ExchangerApp(ServiceLocator serviceLocator) {
+	private ServiceLocator serviceLocator;
+
+	public ExchangerApp() {
+	}
+
+	@PostConstruct
+	private void init() {
 		DynamicConfiguration configuration = getConfiguration(serviceLocator);
 
 		addBinding(newBinder(Env.class).to(Env.class).in(Singleton.class), configuration);
@@ -56,5 +64,15 @@ public class ExchangerApp extends Application {
 		configuration.commit();
 
 		serviceLocator.createAndInitialize(OrderFlowScheduler.class);
+	}
+
+	/**
+	 * Called on application shutdown. We need this workaround because fucking
+	 * Jersey 2.5.1 doesn't process @PreDestroy annotated methods in another
+	 * classes except this one.
+	 */
+	@PreDestroy
+	public void preDestroy() {
+		serviceLocator.shutdown();
 	}
 }

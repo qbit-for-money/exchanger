@@ -44,10 +44,10 @@ public class YandexMoneyService implements MoneyService {
 	private Env env;
 
 	@PostConstruct
-	public void init() {
+	private void init() {
 		yandexMoney = new YandexMoneyImpl(env.getYandexClientId());
 	}
-
+	
 	public String getAuthorizeUri(boolean mobile, BigDecimal amount) {
 		Collection<Permission> scope = getPaymentScope(amount);
 		return yandexMoney.authorizeUri(scope, env.getYandexRedirectUrl(), mobile);

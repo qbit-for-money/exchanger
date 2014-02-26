@@ -21,7 +21,6 @@ bitcoinModule.controller("BitcoinController", function($scope, $rootScope, bitco
 		$scope.$watch("amount", $scope.fillInTransfer);
 		var walletAddress = bitcoinResource.getNewAddress();
 		walletAddress.$promise.then(function() {
-			console.log(arguments);
 			$scope.address = walletAddress.address;
 			$rootScope.orderInfo.inTransfer.address = $scope.address;
 		});
