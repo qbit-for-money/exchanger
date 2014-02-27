@@ -19,7 +19,7 @@ public class OrderFlowScheduler {
 
 	@Inject
 	private Env env;
-	
+
 	@Inject
 	private EntityManagerFactory entityManagerFactory;
 

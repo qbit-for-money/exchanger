@@ -1,7 +1,7 @@
 var moneyModule = angular.module("money.yandex");
 
 moneyModule.controller("YandexController", function($scope, $location, $window, $rootScope,
-		yandexResource, storeOrderInfoInSession) {
+	yandexResource, storeOrderInfoInSession) {
 	$scope.authorized = false;
 	var address;
 	address = $location.search()["wallet"];

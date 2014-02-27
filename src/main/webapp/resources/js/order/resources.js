@@ -8,7 +8,7 @@ orderModule.factory("currencyResource", function($resource) {
 
 orderModule.factory("ordersResource", function($resource) {
 	return $resource(window.context + "webapi/orders/", {}, {
-			getByUserAndTimestamp: {method: "GET"},
-			create: {method: "POST"}
-		});
+		getByUserAndTimestamp: {method: "GET"},
+		create: {method: "POST"}
+	});
 });

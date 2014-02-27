@@ -19,11 +19,11 @@ public class MoneyServiceFacade implements MoneyService {
 
 	@Inject
 	private Bitcoin bitcoinService;
-	
+
 	@Inject
 	private YandexMoneyService yandexMoneyService;
-        
-        @Inject
+
+	@Inject
 	private Litecoin litecoinService;
 
 	private Map<Currency, MoneyService> servicesMap;
@@ -50,13 +50,13 @@ public class MoneyServiceFacade implements MoneyService {
 		}
 		return moneyService;
 	}
-	
+
 	private synchronized Map<Currency, MoneyService> getServicesMap() {
 		if (servicesMap == null) {
 			servicesMap = new HashMap<>();
 			servicesMap.put(Currency.BITCOIN, bitcoinService);
 			servicesMap.put(Currency.YANDEX_RUB, yandexMoneyService);
-                        servicesMap.put(Currency.LITECOIN, litecoinService);
+			servicesMap.put(Currency.LITECOIN, litecoinService);
 		}
 		return servicesMap;
 	}

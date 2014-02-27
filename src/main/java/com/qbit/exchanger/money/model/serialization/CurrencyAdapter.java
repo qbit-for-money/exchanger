@@ -8,9 +8,9 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
  * @author alisherfaz
  */
 public class CurrencyAdapter extends XmlAdapter<CurrencyAdapter.AdaptedCurrency, Currency> {
-	
+
 	public static class AdaptedCurrency {
-	
+
 		private String id;
 		private String code;
 		private boolean supported;
@@ -39,7 +39,7 @@ public class CurrencyAdapter extends XmlAdapter<CurrencyAdapter.AdaptedCurrency,
 			this.supported = supported;
 		}
 	}
-	
+
 	@Override
 	public Currency unmarshal(AdaptedCurrency adaptedCurrency) throws Exception {
 		Currency result = null;

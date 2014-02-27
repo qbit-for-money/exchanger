@@ -9,7 +9,7 @@ import com.qbit.exchanger.money.model.Transfer;
  */
 public interface MoneyService {
 
-    void process(Transfer transfer, MoneyTransferCallback callback);
+	void process(Transfer transfer, MoneyTransferCallback callback);
 
 	boolean test(Transfer transfer);
 }

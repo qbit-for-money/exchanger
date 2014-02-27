@@ -8,7 +8,7 @@ import javax.ws.rs.core.MediaType;
 
 @Path("env")
 public class EnvResource {
-	
+
 	@Inject
 	private Env env;
 

@@ -27,12 +27,12 @@ public class OrderDAO {
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 		try {
 			return DAOUtil.find(entityManagerFactory.createEntityManager(),
-					OrderInfo.class, id, null);
+				OrderInfo.class, id, null);
 		} finally {
 			entityManager.close();
 		}
 	}
-	
+
 	public List<OrderInfo> findActive() {
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 		try {
@@ -42,7 +42,7 @@ public class OrderDAO {
 			entityManager.close();
 		}
 	}
-	
+
 	public List<OrderInfo> findActiveAndNotInProcess() {
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 		try {
@@ -52,7 +52,7 @@ public class OrderDAO {
 			entityManager.close();
 		}
 	}
-	
+
 	public List<OrderInfo> findActiveByUser(String userPublicKey) {
 		if (userPublicKey == null) {
 			throw new IllegalArgumentException();
@@ -66,7 +66,7 @@ public class OrderDAO {
 			entityManager.close();
 		}
 	}
-	
+
 	public List<OrderInfo> findByUserAndTimestamp(String userPublicKey, Date creationDate) {
 		if ((userPublicKey == null) || (creationDate == null)) {
 			throw new IllegalArgumentException();
@@ -81,7 +81,7 @@ public class OrderDAO {
 			entityManager.close();
 		}
 	}
-	
+
 	public void changeStatus(String id, OrderStatus orderStatus, boolean inProcess) {
 		if ((id == null) || (orderStatus == null)) {
 			throw new IllegalArgumentException();
@@ -104,9 +104,9 @@ public class OrderDAO {
 
 	public OrderInfo create(String userPublicKey, Transfer inTransfer, Transfer outTransfer) {
 		if ((userPublicKey == null) || (inTransfer == null) || (outTransfer == null)
-				|| !inTransfer.isValid() || !outTransfer.isValid()
-				|| !TransferType.IN.equals(inTransfer.getType())
-				|| !TransferType.OUT.equals(outTransfer.getType())) {
+			|| !inTransfer.isValid() || !outTransfer.isValid()
+			|| !TransferType.IN.equals(inTransfer.getType())
+			|| !TransferType.OUT.equals(outTransfer.getType())) {
 			throw new IllegalArgumentException("Order is inconsistent.");
 		}
 		EntityManager entityManager = entityManagerFactory.createEntityManager();

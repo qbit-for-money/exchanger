@@ -2,7 +2,7 @@ var currencyModule = angular.module("wizard.currency");
 
 currencyModule.controller("CurrencyController", function($scope, $rootScope, currencyResource, resetOrderInfo) {
 	resetOrderInfo();
-	
+
 	$rootScope.convertion = $rootScope.convertion || {};
 	$rootScope.convertion.ltr = (typeof $rootScope.convertion.ltr == "boolean") ? $rootScope.convertion.ltr : true;
 	$scope.panels = {
@@ -25,7 +25,7 @@ currencyModule.controller("CurrencyController", function($scope, $rootScope, cur
 			$rootScope.orderInfo.outTransfer.currency = $scope.panels.left.currency;
 		}
 	};
-	
+
 	var isCurrencySelectable = function(panelName, currency) {
 		var result = false;
 		if (panelName && currency) {
@@ -33,10 +33,10 @@ currencyModule.controller("CurrencyController", function($scope, $rootScope, cur
 			var oppositePanel = $scope.panels[panelName == "left" ? "right" : "left"];
 			if (panel && oppositePanel) {
 				result = true;
-				if (oppositePanel.currency){
+				if (oppositePanel.currency) {
 					result = oppositePanel.currency !== currency;
 				}
-			} 
+			}
 		}
 		return result;
 	};

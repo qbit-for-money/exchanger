@@ -11,13 +11,13 @@ import javax.persistence.Embedded;
  */
 @Embeddable
 public class Transfer implements Serializable {
-	
+
 	private TransferType type;
-	
+
 	private Currency currency;
-	
+
 	private String address;
-	
+
 	@Embedded
 	private Amount amount;
 
@@ -64,7 +64,7 @@ public class Transfer implements Serializable {
 	public BigDecimal toBigDecimal() {
 		return amount.toBigDecimal();
 	}
-	
+
 	public boolean isValid() {
 		return ((type != null) && (currency != null) && (address != null) && (amount != null) && amount.isValid());
 	}

@@ -7,36 +7,36 @@ userModule.controller("UserController", function($rootScope, $scope, delayedProx
 			$scope.publicKey = user.publicKey;
 		}
 	}
-	
+
 	var user = userService.get();
 	user.$promise.then(function() {
-			if (user.publicKey) {
+		if (user.publicKey) {
+			setUser(user);
+		} else {
+			user = userService.create();
+			user.$promise.then(function() {
 				setUser(user);
-			} else {
-				user = userService.create();
-				user.$promise.then(function() {
-						setUser(user);
-					});
-			}
-		});
-		
+			});
+		}
+	});
+
 	$scope.changeUser = function() {
 		$scope.publicKeyUnderCheck = true;
 		var user = userService.change($scope.publicKey);
 		user.$promise.then(function() {
-				setUser(user);
-			}).finally(function() {
-				$scope.publicKeyUnderCheck = false;
-			});
+			setUser(user);
+		}).finally(function() {
+			$scope.publicKeyUnderCheck = false;
+		});
 	};
-	
+
 	$scope.createUser = function() {
 		var user = userService.create();
 		user.$promise.then(function() {
-				setUser(user);
-			});
+			setUser(user);
+		});
 	};
-	
+
 	function editUser() {
 		if (!$rootScope.user || !$rootScope.user.publicKey) {
 			return;
@@ -44,12 +44,12 @@ userModule.controller("UserController", function($rootScope, $scope, delayedProx
 		$rootScope.user.$edit({publicKey: $rootScope.user.publicKey});
 	}
 	$scope.editUser = delayedProxy(editUser, 2000);
-	
+
 	function isPublicKeyValid() {
 		return ($rootScope.user && $rootScope.user.publicKey && ($rootScope.user.publicKey === $scope.publicKey));
 	}
 	$scope.isPublicKeyValid = isPublicKeyValid;
-	
+
 	function updateUserProfileButton() {
 		if (isPublicKeyValid()) {
 			angular.element("#userProfileButton").removeAttr("disabled");

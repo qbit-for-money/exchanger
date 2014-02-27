@@ -10,14 +10,14 @@ import javax.persistence.Embeddable;
  */
 @Embeddable
 public class Amount implements Serializable {
-	
+
 	private long coins, cents;
 
 	private long centsInCoin;
 
 	public Amount() {
 	}
-	
+
 	public Amount(BigDecimal amount, long centsInCoin) {
 		if (amount.signum() < 0) {
 			throw new IllegalArgumentException();
@@ -25,7 +25,7 @@ public class Amount implements Serializable {
 		this.coins = amount.longValue();
 		if (amount.scale() > 0) {
 			this.cents = amount.subtract(BigDecimal.valueOf(coins))
-					.multiply(BigDecimal.valueOf(centsInCoin)).longValue();
+				.multiply(BigDecimal.valueOf(centsInCoin)).longValue();
 		} else {
 			this.cents = 0;
 		}
@@ -40,7 +40,7 @@ public class Amount implements Serializable {
 		this.cents = cents;
 		this.centsInCoin = centsInCoin;
 	}
-	
+
 	public long getCoins() {
 		return coins;
 	}
@@ -71,7 +71,7 @@ public class Amount implements Serializable {
 
 	public BigDecimal toBigDecimal() {
 		return BigDecimal.valueOf(coins).add(BigDecimal.valueOf(cents)
-				.divide(BigDecimal.valueOf(centsInCoin)));
+			.divide(BigDecimal.valueOf(centsInCoin)));
 	}
 
 	@Override

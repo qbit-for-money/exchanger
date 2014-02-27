@@ -45,7 +45,7 @@ public class ExchangerApp extends Application {
 		addBinding(newBinder(OrderDAO.class).to(OrderDAO.class).in(Singleton.class), configuration);
 
 		addBinding(newBinder(Bitcoin.class).to(Bitcoin.class).in(Singleton.class), configuration);
-                addBinding(newBinder(Litecoin.class).to(Litecoin.class).in(Singleton.class), configuration);
+		addBinding(newBinder(Litecoin.class).to(Litecoin.class).in(Singleton.class), configuration);
 		addBinding(newBinder(YandexMoneyService.class).to(YandexMoneyService.class).in(Singleton.class), configuration);
 		addBinding(newBinder(MoneyServiceFacade.class).to(MoneyService.class).in(Singleton.class), configuration);
 

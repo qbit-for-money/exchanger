@@ -19,21 +19,21 @@ import org.glassfish.jersey.client.ClientConfig;
  * @author Александр
  */
 public final class RESTClientUtils {
-	
+
 	private static final Map<String, Object> JAXB_PROPS = new HashMap<>(2);
-	
+
 	static {
 		JAXB_PROPS.put(JAXBContextProperties.MEDIA_TYPE, MediaType.APPLICATION_JSON);
 		JAXB_PROPS.put(JAXBContextProperties.JSON_INCLUDE_ROOT, false);
 	}
-	
+
 	private RESTClientUtils() {
 	}
-	
+
 	public static <R> R get(String target, String path, Class<R> type) throws JAXBException {
 		return get(target, path, type, false);
 	}
-	
+
 	public static <R> R get(String target, String path, Class<R> type, boolean forceUnmarshal) throws JAXBException {
 		Client client = ClientBuilder.newClient(new ClientConfig());
 		Builder builder = client.target(target).path(path).request(MediaType.APPLICATION_JSON_TYPE);
@@ -43,15 +43,15 @@ public final class RESTClientUtils {
 			return builder.get(type);
 		}
 	}
-	
+
 	public static <R> R unmarshal(String text, Class<R> type) throws JAXBException {
 		Source source = new StreamSource(new StringReader(text));
 		return unmarshal(source, type);
 	}
-	
+
 	public static <R> R unmarshal(Source source, Class<R> type) throws JAXBException {
 		System.setProperty(JAXBContext.JAXB_CONTEXT_FACTORY, "org.eclipse.persistence.jaxb.JAXBContextFactory");
-		JAXBContext context = JAXBContext.newInstance(new Class[] {type}, JAXB_PROPS);
+		JAXBContext context = JAXBContext.newInstance(new Class[]{type}, JAXB_PROPS);
 		return context.createUnmarshaller().unmarshal(source, type).getValue();
 	}
 }
