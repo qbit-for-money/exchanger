@@ -30,7 +30,7 @@ public class YandexMoneyResource {
 		urlWrapper.setUrl(yandexMoneyService.getAuthorizeUri(mobile));
 		return urlWrapper;
 	}
-	
+
 	@GET
 	@Path("proceedAuth")
 	public Response proceedAuth(@QueryParam("code") String code, @QueryParam("error") String error) {

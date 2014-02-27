@@ -72,7 +72,7 @@ public class ExchangerApp extends Application {
 	 * classes except this one.
 	 */
 	@PreDestroy
-	public void preDestroy() {
+	private void preDestroy() {
 		serviceLocator.shutdown();
 	}
 }
