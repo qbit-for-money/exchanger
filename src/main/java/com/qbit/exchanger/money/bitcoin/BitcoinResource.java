@@ -18,4 +18,11 @@ public class BitcoinResource {
 	public WalletAddress getNewAddress() {
 		return new WalletAddress(bitcoinMoneyService.getNewAddress());
 	}
+
+	@GET
+	@Path("balance")
+	@Produces(MediaType.TEXT_PLAIN)
+	public String getBalance() {
+		return bitcoinMoneyService.getBalance();
+	}
 }

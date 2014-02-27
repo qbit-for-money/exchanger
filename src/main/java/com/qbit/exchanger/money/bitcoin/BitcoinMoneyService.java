@@ -199,11 +199,11 @@ public class BitcoinMoneyService implements MoneyService {
 		try {
 			Address forwardingAddress = new Address(parameters, transfer.getAddress());
 
-			BigInteger value = toNanoCoins(transfer.getAmount().getCoins(), transfer.getAmount().getCents());
+			final BigInteger amountToSend = toNanoCoins(transfer.getAmount().getCoins(), transfer.getAmount().getCents());
 
-			logger.log(Level.INFO, "Forwarding {0} BTC", Utils.bitcoinValueToFriendlyString(value));
+			logger.log(Level.INFO, "Forwarding {0} BTC", Utils.bitcoinValueToFriendlyString(amountToSend));
 
-			final BigInteger amountToSend = value.subtract(Transaction.REFERENCE_DEFAULT_MIN_TX_FEE);
+//			final BigInteger amountToSend = value.subtract(Transaction.REFERENCE_DEFAULT_MIN_TX_FEE);
 			final Wallet.SendResult sendResult = kit.wallet().sendCoins(kit.peerGroup(), forwardingAddress, amountToSend);
 
 			logger.info("Sending ...");
