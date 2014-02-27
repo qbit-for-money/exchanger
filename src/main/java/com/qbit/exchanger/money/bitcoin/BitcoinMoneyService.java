@@ -221,7 +221,7 @@ public class BitcoinMoneyService implements MoneyService {
 				}
 			}, MoreExecutors.sameThreadExecutor());
 
-		} catch (KeyCrypterException e) {
+		} catch (KeyCrypterException | InsufficientMoneyException e) {
 			throw new RuntimeException(e);
 		} catch (AddressFormatException ex) {
 			logger.severe(ex.getMessage());
