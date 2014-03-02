@@ -1,6 +1,6 @@
-var moneyModule = angular.module("money.yandex");
+var yandexModule = angular.module("money.yandex");
 
-moneyModule.controller("YandexController", function($scope, $location, $window, $rootScope,
+yandexModule.controller("YandexController", function($scope, $location, $window, $rootScope,
 		yandexResource, storeOrderInfoInSession) {
 	$scope.authorized = false;
 	var address;

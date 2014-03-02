@@ -1,16 +1,15 @@
 <div class="row" ng-if="orderInfo.status">
 	<div class="col-md-12">
 		<div class="container-fluid">
+			
 			<div class="row">
 				<div class="col-md-12">
 					<p class="text-right"><small><span class="glyphicon glyphicon-time"></span><span style="margin-left: 10px;">{{secondsInWaiting|delaySeconds}}</span></small></p>
 				</div>
 			</div>
-			<div class="row">
-				<div class="col-md-12">
-					<result-transfer transfer="orderInfo.inTransfer" status="inTransferStatus"></result-transfer>
-				</div>
-			</div>
+			
+			<result-transfer transfer="orderInfo.inTransfer" status="inTransferStatus"></result-transfer>
+			
 			<div class="row" style="margin-bottom: 20px;">
 				<div class="col-md-12 text-center">
 					<span class="label label-success direction-control" popover="{{rate|rate}}"
@@ -19,11 +18,9 @@
 					</span>
 				</div>
 			</div>
-			<div class="row">
-				<div class="col-md-12">
-					<result-transfer transfer="orderInfo.outTransfer" status="outTransferStatus"></result-transfer>
-				</div>
-			</div>
+			
+			<result-transfer transfer="orderInfo.outTransfer" status="outTransferStatus"></result-transfer>
+			
 		</div>
 	</div>
 </div>

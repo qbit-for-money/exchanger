@@ -42,6 +42,7 @@
 		</div>
 
 		<script type="text/javascript" src="resources/lib/jquery/jquery-2.1.0.min.js"></script>
+		<script type="text/javascript" src="resources/lib/jquery/jquery.price_format.2.0.min.js"></script>
 		<script type="text/javascript" src="resources/lib/angular/angular.min.js"></script>
 		<script type="text/javascript" src="resources/lib/angular/angular-route.min.js"></script>
 		<script type="text/javascript" src="resources/lib/angular/angular-resource.min.js"></script>
@@ -70,6 +71,7 @@
 		
 		<script type="text/javascript" src="resources/js/money/services.js"></script>
 		<script type="text/javascript" src="resources/js/money/filters.js"></script>
+		<script type="text/javascript" src="resources/js/money/directives.js"></script>
 
 		<script type="text/javascript" src="resources/js/money/yandex/resources.js"></script>
 		<script type="text/javascript" src="resources/js/money/yandex/controllers.js"></script>

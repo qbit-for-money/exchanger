@@ -1,17 +1,8 @@
 <div class="container-fluid" ng-controller="YandexController">
 	<div class="row">
 		<div class="col-xs-offset-0 col-xs-12 col-md-offset-2 col-md-8" ng-if="authorized">
-			<form name="form" novalidate class="form-inline" role="form">
-				<div class="form-group" ng-class="{'has-error': form.coins.$invalid}">
-					<label class="sr-only" for="yandexCoins">Coins</label>
-					<input class="form-control input-lg money-amount" placeholder="Coins" ng-readonly="false" ng-model="amount.coins"
-						   ng-pattern="/^[0-9]\d*$/" required step="1" type="number" name="coins" min="1" id="yandexCoins" />
-				</div>
-				<div class="form-group" ng-class="{'has-error': form.cents.$invalid}">
-					<label class="sr-only" for="yandexCents">Cents</label>
-					<input class="form-control input-lg money-amount" placeholder="Cents" ng-readonly="false" ng-model="amount.cents"
-						   ng-pattern="/^[0-9]\d*$/" required step="1" type="number" name="cents" min="0" max="99" id="yandexCents" />
-				</div>
+			<form name="form" novalidate class="form" role="form">
+				<amount-input form="form" amount="amount"></amount-input>
 			</form>
 		</div>
 		<div class="col-xs-offset-0 col-xs-12 col-md-offset-3 col-md-6" ng-if="!authorized">

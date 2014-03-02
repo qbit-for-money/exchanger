@@ -58,7 +58,7 @@ public class Bitcoin implements MoneyService {
 		// AbstractWalletEventListener listener = getPaymentListener();
 		//getWallet().addEventListener(listener);
 	}
-	
+
 	@Override
 	public void process(Transfer transfer, MoneyTransferCallback callback) {
 		switch (transfer.getType()) {
@@ -154,8 +154,8 @@ public class Bitcoin implements MoneyService {
 		} catch (AddressFormatException ex) {
 			logger.severe(ex.getMessage());
 		} catch (InsufficientMoneyException ex) {
-                        Logger.getLogger(Bitcoin.class.getName()).log(Level.SEVERE, null, ex);
-                }
+			Logger.getLogger(Bitcoin.class.getName()).log(Level.SEVERE, null, ex);
+		}
 	}
 
 	@Override
