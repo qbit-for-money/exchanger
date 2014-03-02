@@ -4,9 +4,9 @@
 		<div class="dropdown open">
 			<ul class="dropdown-menu currencies-list">
 				<li data-ng-repeat="currency in currencies" 
-				    data-ng-click="selectCurrency('left', currency.id)"
-				    data-ng-class="{  'active' : panels.left.currency == currency.id,
-				    'disabled' : panels.right.currency == currency.id}">
+				    data-ng-click="selectCurrency('left', currency)"
+				    data-ng-class="{'active': panels.left.currency && (panels.left.currency.id === currency.id),
+								'disabled': panels.right.currency && (panels.right.currency.id === currency.id)}">
 					<a class="currency-list-item">
 						<div class="currency-list-icon">
 							<div class=" currency {{currency.id}}"></div>
@@ -18,19 +18,17 @@
 		</div>
 	</div>
 	<div class="text-center convert-direction col-md-2 col-xs-2">
-		<button class="btn btn-success btn-lg direction-control" 
-			data-ng-click="toggleDirection()">
-			<span class="glyphicon"
-			      data-ng-class="convertion.ltr ? 'glyphicon-arrow-right' : 'glyphicon-arrow-left'"></span>
+		<button class="btn btn-success btn-lg direction-control" ng-click="goToNextStep()">
+			<span class="glyphicon glyphicon-arrow-right"></span>
 		</button>
 	</div>
 	<div class="col-lg-3 col-md-4 col-sm-5 col-xs-5">
 		<div class="dropdown open">
 			<ul class="dropdown-menu currencies-list">
 				<li data-ng-repeat="currency in currencies"
-				    data-ng-click="selectCurrency('right', currency.id)"
-				    data-ng-class="{  'active' : panels.right.currency == currency.id,
-				    'disabled' : panels.left.currency == currency.id}">
+				    data-ng-click="selectCurrency('right', currency)"
+				    data-ng-class="{'active': panels.right.currency && (panels.right.currency.id === currency.id),
+							'disabled': panels.left.currency && (panels.left.currency.id === currency.id)}">
 					<a class="currency-list-item">
 						<div class="currency-list-icon">
 							<div class="currency {{currency.id}}"></div>

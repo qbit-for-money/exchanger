@@ -1,8 +1,8 @@
 <div class="container-fluid" ng-controller="YandexController">
 	<div class="row">
-		<div class="col-xs-offset-0 col-xs-12 col-md-offset-2 col-md-8">
+		<div class="col-md-12">
 			<form name="form" novalidate class="form" role="form">
-				<amount-input form="form" amount="amount"></amount-input>
+				<amount-input form="form" amount="transfer.amount"></amount-input>
 				<div class="form-group" ng-class="{'has-error': form.wallet.$invalid}">
 					<label class="sr-only" for="yandexWallet">Wallet</label>
 					<input class="form-control input-lg money-wallet" placeholder="Wallet" ng-model="address"

@@ -1,11 +1,11 @@
 <div class="container-fluid" ng-controller="YandexController">
 	<div class="row">
-		<div class="col-xs-offset-0 col-xs-12 col-md-offset-2 col-md-8" ng-if="authorized">
+		<div class="col-md-12" ng-if="authorized">
 			<form name="form" novalidate class="form" role="form">
-				<amount-input form="form" amount="amount"></amount-input>
+				<amount-input form="form" amount="transfer.amount"></amount-input>
 			</form>
 		</div>
-		<div class="col-xs-offset-0 col-xs-12 col-md-offset-3 col-md-6" ng-if="!authorized">
+		<div class="col-md-12" ng-if="!authorized">
 			<button class="btn btn-danger btn-block" ng-click="redirect()">Please authorize on Yandex first</button>
 		</div>
 	</div>
