@@ -1,10 +1,5 @@
-.direction-control {
-	height: 75px;
-	width: 75px;
-	font-size: 3em;
-}
-
 /* START CURRENCY STEP */
+
 /* Smartphones (portrait) ----------- */
 @media only screen 
 and (max-width : 767px) {
@@ -23,7 +18,29 @@ and (max-width : 767px) {
 	.currency.QUARKCOIN { background-position: -479px 0px; } 
 	.currency.STABLECOIN { background-position: -539px 0px; } 
 	.currency.YANDEX_RUB { background-position: -599px 0px; } 
-	.currency.ZETACOIN { background-position: -659px 0px; } }
+	.currency.ZETACOIN { background-position: -659px 0px; } 
+
+	.currency-list-label {
+		font-size: 1.5em;
+		padding: 0;
+	}
+
+	.currencies-list {
+		height: 400px;
+		max-height: 400px;
+	}
+
+	.direction-control {
+		height: 60px;
+		width: 60px;
+		font-size: 2em;
+		padding: 0;
+	}
+
+	.convert-direction {
+		padding: 150px 0;
+	}
+}
 
 /* Larger screens ----------- */
 @media only screen 
@@ -44,6 +61,27 @@ and (min-width : 768px) {
 	.currency.STABLECOIN { background-position: -765px 0px; } 
 	.currency.YANDEX_RUB { background-position: -850px 0px; } 
 	.currency.ZETACOIN { background-position: -935px 0px; } 
+
+	.currency-list-label {
+		font-size: 2em;
+		padding: 0 10%;
+	}
+
+	.currencies-list {
+		height: 500px;
+		max-height: 500px;
+	}
+
+	.direction-control {
+		height: 75px;
+		width: 75px;
+		font-size: 3em;
+		padding: 0;
+	}
+
+	.convert-direction {
+		padding: 200px 0;
+	}
 }
 
 .currency-step {
@@ -53,14 +91,8 @@ and (min-width : 768px) {
 .currencies-list {
 	position: relative;
 	width: 100%;
-	height: 500px;
-	max-height: 500px;
 	overflow-y: auto;
 	overflow-x: auto;
-}
-
-.convert-direction {
-	padding: 200px 0;
 }
 
 .currency-list-item {
@@ -76,8 +108,6 @@ and (min-width : 768px) {
 
 .currency-list-label {
 	vertical-align: middle;
-	font-size: 2em;
-	padding: 0 10%;
 	display: table-cell;
 }
 
