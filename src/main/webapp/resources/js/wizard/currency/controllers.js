@@ -37,17 +37,16 @@ currencyModule.controller("CurrencyController", function($scope, $rootScope, cur
 			$rootScope.orderInfo.outTransfer.currency = $scope.panels.right.currency.id;
 			$rootScope.orderInfo.outTransfer.amount = createEmptyAmount($scope.panels.right.currency);
 		}
-	};
+	}
 	
-	function isCurrencySelectable(panelName, currency) {
+	$scope.selectCurrency = function(panelName, currency) {
+		var panel = $scope.panels[panelName];
 		var oppositePanel = $scope.panels[panelName === "left" ? "right" : "left"];
-		return (!oppositePanel.currency || (currency.id !== oppositePanel.currency.id));
-	};
-	$scope.selectCurrency = function(panel, currency) {
-		if (isCurrencySelectable(panel, currency)) {
-			$scope.panels[panel].currency = currency;
-			refreshTransfers();
+		if (oppositePanel.currency && (oppositePanel.currency.id === currency.id)) {
+			oppositePanel.currency = panel.currency;
 		}
+		panel.currency = currency;
+		refreshTransfers();
 	};
 });
 

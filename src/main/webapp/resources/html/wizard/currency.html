@@ -6,7 +6,7 @@
 				<li data-ng-repeat="currency in currencies" 
 				    data-ng-click="selectCurrency('left', currency)"
 				    data-ng-class="{'active': panels.left.currency && (panels.left.currency.id === currency.id),
-								'disabled': panels.right.currency && (panels.right.currency.id === currency.id)}">
+								'disabled': !currency.supported}">
 					<a class="currency-list-item">
 						<div class="currency-list-icon">
 							<div class=" currency {{currency.id}}"></div>
@@ -28,7 +28,7 @@
 				<li data-ng-repeat="currency in currencies"
 				    data-ng-click="selectCurrency('right', currency)"
 				    data-ng-class="{'active': panels.right.currency && (panels.right.currency.id === currency.id),
-							'disabled': panels.left.currency && (panels.left.currency.id === currency.id)}">
+							'disabled': !currency.supported}">
 					<a class="currency-list-item">
 						<div class="currency-list-icon">
 							<div class="currency {{currency.id}}"></div>
