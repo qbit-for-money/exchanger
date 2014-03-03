@@ -87,7 +87,6 @@ wizardModule.factory("wizardService", function() {
 		step.validator = validator;
 	}
 	
-	
 	return {
 		getSteps: getSteps,
 		
