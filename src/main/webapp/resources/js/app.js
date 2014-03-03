@@ -30,12 +30,4 @@ angular.module("main").config(function($routeProvider, $locationProvider) {
 	//$locationProvider.html5Mode(true);
 }).run(function($rootScope, $location) {
 	$rootScope.location = $location;
-	$rootScope.orderInfo = {
-		inTransfer: {
-			type: "IN"
-		},
-		outTransfer: {
-			type: "OUT"
-		}
-	};
 });

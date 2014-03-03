@@ -2,8 +2,14 @@ var orderModule = angular.module("order");
 
 orderModule.factory("resetOrderInfo", function($rootScope) {
 	var emptyOrderInfo = {
-		inTransfer: { type: "IN" },
-		outTransfer: { type: "OUT" }
+		inTransfer: {
+			type: "IN",
+			currency: "BITCOIN"
+		},
+		outTransfer: {
+			type: "OUT",
+			currency: "LITECOIN"
+		}
 	};
 	return function() {
 		var orderInfo = angular.copy(emptyOrderInfo);
