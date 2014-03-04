@@ -1,19 +1,6 @@
 var currencyModule = angular.module("wizard.currency");
 
-currencyModule.controller("CurrencyController", function($scope, $rootScope, wizardService, currencyResource, resetOrderInfo) {
-	function validator() {
-		var orderInfo = $rootScope.orderInfo;
-		if (orderInfo && orderInfo.inTransfer && orderInfo.inTransfer.currency
-				&& orderInfo.outTransfer && orderInfo.outTransfer.currency) {
-			return true;
-		} else {
-			// Show error on page
-			$scope.$apply(function() {});
-			return false;
-		}
-	}
-	wizardService.registerValidator("currency", validator);
-	
+currencyModule.controller("CurrencyController", function($scope, $rootScope, currencyResource, resetOrderInfo) {
 	resetOrderInfo();
 	
 	$scope.panels = {left: {}, right: {}};

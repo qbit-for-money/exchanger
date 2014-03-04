@@ -47,9 +47,15 @@ wizardModule.factory("wizardService", function() {
 		return -1;
 	}
 	
-	function canGoToStep(currentPath, stepIndex) {
-		var currentStepIndex = getStepIndexByPath(currentPath);
-		return (isStepIndexValid(currentStepIndex) && isStepIndexValid(stepIndex) && (stepIndex <= currentStepIndex));
+	function canGoToStep(stepIndex) {
+		if (!isStepIndexValid(stepIndex)) {
+			return false;
+		}
+		if (stepIndex === 0) {
+			return true;
+		}
+		var prevStep = steps[stepIndex - 1];
+		return (!prevStep.validator || prevStep.validator());
 	}
 	
 	function canGoToNextStep(currentPath) {

@@ -1,17 +1,25 @@
 var wizardModule = angular.module("wizard");
 
-wizardModule.controller("WizardController", function($rootScope, $scope, $location, wizardService) {
-	$scope.steps = wizardService.getSteps();
+wizardModule.controller("WizardController", function($rootScope, $location, wizardService) {
+	$rootScope.steps = wizardService.getSteps();
 	
 	function updateCurrentStepIndex() {
 		var currentStepIndex = wizardService.getStepIndexByPath($location.path());
-		$scope.currentStepIndex = (wizardService.isStepIndexValid(currentStepIndex) ? currentStepIndex : 0);
+		if (wizardService.isStepIndexValid(currentStepIndex)) {
+			if (wizardService.canGoToStep(currentStepIndex)) {
+				$rootScope.currentStepIndex = currentStepIndex;
+			} else {
+				$rootScope.currentStepIndex = -1;
+			}
+		} else {
+			$rootScope.currentStepIndex = 0;
+		}
 	}
-	$scope.$on("$locationChangeSuccess", updateCurrentStepIndex);
+	$rootScope.$on("$locationChangeSuccess", updateCurrentStepIndex);
 	updateCurrentStepIndex();
 	
-	$scope.goToStep = function(stepIndex) {
-		if (wizardService.canGoToStep($location.path(), stepIndex)) {
+	$rootScope.goToStep = function(stepIndex) {
+		if (wizardService.canGoToStep(stepIndex)) {
 			$location.path(wizardService.getStepByIndex(stepIndex).path);
 		}
 	};
@@ -20,7 +28,7 @@ wizardModule.controller("WizardController", function($rootScope, $scope, $locati
 			$location.path(wizardService.getNextStep($location.path()).path);
 		}
 	};
-	$scope.goToPrevStep = function() {
+	$rootScope.goToPrevStep = function() {
 		if (wizardService.canGoToPrevStep($location.path())) {
 			$location.path(wizardService.getPrevStep($location.path()).path);
 		}
