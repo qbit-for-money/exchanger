@@ -20,27 +20,27 @@ import javax.ws.rs.core.MediaType;
  */
 @Path("orders")
 public class OrdersResource {
-	
+
 	@Inject
 	private OrderService orderService;
-	
+
 	@GET
-    @Path("active")
-    @Produces(MediaType.APPLICATION_JSON)
+	@Path("active")
+	@Produces(MediaType.APPLICATION_JSON)
 	public OrderInfo getActiveByUser(@QueryParam("userPublicKey") String userPublicKey) throws OrderServiceException {
 		return orderService.getActiveByUser(userPublicKey);
 	}
-	
+
 	@GET
-    @Produces(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
 	public OrderInfo getByUserAndTimestamp(@QueryParam("userPublicKey") String userPublicKey,
-			@QueryParam("creationDate") String creationDateStr) throws OrderServiceException, ParseException {
+		@QueryParam("creationDate") String creationDateStr) throws OrderServiceException, ParseException {
 		return orderService.getByUserAndTimestamp(userPublicKey, toDate(creationDateStr));
 	}
 
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
 	public OrderInfo create(OrderInfo order) throws OrderServiceException {
 		return orderService.create(order);
 	}

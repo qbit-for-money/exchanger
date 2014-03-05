@@ -25,7 +25,7 @@ public class MailService {
 			email.setHostName(env.getMailHost());
 			email.setSmtpPort(465);
 			email.setAuthenticator(new DefaultAuthenticator(env.getMailBotAddress(),
-					env.getMailBotPersonal()));
+				env.getMailBotPersonal()));
 			email.setSSL(true);
 			email.setFrom(env.getMailBotAddress());
 			email.addTo(to);

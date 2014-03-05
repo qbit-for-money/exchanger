@@ -22,7 +22,7 @@ public class UserDAO {
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 		try {
 			return DAOUtil.find(entityManagerFactory.createEntityManager(),
-					UserInfo.class, publicKey, UserInfo.EMPTY);
+				UserInfo.class, publicKey, UserInfo.EMPTY);
 		} finally {
 			entityManager.close();
 		}

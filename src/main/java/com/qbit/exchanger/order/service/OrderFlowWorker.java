@@ -21,10 +21,10 @@ public class OrderFlowWorker implements Runnable {
 
 	@Inject
 	private OrderDAO orderDAO;
-	
+
 	@Inject
 	private MoneyService moneyService;
-	
+
 	@Override
 	public void run() {
 		List<OrderInfo> activeOrders = orderDAO.findActiveAndNotInProcess();
@@ -34,7 +34,7 @@ public class OrderFlowWorker implements Runnable {
 					processActiveOrder(activeOrder);
 				} catch (Exception ex) {
 					Logger.getLogger(OrderFlowWorker.class.getName()).log(Level.SEVERE,
-							ex.getMessage(), ex);
+						ex.getMessage(), ex);
 				}
 			}
 		}
@@ -77,7 +77,7 @@ public class OrderFlowWorker implements Runnable {
 
 	private void processOutTransfer(final OrderInfo activeOrder) {
 		final String orderId = activeOrder.getId();
-		final Transfer outTransfer = activeOrder.getInTransfer();
+		final Transfer outTransfer = activeOrder.getOutTransfer();
 		orderDAO.changeStatus(orderId, OrderStatus.PAYED, true);
 		moneyService.process(outTransfer, new MoneyTransferCallback() {
 

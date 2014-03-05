@@ -7,8 +7,8 @@ package com.qbit.exchanger.money.model;
 public enum Currency {
 	
 	YANDEX_RUB(new Amount(0, 1, 100), "RUR", true), 
-	BITCOIN(new Amount(0, 1, 100 * 1000 * 1000), "BTC", false),
-	LITECOIN(new Amount(0, 1, 100 * 1000 * 1000), "LTC", false),
+	BITCOIN(new Amount(0, 1, 100 * 1000 * 1000), "BTC", true),
+	LITECOIN(new Amount(0, 1, 100 * 1000 * 1000), "LTC", true),
 	PEERCOIN(new Amount(0, 1, 100 * 1000 * 1000), "PPC", false),
 	NAMECOIN(new Amount(0, 1, 100 * 1000 * 1000), "NMC", false),
 	QUARKCOIN(new Amount(0, 1, 100 * 1000 * 1000), "QRK", false),

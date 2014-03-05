@@ -14,8 +14,8 @@ public class OrderCreationException extends Exception {
 	}
 
 	/**
-	 * Constructs an instance of <code>OrderCreationException</code> with the
-	 * specified detail message.
+	 * Constructs an instance of <code>OrderCreationException</code> with
+	 * the specified detail message.
 	 *
 	 * @param msg the detail message.
 	 */

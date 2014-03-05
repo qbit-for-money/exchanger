@@ -9,16 +9,16 @@
 				</button>
 			</div>
 			<input type="text" class="form-control" title="User public key" ng-model="publicKey" ng-change="changeUser()"
-				   ng-blur="publicKey = user.publicKey" />
+			       ng-blur="publicKey = user.publicKey" />
 		</div>
 	</div>
 	<div class="form-group ng-hide" ng-show="isPublicKeyValid()">
-		<div class="input-group" style="width: 20em;" ng-class="{'has-error': userForm.email.$error.email}">
+		<div class="input-group" style="width: 20em;" ng-class="{'has-error': userForm.email.$invalid}">
 			<div class="input-group-addon">
 				<span class="glyphicon glyphicon-envelope"></span>
 			</div>
 			<input name="email" type="email" class="form-control" placeholder="Email"
-				   ng-model="user.email" ng-change="editUser()"/>
+			       ng-model="user.email" ng-change="editUser()"/>
 		</div>
 	</div>
 </form>

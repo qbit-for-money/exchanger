@@ -1,55 +1,64 @@
 var currencyModule = angular.module("wizard.currency");
 
-currencyModule.controller("CurrencyController", function($scope, $rootScope, currencyResource, resetOrderInfo) {
+currencyModule.controller("CurrencyController", function($scope, $rootScope, wizardService, currencyResource, resetOrderInfo) {
+	function validator() {
+		var orderInfo = $rootScope.orderInfo;
+		if (orderInfo && orderInfo.inTransfer && orderInfo.inTransfer.currency
+				&& orderInfo.outTransfer && orderInfo.outTransfer.currency) {
+			return true;
+		} else {
+			// Show error on page
+			$scope.$apply(function() {});
+			return false;
+		}
+	}
+	wizardService.registerValidator("currency", validator);
+	
 	resetOrderInfo();
 	
-	$rootScope.convertion = $rootScope.convertion || {};
-	$rootScope.convertion.ltr = (typeof $rootScope.convertion.ltr == "boolean") ? $rootScope.convertion.ltr : true;
-	$scope.panels = {
-		left: {currency: $rootScope.orderInfo[$rootScope.convertion.ltr ? "inTransfer" : "outTransfer"].currency},
-		right: {currency: $rootScope.orderInfo[$rootScope.convertion.ltr ? "outTransfer" : "inTransfer"].currency}
-	};
+	$scope.panels = {left: {}, right: {}};
+	
 	var currenciesResponse = currencyResource.findAll();
 	currenciesResponse.$promise.then(function() {
-		if (currenciesResponse) {
-			$scope.currencies = currenciesResponse.currencies;
-		}
-	});
-
-	var refreshTransfers = function() {
-		if ($scope.convertion.ltr) {
-			$rootScope.orderInfo.inTransfer.currency = $scope.panels.left.currency;
-			$rootScope.orderInfo.outTransfer.currency = $scope.panels.right.currency;
-		} else {
-			$rootScope.orderInfo.inTransfer.currency = $scope.panels.right.currency;
-			$rootScope.orderInfo.outTransfer.currency = $scope.panels.left.currency;
-		}
-	};
-	
-	var isCurrencySelectable = function(panelName, currency) {
-		var result = false;
-		if (panelName && currency) {
-			var panel = $scope.panels[panelName];
-			var oppositePanel = $scope.panels[panelName == "left" ? "right" : "left"];
-			if (panel && oppositePanel) {
-				result = true;
-				if (oppositePanel.currency){
-					result = oppositePanel.currency !== currency;
+		if (currenciesResponse && currenciesResponse.currencies) {
+			var currencies = currenciesResponse.currencies;
+			$scope.currencies = currencies;
+			for (var c = 0; c < currencies.length; c++) {
+				var currency = currencies[c];
+				if ($rootScope.orderInfo.inTransfer.currency
+						&& (currency.id === $rootScope.orderInfo.inTransfer.currency)) {
+					$scope.panels.left.currency = currency;
 				}
-			} 
-		}
-		return result;
-	};
-
-	$scope.selectCurrency = function(panel, item) {
-		if (isCurrencySelectable(panel, item)) {
-			$scope.panels[panel].currency = item;
+				if ($rootScope.orderInfo.outTransfer.currency
+						&& (currency.id === $rootScope.orderInfo.outTransfer.currency)) {
+					$scope.panels.right.currency = currency;
+				}
+			}
 			refreshTransfers();
 		}
-	};
-
-	$scope.toggleDirection = function() {
-		$scope.convertion.ltr = !$scope.convertion.ltr;
+	});
+	
+	function createEmptyAmount(currency) {
+		return { coins: 0, cents: 0, centsInCoin: currency.centsInCoin };
+	}
+	function refreshTransfers() {
+		if ($scope.panels.left.currency) {
+			$rootScope.orderInfo.inTransfer.currency = $scope.panels.left.currency.id;
+			$rootScope.orderInfo.inTransfer.amount = createEmptyAmount($scope.panels.left.currency);
+		}
+		if ($scope.panels.right.currency) {
+			$rootScope.orderInfo.outTransfer.currency = $scope.panels.right.currency.id;
+			$rootScope.orderInfo.outTransfer.amount = createEmptyAmount($scope.panels.right.currency);
+		}
+	}
+	
+	$scope.selectCurrency = function(panelName, currency) {
+		var panel = $scope.panels[panelName];
+		var oppositePanel = $scope.panels[panelName === "left" ? "right" : "left"];
+		if (oppositePanel.currency && (oppositePanel.currency.id === currency.id)) {
+			oppositePanel.currency = panel.currency;
+		}
+		panel.currency = currency;
 		refreshTransfers();
 	};
 });

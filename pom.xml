@@ -1,5 +1,5 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 
@@ -117,18 +117,18 @@
 			<artifactId>bitcoinj</artifactId>
 			<version>${bitcoinj-version}</version>
 		</dependency>
-                
-                <dependency>
-                        <groupId>com.google</groupId>
-                        <artifactId>litecoinj</artifactId>
-                        <version>${litecoinj-version}</version>
-                </dependency>
-                
-                <dependency>
-                        <groupId>org.jboss.netty</groupId>
-                        <artifactId>netty</artifactId>
-                        <version>3.2.0.Final</version>
-                </dependency>
+
+		<dependency>
+			<groupId>com.google</groupId>
+			<artifactId>litecoinj</artifactId>
+			<version>${litecoinj-version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jboss.netty</groupId>
+			<artifactId>netty</artifactId>
+			<version>3.2.0.Final</version>
+		</dependency>
 
 		<dependency>
 			<groupId>org.jumpmind.symmetric.jdbc</groupId>
@@ -162,7 +162,7 @@
 		<jersey.version>2.5.1</jersey.version>
 		<yandex.version>1.2.4-SNAPSHOT</yandex.version>
 		<bitcoinj-version>0.11</bitcoinj-version>
-                <litecoinj-version>0.11</litecoinj-version>
+		<litecoinj-version>0.11</litecoinj-version>
 		<eclipselink.version>2.5.0</eclipselink.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>

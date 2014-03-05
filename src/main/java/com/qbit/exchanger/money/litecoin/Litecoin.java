@@ -1,9 +1,19 @@
 package com.qbit.exchanger.money.litecoin;
 
-import com.google.litecoin.core.*;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.MoreExecutors;
+import com.google.litecoin.core.AbstractWalletEventListener;
+import com.google.litecoin.core.Address;
+import com.google.litecoin.core.AddressFormatException;
+import com.google.litecoin.core.ECKey;
+import com.google.litecoin.core.InsufficientMoneyException;
+import com.google.litecoin.core.NetworkParameters;
+import com.google.litecoin.core.ScriptException;
+import com.google.litecoin.core.Transaction;
+import com.google.litecoin.core.TransactionOutput;
+import com.google.litecoin.core.Utils;
+import com.google.litecoin.core.Wallet;
 import com.google.litecoin.kits.WalletAppKit;
 import com.google.litecoin.params.MainNetParams;
 import com.google.litecoin.params.TestNet3Params;
@@ -52,7 +62,7 @@ public class Litecoin implements MoneyService {
 		}
 		kit = new WalletAppKit(parameters, new File(WALLET_PATH), "sample");
 
-                // For debug purposes
+		// For debug purposes
 		//kit.startAndWait();
 	}
 

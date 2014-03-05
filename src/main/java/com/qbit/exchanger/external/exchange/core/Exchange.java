@@ -8,6 +8,6 @@ import com.qbit.exchanger.money.model.Rate;
  * @author Александр
  */
 public interface Exchange {
-	
+
 	Rate getRate(Currency from, Currency to) throws Exception;
 }
