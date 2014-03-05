@@ -13,7 +13,7 @@
 		</div>
 	</div>
 	<div class="form-group ng-hide" ng-show="isPublicKeyValid()">
-		<div class="input-group" style="width: 20em;" ng-class="{'has-error': userForm.email.$error.email}">
+		<div class="input-group" style="width: 20em;" ng-class="{'has-error': userForm.email.$invalid}">
 			<div class="input-group-addon">
 				<span class="glyphicon glyphicon-envelope"></span>
 			</div>

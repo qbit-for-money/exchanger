@@ -6,6 +6,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.persistence.EntityManagerFactory;
@@ -48,5 +49,10 @@ public class OrderFlowScheduler {
 				}
 			}
 		}, env.getOrderWorkerPeriodSecs(), env.getOrderWorkerPeriodSecs(), TimeUnit.SECONDS);
+	}
+
+	@PreDestroy
+	private void shutdown() {
+		executorService.shutdown();
 	}
 }

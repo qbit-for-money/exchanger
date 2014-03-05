@@ -1,6 +1,6 @@
 package com.qbit.exchanger.money.core;
 
-import com.qbit.exchanger.money.bitcoin.Bitcoin;
+import com.qbit.exchanger.money.bitcoin.BitcoinMoneyService;
 import com.qbit.exchanger.money.litecoin.Litecoin;
 import com.qbit.exchanger.money.model.Currency;
 import com.qbit.exchanger.money.model.Transfer;
@@ -18,12 +18,12 @@ import javax.inject.Singleton;
 public class MoneyServiceFacade implements MoneyService {
 
 	@Inject
-	private Bitcoin bitcoinService;
-
+	private BitcoinMoneyService bitcoinService;
+	
 	@Inject
 	private YandexMoneyService yandexMoneyService;
-
-	@Inject
+        
+        @Inject
 	private Litecoin litecoinService;
 
 	private Map<Currency, MoneyService> servicesMap;
@@ -50,13 +50,13 @@ public class MoneyServiceFacade implements MoneyService {
 		}
 		return moneyService;
 	}
-
+	
 	private synchronized Map<Currency, MoneyService> getServicesMap() {
 		if (servicesMap == null) {
 			servicesMap = new HashMap<>();
 			servicesMap.put(Currency.BITCOIN, bitcoinService);
 			servicesMap.put(Currency.YANDEX_RUB, yandexMoneyService);
-			servicesMap.put(Currency.LITECOIN, litecoinService);
+                        servicesMap.put(Currency.LITECOIN, litecoinService);
 		}
 		return servicesMap;
 	}

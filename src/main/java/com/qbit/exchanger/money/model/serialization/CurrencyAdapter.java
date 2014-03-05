@@ -1,6 +1,7 @@
 package com.qbit.exchanger.money.model.serialization;
 
 import com.qbit.exchanger.money.model.Currency;
+import java.io.Serializable;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 /**
@@ -8,11 +9,12 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
  * @author alisherfaz
  */
 public class CurrencyAdapter extends XmlAdapter<CurrencyAdapter.AdaptedCurrency, Currency> {
-
-	public static class AdaptedCurrency {
-
+	
+	public static class AdaptedCurrency implements Serializable {
+	
 		private String id;
 		private String code;
+		private long centsInCoin;
 		private boolean supported;
 
 		public String getId() {
@@ -29,6 +31,14 @@ public class CurrencyAdapter extends XmlAdapter<CurrencyAdapter.AdaptedCurrency,
 
 		public void setCode(String code) {
 			this.code = code;
+		}
+
+		public long getCentsInCoin() {
+			return centsInCoin;
+		}
+
+		public void setCentsInCoin(long centsInCoin) {
+			this.centsInCoin = centsInCoin;
 		}
 
 		public boolean isSupported() {
@@ -56,6 +66,7 @@ public class CurrencyAdapter extends XmlAdapter<CurrencyAdapter.AdaptedCurrency,
 			result = new AdaptedCurrency();
 			result.setId(currency.name());
 			result.setCode(currency.getCode());
+			result.setCentsInCoin(currency.getCentsInCoin());
 			result.setSupported(currency.isSupported());
 		}
 		return result;

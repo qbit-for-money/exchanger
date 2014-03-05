@@ -4,12 +4,16 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
-public class AuthorizeUrlWrapper {
+public class URL {
 
 	@XmlElement
 	private String url;
 
-	public AuthorizeUrlWrapper() {
+	public URL() {
+	}
+
+	public URL(String url) {
+		this.url = url;
 	}
 
 	public String getUrl() {

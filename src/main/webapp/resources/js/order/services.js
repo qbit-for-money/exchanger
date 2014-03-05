@@ -2,8 +2,12 @@ var orderModule = angular.module("order");
 
 orderModule.factory("resetOrderInfo", function($rootScope) {
 	var emptyOrderInfo = {
-		inTransfer: {type: "IN"},
-		outTransfer: {type: "OUT"}
+		inTransfer: {
+			type: "IN", currency: "BITCOIN"
+		},
+		outTransfer: {
+			type: "OUT", currency: "LITECOIN"
+		}
 	};
 	return function() {
 		var orderInfo = angular.copy(emptyOrderInfo);
@@ -28,6 +32,7 @@ orderModule.factory("restoreOrderInfoFromSession", function($rootScope, sessionS
 	return function() {
 		var orderInfoJSON = sessionStorage.getItem("orderInfo");
 		if (orderInfoJSON) {
+			sessionStorage.removeItem("orderInfo");
 			$rootScope.orderInfo = JSON.parse(orderInfoJSON);
 		}
 	};

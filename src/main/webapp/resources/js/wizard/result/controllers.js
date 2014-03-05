@@ -2,8 +2,8 @@ var resultModule = angular.module("wizard.result");
 
 resultModule.controller("ResultController", function($rootScope, $scope, $timeout, $interval, ordersResource) {
 	// START Test
-	$rootScope.orderInfo.userPublicKey = "948bd81b-77b4-4b97-84d6-039c0b733637";
-	$rootScope.orderInfo.creationDate = "2014-02-15T18:00:32.00";
+//	$rootScope.orderInfo.userPublicKey = "948bd81b-77b4-4b97-84d6-039c0b733637";
+//	$rootScope.orderInfo.creationDate = "2014-02-15T18:00:32.00";
 	// END Test
 
 	function actualizeOrder() {
