@@ -1,52 +1,51 @@
-package com.qbit.exchanger.money.bitcoin;
+package com.qbit.exchanger.money.litecoin;
 
-import com.google.bitcoin.core.*;
-import com.google.bitcoin.core.Wallet;
-import com.google.bitcoin.crypto.KeyCrypterException;
-import com.google.bitcoin.kits.WalletAppKit;
-import com.google.bitcoin.params.MainNetParams;
-import com.google.bitcoin.params.TestNet3Params;
-import com.google.bitcoin.utils.BriefLogFormatter;
+import com.google.litecoin.core.*;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.MoreExecutors;
-import com.qbit.exchanger.env.Env;
-import com.qbit.exchanger.money.core.MoneyTransferCallback;
+import com.google.litecoin.kits.WalletAppKit;
+import com.google.litecoin.params.MainNetParams;
+import com.google.litecoin.params.TestNet3Params;
+import com.google.litecoin.utils.BriefLogFormatter;
 import com.qbit.exchanger.money.core.MoneyService;
+import com.qbit.exchanger.money.core.MoneyTransferCallback;
+import com.qbit.exchanger.money.model.Transfer;
 
 import java.io.File;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
+import com.google.litecoin.crypto.KeyCrypterException;
+import com.qbit.exchanger.env.Env;
 import com.qbit.exchanger.money.model.Amount;
-import com.qbit.exchanger.money.model.Transfer;
 import com.qbit.exchanger.money.model.TransferType;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.logging.Level;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+import static com.google.common.base.Preconditions.checkArgument;
 
 /**
- * BITCOIN
+ * LITECOIN
  *
- * @author Ivan_Rakitnyh
+ * @author Alexander_Sergeev
  */
 @Singleton
-public class BitcoinMoneyService implements MoneyService {
+public class LitecoinMoneyService implements MoneyService {
 
 	private static final BigInteger COIN = new BigInteger("100000000", 10);
 
-	private static final BigInteger MIN_FEE = new BigInteger("10000", 10);
+	private static final BigInteger MIN_FEE = new BigInteger("100000", 10);
 
-	private static final Logger logger = Logger.getLogger(BitcoinMoneyService.class.getName());
+	private static final Logger logger = Logger.getLogger(LitecoinMoneyService.class.getName());
 
 	private ConcurrentMap<String, QueueItem> paymentQueue;
 
@@ -84,17 +83,17 @@ public class BitcoinMoneyService implements MoneyService {
 	}
 
 	@PostConstruct
-	private void init() {		
+	private void init() {
 		BriefLogFormatter.init();
-		if (env.isBitcoinTestnet()) {
+		if (env.isLitecoinTestnet()) {
 			parameters = TestNet3Params.get();
 		} else {
 			parameters = MainNetParams.get();
 		}
-		kit = new WalletAppKit(parameters, new File(env.getBitcoinWalletPath()), "sample");
+		kit = new WalletAppKit(parameters, new File(env.getLitecoinWalletPath()), "sample");
 		kit.startAndWait();
-				
-		paymentQueue = new ConcurrentHashMap<String, QueueItem>();
+
+		paymentQueue = new ConcurrentHashMap<>();
 
 		AbstractWalletEventListener listener = getPaymentListener();
 		getWallet().addEventListener(listener);
@@ -139,7 +138,7 @@ public class BitcoinMoneyService implements MoneyService {
 					if (item != null) {
 						Amount amount = item.getTransfer().getAmount();
 						BigInteger expectedValue = toNanoCoins(amount.getCoins(), amount.getCents());
-						if (receivedValue.compareTo(expectedValue) >= 0 ) {
+						if (receivedValue.compareTo(expectedValue) >= 0) {
 							item.callback.success();
 						}
 					}
@@ -163,7 +162,7 @@ public class BitcoinMoneyService implements MoneyService {
 //						logger.severe(ex.getMessage());
 //					}
 //				}
-
+				
 				logger.log(Level.INFO, "Received tx for {0}: {1}", new Object[]{Utils.bitcoinValueToFriendlyString(receivedValue), tx});
 				logger.info("Transaction will be forwarded after it confirms.");
 
@@ -188,10 +187,10 @@ public class BitcoinMoneyService implements MoneyService {
 	}
 
 	/*
-	*	1 coin = 100 cents
-	* 	1 cent = 1000000 nanocents
-	*   Example: 1 coin 2345 cents = 1.00002345
-	*/
+	 *	1 coin = 100 cents
+	 * 	1 cent = 1000000 nanocents
+	 *   Example: 1 coin 2345 cents = 1.00002345
+	 */
 	private void sendMoney(Transfer transfer, MoneyTransferCallback callback) {
 		if ((transfer == null) || !transfer.isValid()) {
 			callback.error("Empty address or wrong money value");
@@ -227,7 +226,7 @@ public class BitcoinMoneyService implements MoneyService {
 			logger.severe(ex.getMessage());
 		}
 	}
-
+	
 	private boolean testReceive(Transfer transfer) {
 		boolean result;
 		if ((transfer != null) && transfer.isValid()) {
@@ -243,7 +242,7 @@ public class BitcoinMoneyService implements MoneyService {
 		}
 		return result;
 	}
-
+	
 	private boolean testSend(Transfer transfer) {
 		boolean result;
 		if ((transfer != null) && transfer.isValid()) {
@@ -270,7 +269,7 @@ public class BitcoinMoneyService implements MoneyService {
 
 	public List<String> getWalletAddress() {
 		List<ECKey> keys = getWallet().getKeys();
-		List<String> result = new ArrayList<String>(keys.size());
+		List<String> result = new ArrayList<>(keys.size());
 		for (ECKey key : keys) {
 			Address address = key.toAddress(parameters);
 			result.add(address.toString());
@@ -286,7 +285,7 @@ public class BitcoinMoneyService implements MoneyService {
 	private Wallet getWallet() {
 		return kit.wallet();
 	}
-
+	
 	private static BigInteger toNanoCoins(long coins, long cents) {
 		checkArgument(cents < 100000000);
 		checkArgument(cents >= 0);

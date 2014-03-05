@@ -56,6 +56,8 @@
 		<script type="text/javascript" src="resources/js/money/yandex/controllers.js"></script>
 		<script type="text/javascript" src="resources/js/money/bitcoin/resources.js"></script>
 		<script type="text/javascript" src="resources/js/money/bitcoin/controllers.js"></script>
+		<script type="text/javascript" src="resources/js/money/litecoin/resources.js"></script>
+		<script type="text/javascript" src="resources/js/money/litecoin/controllers.js"></script>
 
 		<script type="text/javascript" src="resources/js/exchange/resources.js"></script>
 
