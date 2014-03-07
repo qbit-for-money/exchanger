@@ -1,7 +1,7 @@
 package com.qbit.exchanger.money.core;
 
 import com.qbit.exchanger.money.bitcoin.BitcoinMoneyService;
-import com.qbit.exchanger.money.litecoin.Litecoin;
+import com.qbit.exchanger.money.litecoin.LitecoinMoneyService;
 import com.qbit.exchanger.money.model.Currency;
 import com.qbit.exchanger.money.model.Transfer;
 import com.qbit.exchanger.money.yandex.YandexMoneyService;
@@ -21,10 +21,10 @@ public class MoneyServiceProvider {
 	private BitcoinMoneyService bitcoinService;
 	
 	@Inject
-	private Litecoin litecoinService;
-
-	@Inject
 	private YandexMoneyService yandexMoneyService;
+        
+        @Inject
+	private LitecoinMoneyService litecoinService;
 
 	private Map<Currency, MoneyService> servicesMap;
 

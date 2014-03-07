@@ -2,4 +2,8 @@
 *.iml
 /.gitignore
 target
+<<<<<<< HEAD
 nb-configuration.xml
+=======
+nb-configuration.xml
+>>>>>>> Litecoin
