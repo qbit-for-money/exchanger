@@ -8,6 +8,8 @@ import com.qbit.exchanger.money.model.Transfer;
  * @author Ivan_Rakitnyh
  */
 public interface MoneyService {
+	
+	String generateAddress();
 
     void process(Transfer transfer, MoneyTransferCallback callback);
 

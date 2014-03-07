@@ -213,4 +213,9 @@ public class YandexMoneyService implements MoneyService {
 		Permission result = scope;
 		return Collections.singletonList(result);
 	}
+
+	@Override
+	public String generateAddress() {
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
 }

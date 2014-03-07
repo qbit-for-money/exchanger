@@ -189,4 +189,9 @@ public class Bitcoin implements MoneyService {
 	private Wallet getWallet() {
 		return kit.wallet();
 	}
+
+	@Override
+	public String generateAddress() {
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
 }
