@@ -38,6 +38,12 @@ public class UserDAO {
 			entityManager.persist(user);
 			entityManager.getTransaction().commit();
 			return user;
+		} catch (Throwable ex) {
+			try {
+				entityManager.getTransaction().rollback();
+			} catch (Throwable doNothing) {
+			}
+			throw ex;
 		} finally {
 			entityManager.close();
 		}
@@ -53,6 +59,12 @@ public class UserDAO {
 			user = entityManager.merge(user);
 			entityManager.getTransaction().commit();
 			return user;
+		} catch (Throwable ex) {
+			try {
+				entityManager.getTransaction().rollback();
+			} catch (Throwable doNothing) {
+			}
+			throw ex;
 		} finally {
 			entityManager.close();
 		}

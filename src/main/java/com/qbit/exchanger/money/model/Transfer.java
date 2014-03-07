@@ -66,7 +66,8 @@ public class Transfer implements Serializable {
 	}
 
 	public boolean isValid() {
-		return ((type != null) && (currency != null) && (address != null) && (amount != null) && amount.isValid());
+		return ((type != null) && (currency != null) && (address != null)
+				&& (amount != null) && amount.isPositive());
 	}
 
 	@Override

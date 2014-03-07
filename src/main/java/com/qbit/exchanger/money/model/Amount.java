@@ -3,12 +3,15 @@ package com.qbit.exchanger.money.model;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import javax.persistence.Embeddable;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
  * @author Александр
  */
 @Embeddable
+@XmlRootElement
 public class Amount implements Serializable {
 
 	private long coins, cents;
@@ -65,10 +68,17 @@ public class Amount implements Serializable {
 		this.centsInCoin = centsInCoin;
 	}
 
+	@XmlTransient
 	public boolean isValid() {
 		return (coins >= 0) && (cents >= 0) && (centsInCoin >= 0) && (cents <= centsInCoin);
 	}
-
+	
+	@XmlTransient
+	public boolean isPositive() {
+		return (isValid() && ((coins > 0) || (cents > 0)));
+	}
+	
+	@XmlTransient
 	public BigDecimal toBigDecimal() {
 		return BigDecimal.valueOf(coins).add(BigDecimal.valueOf(cents)
 			.divide(BigDecimal.valueOf(centsInCoin)));

@@ -2,7 +2,7 @@ var moneyModule = angular.module("money");
 
 moneyModule.factory("isAmountValid", function() {
 	return function(amount) {
-		return (amount && ((amount.coins > 0) || (amount.cents > 0)));
+		return (amount && ((amount.coins > 0) || (amount.cents > 0)) && (amount.centsInCoin > 0));
 	};
 });
 

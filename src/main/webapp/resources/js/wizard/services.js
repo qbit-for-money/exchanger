@@ -1,13 +1,9 @@
 var wizardModule = angular.module("wizard");
 
 wizardModule.factory("wizardService", function() {
-	var steps = [{
-			id: "currency", title: "Currency", path: "/steps/currency"
-		}, {
-			id: "amount", title: "Amount", path: "/steps/amount"
-		}, {
-			id: "result", title: "Result", path: "/steps/result"
-		}];
+	var steps = [{id: "currency", path: "/steps/currency"},
+		{id: "amount", path: "/steps/amount"},
+		{id: "result", path: "/steps/result"}];
 
 	function getSteps() {
 		return steps;

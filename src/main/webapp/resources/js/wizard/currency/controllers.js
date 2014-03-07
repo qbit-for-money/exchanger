@@ -1,23 +1,10 @@
 var currencyModule = angular.module("wizard.currency");
 
 currencyModule.controller("CurrencyController", function($scope, $rootScope, wizardService, currencyResource, resetOrderInfo) {
-	function validator() {
-		var orderInfo = $rootScope.orderInfo;
-		if (orderInfo && orderInfo.inTransfer && orderInfo.inTransfer.currency
-				&& orderInfo.outTransfer && orderInfo.outTransfer.currency) {
-			return true;
-		} else {
-			// Show error on page
-			$scope.$apply(function() {});
-			return false;
-		}
-	}
-	wizardService.registerValidator("currency", validator);
-	
 	resetOrderInfo();
-	
+
 	$scope.panels = {left: {}, right: {}};
-	
+
 	var currenciesResponse = currencyResource.findAll();
 	currenciesResponse.$promise.then(function() {
 		if (currenciesResponse && currenciesResponse.currencies) {
@@ -37,10 +24,17 @@ currencyModule.controller("CurrencyController", function($scope, $rootScope, wiz
 			refreshTransfers();
 		}
 	});
-	
-	function createEmptyAmount(currency) {
-		return { coins: 0, cents: 0, centsInCoin: currency.centsInCoin };
-	}
+
+	$scope.selectCurrency = function(panelName, currency) {
+		var panel = $scope.panels[panelName];
+		var oppositePanel = $scope.panels[panelName === "left" ? "right" : "left"];
+		if (oppositePanel.currency && (oppositePanel.currency.id === currency.id)) {
+			oppositePanel.currency = panel.currency;
+		}
+		panel.currency = currency;
+		refreshTransfers();
+	};
+
 	function refreshTransfers() {
 		if ($scope.panels.left.currency) {
 			$rootScope.orderInfo.inTransfer.currency = $scope.panels.left.currency.id;
@@ -51,15 +45,8 @@ currencyModule.controller("CurrencyController", function($scope, $rootScope, wiz
 			$rootScope.orderInfo.outTransfer.amount = createEmptyAmount($scope.panels.right.currency);
 		}
 	}
-	
-	$scope.selectCurrency = function(panelName, currency) {
-		var panel = $scope.panels[panelName];
-		var oppositePanel = $scope.panels[panelName === "left" ? "right" : "left"];
-		if (oppositePanel.currency && (oppositePanel.currency.id === currency.id)) {
-			oppositePanel.currency = panel.currency;
-		}
-		panel.currency = currency;
-		refreshTransfers();
-	};
+	function createEmptyAmount(currency) {
+		return {coins: 0, cents: 0, centsInCoin: currency.centsInCoin};
+	}
 });
 

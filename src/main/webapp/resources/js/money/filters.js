@@ -5,7 +5,7 @@ moneyModule.factory("formatAmount", function(amountToNumber) {
 		if (!amount) {
 			return "";
 		}
-		var fractionDigits = Math.round(Math.log(amount.centsInCoin) / Math.LN10);
+		var fractionDigits = Math.min(3, Math.round(Math.log(amount.centsInCoin) / Math.LN10));
 		return amountToNumber(amount).toFixed(fractionDigits);
 	};
 });

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Objects;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -39,8 +40,8 @@ public class Rate implements Serializable {
 	}
 
 	public Rate(Amount numerator, Amount denominator) {
-		if ((numerator == null) || !numerator.isValid()
-			|| (denominator == null) || !denominator.isValid()) {
+		if ((numerator == null) || !numerator.isPositive()
+			|| (denominator == null) || !denominator.isPositive()) {
 			throw new IllegalArgumentException();
 		}
 		this.numerator = numerator;
@@ -63,8 +64,24 @@ public class Rate implements Serializable {
 		this.denominator = denominator;
 	}
 
+	@XmlTransient
 	public Rate inv() {
 		return new Rate(denominator, numerator);
+	}
+	
+	public Amount mul(Amount amount) {
+		if ((amount == null) || !amount.isValid()) {
+			throw new IllegalArgumentException();
+		}
+		BigDecimal result = numerator.toBigDecimal().multiply(
+				amount.toBigDecimal()).divide(denominator.toBigDecimal());
+		return new Amount(result, numerator.getCentsInCoin());
+	}
+	
+	@XmlTransient
+	public boolean isValid() {
+		return ((numerator != null) && numerator.isPositive()
+				&& (denominator != null) && denominator.isPositive());
 	}
 
 	@Override

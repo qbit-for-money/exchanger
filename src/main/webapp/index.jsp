@@ -15,7 +15,7 @@
 
 		<%@ include file="WEB-INF/jspf/wizard.jspf" %>
 
-		<div class="container">
+		<div class="container" ng-if="currentStepIndex >= 0">
 			<div ng-view></div>
 		</div>
 
@@ -69,7 +69,6 @@
 		<script type="text/javascript" src="resources/js/wizard/currency/validation.js"></script>
 		
 		<script type="text/javascript" src="resources/js/wizard/amount/controllers.js"></script>
-		<script type="text/javascript" src="resources/js/wizard/amount/directives.js"></script>
 		<script type="text/javascript" src="resources/js/wizard/amount/validation.js"></script>
 		
 		<script type="text/javascript" src="resources/js/wizard/result/controllers.js"></script>

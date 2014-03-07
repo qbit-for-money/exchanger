@@ -14,3 +14,11 @@ moneyModule.factory("rateToNumber", function(amountToNumber) {
 		}
 	};
 });
+moneyModule.factory("convertAmount", function() {
+	return function(amount, rate) {
+		if (!amount || !rate) {
+			return amount;
+		}
+		
+	};
+});

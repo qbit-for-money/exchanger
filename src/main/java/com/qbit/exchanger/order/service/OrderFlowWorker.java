@@ -1,9 +1,12 @@
 package com.qbit.exchanger.order.service;
 
+import com.qbit.exchanger.external.exchange.core.Exchange;
 import com.qbit.exchanger.money.core.MoneyService;
 import com.qbit.exchanger.money.core.MoneyServiceProvider;
 import com.qbit.exchanger.money.core.MoneyTransferCallback;
 import com.qbit.exchanger.money.model.Amount;
+import com.qbit.exchanger.money.model.Currency;
+import com.qbit.exchanger.money.model.Rate;
 import com.qbit.exchanger.money.model.Transfer;
 import com.qbit.exchanger.order.dao.OrderDAO;
 import com.qbit.exchanger.order.model.OrderInfo;
@@ -26,6 +29,9 @@ public class OrderFlowWorker implements Runnable {
 
 	@Inject
 	private MoneyServiceProvider moneyServiceProvider;
+	
+	@Inject
+	private Exchange exchange;
 
 	@Override
 	public void run() {
@@ -42,7 +48,7 @@ public class OrderFlowWorker implements Runnable {
 		}
 	}
 
-	private void processActiveOrder(OrderInfo activeOrder) {
+	private void processActiveOrder(OrderInfo activeOrder) throws Exception {
 		if (!activeOrder.isValid()) {
 			throw new IllegalArgumentException("Order #" + activeOrder.getId() + " is inconsistent.");
 		}
@@ -59,16 +65,22 @@ public class OrderFlowWorker implements Runnable {
 		}
 	}
 
-	private void processInTransfer(final OrderInfo activeOrder) {
+	private void processInTransfer(final OrderInfo activeOrder) throws Exception {
 		final String orderId = activeOrder.getId();
 		Transfer inTransfer = activeOrder.getInTransfer();
+		final Rate rate = exchange.getRate(inTransfer.getCurrency(),
+				activeOrder.getOutTransfer().getCurrency());
+		if ((rate == null) || !rate.isValid()) {
+			throw new IllegalStateException();
+		}
 		orderDAO.changeStatus(orderId, OrderStatus.INITIAL, true);
 		MoneyService moneyService = moneyServiceProvider.get(inTransfer);
 		moneyService.process(inTransfer, new MoneyTransferCallback() {
 
 			@Override
-			public void success(Amount amount) {
-				orderDAO.changeStatus(orderId, OrderStatus.PAYED, false);
+			public void success(Amount inAmount) {
+				orderDAO.changeStatusAndAmounts(orderId, OrderStatus.PAYED, false,
+						inAmount, rate.mul(inAmount));
 			}
 
 			@Override
@@ -87,7 +99,8 @@ public class OrderFlowWorker implements Runnable {
 
 			@Override
 			public void success(Amount amount) {
-				orderDAO.changeStatus(orderId, OrderStatus.SUCCESS, false);
+				orderDAO.changeStatusAndOutAmount(orderId, OrderStatus.SUCCESS, false,
+						amount);
 			}
 
 			@Override

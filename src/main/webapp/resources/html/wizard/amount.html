@@ -1,4 +1,31 @@
-<amount-transfer transfer="orderInfo.inTransfer" direction="'in'"></amount-transfer>
+<div class="row">
+	<div class="col-xs-offset-0 col-xs-12 col-md-offset-1 col-md-10">
+		<div class="panel panel-default">
+			<div class="panel-body">
+				<div class="container-fluid">
+					
+					<div class="row">
+						<div class="col-xs-2 col-md-2">
+							<div class="currency {{orderInfo.inTransfer.currency}}"></div>
+						</div>
+						<div class="col-xs-10 col-md-10">
+							<form name="inForm" novalidate>
+								<div class="form-group">
+									<p class="form-control-static" title="Wallet address"
+									   ng-bind="orderInfo.inTransfer.address"></p>
+								</div>
+								<div class="form-group" ng-class="{'has-error': outForm.amountText.$invalid}">
+									<amount-input form="form" amount="orderInfo.inTransfer.amount"></amount-input>
+								</div>
+							</form>
+						</div>
+					</div>
+					
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
 
 <div class="row" style="margin-bottom: 20px;">
 	<div class="text-center col-md-12">
@@ -8,4 +35,33 @@
 	</div>
 </div>
 
-<amount-transfer transfer="orderInfo.outTransfer" direction="'out'"></amount-transfer>
+<div class="row">
+	<div class="col-xs-offset-0 col-xs-12 col-md-offset-1 col-md-10">
+		<div class="panel panel-default">
+			<div class="panel-body">
+				<div class="container-fluid">
+					
+					<div class="row">
+						<div class="col-xs-2 col-md-2">
+							<div class="currency {{orderInfo.outTransfer.currency}}"></div>
+						</div>
+						<div class="col-xs-10 col-md-10">
+							<form name="outForm" novalidate>
+								<div class="form-group" ng-class="{'has-error': outForm.amountText.$invalid}">
+									<amount-input form="form" amount="orderInfo.outTransfer.amount"></amount-input>
+								</div>
+								<div class="form-group" ng-class="{'has-error': outForm.outAddress.$invalid}">
+									<label class="sr-only" for="outAddress">Address</label>
+									<input class="form-control input-lg money-wallet" type="text" name="outAddress"
+										   ng-model="orderInfo.outTransfer.address" ng-required="true"
+										   title="Wallet address" placeholder="Wallet address" id="outAddress" />
+								</div>
+							</form>
+						</div>
+					</div>
+					
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

@@ -1,9 +1,10 @@
 package com.qbit.exchanger.order.dao;
 
+import com.qbit.exchanger.money.model.Amount;
 import com.qbit.exchanger.money.model.Transfer;
 import com.qbit.exchanger.money.model.TransferType;
-import com.qbit.exchanger.order.model.OrderStatus;
 import com.qbit.exchanger.order.model.OrderInfo;
+import com.qbit.exchanger.order.model.OrderStatus;
 import com.qbit.exchanger.util.DAOUtil;
 import java.util.Date;
 import java.util.List;
@@ -93,6 +94,86 @@ public class OrderDAO {
 			orderInfo.setStatus(orderStatus);
 			orderInfo.setInProcess(inProcess);
 			entityManager.getTransaction().commit();
+		} catch (Throwable ex) {
+			try {
+				entityManager.getTransaction().rollback();
+			} catch (Throwable doNothing) {
+			}
+			throw ex;
+		} finally {
+			entityManager.close();
+		}
+	}
+	
+	public void changeStatusAndInAmount(String id, OrderStatus orderStatus, boolean inProcess,
+			Amount inAmount) {
+		if ((id == null) || (orderStatus == null) || (inAmount == null) || !inAmount.isValid()) {
+			throw new IllegalArgumentException();
+		}
+		EntityManager entityManager = entityManagerFactory.createEntityManager();
+		try {
+			entityManager.getTransaction().begin();
+			OrderInfo orderInfo = entityManager.find(OrderInfo.class, id);
+			orderInfo.setStatus(orderStatus);
+			orderInfo.setInProcess(inProcess);
+			orderInfo.getInTransfer().setAmount(inAmount);
+			entityManager.getTransaction().commit();
+		} catch (Throwable ex) {
+			try {
+				entityManager.getTransaction().rollback();
+			} catch (Throwable doNothing) {
+			}
+			throw ex;
+		} finally {
+			entityManager.close();
+		}
+	}
+	
+	public void changeStatusAndOutAmount(String id, OrderStatus orderStatus, boolean inProcess,
+			Amount outAmount) {
+		if ((id == null) || (orderStatus == null) || (outAmount == null) || !outAmount.isValid()) {
+			throw new IllegalArgumentException();
+		}
+		EntityManager entityManager = entityManagerFactory.createEntityManager();
+		try {
+			entityManager.getTransaction().begin();
+			OrderInfo orderInfo = entityManager.find(OrderInfo.class, id);
+			orderInfo.setStatus(orderStatus);
+			orderInfo.setInProcess(inProcess);
+			orderInfo.getOutTransfer().setAmount(outAmount);
+			entityManager.getTransaction().commit();
+		} catch (Throwable ex) {
+			try {
+				entityManager.getTransaction().rollback();
+			} catch (Throwable doNothing) {
+			}
+			throw ex;
+		} finally {
+			entityManager.close();
+		}
+	}
+	
+	public void changeStatusAndAmounts(String id, OrderStatus orderStatus, boolean inProcess,
+			Amount inAmount, Amount outAmount) {
+		if ((id == null) || (orderStatus == null) || (inAmount == null) || !inAmount.isValid()
+				|| (outAmount == null) || !outAmount.isValid()) {
+			throw new IllegalArgumentException();
+		}
+		EntityManager entityManager = entityManagerFactory.createEntityManager();
+		try {
+			entityManager.getTransaction().begin();
+			OrderInfo orderInfo = entityManager.find(OrderInfo.class, id);
+			orderInfo.setStatus(orderStatus);
+			orderInfo.setInProcess(inProcess);
+			orderInfo.getInTransfer().setAmount(inAmount);
+			orderInfo.getOutTransfer().setAmount(outAmount);
+			entityManager.getTransaction().commit();
+		} catch (Throwable ex) {
+			try {
+				entityManager.getTransaction().rollback();
+			} catch (Throwable doNothing) {
+			}
+			throw ex;
 		} finally {
 			entityManager.close();
 		}
@@ -121,6 +202,12 @@ public class OrderDAO {
 			entityManager.persist(order);
 			entityManager.getTransaction().commit();
 			return order;
+		} catch (Throwable ex) {
+			try {
+				entityManager.getTransaction().rollback();
+			} catch (Throwable doNothing) {
+			}
+			throw ex;
 		} finally {
 			entityManager.close();
 		}
