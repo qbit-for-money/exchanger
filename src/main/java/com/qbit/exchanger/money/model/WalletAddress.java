@@ -1,6 +1,10 @@
-package com.qbit.exchanger.money.bitcoin;
+package com.qbit.exchanger.money.model;
 
-public class WalletAddress {
+import java.io.Serializable;
+import javax.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement
+public class WalletAddress implements Serializable {
 
 	private String address;
 

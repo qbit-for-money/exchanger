@@ -6,7 +6,6 @@ import com.qbit.exchanger.external.exchange.core.Exchange;
 import com.qbit.exchanger.external.exchange.core.ExchangeFacade;
 import com.qbit.exchanger.mail.MailService;
 import com.qbit.exchanger.money.bitcoin.BitcoinMoneyService;
-import com.qbit.exchanger.money.core.MoneyService;
 import com.qbit.exchanger.money.core.MoneyServiceProvider;
 import com.qbit.exchanger.money.litecoin.Litecoin;
 import com.qbit.exchanger.money.yandex.YandexMoneyService;
@@ -39,7 +38,7 @@ public class ExchangerApp extends Application {
 	}
 
 	@PostConstruct
-	private void init() {
+	public void init() {
 		DynamicConfiguration configuration = getConfiguration(serviceLocator);
 
 		addBinding(newBinder(Env.class).to(Env.class).in(Singleton.class), configuration);
@@ -75,7 +74,7 @@ public class ExchangerApp extends Application {
 	 * classes except this one.
 	 */
 	@PreDestroy
-	private void preDestroy() {
+	public void preDestroy() {
 		serviceLocator.shutdown();
 	}
 }

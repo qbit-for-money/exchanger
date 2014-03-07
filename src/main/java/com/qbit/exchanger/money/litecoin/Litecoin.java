@@ -43,7 +43,7 @@ public class Litecoin implements MoneyService {
 
 	private static final Logger logger = Logger.getLogger(Litecoin.class.getName());
 
-	private static final String WALLET_PATH = "./src/main/resources/litecoin";
+	private static final String WALLET_PATH = "D:/works/qbit-for-money/exchanger/stuff/litecoin-wallet";
 
 	private NetworkParameters parameters;
 

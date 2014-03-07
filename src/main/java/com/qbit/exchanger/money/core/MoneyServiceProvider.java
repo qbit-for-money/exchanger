@@ -5,7 +5,7 @@ import com.qbit.exchanger.money.litecoin.Litecoin;
 import com.qbit.exchanger.money.model.Currency;
 import com.qbit.exchanger.money.model.Transfer;
 import com.qbit.exchanger.money.yandex.YandexMoneyService;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -48,7 +48,7 @@ public class MoneyServiceProvider {
 
 	private synchronized Map<Currency, MoneyService> getServicesMap() {
 		if (servicesMap == null) {
-			servicesMap = new HashMap<Currency, MoneyService>();
+			servicesMap = new EnumMap<>(Currency.class);
 			servicesMap.put(Currency.BITCOIN, bitcoinService);
 			servicesMap.put(Currency.YANDEX_RUB, yandexMoneyService);
 			servicesMap.put(Currency.LITECOIN, litecoinService);

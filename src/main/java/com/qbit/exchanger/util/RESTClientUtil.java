@@ -18,7 +18,7 @@ import org.glassfish.jersey.client.ClientConfig;
  *
  * @author Александр
  */
-public final class RESTClientUtils {
+public final class RESTClientUtil {
 	
 	private static final Map<String, Object> JAXB_PROPS = new HashMap<>(2);
 	
@@ -27,7 +27,7 @@ public final class RESTClientUtils {
 		JAXB_PROPS.put(JAXBContextProperties.JSON_INCLUDE_ROOT, false);
 	}
 	
-	private RESTClientUtils() {
+	private RESTClientUtil() {
 	}
 	
 	public static <R> R get(String target, String path, Class<R> type) throws JAXBException {

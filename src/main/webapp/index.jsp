@@ -51,6 +51,7 @@
 		<script type="text/javascript" src="resources/js/money/filters.js"></script>
 		<script type="text/javascript" src="resources/js/money/directives.js"></script>
 		<script type="text/javascript" src="resources/js/money/validation.js"></script>
+		<script type="text/javascript" src="resources/js/money/resources.js"></script>
 
 		<script type="text/javascript" src="resources/js/money/yandex/resources.js"></script>
 		<script type="text/javascript" src="resources/js/money/yandex/controllers.js"></script>

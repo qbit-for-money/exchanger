@@ -13,13 +13,6 @@ public class BitcoinResource {
 	private BitcoinMoneyService bitcoinMoneyService;
 
 	@GET
-	@Path("getNewAddress")
-	@Produces(MediaType.APPLICATION_JSON)
-	public WalletAddress getNewAddress() {
-		return new WalletAddress(bitcoinMoneyService.generateAddress());
-	}
-
-	@GET
 	@Path("balance")
 	@Produces(MediaType.TEXT_PLAIN)
 	public String getBalance() {

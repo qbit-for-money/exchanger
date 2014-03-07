@@ -22,7 +22,6 @@ import java.util.List;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import com.qbit.exchanger.money.model.Amount;
-import com.qbit.exchanger.money.model.Currency;
 import com.qbit.exchanger.money.model.Transfer;
 import com.qbit.exchanger.money.model.TransferType;
 
@@ -85,7 +84,7 @@ public class BitcoinMoneyService implements MoneyService {
 	}
 
 	@PostConstruct
-	private void init() {
+	public void init() {
 		BriefLogFormatter.init();
 		if (env.isBitcoinTestnet()) {
 			parameters = TestNet3Params.get();
@@ -95,14 +94,14 @@ public class BitcoinMoneyService implements MoneyService {
 		kit = new WalletAppKit(parameters, new File(env.getBitcoinWalletPath()), "sample");
 		kit.startAndWait();
 
-		paymentQueue = new ConcurrentHashMap<String, QueueItem>();
+		paymentQueue = new ConcurrentHashMap<>();
 
 		AbstractWalletEventListener listener = getPaymentListener();
 		getWallet().addEventListener(listener);
 	}
 
 	@PreDestroy
-	private void destroy() {
+	public void destroy() {
 		kit.stopAndWait();
 	}
 
@@ -144,8 +143,8 @@ public class BitcoinMoneyService implements MoneyService {
 							item.callback.success(null);
 						}
 					}
-				} catch (ScriptException e) {
-					e.printStackTrace();
+				} catch (ScriptException ex) {
+					logger.severe(ex.getMessage());
 				}
 
 				logger.log(Level.INFO, "Received tx for {0}: {1}", new Object[]{Utils.bitcoinValueToFriendlyString(receivedValue), tx});
@@ -215,12 +214,7 @@ public class BitcoinMoneyService implements MoneyService {
 	private boolean testReceive(Transfer transfer) {
 		boolean result;
 		if ((transfer != null) && transfer.isValid()) {
-			if (getWalletAddress().contains(transfer.getAddress())) {
-				result = true;
-			} else {
-				//("Invalid address");
-				result = false;
-			}
+			result = getWalletAddress().contains(transfer.getAddress());
 		} else {
 			//("Invalid transfer");
 			result = false;
@@ -232,12 +226,7 @@ public class BitcoinMoneyService implements MoneyService {
 		boolean result;
 		if ((transfer != null) && transfer.isValid()) {
 			BigInteger transferAmount = toNanoCoins(transfer.getAmount().getCoins(), transfer.getAmount().getCents());
-			if (transferAmount.compareTo(getWallet().getBalance().add(MIN_FEE)) == -1) {
-				result = true;
-			} else {
-				//("Wallet is empty");
-				result = false;
-			}
+			result = transferAmount.compareTo(getWallet().getBalance().add(MIN_FEE)) == -1;
 		} else {
 			//("Invalid transfer");
 			result = false;
@@ -255,7 +244,7 @@ public class BitcoinMoneyService implements MoneyService {
 
 	public List<String> getWalletAddress() {
 		List<ECKey> keys = getWallet().getKeys();
-		List<String> result = new ArrayList<String>(keys.size());
+		List<String> result = new ArrayList<>(keys.size());
 		for (ECKey key : keys) {
 			Address address = key.toAddress(parameters);
 			result.add(address.toString());
