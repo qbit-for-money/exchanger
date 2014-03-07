@@ -1,0 +1,35 @@
+<%@ page pageEncoding="UTF-8" %>
+<div class="container" ng-controller="WizardController">
+	<div class="row">
+		<div class="col-md-12">
+			<div class="wizard">
+				<ul class="steps">
+					<li ng-repeat="step in steps"
+						ng-class="{'active': $index == currentStepIndex, 'complete': $index < currentStepIndex}">
+						<a href="" ng-click="goToStep($index)" tabindex="-1">
+							<span class="badge">{{$index + 1}}</span>
+							{{step.title}}
+							<span class="chevron"></span>
+						</a>
+					</li>
+				</ul>
+				<div class="actions">
+					<button class="btn btn-lg btn-success" 
+							ng-disabled="currentStepIndex === 0"
+							ng-click="goToPrevStep()"><span class="glyphicon glyphicon-chevron-left"></span></button>
+					<button class="btn btn-lg btn-success" 
+							ng-disabled="currentStepIndex === (steps.length - 1)"
+							ng-click="goToNextStep()"><span class="glyphicon glyphicon-chevron-right"></span></button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="row ng-hide" ng-show="currentStepIndex === -1">
+		<div class="col-xs-offset-0 col-xs-12 col-md-offset-1 col-md-10">
+			<div class="alert alert-warning">
+				<h3>Please choose <a href="#/steps/currency" class="alert-link">currency pair</a> first.</h3>
+			</div>
+		</div>
+	</div>
+</div>

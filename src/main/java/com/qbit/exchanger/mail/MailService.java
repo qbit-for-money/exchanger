@@ -20,7 +20,7 @@ public class MailService {
 	private Env env;
 
 	public void send(String to, String subject, String text) {
-		try {
+		/*try {
 			Email email = new SimpleEmail();
 			email.setHostName(env.getMailHost());
 			email.setSmtpPort(465);
@@ -34,6 +34,6 @@ public class MailService {
 			email.send();
 		} catch (Exception ex) {
 			Logger.getLogger(MailService.class.getName()).log(Level.SEVERE, null, ex);
-		}
+		}*/
 	}
 }

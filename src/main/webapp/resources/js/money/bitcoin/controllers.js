@@ -6,6 +6,7 @@ bitcoinModule.controller("BitcoinController", function($scope, $rootScope, bitco
 		cents: 0,
 		centsInCoin: 100 * 1000 * 1000
 	};
+
 	$scope.fillInTransfer = function() {
 		var orderInfo = $rootScope.orderInfo;
 		orderInfo.inTransfer.amount = $scope.amount;

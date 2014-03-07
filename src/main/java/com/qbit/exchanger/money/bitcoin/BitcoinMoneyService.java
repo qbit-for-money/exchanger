@@ -22,6 +22,7 @@ import java.util.List;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import com.qbit.exchanger.money.model.Amount;
+import com.qbit.exchanger.money.model.Currency;
 import com.qbit.exchanger.money.model.Transfer;
 import com.qbit.exchanger.money.model.TransferType;
 
@@ -36,8 +37,8 @@ import javax.annotation.PreDestroy;
 
 /**
  * BITCOIN
- *
- * @author Ivan_Rakitnyh
+ * 
+* @author Ivan_Rakitnyh
  */
 @Singleton
 public class BitcoinMoneyService implements MoneyService {
@@ -58,6 +59,7 @@ public class BitcoinMoneyService implements MoneyService {
 	private Env env;
 
 	private class QueueItem {
+
 		private Transfer transfer;
 		private MoneyTransferCallback callback;
 
@@ -139,30 +141,13 @@ public class BitcoinMoneyService implements MoneyService {
 					if (item != null) {
 						Amount amount = item.getTransfer().getAmount();
 						BigInteger expectedValue = toNanoCoins(amount.getCoins(), amount.getCents());
-						if (receivedValue.compareTo(expectedValue) >= 0 ) {
-							item.callback.success();
+						if (receivedValue.compareTo(expectedValue) >= 0) {
+							item.callback.success(null);
 						}
 					}
 				} catch (ScriptException e) {
 					e.printStackTrace();
 				}
-
-//				for (TransactionOutput out : tx.getOutputs()) {
-//					try {
-//						Script scriptPubKey = out.getScriptPubKey();
-//						if (scriptPubKey.isSentToAddress()) {
-//							System.out.println(scriptPubKey.getToAddress(parameters).toString());
-//						} else if (scriptPubKey.isSentToRawPubKey()) {
-//							System.out.println("[pubkey:");
-//							System.out.println(bytesToHexString(scriptPubKey.getPubKey()));
-//							System.out.println("]");
-//						} else {
-//							System.out.println(scriptPubKey);
-//						}
-//					} catch (ScriptException ex) {
-//						logger.severe(ex.getMessage());
-//					}
-//				}
 
 				logger.log(Level.INFO, "Received tx for {0}: {1}", new Object[]{Utils.bitcoinValueToFriendlyString(receivedValue), tx});
 				logger.info("Transaction will be forwarded after it confirms.");
@@ -188,10 +173,10 @@ public class BitcoinMoneyService implements MoneyService {
 	}
 
 	/*
-	*	1 coin = 100 cents
-	* 	1 cent = 1000000 nanocents
-	*   Example: 1 coin 2345 cents = 1.00002345
-	*/
+	 * 1 coin = 100 cents
+	 * 1 cent = 1000000 nanocents
+	 * Example: 1 coin 2345 cents = 1.00002345
+	 */
 	private void sendMoney(Transfer transfer, MoneyTransferCallback callback) {
 		if ((transfer == null) || !transfer.isValid()) {
 			callback.error("Empty address or wrong money value");
@@ -203,16 +188,16 @@ public class BitcoinMoneyService implements MoneyService {
 
 			logger.log(Level.INFO, "Forwarding {0} BTC", Utils.bitcoinValueToFriendlyString(amountToSend));
 
-//			final BigInteger amountToSend = value.subtract(Transaction.REFERENCE_DEFAULT_MIN_TX_FEE);
+// final BigInteger amountToSend = value.subtract(Transaction.REFERENCE_DEFAULT_MIN_TX_FEE);
 			final Wallet.SendResult sendResult = kit.wallet().sendCoins(kit.peerGroup(), forwardingAddress, amountToSend);
 
 			logger.info("Sending ...");
 
 			assert sendResult != null;
 
-			callback.success();
+			callback.success(transfer.getAmount());
 
-			// A future that will complete once the transaction message has been successfully
+// A future that will complete once the transaction message has been successfully
 			sendResult.broadcastComplete.addListener(new Runnable() {
 
 				@Override
@@ -234,11 +219,11 @@ public class BitcoinMoneyService implements MoneyService {
 			if (getWalletAddress().contains(transfer.getAddress())) {
 				result = true;
 			} else {
-				//("Invalid address");
+//("Invalid address");
 				result = false;
 			}
 		} else {
-			//("Invalid transfer");
+//("Invalid transfer");
 			result = false;
 		}
 		return result;
@@ -251,17 +236,18 @@ public class BitcoinMoneyService implements MoneyService {
 			if (transferAmount.compareTo(getWallet().getBalance().add(MIN_FEE)) == -1) {
 				result = true;
 			} else {
-				//("Wallet is empty");
+//("Wallet is empty");
 				result = false;
 			}
 		} else {
-			//("Invalid transfer");
+//("Invalid transfer");
 			result = false;
 		}
 		return result;
 	}
 
-	public String getNewAddress() {
+	@Override
+	public String generateAddress() {
 		ECKey key = new ECKey();
 		getWallet().addKey(key);
 		Address address = key.toAddress(parameters);

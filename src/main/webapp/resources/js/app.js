@@ -4,8 +4,8 @@ angular.module("user", ["ngResource"]);
 angular.module("order", ["ngResource", "common"]);
 
 angular.module("money", []);
+angular.module("money.bitcoin", ["common"]);
 angular.module("money.yandex", ["common", "order", "money"]);
-angular.module("money.bitcoin", ["common", "order", "money"]);
 
 angular.module("exchange", ["ngResource"]);
 
@@ -28,7 +28,7 @@ angular.module("main").config(function($routeProvider, $locationProvider) {
 		templateUrl: "resources/html/wizard/result.html",
 		controller: "ResultController"
 	}).otherwise({redirectTo: "/steps/currency"});
-	//$locationProvider.html5Mode(true);
+//$locationProvider.html5Mode(true);
 }).run(function($rootScope, $location) {
 	$rootScope.location = $location;
 });

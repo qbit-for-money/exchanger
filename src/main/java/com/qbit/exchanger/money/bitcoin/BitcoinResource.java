@@ -16,7 +16,7 @@ public class BitcoinResource {
 	@Path("getNewAddress")
 	@Produces(MediaType.APPLICATION_JSON)
 	public WalletAddress getNewAddress() {
-		return new WalletAddress(bitcoinMoneyService.getNewAddress());
+		return new WalletAddress(bitcoinMoneyService.generateAddress());
 	}
 
 	@GET

@@ -1,7 +1,9 @@
 package com.qbit.exchanger.order.service;
 
 import com.qbit.exchanger.money.core.MoneyService;
+import com.qbit.exchanger.money.core.MoneyServiceProvider;
 import com.qbit.exchanger.money.core.MoneyTransferCallback;
+import com.qbit.exchanger.money.model.Amount;
 import com.qbit.exchanger.money.model.Transfer;
 import com.qbit.exchanger.order.dao.OrderDAO;
 import com.qbit.exchanger.order.model.OrderInfo;
@@ -23,7 +25,7 @@ public class OrderFlowWorker implements Runnable {
 	private OrderDAO orderDAO;
 
 	@Inject
-	private MoneyService moneyService;
+	private MoneyServiceProvider moneyServiceProvider;
 
 	@Override
 	public void run() {
@@ -61,10 +63,11 @@ public class OrderFlowWorker implements Runnable {
 		final String orderId = activeOrder.getId();
 		Transfer inTransfer = activeOrder.getInTransfer();
 		orderDAO.changeStatus(orderId, OrderStatus.INITIAL, true);
+		MoneyService moneyService = moneyServiceProvider.get(inTransfer);
 		moneyService.process(inTransfer, new MoneyTransferCallback() {
 
 			@Override
-			public void success() {
+			public void success(Amount amount) {
 				orderDAO.changeStatus(orderId, OrderStatus.PAYED, false);
 			}
 
@@ -79,10 +82,11 @@ public class OrderFlowWorker implements Runnable {
 		final String orderId = activeOrder.getId();
 		final Transfer outTransfer = activeOrder.getOutTransfer();
 		orderDAO.changeStatus(orderId, OrderStatus.PAYED, true);
+		MoneyService moneyService = moneyServiceProvider.get(outTransfer);
 		moneyService.process(outTransfer, new MoneyTransferCallback() {
 
 			@Override
-			public void success() {
+			public void success(Amount amount) {
 				orderDAO.changeStatus(orderId, OrderStatus.SUCCESS, false);
 			}
 

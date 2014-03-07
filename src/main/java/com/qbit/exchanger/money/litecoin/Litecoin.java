@@ -35,8 +35,8 @@ import javax.inject.Singleton;
 
 /**
  * LITECOIN
- *
- * @author Alexander_Sergeev
+ * 
+* @author Alexander_Sergeev
  */
 @Singleton
 public class Litecoin implements MoneyService {
@@ -62,8 +62,8 @@ public class Litecoin implements MoneyService {
 		}
 		kit = new WalletAppKit(parameters, new File(WALLET_PATH), "sample");
 
-		// For debug purposes
-		//kit.startAndWait();
+                // For debug purposes
+//kit.startAndWait();
 	}
 
 	@Override
@@ -138,9 +138,9 @@ public class Litecoin implements MoneyService {
 
 			assert sendResult != null;
 
-			callback.success();
+			callback.success(null);
 
-			// A future that will complete once the transaction message has been successfully
+// A future that will complete once the transaction message has been successfully
 			sendResult.broadcastComplete.addListener(new Runnable() {
 
 				@Override
@@ -160,7 +160,7 @@ public class Litecoin implements MoneyService {
 
 	@Override
 	public boolean test(Transfer transfer) {
-		// For debug purposes
+// For debug purposes
 		return true;
 	}
 
@@ -190,4 +190,8 @@ public class Litecoin implements MoneyService {
 		return kit.wallet();
 	}
 
+	@Override
+	public String generateAddress() {
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
 }
