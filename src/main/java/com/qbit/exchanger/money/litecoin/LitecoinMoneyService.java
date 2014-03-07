@@ -57,6 +57,7 @@ public class LitecoinMoneyService implements MoneyService {
 	private Env env;
 
 	private class QueueItem {
+
 		private Transfer transfer;
 		private MoneyTransferCallback callback;
 
@@ -92,7 +93,6 @@ public class LitecoinMoneyService implements MoneyService {
 		}
 		kit = new WalletAppKit(parameters, new File(env.getLitecoinWalletPath()), "sample");
 		kit.startAndWait();
-
 		paymentQueue = new ConcurrentHashMap<>();
 
 		AbstractWalletEventListener listener = getPaymentListener();
@@ -142,8 +142,8 @@ public class LitecoinMoneyService implements MoneyService {
 							item.callback.success();
 						}
 					}
-				} catch (ScriptException e) {
-					e.printStackTrace();
+				} catch (ScriptException ex) {
+					logger.severe(ex.getMessage());
 				}
 
 //				for (TransactionOutput out : tx.getOutputs()) {
@@ -162,7 +162,6 @@ public class LitecoinMoneyService implements MoneyService {
 //						logger.severe(ex.getMessage());
 //					}
 //				}
-				
 				logger.log(Level.INFO, "Received tx for {0}: {1}", new Object[]{Utils.bitcoinValueToFriendlyString(receivedValue), tx});
 				logger.info("Transaction will be forwarded after it confirms.");
 
@@ -226,7 +225,7 @@ public class LitecoinMoneyService implements MoneyService {
 			logger.severe(ex.getMessage());
 		}
 	}
-	
+
 	private boolean testReceive(Transfer transfer) {
 		boolean result;
 		if ((transfer != null) && transfer.isValid()) {
@@ -242,7 +241,7 @@ public class LitecoinMoneyService implements MoneyService {
 		}
 		return result;
 	}
-	
+
 	private boolean testSend(Transfer transfer) {
 		boolean result;
 		if ((transfer != null) && transfer.isValid()) {
@@ -285,7 +284,7 @@ public class LitecoinMoneyService implements MoneyService {
 	private Wallet getWallet() {
 		return kit.wallet();
 	}
-	
+
 	private static BigInteger toNanoCoins(long coins, long cents) {
 		checkArgument(cents < 100000000);
 		checkArgument(cents >= 0);
