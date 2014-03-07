@@ -1,2 +1,5 @@
-target/
+.idea
+*.iml
+/.gitignore
+target
 nb-configuration.xml

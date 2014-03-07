@@ -8,11 +8,11 @@ wizardModule.factory("wizardService", function() {
 		}, {
 			id: "result", title: "Result", path: "/steps/result"
 		}];
-	
+
 	function getSteps() {
 		return steps;
 	}
-	
+
 	function getStepByIndex(stepIndex) {
 		if (isStepIndexValid(stepIndex)) {
 			return steps[stepIndex];
@@ -46,6 +46,7 @@ wizardModule.factory("wizardService", function() {
 		}
 		return -1;
 	}
+
 	function canGoToStep(stepIndex) {
 		if (!isStepIndexValid(stepIndex)) {
 			return false;
@@ -56,7 +57,7 @@ wizardModule.factory("wizardService", function() {
 		var prevStep = steps[stepIndex - 1];
 		return (!prevStep.validator || prevStep.validator());
 	}
-	
+
 	function canGoToNextStep(currentPath) {
 		var currentStepIndex = getStepIndexByPath(currentPath);
 		if (!isStepIndexValid(currentStepIndex) || !isStepIndexValid(currentStepIndex + 1)) {
@@ -73,7 +74,7 @@ wizardModule.factory("wizardService", function() {
 		var currentStepIndex = getStepIndexByPath(currentPath);
 		return steps[currentStepIndex + 1];
 	}
-	
+
 	function canGoToPrevStep(currentPath) {
 		var currentStepIndex = getStepIndexByPath(currentPath);
 		return (isStepIndexValid(currentStepIndex) && isStepIndexValid(currentStepIndex - 1));
@@ -82,35 +83,29 @@ wizardModule.factory("wizardService", function() {
 		var currentStepIndex = getStepIndexByPath(currentPath);
 		return steps[currentStepIndex - 1];
 	}
-	
+
 	function isStepIndexValid(stepIndex) {
 		return (angular.isNumber(stepIndex) && (stepIndex >= 0) && (stepIndex < steps.length));
 	}
-	
+
 	function registerValidator(stepId, validator) {
 		var step = getStepById(stepId);
 		step.validator = validator;
 	}
-	
+
 	return {
 		getSteps: getSteps,
-		
 		getStepByIndex: getStepByIndex,
 		getStepById: getStepById,
 		getStepIndexById: getStepIndexById,
 		getStepByPath: getStepByPath,
 		getStepIndexByPath: getStepIndexByPath,
-		
 		canGoToStep: canGoToStep,
-		
 		canGoToNextStep: canGoToNextStep,
 		getNextStep: getNextStep,
-		
 		canGoToPrevStep: canGoToPrevStep,
 		getPrevStep: getPrevStep,
-		
 		isStepIndexValid: isStepIndexValid,
-		
 		registerValidator: registerValidator
 	};
 });
