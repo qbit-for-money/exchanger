@@ -12,10 +12,10 @@ import javax.persistence.criteria.CriteriaQuery;
  * @author Александр
  */
 public final class DAOUtil {
-	
+
 	private DAOUtil() {
 	}
-	
+
 	public static <T> T find(EntityManager entityManager, Class<T> entityClass, Object id, T empty) {
 		try {
 			T result = entityManager.find(entityClass, id);
@@ -28,7 +28,7 @@ public final class DAOUtil {
 			return empty;
 		}
 	}
-	
+
 	public static <T> List<T> findAll(EntityManager entityManager, Class<T> entityClass) {
 		CriteriaQuery<T> criteriaQuery = entityManager.getCriteriaBuilder().createQuery(entityClass);
 		criteriaQuery.select(criteriaQuery.from(entityClass));

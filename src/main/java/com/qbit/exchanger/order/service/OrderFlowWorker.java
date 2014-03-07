@@ -23,10 +23,10 @@ public class OrderFlowWorker implements Runnable {
 
 	@Inject
 	private OrderDAO orderDAO;
-	
+
 	@Inject
 	private MoneyServiceProvider moneyServiceProvider;
-	
+
 	@Override
 	public void run() {
 		List<OrderInfo> activeOrders = orderDAO.findActiveAndNotInProcess();
@@ -36,7 +36,7 @@ public class OrderFlowWorker implements Runnable {
 					processActiveOrder(activeOrder);
 				} catch (Exception ex) {
 					Logger.getLogger(OrderFlowWorker.class.getName()).log(Level.SEVERE,
-							ex.getMessage(), ex);
+						ex.getMessage(), ex);
 				}
 			}
 		}

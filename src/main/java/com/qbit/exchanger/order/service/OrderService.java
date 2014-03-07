@@ -19,13 +19,13 @@ import javax.inject.Singleton;
  */
 @Singleton
 public class OrderService {
-	
+
 	@Inject
 	private OrderDAO orderDAO;
-	
+
 	@Inject
 	private MoneyServiceProvider moneyServiceProvider;
-	
+
 	public OrderInfo getActiveByUser(String userPublicKey) throws OrderServiceException {
 		List<OrderInfo> activeOrders = orderDAO.findActiveByUser(userPublicKey);
 		if ((activeOrders != null) && activeOrders.size() > 1) {
@@ -37,7 +37,7 @@ public class OrderService {
 			return null;
 		}
 	}
-	
+
 	public OrderInfo getByUserAndTimestamp(String userPublicKey, Date creationDate) throws OrderServiceException {
 		List<OrderInfo> orders = orderDAO.findByUserAndTimestamp(userPublicKey, creationDate);
 		if ((orders != null) && orders.size() > 1) {
@@ -49,23 +49,23 @@ public class OrderService {
 			return null;
 		}
 	}
-	
+
 	public OrderInfo create(OrderInfo orderInfo) throws OrderServiceException {
 		if ((orderInfo == null) || !orderInfo.isValid()) {
 			throw new OrderServiceSecurityException("Can not create order. Order is inconsistent.");
 		}
-		
+
 		OrderInfo activeOrder = getActiveByUser(orderInfo.getUserPublicKey());
 		if (activeOrder != null) {
 			throw new OrderServiceSecurityException("Can not create order. No more than one active order per user.");
 		}
-		
+
 		Transfer outTransfer = orderInfo.getOutTransfer();
 		MoneyService moneyService = moneyServiceProvider.get(outTransfer);
 		if (!moneyService.test(outTransfer)) {
 			throw new OrderTestException();
 		}
-		
+
 		OrderInfo result = orderDAO.create(orderInfo);
 		if (result == null) {
 			throw new OrderServiceSecurityException("Can not create order.");

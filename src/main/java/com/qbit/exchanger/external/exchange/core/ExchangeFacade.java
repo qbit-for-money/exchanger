@@ -12,7 +12,7 @@ import javax.inject.Singleton;
  */
 @Singleton
 public class ExchangeFacade implements Exchange {
-	
+
 	@Inject
 	private BTCExchange btcExchange;
 

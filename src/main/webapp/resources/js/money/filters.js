@@ -21,7 +21,7 @@ moneyModule.filter("rate", function(rateToNumber) {
 		var fractionDigits;
 		if (rateNum < 1) {
 			fractionDigits = Math.round(Math.log(Math.max(
-					rate.numerator.centsInCoin, rate.denominator.centsInCoin)) / Math.LN10);
+				rate.numerator.centsInCoin, rate.denominator.centsInCoin)) / Math.LN10);
 		} else {
 			fractionDigits = 2;
 		}

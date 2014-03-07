@@ -2,3 +2,5 @@
 *.png binary
 *.jpg binary
 *.jar binary
+*.spvchain binary
+*.wallet binary

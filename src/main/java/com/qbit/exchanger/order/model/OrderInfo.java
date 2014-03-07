@@ -28,19 +28,19 @@ import javax.xml.bind.annotation.XmlTransient;
 @Entity
 @NamedQueries({
 	@NamedQuery(name = "OrderInfo.findActive",
-			query = "SELECT o FROM OrderInfo o WHERE o.status = com.qbit.exchanger.order.model.OrderStatus.INITIAL"
-					+ " OR o.status = com.qbit.exchanger.order.model.OrderStatus.PAYED"),
+		query = "SELECT o FROM OrderInfo o WHERE o.status = com.qbit.exchanger.order.model.OrderStatus.INITIAL"
+		+ " OR o.status = com.qbit.exchanger.order.model.OrderStatus.PAYED"),
 	@NamedQuery(name = "OrderInfo.findActiveAndNotInProcess",
-			query = "SELECT o FROM OrderInfo o WHERE (o.status = com.qbit.exchanger.order.model.OrderStatus.INITIAL"
-					+ " OR o.status = com.qbit.exchanger.order.model.OrderStatus.PAYED)"
-					+ " AND NOT o.inProcess"),
+		query = "SELECT o FROM OrderInfo o WHERE (o.status = com.qbit.exchanger.order.model.OrderStatus.INITIAL"
+		+ " OR o.status = com.qbit.exchanger.order.model.OrderStatus.PAYED)"
+		+ " AND NOT o.inProcess"),
 	@NamedQuery(name = "OrderInfo.findActiveByUser",
-			query = "SELECT o FROM OrderInfo o WHERE (o.status = com.qbit.exchanger.order.model.OrderStatus.INITIAL"
-					+ " OR o.status = com.qbit.exchanger.order.model.OrderStatus.PAYED)"
-					+ " AND o.userPublicKey = :userPublicKey"),
+		query = "SELECT o FROM OrderInfo o WHERE (o.status = com.qbit.exchanger.order.model.OrderStatus.INITIAL"
+		+ " OR o.status = com.qbit.exchanger.order.model.OrderStatus.PAYED)"
+		+ " AND o.userPublicKey = :userPublicKey"),
 	@NamedQuery(name = "OrderInfo.findByUserAndTimestamp",
-			query = "SELECT o FROM OrderInfo o WHERE o.userPublicKey = :userPublicKey"
-					+ " AND o.creationDate = :creationDate")})
+		query = "SELECT o FROM OrderInfo o WHERE o.userPublicKey = :userPublicKey"
+		+ " AND o.creationDate = :creationDate")})
 @XmlRootElement
 public class OrderInfo implements Identifiable<String>, Serializable {
 
@@ -138,10 +138,10 @@ public class OrderInfo implements Identifiable<String>, Serializable {
 
 	public boolean isValid() {
 		return ((userPublicKey != null) && (inTransfer != null) && (outTransfer != null)
-				&& inTransfer.isValid() && outTransfer.isValid()
-				&& TransferType.IN.equals(inTransfer.getType())
-				&& TransferType.OUT.equals(outTransfer.getType())
-				&& !inTransfer.getCurrency().equals(outTransfer.getCurrency()));
+			&& inTransfer.isValid() && outTransfer.isValid()
+			&& TransferType.IN.equals(inTransfer.getType())
+			&& TransferType.OUT.equals(outTransfer.getType())
+			&& !inTransfer.getCurrency().equals(outTransfer.getCurrency()));
 	}
 
 	@Override

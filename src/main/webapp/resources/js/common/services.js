@@ -24,16 +24,16 @@ commonModule.factory("sessionStorage", function(storage) {
 
 commonModule.factory("delayedProxy", function($timeout) {
 	return function(f, delay) {
-			var proxy = function() {
-				if (proxy.promise) {
-					$timeout.cancel(proxy.promise);
-				}
-				var self = this;
-				var args = arguments;
-				proxy.promise = $timeout(function() {
-						f.apply(self, args);
-					}, delay);
-			};
-			return proxy;
+		var proxy = function() {
+			if (proxy.promise) {
+				$timeout.cancel(proxy.promise);
+			}
+			var self = this;
+			var args = arguments;
+			proxy.promise = $timeout(function() {
+				f.apply(self, args);
+			}, delay);
 		};
+		return proxy;
+	};
 });

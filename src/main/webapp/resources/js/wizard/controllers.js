@@ -2,7 +2,7 @@ var wizardModule = angular.module("wizard");
 
 wizardModule.controller("WizardController", function($rootScope, $location, wizardService) {
 	$rootScope.steps = wizardService.getSteps();
-	
+
 	function updateCurrentStepIndex() {
 		var currentStepIndex = wizardService.getStepIndexByPath($location.path());
 		if (wizardService.isStepIndexValid(currentStepIndex)) {
@@ -17,7 +17,7 @@ wizardModule.controller("WizardController", function($rootScope, $location, wiza
 	}
 	$rootScope.$on("$locationChangeSuccess", updateCurrentStepIndex);
 	updateCurrentStepIndex();
-	
+
 	$rootScope.goToStep = function(stepIndex) {
 		if (wizardService.canGoToStep(stepIndex)) {
 			$location.path(wizardService.getStepByIndex(stepIndex).path);

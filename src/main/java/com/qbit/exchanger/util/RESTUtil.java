@@ -14,14 +14,14 @@ import java.util.List;
  * @author Александр
  */
 public final class RESTUtil {
-	
+
 	private static final DateFormat DATE_TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-	
+
 	private static final DateFormat DATE_TIME_FORMAT_WITH_MILLIS = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
-	
+
 	private RESTUtil() {
 	}
-	
+
 	public static List<ResourceLink> toLinks(String basePath, List<? extends Identifiable<?>> objs) {
 		List<ResourceLink> result = new ArrayList<>();
 		if (objs != null) {
@@ -31,7 +31,7 @@ public final class RESTUtil {
 		}
 		return result;
 	}
-	
+
 	public static Date toDate(String dateStr) throws ParseException {
 		Date result;
 		try {

@@ -1,52 +1,51 @@
-package com.qbit.exchanger.money.bitcoin;
+package com.qbit.exchanger.money.litecoin;
 
-import com.google.bitcoin.core.*;
-import com.google.bitcoin.core.Wallet;
-import com.google.bitcoin.crypto.KeyCrypterException;
-import com.google.bitcoin.kits.WalletAppKit;
-import com.google.bitcoin.params.MainNetParams;
-import com.google.bitcoin.params.TestNet3Params;
-import com.google.bitcoin.utils.BriefLogFormatter;
+import com.google.litecoin.core.*;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.MoreExecutors;
-import com.qbit.exchanger.env.Env;
-import com.qbit.exchanger.money.core.MoneyTransferCallback;
+import com.google.litecoin.kits.WalletAppKit;
+import com.google.litecoin.params.MainNetParams;
+import com.google.litecoin.params.TestNet3Params;
+import com.google.litecoin.utils.BriefLogFormatter;
 import com.qbit.exchanger.money.core.MoneyService;
+import com.qbit.exchanger.money.core.MoneyTransferCallback;
+import com.qbit.exchanger.money.model.Transfer;
 
 import java.io.File;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
+import com.google.litecoin.crypto.KeyCrypterException;
+import com.qbit.exchanger.env.Env;
 import com.qbit.exchanger.money.model.Amount;
-import com.qbit.exchanger.money.model.Transfer;
 import com.qbit.exchanger.money.model.TransferType;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.logging.Level;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+import static com.google.common.base.Preconditions.checkArgument;
 
 /**
- * BITCOIN
- * 
-* @author Ivan_Rakitnyh
+ * LITECOIN
+ *
+ * @author Alexander_Sergeev
  */
 @Singleton
-public class BitcoinMoneyService implements MoneyService {
+public class LitecoinMoneyService implements MoneyService {
 
 	private static final BigInteger COIN = new BigInteger("100000000", 10);
 
-	private static final BigInteger MIN_FEE = new BigInteger("10000", 10);
+	private static final BigInteger MIN_FEE = new BigInteger("100000", 10);
 
-	private static final Logger logger = Logger.getLogger(BitcoinMoneyService.class.getName());
+	private static final Logger logger = Logger.getLogger(LitecoinMoneyService.class.getName());
 
 	private ConcurrentMap<String, QueueItem> paymentQueue;
 
@@ -87,14 +86,13 @@ public class BitcoinMoneyService implements MoneyService {
 	@PostConstruct
 	public void init() {
 		BriefLogFormatter.init();
-		if (env.isBitcoinTestnet()) {
+		if (env.isLitecoinTestnet()) {
 			parameters = TestNet3Params.get();
 		} else {
 			parameters = MainNetParams.get();
 		}
-		kit = new WalletAppKit(parameters, new File(env.getBitcoinWalletPath()), "sample");
+		kit = new WalletAppKit(parameters, new File(env.getLitecoinWalletPath()), "sample");
 		kit.startAndWait();
-
 		paymentQueue = new ConcurrentHashMap<>();
 
 		AbstractWalletEventListener listener = getPaymentListener();
@@ -172,9 +170,9 @@ public class BitcoinMoneyService implements MoneyService {
 	}
 
 	/*
-	 * 1 coin = 100 cents
-	 * 1 cent = 1000000 nanocents
-	 * Example: 1 coin 2345 cents = 1.00002345
+	 *	1 coin = 100 cents
+	 * 	1 cent = 1000000 nanocents
+	 *   Example: 1 coin 2345 cents = 1.00002345
 	 */
 	private void sendMoney(Transfer transfer, MoneyTransferCallback callback) {
 		if ((transfer == null) || !transfer.isValid()) {
@@ -187,7 +185,7 @@ public class BitcoinMoneyService implements MoneyService {
 
 			logger.log(Level.INFO, "Forwarding {0} BTC", Utils.bitcoinValueToFriendlyString(amountToSend));
 
-			// final BigInteger amountToSend = value.subtract(Transaction.REFERENCE_DEFAULT_MIN_TX_FEE);
+//			final BigInteger amountToSend = value.subtract(Transaction.REFERENCE_DEFAULT_MIN_TX_FEE);
 			final Wallet.SendResult sendResult = kit.wallet().sendCoins(kit.peerGroup(), forwardingAddress, amountToSend);
 
 			logger.info("Sending ...");
@@ -215,7 +213,12 @@ public class BitcoinMoneyService implements MoneyService {
 	private boolean testReceive(Transfer transfer) {
 		boolean result;
 		if ((transfer != null) && transfer.isValid()) {
-			result = getWalletAddress().contains(transfer.getAddress());
+			if (getWalletAddress().contains(transfer.getAddress())) {
+				result = true;
+			} else {
+				//("Invalid address");
+				result = false;
+			}
 		} else {
 			//("Invalid transfer");
 			result = false;
@@ -227,7 +230,12 @@ public class BitcoinMoneyService implements MoneyService {
 		boolean result;
 		if ((transfer != null) && transfer.isValid()) {
 			BigInteger transferAmount = toNanoCoins(transfer.getAmount().getCoins(), transfer.getAmount().getCents());
-			result = transferAmount.compareTo(getWallet().getBalance().add(MIN_FEE)) == -1;
+			if (transferAmount.compareTo(getWallet().getBalance().add(MIN_FEE)) == -1) {
+				result = true;
+			} else {
+				//("Wallet is empty");
+				result = false;
+			}
 		} else {
 			//("Invalid transfer");
 			result = false;

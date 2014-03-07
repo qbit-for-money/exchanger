@@ -49,7 +49,7 @@ public class CurrencyAdapter extends XmlAdapter<CurrencyAdapter.AdaptedCurrency,
 			this.supported = supported;
 		}
 	}
-	
+
 	@Override
 	public Currency unmarshal(AdaptedCurrency adaptedCurrency) throws Exception {
 		Currency result = null;

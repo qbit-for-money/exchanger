@@ -11,7 +11,7 @@ public interface MoneyService {
 	
 	String generateAddress();
 
-    void process(Transfer transfer, MoneyTransferCallback callback);
+	void process(Transfer transfer, MoneyTransferCallback callback);
 
 	boolean test(Transfer transfer);
 }

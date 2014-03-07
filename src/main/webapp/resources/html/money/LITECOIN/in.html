@@ -1,12 +1,12 @@
-<div ng-controller="BitcoinController">
+<div ng-controller="LitecoinController">
 	<div class="row">
 		<div class="col-md-12">
 			<form name="form" novalidate>
 				<amount-input form="form" amount="transfer.amount"></amount-input>
 				<div class="form-group" ng-class="{'has-error': form.wallet.$invalid}">
-					<label class="sr-only" for="bitcoinWallet">Wallet</label>
+					<label class="sr-only" for="litecoinWallet">Wallet</label>
 					<input class="form-control input-lg money-wallet" placeholder="Wallet" ng-model="address"
-					       ng-readonly="true" type="text" name="wallet" id="bitcoinWallet" />
+					       ng-readonly="true" type="text" name="wallet" id="litecoinWallet" />
 				</div>
 			</form>
 		</div>

@@ -11,27 +11,27 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement
 public class Rate implements Serializable {
-	
+
 	private Amount numerator;
-	
+
 	private Amount denominator;
 
 	public Rate() {
 	}
-	
+
 	public Rate(BigDecimal numerator, Currency fromCurrency, Currency toCurrency) {
 		if ((numerator == null) || (fromCurrency == null)
-				|| (toCurrency == null)) {
+			|| (toCurrency == null)) {
 			throw new IllegalArgumentException();
 		}
 		this.numerator = new Amount(numerator, toCurrency.getCentsInCoin());
 		this.denominator = new Amount(1, 0, fromCurrency.getCentsInCoin());
 	}
-	
+
 	public Rate(BigDecimal numerator, BigDecimal denominator,
-			Currency fromCurrency, Currency toCurrency) {
+		Currency fromCurrency, Currency toCurrency) {
 		if ((numerator == null) || (denominator == null)
-				|| (fromCurrency == null) || (toCurrency == null)) {
+			|| (fromCurrency == null) || (toCurrency == null)) {
 			throw new IllegalArgumentException();
 		}
 		this.numerator = new Amount(numerator, toCurrency.getCentsInCoin());
@@ -40,7 +40,7 @@ public class Rate implements Serializable {
 
 	public Rate(Amount numerator, Amount denominator) {
 		if ((numerator == null) || !numerator.isValid()
-				|| (denominator == null) || !denominator.isValid()) {
+			|| (denominator == null) || !denominator.isValid()) {
 			throw new IllegalArgumentException();
 		}
 		this.numerator = numerator;
@@ -62,7 +62,7 @@ public class Rate implements Serializable {
 	public void setDenominator(Amount denominator) {
 		this.denominator = denominator;
 	}
-	
+
 	public Rate inv() {
 		return new Rate(denominator, numerator);
 	}

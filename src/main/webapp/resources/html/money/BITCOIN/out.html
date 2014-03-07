@@ -1,30 +1,12 @@
 <div ng-controller="BitcoinController">
-	<div class="col-md-offset-5 row">
-		<h2>Bitcoin</h2>
-	</div>
-	<div class="row">
-		<div class="col-md-offset-4">
-			<form name="form" novalidate class="">
-				<div class="form-group col-md-4" ng-class="{'has-error': form.coins.$invalid}">
-					<label class="" for="bitcoinCoins">Coins</label>
-					<input class="form-control input-lg money-amount" ng-readonly="false" ng-model="amount.coins"
-						   ng-pattern="/^[0-9]\d*$/" required step="1" type="number" name="coins" min="0" id="bitcoinCoins" />
-				</div>
-				<div class="form-group col-md-4" ng-class="{'has-error': form.cents.$invalid}">
-					<label class="" for="bitcoinCents">Cents</label>
-					<input class="form-control input-lg money-amount" ng-readonly="false" ng-model="amount.cents"
-						   ng-pattern="/^[0-9]\d*$/" required step="1" type="number" name="cents" min="0" max="99999999" id="bitcoinCents" />
-				</div>
-			</form>
-		</div>
-	</div>
-	<div class="row">
-		<div class="col-md-offset-3">
-			<form name="walletForm" novalidate>
-				<div class="form-group col-md-8" ng-class="{'has-error': walletForm.wallet.$invalid}">
-					<label for="bitcoinWallet">Wallet</label>
-					<input class="form-control input-lg money-wallet" ng-model="address"
-						   required type="text" name="wallet" id="bitcoinWallet" placeholder="Wallet" />
+	<div class="row">		
+		<div class="col-md-12">
+			<form name="form" novalidate>
+				<amount-input form="form" amount="transfer.amount"></amount-input>
+				<div class="form-group" ng-class="{'has-error': form.wallet.$invalid}">
+					<label class="sr-only" for="bitcoinWallet">Wallet</label>
+					<input class="form-control input-lg money-wallet" placeholder="Wallet" ng-model="address"
+					       required type="text" name="wallet" id="bitcoinWallet" />
 				</div>
 			</form>
 		</div>

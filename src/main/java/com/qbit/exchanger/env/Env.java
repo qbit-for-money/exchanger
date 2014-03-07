@@ -96,4 +96,14 @@ public class Env {
 	public boolean isBitcoinTestnet() {
 		return Boolean.TRUE.toString().equalsIgnoreCase(properties.getProperty("money.bitcoin.testnet"));
 	}
+	
+	@XmlTransient
+	public String getLitecoinWalletPath() {
+		return properties.getProperty("money.litecoin.wallet.path");
+	}
+
+	@XmlTransient
+	public boolean isLitecoinTestnet() {
+		return Boolean.TRUE.toString().equalsIgnoreCase(properties.getProperty("money.litecoin.testnet"));
+	}
 }

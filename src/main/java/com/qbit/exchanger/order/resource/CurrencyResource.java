@@ -19,10 +19,10 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @Path("currency")
 public class CurrencyResource {
-	
+
 	@XmlRootElement
 	public static class CurrencyWrapper implements Serializable {
-		
+
 		@XmlJavaTypeAdapter(CurrencyAdapter.class)
 		private Currency currency;
 
@@ -37,10 +37,10 @@ public class CurrencyResource {
 			return currency;
 		}
 	}
-	
+
 	@XmlRootElement
 	public static class CurrencyListWrapper implements Serializable {
-		
+
 		@XmlJavaTypeAdapter(CurrencyAdapter.class)
 		private List<Currency> currencies;
 
@@ -55,16 +55,16 @@ public class CurrencyResource {
 			return currencies;
 		}
 	}
-	
+
 	@GET
-    @Path("{id}")
-    @Produces(MediaType.APPLICATION_JSON)
+	@Path("{id}")
+	@Produces(MediaType.APPLICATION_JSON)
 	public CurrencyWrapper get(@PathParam("id") String id) {
 		return new CurrencyWrapper(Currency.valueOf(id));
 	}
-	
+
 	@GET
-    @Produces(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
 	public CurrencyListWrapper findAll() {
 		return new CurrencyListWrapper(Arrays.asList(Currency.values()));
 	}

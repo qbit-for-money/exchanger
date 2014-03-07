@@ -17,21 +17,21 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Entity
 @XmlRootElement
 public class UserInfo implements Identifiable<String>, Serializable {
-	
+
 	private static final long serialVersionUID = 1L;
-	
+
 	public static final UserInfo EMPTY = new UserInfo();
-	
+
 	@Id
 	private String publicKey;
-	
+
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date registrationDate;
-	
+
 	private String name;
-	
+
 	private String email;
-	
+
 	@Override
 	public String getId() {
 		return publicKey;
