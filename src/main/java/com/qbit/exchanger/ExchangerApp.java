@@ -38,7 +38,7 @@ public class ExchangerApp extends Application {
 	}
 
 	@PostConstruct
-	private void init() {
+	public void init() {
 		DynamicConfiguration configuration = getConfiguration(serviceLocator);
 
 		addBinding(newBinder(Env.class).to(Env.class).in(Singleton.class), configuration);
@@ -53,7 +53,6 @@ public class ExchangerApp extends Application {
 
 		addBinding(newBinder(BitcoinMoneyService.class).to(BitcoinMoneyService.class).in(Singleton.class), configuration);
 		addBinding(newBinder(LitecoinMoneyService.class).to(LitecoinMoneyService.class).in(Singleton.class), configuration);
-
 		addBinding(newBinder(YandexMoneyService.class).to(YandexMoneyService.class).in(Singleton.class), configuration);
 
 		addBinding(newBinder(MoneyServiceProvider.class).to(MoneyServiceProvider.class).in(Singleton.class), configuration);
@@ -75,7 +74,7 @@ public class ExchangerApp extends Application {
 	 * another classes except this one.
 	 */
 	@PreDestroy
-	private void preDestroy() {
+	public void preDestroy() {
 		serviceLocator.shutdown();
 	}
 }

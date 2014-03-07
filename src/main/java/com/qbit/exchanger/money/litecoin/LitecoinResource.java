@@ -14,13 +14,6 @@ public class LitecoinResource {
 	
 	@Inject
 	private LitecoinMoneyService litecoinMoneyService;
-	
-	@GET
-	@Path("getNewAddress")
-	@Produces(MediaType.APPLICATION_JSON)
-	public WalletAddress getNewAddress() {
-		return new WalletAddress(litecoinMoneyService.generateAddress());
-	}
 
 	@GET
 	@Path("balance")

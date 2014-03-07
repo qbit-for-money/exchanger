@@ -44,7 +44,7 @@ public class YandexMoneyService implements MoneyService {
 	private Env env;
 
 	@PostConstruct
-	private void init() {
+	public void init() {
 		yandexMoney = new YandexMoneyImpl(env.getYandexClientId());
 	}
 

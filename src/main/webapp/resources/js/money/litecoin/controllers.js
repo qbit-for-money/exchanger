@@ -18,11 +18,6 @@ litecoinModule.controller("LitecoinController", function($scope, $rootScope, lit
 
 	if ($rootScope.orderInfo.inTransfer.currency === "LITECOIN") {
 		$scope.$watch("amount", $scope.fillInTransfer);
-		var walletAddress = litecoinResource.getNewAddress();
-		walletAddress.$promise.then(function() {
-			$scope.address = walletAddress.address;
-			$rootScope.orderInfo.inTransfer.address = $scope.address;
-		});
 	} else {
 		$scope.$watch("amount", $scope.fillOutTransfer);
 		$scope.$watch("address", $scope.fillOutTransfer);

@@ -84,7 +84,7 @@ public class LitecoinMoneyService implements MoneyService {
 	}
 
 	@PostConstruct
-	private void init() {
+	public void init() {
 		BriefLogFormatter.init();
 		if (env.isLitecoinTestnet()) {
 			parameters = TestNet3Params.get();
@@ -93,14 +93,14 @@ public class LitecoinMoneyService implements MoneyService {
 		}
 		kit = new WalletAppKit(parameters, new File(env.getLitecoinWalletPath()), "sample");
 		kit.startAndWait();
-		paymentQueue = new ConcurrentHashMap<String, QueueItem>();
+		paymentQueue = new ConcurrentHashMap<>();
 
 		AbstractWalletEventListener listener = getPaymentListener();
 		getWallet().addEventListener(listener);
 	}
 
 	@PreDestroy
-	private void destroy() {
+	public void destroy() {
 		kit.stopAndWait();
 	}
 

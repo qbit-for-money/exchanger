@@ -18,7 +18,7 @@ import org.glassfish.jersey.client.ClientConfig;
  *
  * @author Александр
  */
-public final class RESTClientUtils {
+public final class RESTClientUtil {
 
 	private static final Map<String, Object> JAXB_PROPS = new HashMap<>(2);
 
@@ -27,7 +27,7 @@ public final class RESTClientUtils {
 		JAXB_PROPS.put(JAXBContextProperties.JSON_INCLUDE_ROOT, false);
 	}
 
-	private RESTClientUtils() {
+	private RESTClientUtil() {
 	}
 
 	public static <R> R get(String target, String path, Class<R> type) throws JAXBException {
@@ -51,7 +51,7 @@ public final class RESTClientUtils {
 
 	public static <R> R unmarshal(Source source, Class<R> type) throws JAXBException {
 		System.setProperty(JAXBContext.JAXB_CONTEXT_FACTORY, "org.eclipse.persistence.jaxb.JAXBContextFactory");
-		JAXBContext context = JAXBContext.newInstance(new Class[]{type}, JAXB_PROPS);
+		JAXBContext context = JAXBContext.newInstance(new Class[] {type}, JAXB_PROPS);
 		return context.createUnmarshaller().unmarshal(source, type).getValue();
 	}
 }

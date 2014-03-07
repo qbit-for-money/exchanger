@@ -1,6 +1,6 @@
 var bitcoinModule = angular.module("money.bitcoin");
 
-bitcoinModule.controller("BitcoinController", function($scope, $rootScope, bitcoinResource) {
+bitcoinModule.controller("BitcoinController", function($scope, $rootScope) {
 	$scope.amount = {
 		coins: 0,
 		cents: 0,
@@ -19,11 +19,6 @@ bitcoinModule.controller("BitcoinController", function($scope, $rootScope, bitco
 
 	if ($rootScope.orderInfo.inTransfer.currency === "BITCOIN") {
 		$scope.$watch("amount", $scope.fillInTransfer);
-		var walletAddress = bitcoinResource.getNewAddress();
-		walletAddress.$promise.then(function() {
-			$scope.address = walletAddress.address;
-			$rootScope.orderInfo.inTransfer.address = $scope.address;
-		});
 	} else {
 		$scope.$watch("amount", $scope.fillOutTransfer);
 		$scope.$watch("address", $scope.fillOutTransfer);

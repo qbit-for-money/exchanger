@@ -52,7 +52,7 @@ public class OrderFlowScheduler {
 	}
 
 	@PreDestroy
-	private void shutdown() {
+	public void shutdown() {
 		executorService.shutdown();
 	}
 }

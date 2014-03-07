@@ -18,6 +18,11 @@ public class ExchangeFacade implements Exchange {
 
 	@Override
 	public Rate getRate(Currency from, Currency to) throws Exception {
-		return btcExchange.getRate(from, to);
+		try {
+			return btcExchange.getRate(from, to);
+		} catch (Exception ex) {
+			Rate invRate = btcExchange.getRate(to, from);
+			return invRate.inv();
+		}
 	}
 }
