@@ -84,7 +84,7 @@ public class YandexMoneyService implements MoneyService {
 			if (response != null && response.isSuccess()) {
 				ProcessPaymentResponse paymentResponse = processPayment(token, response.getRequestId());
 				if (paymentResponse != null && paymentResponse.isSuccess()) {
-					callback.success();
+					callback.success(null);
 				} else {
 					callback.error(paymentResponse != null ? paymentResponse.getError().getCode() : null);
 				}

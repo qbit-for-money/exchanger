@@ -138,7 +138,7 @@ public class Bitcoin implements MoneyService {
 
 			assert sendResult != null;
 
-			callback.success();
+			callback.success(null);
 
 			// A future that will complete once the transaction message has been successfully
 			sendResult.broadcastComplete.addListener(new Runnable() {

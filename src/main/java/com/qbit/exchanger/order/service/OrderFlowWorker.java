@@ -2,6 +2,7 @@ package com.qbit.exchanger.order.service;
 
 import com.qbit.exchanger.money.core.MoneyService;
 import com.qbit.exchanger.money.core.MoneyTransferCallback;
+import com.qbit.exchanger.money.model.Amount;
 import com.qbit.exchanger.money.model.Transfer;
 import com.qbit.exchanger.order.dao.OrderDAO;
 import com.qbit.exchanger.order.model.OrderInfo;
@@ -64,7 +65,7 @@ public class OrderFlowWorker implements Runnable {
 		moneyService.process(inTransfer, new MoneyTransferCallback() {
 
 			@Override
-			public void success() {
+			public void success(Amount amount) {
 				orderDAO.changeStatus(orderId, OrderStatus.PAYED, false);
 			}
 
@@ -82,7 +83,7 @@ public class OrderFlowWorker implements Runnable {
 		moneyService.process(outTransfer, new MoneyTransferCallback() {
 
 			@Override
-			public void success() {
+			public void success(Amount amount) {
 				orderDAO.changeStatus(orderId, OrderStatus.SUCCESS, false);
 			}
 

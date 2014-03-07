@@ -1,5 +1,7 @@
 package com.qbit.exchanger.money.core;
 
+import com.qbit.exchanger.money.model.Amount;
+
 /**
  *
  *
@@ -7,7 +9,7 @@ package com.qbit.exchanger.money.core;
  */
 public interface MoneyTransferCallback {
 
-	void success();
+	void success(Amount amount);
 
 	void error(String msg);
 }
