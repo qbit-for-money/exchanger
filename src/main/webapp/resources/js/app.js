@@ -4,6 +4,7 @@ angular.module("user", ["ngResource"]);
 angular.module("order", ["ngResource", "common"]);
 
 angular.module("money", []);
+angular.module("money.bitcoin", ["common"]);
 angular.module("money.yandex", ["common", "order", "money"]);
 
 angular.module("exchange", ["ngResource"]);
@@ -14,7 +15,7 @@ angular.module("wizard.amount", ["common", "wizard", "order"]);
 angular.module("wizard.result", ["common", "wizard", "order"]);
 
 angular.module("main", ["ngRoute", "ui.bootstrap", "common", "user", "order",
-	"money", "money.yandex", "exchange", "wizard", "wizard.currency", "wizard.amount", "wizard.result"]);
+	"money", "money.yandex", "money.bitcoin", "exchange", "wizard", "wizard.currency", "wizard.amount", "wizard.result"]);
 
 angular.module("main").config(function($routeProvider, $locationProvider) {
 	$routeProvider.when("/steps/currency", {

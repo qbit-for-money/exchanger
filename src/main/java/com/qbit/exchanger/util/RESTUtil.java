@@ -23,7 +23,7 @@ public final class RESTUtil {
 	}
 	
 	public static List<ResourceLink> toLinks(String basePath, List<? extends Identifiable<?>> objs) {
-		List<ResourceLink> result = new ArrayList<>();
+		List<ResourceLink> result = new ArrayList<ResourceLink>();
 		if (objs != null) {
 			for (Identifiable<?> obj : objs) {
 				result.add(new ResourceLink(obj.getId().toString(), basePath + "/" + obj.getId().toString()));

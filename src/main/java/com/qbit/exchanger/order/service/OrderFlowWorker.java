@@ -80,7 +80,7 @@ public class OrderFlowWorker implements Runnable {
 
 	private void processOutTransfer(final OrderInfo activeOrder) {
 		final String orderId = activeOrder.getId();
-		final Transfer outTransfer = activeOrder.getInTransfer();
+		final Transfer outTransfer = activeOrder.getOutTransfer();
 		orderDAO.changeStatus(orderId, OrderStatus.PAYED, true);
 		MoneyService moneyService = moneyServiceProvider.get(outTransfer);
 		moneyService.process(outTransfer, new MoneyTransferCallback() {

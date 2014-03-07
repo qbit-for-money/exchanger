@@ -44,7 +44,7 @@ public class YandexMoneyService implements MoneyService {
 	private Env env;
 
 	@PostConstruct
-	public void init() {
+	private void init() {
 		yandexMoney = new YandexMoneyImpl(env.getYandexClientId());
 	}
 
@@ -84,7 +84,7 @@ public class YandexMoneyService implements MoneyService {
 			if (response != null && response.isSuccess()) {
 				ProcessPaymentResponse paymentResponse = processPayment(token, response.getRequestId());
 				if (paymentResponse != null && paymentResponse.isSuccess()) {
-					callback.success(null);
+					callback.success(transfer.getAmount());
 				} else {
 					callback.error(paymentResponse != null ? paymentResponse.getError().getCode() : null);
 				}
@@ -194,7 +194,7 @@ public class YandexMoneyService implements MoneyService {
 	 * @return
 	 */
 	private Collection<Permission> getAppPaymentScope() {
-		List<Permission> permissions = new LinkedList<>();
+		List<Permission> permissions = new LinkedList<Permission>();
 		permissions.add(new PaymentP2P());
 		permissions.add(new AccountInfo());
 		permissions.add(new OperationDetails());
