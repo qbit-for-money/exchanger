@@ -7,7 +7,7 @@ import com.qbit.exchanger.external.exchange.core.ExchangeFacade;
 import com.qbit.exchanger.mail.MailService;
 import com.qbit.exchanger.money.bitcoin.BitcoinMoneyService;
 import com.qbit.exchanger.money.core.MoneyService;
-import com.qbit.exchanger.money.core.MoneyServiceFacade;
+import com.qbit.exchanger.money.core.MoneyServiceProvider;
 import com.qbit.exchanger.money.litecoin.Litecoin;
 import com.qbit.exchanger.money.yandex.YandexMoneyService;
 import com.qbit.exchanger.order.dao.OrderDAO;
@@ -55,7 +55,8 @@ public class ExchangerApp extends Application {
 		addBinding(newBinder(BitcoinMoneyService.class).to(BitcoinMoneyService.class).in(Singleton.class), configuration);
 		addBinding(newBinder(Litecoin.class).to(Litecoin.class).in(Singleton.class), configuration);
 		addBinding(newBinder(YandexMoneyService.class).to(YandexMoneyService.class).in(Singleton.class), configuration);
-		addBinding(newBinder(MoneyServiceFacade.class).to(MoneyService.class).in(Singleton.class), configuration);
+		
+		addBinding(newBinder(MoneyServiceProvider.class).to(MoneyServiceProvider.class).in(Singleton.class), configuration);
 
 		addBinding(newBinder(OrderService.class).to(OrderService.class).in(Singleton.class), configuration);
 		addBinding(newBinder(OrderFlowWorker.class).to(OrderFlowWorker.class).in(Singleton.class), configuration);
