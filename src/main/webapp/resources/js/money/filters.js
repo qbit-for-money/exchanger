@@ -1,6 +1,6 @@
 var moneyModule = angular.module("money");
 
-moneyModule.filter("amount", function(amountToNumber) {
+moneyModule.factory("formatAmount", function(amountToNumber) {
 	return function(amount) {
 		if (!amount) {
 			return "";
@@ -8,6 +8,9 @@ moneyModule.filter("amount", function(amountToNumber) {
 		var fractionDigits = Math.round(Math.log(amount.centsInCoin) / Math.LN10);
 		return amountToNumber(amount).toFixed(fractionDigits);
 	};
+});
+moneyModule.filter("amount", function(formatAmount) {
+	return formatAmount;
 });
 moneyModule.filter("rate", function(rateToNumber) {
 	return function(rate) {

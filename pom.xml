@@ -117,18 +117,18 @@
 			<artifactId>bitcoinj</artifactId>
 			<version>${bitcoinj-version}</version>
 		</dependency>
-                
-                <dependency>
-                        <groupId>com.google</groupId>
-                        <artifactId>litecoinj</artifactId>
-                        <version>${litecoinj-version}</version>
-                </dependency>
-                
-                <dependency>
-                        <groupId>org.jboss.netty</groupId>
-                        <artifactId>netty</artifactId>
-                        <version>3.2.0.Final</version>
-                </dependency>
+
+		<dependency>
+			<groupId>com.google</groupId>
+			<artifactId>litecoinj</artifactId>
+			<version>${litecoinj-version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jboss.netty</groupId>
+			<artifactId>netty</artifactId>
+			<version>3.2.0.Final</version>
+		</dependency>
 
 		<dependency>
 			<groupId>org.jumpmind.symmetric.jdbc</groupId>

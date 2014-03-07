@@ -138,7 +138,7 @@ public class Litecoin implements MoneyService {
 
                         assert sendResult != null;
 
-                        callback.success();
+                        callback.success(null);
 
                         // A future that will complete once the transaction message has been successfully
                         sendResult.broadcastComplete.addListener(new Runnable() {
@@ -189,5 +189,10 @@ public class Litecoin implements MoneyService {
         private Wallet getWallet() {
                 return kit.wallet();
         }
+
+	@Override
+	public String generateAddress() {
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
 
 }

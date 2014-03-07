@@ -84,7 +84,7 @@ public class YandexMoneyService implements MoneyService {
 			if (response != null && response.isSuccess()) {
 				ProcessPaymentResponse paymentResponse = processPayment(token, response.getRequestId());
 				if (paymentResponse != null && paymentResponse.isSuccess()) {
-					callback.success();
+					callback.success(null);
 				} else {
 					callback.error(paymentResponse != null ? paymentResponse.getError().getCode() : null);
 				}
@@ -212,5 +212,10 @@ public class YandexMoneyService implements MoneyService {
 		scope.toAccount(env.getYandexWallet());
 		Permission result = scope;
 		return Collections.singletonList(result);
+	}
+
+	@Override
+	public String generateAddress() {
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 }

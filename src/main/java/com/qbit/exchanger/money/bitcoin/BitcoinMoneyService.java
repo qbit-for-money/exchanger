@@ -22,6 +22,7 @@ import java.util.List;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import com.qbit.exchanger.money.model.Amount;
+import com.qbit.exchanger.money.model.Currency;
 import com.qbit.exchanger.money.model.Transfer;
 import com.qbit.exchanger.money.model.TransferType;
 
@@ -140,29 +141,12 @@ public class BitcoinMoneyService implements MoneyService {
 						Amount amount = item.getTransfer().getAmount();
 						BigInteger expectedValue = toNanoCoins(amount.getCoins(), amount.getCents());
 						if (receivedValue.compareTo(expectedValue) >= 0 ) {
-							item.callback.success();
+							item.callback.success(null);
 						}
 					}
 				} catch (ScriptException e) {
 					e.printStackTrace();
 				}
-
-//				for (TransactionOutput out : tx.getOutputs()) {
-//					try {
-//						Script scriptPubKey = out.getScriptPubKey();
-//						if (scriptPubKey.isSentToAddress()) {
-//							System.out.println(scriptPubKey.getToAddress(parameters).toString());
-//						} else if (scriptPubKey.isSentToRawPubKey()) {
-//							System.out.println("[pubkey:");
-//							System.out.println(bytesToHexString(scriptPubKey.getPubKey()));
-//							System.out.println("]");
-//						} else {
-//							System.out.println(scriptPubKey);
-//						}
-//					} catch (ScriptException ex) {
-//						logger.severe(ex.getMessage());
-//					}
-//				}
 
 				logger.log(Level.INFO, "Received tx for {0}: {1}", new Object[]{Utils.bitcoinValueToFriendlyString(receivedValue), tx});
 				logger.info("Transaction will be forwarded after it confirms.");
@@ -210,7 +194,7 @@ public class BitcoinMoneyService implements MoneyService {
 
 			assert sendResult != null;
 
-			callback.success();
+			callback.success(transfer.getAmount());
 
 			// A future that will complete once the transaction message has been successfully
 			sendResult.broadcastComplete.addListener(new Runnable() {
@@ -261,7 +245,8 @@ public class BitcoinMoneyService implements MoneyService {
 		return result;
 	}
 
-	public String getNewAddress() {
+	@Override
+	public String generateAddress() {
 		ECKey key = new ECKey();
 		getWallet().addKey(key);
 		Address address = key.toAddress(parameters);

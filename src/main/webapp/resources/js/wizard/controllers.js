@@ -1,29 +1,36 @@
 var wizardModule = angular.module("wizard");
 
-wizardModule.controller("WizardController", function($scope, $location, wizardService) {
-	$scope.steps = wizardService.getSteps();
-	$scope.getStepIndexByPath = wizardService.getStepIndexByPath;
-	$scope.$on('$locationChangeSuccess', function() {
-		$scope.currentStepIndex = wizardService.getStepIndexByPath($location.path());
-	});
-	$scope.setCurrentStep = function(stepIndex) {
-		if (!angular.isNumber(stepIndex)) {
-			return;
+wizardModule.controller("WizardController", function($rootScope, $location, wizardService) {
+	$rootScope.steps = wizardService.getSteps();
+	
+	function updateCurrentStepIndex() {
+		var currentStepIndex = wizardService.getStepIndexByPath($location.path());
+		if (wizardService.isStepIndexValid(currentStepIndex)) {
+			if (wizardService.canGoToStep(currentStepIndex)) {
+				$rootScope.currentStepIndex = currentStepIndex;
+			} else {
+				$rootScope.currentStepIndex = -1;
+			}
+		} else {
+			$rootScope.currentStepIndex = 0;
 		}
-		if (wizardService.getStepIndexByPath($location.path()) >= stepIndex) {
-			$location.path($scope.steps[stepIndex].path);
+	}
+	$rootScope.$on("$locationChangeSuccess", updateCurrentStepIndex);
+	updateCurrentStepIndex();
+	
+	$rootScope.goToStep = function(stepIndex) {
+		if (wizardService.canGoToStep(stepIndex)) {
+			$location.path(wizardService.getStepByIndex(stepIndex).path);
 		}
 	};
-	$scope.goToPreviousStep = function() {
-		var currentStepIndex = wizardService.getStepIndexByPath($location.path());
-		if (currentStepIndex > 0) {
-			$location.path($scope.steps[currentStepIndex - 1].path);
+	$rootScope.goToNextStep = function() {
+		if (wizardService.canGoToNextStep($location.path())) {
+			$location.path(wizardService.getNextStep($location.path()).path);
 		}
 	};
-	$scope.goToNextStep = function() {
-		var currentStepIndex = wizardService.getStepIndexByPath($location.path());
-		if (currentStepIndex + 1 < $scope.steps.length) {
-			$location.path($scope.steps[currentStepIndex + 1].path);
+	$rootScope.goToPrevStep = function() {
+		if (wizardService.canGoToPrevStep($location.path())) {
+			$location.path(wizardService.getPrevStep($location.path()).path);
 		}
 	};
 });
