@@ -24,6 +24,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import com.qbit.exchanger.money.model.Amount;
 import com.qbit.exchanger.money.model.Transfer;
 import com.qbit.exchanger.money.model.TransferType;
+import java.math.BigDecimal;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -139,10 +140,9 @@ public class BitcoinMoneyService implements MoneyService {
 					QueueItem item = paymentQueue.get(address);
 					if (item != null) {
 						Amount amount = item.getTransfer().getAmount();
-						BigInteger expectedValue = toNanoCoins(amount.getCoins(), amount.getCents());
-						if (receivedValue.compareTo(expectedValue) >= 0) {
-							item.callback.success(null);
-						}
+
+						BigDecimal am = new BigDecimal(Utils.bitcoinValueToFriendlyString(receivedValue));
+						item.callback.success(new Amount(am, amount.getCentsInCoin()));
 					}
 				} catch (ScriptException ex) {
 					logger.severe(ex.getMessage());
