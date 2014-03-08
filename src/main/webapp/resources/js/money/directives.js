@@ -13,14 +13,8 @@ moneyModule.directive("amountInput", function() {
 		link: function(scope, element) {
 			var input = element.find("input");
 			
-			var centsLimit;
-			if (scope.amount && scope.amount.centsInCoin) {
-				centsLimit = Math.min(3, Math.round(Math.log(scope.amount.centsInCoin) / Math.LN10));
-			} else {
-				centsLimit = 2;
-			}
 			input.priceFormat({
-				prefix: "", centsLimit: centsLimit, thousandsSeparator: ""
+				prefix: "", centsLimit: 2, thousandsSeparator: ""
 			});
 			
 			function updateAmount() {
@@ -48,8 +42,7 @@ moneyModule.directive("amountInput", function() {
 			function updateInput() {
 				input.val(scope.formatAmount());
 			}
-			scope.$watch("amount", updateInput);
-			updateInput();
+			scope.$watch("amount", updateInput, true);
 		}
 	};
 });

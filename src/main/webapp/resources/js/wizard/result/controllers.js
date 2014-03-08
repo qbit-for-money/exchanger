@@ -39,9 +39,6 @@ resultModule.controller("ResultController", function($rootScope, $scope, $timeou
 				break;
 		}
 	}
-	updateInTransferStatus();
-	$rootScope.$watch("orderInfo.status", updateInTransferStatus);
-
 	function updateOutTransferStatus() {
 		if (!$rootScope.orderInfo.status) {
 			return;
@@ -60,9 +57,6 @@ resultModule.controller("ResultController", function($rootScope, $scope, $timeou
 				break;
 		}
 	}
-	updateOutTransferStatus();
-	$rootScope.$watch("orderInfo.status", updateOutTransferStatus);
-
 	function updateRate() {
 		if (!$rootScope.orderInfo.status) {
 			return;
@@ -72,8 +66,11 @@ resultModule.controller("ResultController", function($rootScope, $scope, $timeou
 			denominator: $rootScope.orderInfo.outTransfer.amount
 		};
 	}
-	updateRate();
-	$rootScope.$watch("orderInfo.status", updateRate);
+	var destroyStatusWatch = $rootScope.$watch("orderInfo.status", function() {
+		updateInTransferStatus();
+		updateOutTransferStatus();
+		updateRate();
+	});
 
 	$scope.secondsInWaiting = 0;
 	function updateSecondsInWaiting() {
@@ -92,5 +89,6 @@ resultModule.controller("ResultController", function($rootScope, $scope, $timeou
 		if ($scope.secondsInWaitingTimeout) {
 			$interval.cancel($scope.secondsInWaitingTimeout);
 		}
+		destroyStatusWatch();
 	});
 });

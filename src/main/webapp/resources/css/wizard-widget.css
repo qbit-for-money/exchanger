@@ -125,3 +125,8 @@
 .wizard .actions .btn {
 	outline: none;
 }
+
+.wizard .step-title {
+	font-size: 1.4em;
+	vertical-align: middle;
+}

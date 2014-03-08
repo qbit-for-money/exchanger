@@ -58,5 +58,5 @@ userModule.controller("UserController", function($rootScope, $scope, delayedProx
 		}
 	}
 	$scope.$watch("publicKey", updateUserProfileButton);
-	$rootScope.$watch("user", updateUserProfileButton);
+	$rootScope.$watch("user", updateUserProfileButton, true);
 });

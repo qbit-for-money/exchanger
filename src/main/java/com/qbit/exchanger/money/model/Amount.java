@@ -28,7 +28,7 @@ public class Amount implements Serializable {
 		this.coins = amount.longValue();
 		if (amount.scale() > 0) {
 			this.cents = amount.subtract(BigDecimal.valueOf(coins))
-				.multiply(BigDecimal.valueOf(centsInCoin)).longValue();
+					.multiply(BigDecimal.valueOf(centsInCoin)).longValue();
 		} else {
 			this.cents = 0;
 		}
