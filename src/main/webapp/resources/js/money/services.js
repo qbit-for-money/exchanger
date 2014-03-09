@@ -1,5 +1,21 @@
 var moneyModule = angular.module("money");
 
+moneyModule.factory("moneyCustomModules", function() {
+	var customModules = {};
+	function get(currency) {
+		return customModules[currency];
+	}
+	function has(currency) {
+		return (currency in customModules);
+	}
+	function put(currency, module) {
+		if (currency && module) {
+			customModules[currency] = module;
+		}
+	}
+	return {get: get, has: has, put: put};
+});
+
 moneyModule.factory("amountToNumber", function(isAmountValid) {
 	return function(amount) {
 		if (isAmountValid(amount)) {

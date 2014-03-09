@@ -1,9 +1,29 @@
 var amountModule = angular.module("wizard.amount");
 
-amountModule.controller("AmountController", function($rootScope, $scope, restoreOrderInfoFromSession,
-		exchangesResource, isAmountPositive, convertAmount, invRate) {
+amountModule.controller("AmountController", function($rootScope, $scope,
+		restoreOrderInfoFromSession, moneyCustomModules, walletsResource,
+		exchangesResource, isAmountPositive, convertAmount) {
 	// if there was a redirect, load stored order
 	restoreOrderInfoFromSession();
+	
+	var inTransfer = $rootScope.orderInfo.inTransfer;
+	$scope.custom = moneyCustomModules.has(inTransfer.currency);
+	
+	function generateInAddress() {
+		if (!$scope.custom) {
+			var inTransfer = $rootScope.orderInfo.inTransfer;
+			var walletAddress = walletsResource.generateAddress({currency: inTransfer.currency});
+			walletAddress.$promise.then(function() {
+				inTransfer.address = walletAddress.address;
+				$scope.inAddressPlaceholder = "Wallet address";
+			}, function() {
+				inTransfer.address = null;
+				$scope.inAddressPlaceholder = "Error generating address...";
+			});
+		}
+	}
+	$scope.generateInAddress = generateInAddress;
+	generateInAddress();
 	
 	function updateOutAmount() {
 		var inTransfer = $rootScope.orderInfo.inTransfer;

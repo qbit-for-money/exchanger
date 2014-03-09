@@ -32,9 +32,9 @@ moneyModule.directive("amountInput", function() {
 			
 			function validate() {
 				if (scope.isAmountPositive(scope.amount)) {
-					input.closest(".form-group").removeClass("has-error");
+					input.parent().removeClass("has-error");
 				} else {
-					input.closest(".form-group").addClass("has-error");
+					input.parent().addClass("has-error");
 				}
 			}
 		}

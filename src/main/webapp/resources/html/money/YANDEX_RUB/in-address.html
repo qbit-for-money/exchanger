@@ -1,0 +1,13 @@
+<div class="col-md-12" ng-controller="YandexController">
+	<div class="input-group input-group-lg" ng-class="{'has-error': inForm.inAddress.$invalid}"
+		 ng-if="authorized">
+		<input class="form-control" type="text" name="inAddress" style="cursor: text;"
+			   ng-model="orderInfo.inTransfer.address" ng-readonly="true"
+			   ng-required="true" ng-pattern="/^[0-9A-Za-z]+$/"
+			   title="Wallet address" placeholder="Wallet address" />
+		<span class="input-group-addon"><span class="glyphicon glyphicon-credit-card"></span></span>
+	</div>
+	<button class="btn btn-danger btn-lg btn-block" ng-click="redirect()" ng-if="!authorized">
+		Please authorize the Yandex first
+	</button>
+</div>

@@ -3,24 +3,38 @@
 		<div class="panel panel-default">
 			<div class="panel-body">
 				<div class="container-fluid">
-					
+
 					<div class="row">
 						<div class="col-xs-2 col-md-2">
 							<div class="currency {{orderInfo.inTransfer.currency}}"></div>
 						</div>
 						<div class="col-xs-10 col-md-10">
-							<form name="inForm" novalidate>
-								<div class="form-group">
-									<p class="form-control-static" title="Wallet address"
-									   ng-bind="orderInfo.inTransfer.address"></p>
+
+							<form name="inForm" role="form" novalidate>
+								<div class="row" style="margin-bottom: 5px;"
+									 ng-if="custom" ng-include="'resources/html/money/' + orderInfo.inTransfer.currency + '/in-address.html'"></div>
+								<div class="input-group input-group-lg" style="margin-bottom: 5px;"
+									 ng-if="!custom" ng-class="{'has-error': inForm.inAddress.$invalid}">
+									<span class="input-group-btn">
+										<button class="btn btn-default" type="button" title="Generate address"
+												ng-click="generateInAddress()">
+											<span class="glyphicon glyphicon-random"></span>
+										</button>
+									</span>
+									<input class="form-control" type="text" name="inAddress" style="cursor: text;"
+										   ng-model="orderInfo.inTransfer.address" ng-readonly="true"
+										   ng-required="true" ng-pattern="/^[0-9A-Za-z]+$/"
+										   title="Wallet address" placeholder="{{inAddressPlaceholder}}" />
+									<span class="input-group-addon"><span class="glyphicon glyphicon-credit-card"></span></span>
 								</div>
 								<div class="form-group">
 									<amount-input amount="orderInfo.inTransfer.amount"></amount-input>
 								</div>
 							</form>
+
 						</div>
 					</div>
-					
+
 				</div>
 			</div>
 		</div>
@@ -40,26 +54,29 @@
 		<div class="panel panel-default">
 			<div class="panel-body">
 				<div class="container-fluid">
-					
+
 					<div class="row">
 						<div class="col-xs-2 col-md-2">
 							<div class="currency {{orderInfo.outTransfer.currency}}"></div>
 						</div>
 						<div class="col-xs-10 col-md-10">
-							<form name="outForm" novalidate>
-								<div class="form-group">
+
+							<form name="outForm" role="form" novalidate>
+								<div class="form-group" style="margin-bottom: 5px;">
 									<amount-input amount="orderInfo.outTransfer.amount" readonly="true"></amount-input>
 								</div>
-								<div class="form-group" ng-class="{'has-error': outForm.outAddress.$invalid}">
-									<label class="sr-only" for="outAddress">Address</label>
-									<input class="form-control input-lg money-wallet" type="text" name="outAddress"
-										   ng-model="orderInfo.outTransfer.address" ng-required="true"
-										   title="Wallet address" placeholder="Wallet address" id="outAddress" />
+								<div class="input-group input-group-lg" ng-class="{'has-error': outForm.outAddress.$invalid}">
+									<input class="form-control" type="text" name="outAddress"
+										   ng-model="orderInfo.outTransfer.address"
+										   ng-required="true" ng-pattern="/^[0-9A-Za-z]+$/"
+										   title="Wallet address" placeholder="Wallet address" />
+									<span class="input-group-addon"><span class="glyphicon glyphicon-credit-card"></span></span>
 								</div>
 							</form>
+
 						</div>
 					</div>
-					
+
 				</div>
 			</div>
 		</div>

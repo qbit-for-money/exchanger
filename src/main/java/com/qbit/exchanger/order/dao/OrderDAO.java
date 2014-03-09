@@ -28,7 +28,7 @@ public class OrderDAO {
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 		try {
 			return DAOUtil.find(entityManagerFactory.createEntityManager(),
-				OrderInfo.class, id, null);
+					OrderInfo.class, id, null);
 		} finally {
 			entityManager.close();
 		}
@@ -104,7 +104,7 @@ public class OrderDAO {
 			entityManager.close();
 		}
 	}
-	
+
 	public void changeStatusAndInAmount(String id, OrderStatus orderStatus, boolean inProcess,
 			Amount inAmount) {
 		if ((id == null) || (orderStatus == null) || (inAmount == null) || !inAmount.isValid()) {
@@ -128,7 +128,7 @@ public class OrderDAO {
 			entityManager.close();
 		}
 	}
-	
+
 	public void changeStatusAndOutAmount(String id, OrderStatus orderStatus, boolean inProcess,
 			Amount outAmount) {
 		if ((id == null) || (orderStatus == null) || (outAmount == null) || !outAmount.isValid()) {
@@ -152,7 +152,7 @@ public class OrderDAO {
 			entityManager.close();
 		}
 	}
-	
+
 	public void changeStatusAndAmounts(String id, OrderStatus orderStatus, boolean inProcess,
 			Amount inAmount, Amount outAmount) {
 		if ((id == null) || (orderStatus == null) || (inAmount == null) || !inAmount.isValid()
@@ -185,9 +185,10 @@ public class OrderDAO {
 
 	public OrderInfo create(String userPublicKey, Transfer inTransfer, Transfer outTransfer) {
 		if ((userPublicKey == null) || (inTransfer == null) || (outTransfer == null)
-			|| !inTransfer.isValid() || !outTransfer.isValid()
-			|| !TransferType.IN.equals(inTransfer.getType())
-			|| !TransferType.OUT.equals(outTransfer.getType())) {
+				|| !inTransfer.isValid() || !outTransfer.isValid()
+				|| !TransferType.IN.equals(inTransfer.getType())
+				|| !TransferType.OUT.equals(outTransfer.getType())
+				|| inTransfer.getCurrency().equals(outTransfer.getCurrency())) {
 			throw new IllegalArgumentException("Order is inconsistent.");
 		}
 		EntityManager entityManager = entityManagerFactory.createEntityManager();

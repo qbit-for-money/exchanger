@@ -4,9 +4,9 @@ angular.module("user", ["ngResource"]);
 angular.module("order", ["ngResource", "common"]);
 
 angular.module("money", []);
-angular.module("money.yandex", ["common", "order", "money"]);
-angular.module("money.bitcoin", ["common", "order", "money"]);
-angular.module("money.litecoin", ["common", "order", "money"]);
+angular.module("money.yandex", ["common", "order", "money"]).run(function(moneyCustomModules) {
+	moneyCustomModules.put("YANDEX_RUB", this);
+});
 
 angular.module("exchange", ["ngResource"]);
 
@@ -15,8 +15,9 @@ angular.module("wizard.currency", ["common", "wizard", "order"]);
 angular.module("wizard.amount", ["common", "wizard", "order"]);
 angular.module("wizard.result", ["common", "wizard", "order"]);
 
-angular.module("main", ["ngRoute", "ui.bootstrap", "common", "user", "order",
-	"money", "money.yandex", "money.bitcoin", "money.litecoin", "exchange",
+angular.module("main", ["ngRoute", "ui.bootstrap", "chieffancypants.loadingBar",
+	"common", "user", "order",
+	"money", "money.yandex", "exchange",
 	"wizard", "wizard.currency", "wizard.amount", "wizard.result"]);
 
 angular.module("main").config(function($routeProvider, $locationProvider) {
@@ -30,7 +31,7 @@ angular.module("main").config(function($routeProvider, $locationProvider) {
 		templateUrl: "resources/html/wizard/result.html",
 		controller: "ResultController"
 	}).otherwise({redirectTo: "/steps/currency"});
-//$locationProvider.html5Mode(true);
+//	$locationProvider.html5Mode(true);
 }).run(function($rootScope, $location) {
 	$rootScope.location = $location;
 });

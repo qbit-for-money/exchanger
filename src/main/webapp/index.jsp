@@ -5,6 +5,8 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
 		<link rel="stylesheet" type="text/css" href="resources/lib/bootstrap/core/css/bootstrap.min.css">
+		
+		<link rel="stylesheet" type="text/css" href="resources/lib/angular/loading-bar.min.css">
 
 		<link rel="stylesheet" type="text/css" href="resources/css/common.css">
 		<link rel="stylesheet" type="text/css" href="resources/css/wizard.css">
@@ -26,6 +28,7 @@
 		<script type="text/javascript" src="resources/lib/angular/angular-resource.min.js"></script>
 		<script type="text/javascript" src="resources/lib/angular/angular-touch.min.js"></script>
 		<script type="text/javascript" src="resources/lib/bootstrap/core/js/ui-bootstrap-tpls-0.10.0.min.js"></script>
+		<script type="text/javascript" src="resources/lib/angular/loading-bar.min.js"></script>
 
 		<script type="text/javascript">
 		// Global constants
@@ -55,10 +58,6 @@
 
 		<script type="text/javascript" src="resources/js/money/yandex/resources.js"></script>
 		<script type="text/javascript" src="resources/js/money/yandex/controllers.js"></script>
-		<script type="text/javascript" src="resources/js/money/bitcoin/resources.js"></script>
-		<script type="text/javascript" src="resources/js/money/bitcoin/controllers.js"></script>
-		<script type="text/javascript" src="resources/js/money/litecoin/resources.js"></script>
-		<script type="text/javascript" src="resources/js/money/litecoin/controllers.js"></script>
 
 		<script type="text/javascript" src="resources/js/exchange/resources.js"></script>
 

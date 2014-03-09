@@ -5,7 +5,6 @@ import com.qbit.exchanger.money.core.MoneyService;
 import com.qbit.exchanger.money.core.MoneyServiceProvider;
 import com.qbit.exchanger.money.core.MoneyTransferCallback;
 import com.qbit.exchanger.money.model.Amount;
-import com.qbit.exchanger.money.model.Currency;
 import com.qbit.exchanger.money.model.Rate;
 import com.qbit.exchanger.money.model.Transfer;
 import com.qbit.exchanger.order.dao.OrderDAO;
