@@ -9,7 +9,8 @@ moneyModule.factory("isAmountValid", function() {
 });
 moneyModule.factory("isAmountPositive", function(isAmountValid) {
 	return function(amount) {
-		return (isAmountValid(amount) && ((amount.coins > 0) || (amount.cents > 0)));
+		var minCents = Math.floor(amount.centsInCoin / 100);
+		return (isAmountValid(amount) && ((amount.coins > 0) || (amount.cents >= minCents)));
 	};
 });
 

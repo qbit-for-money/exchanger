@@ -75,7 +75,8 @@ public class Amount implements Serializable {
 	
 	@XmlTransient
 	public boolean isPositive() {
-		return (isValid() && ((coins > 0) || (cents > 0)));
+		long minCents = centsInCoin / 100;
+		return (isValid() && ((coins > 0) || (cents >= minCents)));
 	}
 	
 	@XmlTransient

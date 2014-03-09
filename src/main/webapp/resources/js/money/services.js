@@ -11,13 +11,29 @@ moneyModule.factory("amountToNumber", function(isAmountValid) {
 });
 moneyModule.factory("numberToAmount", function() {
 	return function(num, centsInCoin) {
-		if (!angular.isNumber(centsInCoin) || (centsInCoin <= 0)) {
+		if (!angular.isNumber(centsInCoin) || Number.isNaN(centsInCoin) || (centsInCoin <= 0)) {
 			return;
 		}
 		var result = {coins: 0, cents: 0, centsInCoin: centsInCoin};
-		if (angular.isNumber(num)) {
+		if (angular.isNumber(num) && !Number.isNaN(num)) {
 			result.coins = Math.floor(num);
 			result.cents = Math.round((num - Math.floor(num)) * centsInCoin);
+		}
+		return result;
+	};
+});
+moneyModule.factory("stringToAmount", function(numberToAmount) {
+	return function(amountText, centsInCoin) {
+		if (!angular.isNumber(centsInCoin) || Number.isNaN(centsInCoin) || (centsInCoin <= 0)) {
+			return;
+		}
+		var result = {coins: 0, cents: 0, centsInCoin: centsInCoin};
+		if (amountText) {
+			try {
+				result = numberToAmount(parseFloat(amountText), centsInCoin);
+			} catch (ex) {
+				// do nothing
+			}
 		}
 		return result;
 	};
