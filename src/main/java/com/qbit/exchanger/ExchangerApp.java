@@ -1,5 +1,6 @@
 package com.qbit.exchanger;
 
+import com.qbit.exchanger.buffers.BufferDAO;
 import com.qbit.exchanger.env.Env;
 import com.qbit.exchanger.external.exchange.btce.BTCExchange;
 import com.qbit.exchanger.external.exchange.core.Exchange;
@@ -50,6 +51,7 @@ public class ExchangerApp extends Application {
 
 		addBinding(newBinder(UserDAO.class).to(UserDAO.class).in(Singleton.class), configuration);
 		addBinding(newBinder(OrderDAO.class).to(OrderDAO.class).in(Singleton.class), configuration);
+		addBinding(newBinder(BufferDAO.class).to(BufferDAO.class).in(Singleton.class), configuration);
 
 		addBinding(newBinder(BitcoinMoneyService.class).to(BitcoinMoneyService.class).in(Singleton.class), configuration);
 		addBinding(newBinder(LitecoinMoneyService.class).to(LitecoinMoneyService.class).in(Singleton.class), configuration);

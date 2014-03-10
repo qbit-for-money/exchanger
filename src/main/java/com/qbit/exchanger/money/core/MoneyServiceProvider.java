@@ -19,11 +19,11 @@ public class MoneyServiceProvider {
 
 	@Inject
 	private BitcoinMoneyService bitcoinService;
-	
+
 	@Inject
 	private YandexMoneyService yandexMoneyService;
-        
-        @Inject
+
+	@Inject
 	private LitecoinMoneyService litecoinService;
 
 	private Map<Currency, MoneyService> servicesMap;
