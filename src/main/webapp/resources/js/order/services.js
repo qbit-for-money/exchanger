@@ -1,6 +1,6 @@
 var orderModule = angular.module("order");
 
-orderModule.factory("resetOrderInfo", function($rootScope) {
+orderModule.factory("resetOrderInfo", function($rootScope, userService) {
 	var emptyOrderInfo = {
 		inTransfer: {
 			type: "IN", currency: "BITCOIN"
@@ -12,6 +12,10 @@ orderModule.factory("resetOrderInfo", function($rootScope) {
 	return function() {
 		var orderInfo = angular.copy(emptyOrderInfo);
 		if ($rootScope.orderInfo) {
+			var userPublicKey = userService.getPublicKey();
+			if (userPublicKey) {
+				$rootScope.orderInfo.userPublicKey = userPublicKey;
+			}
 			if ($rootScope.orderInfo.inTransfer && $rootScope.orderInfo.inTransfer.currency) {
 				orderInfo.inTransfer.currency = $rootScope.orderInfo.inTransfer.currency;
 			}

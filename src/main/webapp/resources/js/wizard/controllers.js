@@ -1,6 +1,6 @@
 var wizardModule = angular.module("wizard");
 
-wizardModule.controller("WizardController", function($rootScope, $location, wizardService,
+wizardModule.controller("WizardController", function($rootScope, $scope, $location, wizardService,
 		restoreOrderInfoFromSession) {
 	$rootScope.steps = wizardService.getSteps();
 
@@ -33,11 +33,17 @@ wizardModule.controller("WizardController", function($rootScope, $location, wiza
 			} else {
 				$location.path(nextStep.path);
 			}
+		} else {
+			$scope.validationFails = true;
 		}
 	};
 	$rootScope.goToPrevStep = function() {
 		if (wizardService.canGoToPrevStep($location.path())) {
 			$location.path(wizardService.getPrevStep($location.path()).path);
 		}
+	};
+	
+	$scope.resetValidation = function() {
+		$scope.validationFails = false;
 	};
 });

@@ -4,6 +4,9 @@ userModule.controller("UserController", function($rootScope, $scope, delayedProx
 	function setUser(user) {
 		if (user && user.publicKey) {
 			$rootScope.user = user;
+			if ($rootScope.orderInfo) {
+				$rootScope.orderInfo.userPublicKey = user.publicKey;
+			}
 			$scope.publicKey = user.publicKey;
 		}
 	}

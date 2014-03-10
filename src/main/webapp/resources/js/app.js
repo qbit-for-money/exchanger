@@ -3,7 +3,7 @@ angular.module("common", ["ngResource"]);
 angular.module("user", ["ngResource"]);
 
 angular.module("money", []);
-angular.module("order", ["ngResource", "common", "money"]);
+angular.module("order", ["ngResource", "common", "user", "money"]);
 
 angular.module("money.yandex", ["common", "order", "money"]).run(function(moneyCustomModules) {
 	moneyCustomModules.put("YANDEX_RUB", this);
