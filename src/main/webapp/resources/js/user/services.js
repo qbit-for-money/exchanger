@@ -12,7 +12,6 @@ userModule.factory("userService", function(localStorage, usersResource) {
 		var user = usersResource.get({publicKey: (publicKey ? publicKey : "null")}, function() {
 			if (publicKey === user.publicKey) {
 				localStorage.setItem("publicKey", user.publicKey);
-				userPublicKeyDeferred.resolve(user.publicKey);
 			}
 		});
 		return user;
@@ -20,7 +19,6 @@ userModule.factory("userService", function(localStorage, usersResource) {
 	function create() {
 		var user = usersResource.create({}, function() {
 			localStorage.setItem("publicKey", user.publicKey);
-			userPublicKeyDeferred.resolve(user.publicKey);
 		});
 		return user;
 	}
