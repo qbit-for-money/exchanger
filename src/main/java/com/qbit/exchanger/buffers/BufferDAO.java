@@ -32,6 +32,7 @@ public class BufferDAO {
 				updateAmount(entityManager, currency, amount);
 			}
 			entityManager.getTransaction().commit();
+			result = true;
 		} catch (Exception ex) {
 			try {
 				entityManager.getTransaction().rollback();
