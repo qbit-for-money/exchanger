@@ -17,18 +17,25 @@ wizardModule.controller("WizardController", function($rootScope, $scope, $locati
 		}
 	}
 	$rootScope.$on("$locationChangeSuccess", function() {
+		resetValidationFail();
+		resetActionFail();
 		restoreOrderInfoFromSession();
 		updateCurrentStepIndex();
 	});
 	updateCurrentStepIndex();
 
 	$rootScope.goToNextStep = function() {
+		resetValidationFail();
 		if (wizardService.canGoToNextStep($location.path())) {
+			var currentStep = wizardService.getStepByPath($location.path());
 			var nextStep = wizardService.getNextStep($location.path());
-			if (nextStep.action) {
-				var promise = nextStep.action();
+			if (currentStep.action) {
+				var promise = currentStep.action();
 				promise.then(function() {
+					resetActionFail();
 					$location.path(nextStep.path);
+				}, function() {
+					$scope.actionFails = true;
 				});
 			} else {
 				$location.path(nextStep.path);
@@ -43,7 +50,12 @@ wizardModule.controller("WizardController", function($rootScope, $scope, $locati
 		}
 	};
 	
-	$scope.resetValidation = function() {
+	function resetValidationFail() {
 		$scope.validationFails = false;
-	};
+	}
+	$scope.resetValidationFail = resetValidationFail;
+	function resetActionFail() {
+		$scope.actionFails = false;
+	}
+	$scope.resetActionFail = resetActionFail;
 });

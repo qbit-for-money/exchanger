@@ -14,7 +14,7 @@ orderModule.factory("resetOrderInfo", function($rootScope, userService) {
 		if ($rootScope.orderInfo) {
 			var userPublicKey = userService.getPublicKey();
 			if (userPublicKey) {
-				$rootScope.orderInfo.userPublicKey = userPublicKey;
+				orderInfo.userPublicKey = userPublicKey;
 			}
 			if ($rootScope.orderInfo.inTransfer && $rootScope.orderInfo.inTransfer.currency) {
 				orderInfo.inTransfer.currency = $rootScope.orderInfo.inTransfer.currency;
