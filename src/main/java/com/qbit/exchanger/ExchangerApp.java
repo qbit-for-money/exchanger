@@ -1,6 +1,6 @@
 package com.qbit.exchanger;
 
-import com.qbit.exchanger.buffers.BufferDAO;
+import com.qbit.exchanger.buffer.BufferDAO;
 import com.qbit.exchanger.env.Env;
 import com.qbit.exchanger.external.exchange.btce.BTCExchange;
 import com.qbit.exchanger.external.exchange.core.Exchange;

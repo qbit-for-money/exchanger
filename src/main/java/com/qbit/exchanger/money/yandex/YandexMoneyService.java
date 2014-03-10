@@ -1,8 +1,11 @@
 package com.qbit.exchanger.money.yandex;
 
+import com.qbit.exchanger.buffer.BufferDAO;
 import com.qbit.exchanger.env.Env;
 import com.qbit.exchanger.money.core.MoneyService;
 import com.qbit.exchanger.money.core.MoneyTransferCallback;
+import com.qbit.exchanger.money.model.Amount;
+import com.qbit.exchanger.money.model.Currency;
 import com.qbit.exchanger.money.model.Transfer;
 import com.qbit.exchanger.money.model.TransferType;
 import java.math.BigDecimal;
@@ -42,6 +45,8 @@ public class YandexMoneyService implements MoneyService {
 
 	@Inject
 	private Env env;
+	@Inject
+	private BufferDAO bufferDAO;
 
 	@PostConstruct
 	public void init() {
@@ -95,6 +100,7 @@ public class YandexMoneyService implements MoneyService {
 			LOGGER.severe(e.getMessage());
 			callback.error(e.getMessage());
 		} finally {
+			bufferDAO.deleteReservation(Currency.BITCOIN, transfer.getAmount());
 			String removedToken = tokens.remove(transfer.getAddress());
 			if (removedToken != null) {
 				revokeToken(removedToken);
@@ -119,7 +125,12 @@ public class YandexMoneyService implements MoneyService {
 			try {
 				RequestPaymentResponse response = requestPayment(token, wallet, transfer.getAmount().toBigDecimal(), env.getYandexOperationDescription());
 				if ((response != null) && response.isSuccess()) {
-					result = true;
+					if (TransferType.OUT.equals(transfer.getType())) {
+						result = bufferDAO.reserveAmount(Currency.YANDEX_RUB,
+								new Amount(getBalance(), Currency.YANDEX_RUB.getCentsInCoin()), transfer.getAmount());
+					} else {
+						result = true;
+					}
 				}
 			} catch (Exception e) {
 				LOGGER.severe(e.getMessage());

@@ -1,4 +1,4 @@
-package com.qbit.exchanger.buffers;
+package com.qbit.exchanger.buffer;
 
 import com.qbit.exchanger.money.model.Amount;
 import java.io.Serializable;
