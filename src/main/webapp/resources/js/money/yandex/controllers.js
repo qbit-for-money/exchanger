@@ -1,10 +1,11 @@
 var yandexModule = angular.module("money.yandex");
 
 yandexModule.controller("YandexController", function($rootScope, $scope, $location, $window,
-		yandexResource, storeOrderInfoInSession) {
+		yandexResource, restoreOrderInfoFromSession, storeOrderInfoInSession) {
 	$scope.authorized = false;
 	var address = $location.search()["wallet"];
 	if (address) {
+		restoreOrderInfoFromSession();
 		$rootScope.orderInfo.inTransfer.address = address;
 		$scope.authorized = true;
 	}

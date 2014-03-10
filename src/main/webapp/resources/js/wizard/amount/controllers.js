@@ -1,11 +1,8 @@
 var amountModule = angular.module("wizard.amount");
 
 amountModule.controller("AmountController", function($rootScope, $scope,
-		restoreOrderInfoFromSession, moneyCustomModules, walletsResource,
+		moneyCustomModules, walletsResource,
 		exchangesResource, isAmountPositive, convertAmount) {
-	// if there was a redirect, load stored order
-	restoreOrderInfoFromSession();
-	
 	var inTransfer = $rootScope.orderInfo.inTransfer;
 	$scope.custom = moneyCustomModules.has(inTransfer.currency);
 	
