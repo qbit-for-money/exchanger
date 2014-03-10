@@ -88,6 +88,11 @@ wizardModule.factory("wizardService", function() {
 		var step = getStepById(stepId);
 		step.validator = validator;
 	}
+	
+	function registerAction(stepId, action) {
+		var step = getStepById(stepId);
+		step.action = action;
+	}
 
 	return {
 		getSteps: getSteps,
@@ -102,6 +107,7 @@ wizardModule.factory("wizardService", function() {
 		canGoToPrevStep: canGoToPrevStep,
 		getPrevStep: getPrevStep,
 		isStepIndexValid: isStepIndexValid,
-		registerValidator: registerValidator
+		registerValidator: registerValidator,
+		registerAction: registerAction
 	};
 });

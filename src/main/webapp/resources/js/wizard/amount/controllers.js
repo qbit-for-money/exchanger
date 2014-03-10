@@ -1,8 +1,15 @@
 var amountModule = angular.module("wizard.amount");
 
 amountModule.controller("AmountController", function($rootScope, $scope,
+		wizardService, ordersResource,
 		moneyCustomModules, walletsResource,
 		exchangesResource, isAmountPositive, convertAmount) {
+	
+	function createOrder() {
+		return ordersResource.create({}, $rootScope.orderInfo);
+	}
+	wizardService.registerAction("amount", createOrder);
+	
 	var inTransfer = $rootScope.orderInfo.inTransfer;
 	$scope.custom = moneyCustomModules.has(inTransfer.currency);
 	

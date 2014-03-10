@@ -17,6 +17,9 @@ orderModule.factory("resetOrderInfo", function($rootScope) {
 			}
 			if ($rootScope.orderInfo.outTransfer && $rootScope.orderInfo.outTransfer.currency) {
 				orderInfo.outTransfer.currency = $rootScope.orderInfo.outTransfer.currency;
+				if ($rootScope.orderInfo.outTransfer.address) {
+					orderInfo.outTransfer.address = $rootScope.orderInfo.outTransfer.address;
+				}
 			}
 		}
 		$rootScope.orderInfo = orderInfo;

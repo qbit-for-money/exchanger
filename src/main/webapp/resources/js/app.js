@@ -1,23 +1,23 @@
 angular.module("common", ["ngResource"]);
 
 angular.module("user", ["ngResource"]);
-angular.module("order", ["ngResource", "common"]);
 
 angular.module("money", []);
+angular.module("order", ["ngResource", "common", "money"]);
+
 angular.module("money.yandex", ["common", "order", "money"]).run(function(moneyCustomModules) {
 	moneyCustomModules.put("YANDEX_RUB", this);
 });
 
 angular.module("exchange", ["ngResource"]);
 
-angular.module("wizard", ["ngRoute"]);
-angular.module("wizard.currency", ["common", "wizard", "order"]);
-angular.module("wizard.amount", ["common", "wizard", "order"]);
-angular.module("wizard.result", ["common", "wizard", "order"]);
+angular.module("wizard", ["ngRoute", "common", "order"]);
+angular.module("wizard.currency", ["common", "wizard", "user", "money", "order"]);
+angular.module("wizard.amount", ["common", "wizard", "user", "money", "order", "exchange"]);
+angular.module("wizard.result", ["common", "wizard", "user", "money", "order"]);
 
 angular.module("main", ["ngRoute", "ui.bootstrap", "chieffancypants.loadingBar",
-	"common", "user", "order",
-	"money", "money.yandex", "exchange",
+	"common", "user", "order", "money", "money.yandex", "exchange",
 	"wizard", "wizard.currency", "wizard.amount", "wizard.result"]);
 
 angular.module("main").config(function($routeProvider, $locationProvider) {

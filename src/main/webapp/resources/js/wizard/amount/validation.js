@@ -1,9 +1,8 @@
 var amountModule = angular.module("wizard.amount");
 
-amountModule.run(function($rootScope, wizardService, isTransferValid) {
+amountModule.run(function($rootScope, wizardService, isOrderValid) {
 	function validator() {
-		var orderInfo = $rootScope.orderInfo;
-		return (orderInfo && isTransferValid(orderInfo.inTransfer) && isTransferValid(orderInfo.outTransfer)) ? true : false;
+		return isOrderValid($rootScope.orderInfo);
 	}
 	wizardService.registerValidator("amount", validator);
 });

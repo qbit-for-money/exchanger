@@ -47,14 +47,15 @@
 		<script type="text/javascript" src="resources/js/user/services.js"></script>
 		<script type="text/javascript" src="resources/js/user/controllers.js"></script>
 
-		<script type="text/javascript" src="resources/js/order/resources.js"></script>
-		<script type="text/javascript" src="resources/js/order/services.js"></script>
-
 		<script type="text/javascript" src="resources/js/money/services.js"></script>
 		<script type="text/javascript" src="resources/js/money/filters.js"></script>
 		<script type="text/javascript" src="resources/js/money/directives.js"></script>
 		<script type="text/javascript" src="resources/js/money/validation.js"></script>
 		<script type="text/javascript" src="resources/js/money/resources.js"></script>
+		
+		<script type="text/javascript" src="resources/js/order/resources.js"></script>
+		<script type="text/javascript" src="resources/js/order/services.js"></script>
+		<script type="text/javascript" src="resources/js/order/validation.js"></script>
 
 		<script type="text/javascript" src="resources/js/money/yandex/resources.js"></script>
 		<script type="text/javascript" src="resources/js/money/yandex/controllers.js"></script>

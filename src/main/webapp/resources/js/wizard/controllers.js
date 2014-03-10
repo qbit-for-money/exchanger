@@ -1,6 +1,7 @@
 var wizardModule = angular.module("wizard");
 
-wizardModule.controller("WizardController", function($rootScope, $location, wizardService) {
+wizardModule.controller("WizardController", function($rootScope, $location, wizardService,
+		restoreOrderInfoFromSession) {
 	$rootScope.steps = wizardService.getSteps();
 
 	function updateCurrentStepIndex() {
@@ -15,17 +16,23 @@ wizardModule.controller("WizardController", function($rootScope, $location, wiza
 			$rootScope.currentStepIndex = 0;
 		}
 	}
-	$rootScope.$on("$locationChangeSuccess", updateCurrentStepIndex);
+	$rootScope.$on("$locationChangeSuccess", function() {
+		restoreOrderInfoFromSession();
+		updateCurrentStepIndex();
+	});
 	updateCurrentStepIndex();
 
-	$rootScope.goToStep = function(stepIndex) {
-		if (wizardService.canGoToStep(stepIndex)) {
-			$location.path(wizardService.getStepByIndex(stepIndex).path);
-		}
-	};
 	$rootScope.goToNextStep = function() {
 		if (wizardService.canGoToNextStep($location.path())) {
-			$location.path(wizardService.getNextStep($location.path()).path);
+			var nextStep = wizardService.getNextStep($location.path());
+			if (nextStep.action) {
+				var promise = nextStep.action();
+				promise.then(function() {
+					$location.path(nextStep.path);
+				});
+			} else {
+				$location.path(nextStep.path);
+			}
 		}
 	};
 	$rootScope.goToPrevStep = function() {

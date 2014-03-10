@@ -1,12 +1,12 @@
 var currencyModule = angular.module("wizard.currency");
 
-currencyModule.run(function($rootScope, wizardService) {
+currencyModule.run(function($rootScope, wizardService, isAmountValid) {
 	function validator() {
 		var orderInfo = $rootScope.orderInfo;
 		return (orderInfo && orderInfo.inTransfer && orderInfo.inTransfer.currency
-				&& orderInfo.inTransfer.amount && orderInfo.inTransfer.amount.centsInCoin
+				&& isAmountValid(orderInfo.inTransfer.amount)
 				&& orderInfo.outTransfer && orderInfo.outTransfer.currency
-				&& orderInfo.outTransfer.amount && orderInfo.outTransfer.amount.centsInCoin) ? true : false;
+				&& isAmountValid(orderInfo.outTransfer.amount));
 	}
 	wizardService.registerValidator("currency", validator);
 });

@@ -1,6 +1,7 @@
 var currencyModule = angular.module("wizard.currency");
 
-currencyModule.controller("CurrencyController", function($scope, $rootScope, wizardService, currencyResource, resetOrderInfo) {
+currencyModule.controller("CurrencyController", function($scope, $rootScope,
+		currencyResource, resetOrderInfo) {
 	resetOrderInfo();
 
 	$scope.panels = {left: {}, right: {}};

@@ -5,7 +5,6 @@ yandexModule.controller("YandexController", function($rootScope, $scope, $locati
 	$scope.authorized = false;
 	var address = $location.search()["wallet"];
 	if (address) {
-		restoreOrderInfoFromSession();
 		$rootScope.orderInfo.inTransfer.address = address;
 		$scope.authorized = true;
 	}
