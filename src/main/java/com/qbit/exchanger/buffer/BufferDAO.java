@@ -53,6 +53,7 @@ public class BufferDAO {
 	public void deleteReservation(Currency currency, Amount amount) {
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 		try {
+			entityManager.getTransaction().begin();
 			BufferBalanceInfo balanceInfo = getBalanceInfo(entityManager, currency);
 			if (balanceInfo != null) {
 				BigDecimal reserved = balanceInfo.getAmount().toBigDecimal();
@@ -62,6 +63,7 @@ public class BufferDAO {
 					balanceInfo.setAmount(new Amount(newAmount, currency.getCentsInCoin()));
 				}
 			}
+			entityManager.getTransaction().commit();
 		} catch (Exception ex) {
 			try {
 				entityManager.getTransaction().rollback();

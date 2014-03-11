@@ -100,7 +100,9 @@ public class YandexMoneyService implements MoneyService {
 			LOGGER.severe(e.getMessage());
 			callback.error(e.getMessage());
 		} finally {
-			bufferDAO.deleteReservation(Currency.BITCOIN, transfer.getAmount());
+			if (TransferType.OUT.equals(transfer.getType())) {
+				bufferDAO.deleteReservation(Currency.YANDEX_RUB, transfer.getAmount());
+			}
 			String removedToken = tokens.remove(transfer.getAddress());
 			if (removedToken != null) {
 				revokeToken(removedToken);
