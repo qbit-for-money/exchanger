@@ -6,7 +6,11 @@ amountModule.controller("AmountController", function($rootScope, $scope,
 		exchangesResource, isAmountPositive, convertAmount) {
 	
 	function createOrder() {
-		return ordersResource.create({}, $rootScope.orderInfo);
+		var orderInfo = ordersResource.create({}, $rootScope.orderInfo);
+		return orderInfo.$promise.then(function() {
+			$rootScope.orderInfo = orderInfo;
+			return orderInfo;
+		});
 	}
 	wizardService.registerAction("amount", createOrder);
 	

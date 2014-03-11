@@ -27,6 +27,9 @@ currencyModule.controller("CurrencyController", function($scope, $rootScope,
 	});
 
 	$scope.selectCurrency = function(panelName, currency) {
+		if (!currency.supported) {
+			return;
+		}
 		var panel = $scope.panels[panelName];
 		var oppositePanel = $scope.panels[panelName === "left" ? "right" : "left"];
 		if (oppositePanel.currency && (oppositePanel.currency.id === currency.id)) {

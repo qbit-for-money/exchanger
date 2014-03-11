@@ -36,8 +36,18 @@
 	<div class="row ng-hide" ng-show="currentStepIndex === -1">
 		<div class="col-xs-offset-0 col-xs-12 col-md-offset-1 col-md-10">
 			<div class="alert alert-warning">
-				<h3>Please choose <a href="#/steps/currency" class="alert-link">currency pair</a> first.</h3>
+				<h4 style="margin-bottom: 0px;">Please choose <a href="#/steps/currency" class="alert-link">currency pair</a> first.</h4>
 			</div>
+		</div>
+	</div>
+	<div class="row ng-hide" ng-show="validationFails">
+		<div class="col-xs-offset-0 col-xs-12 col-md-offset-1 col-md-10">
+			<alert type="'warning'" close="resetValidationFail()"><h4 style="margin-bottom: 0px;">Validation fails.</h4></alert>
+		</div>
+	</div>
+	<div class="row ng-hide" ng-show="actionFails">
+		<div class="col-xs-offset-0 col-xs-12 col-md-offset-1 col-md-10">
+			<alert type="'warning'" close="resetActionFail()"><h4 style="margin-bottom: 0px;">Action fails.</h4></alert>
 		</div>
 	</div>
 </div>
