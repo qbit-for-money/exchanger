@@ -6,6 +6,7 @@ import com.google.bitcoin.crypto.KeyCrypterException;
 import com.google.bitcoin.kits.WalletAppKit;
 import com.google.bitcoin.params.MainNetParams;
 import com.google.bitcoin.params.TestNet3Params;
+import com.google.bitcoin.script.Script;
 import com.google.bitcoin.utils.BriefLogFormatter;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
@@ -136,17 +137,22 @@ public class BitcoinMoneyService implements MoneyService {
 			@Override
 			public void onCoinsReceived(Wallet w, Transaction tx, BigInteger prevBalance, BigInteger newBalance) {
 				BigInteger receivedValue = tx.getValueSentToMe(w);
-				try {
-					String address = tx.getOutputs().get(0).getScriptPubKey().getToAddress(parameters).toString();
-					QueueItem item = paymentQueue.get(address);
-					if (item != null) {
-						BigDecimal am = new BigDecimal(Utils.bitcoinValueToFriendlyString(receivedValue));
-						item.callback.success(new Amount(am, Currency.BITCOIN.getCentsInCoin()));
+				for (TransactionOutput out : tx.getOutputs()) {
+					try {
+						Script scriptPubKey = out.getScriptPubKey();
+						String address = scriptPubKey.getToAddress(parameters).toString();
+						if (getWalletAddress().contains(address)) {
+							QueueItem item = paymentQueue.get(address);
+							if (item != null) {
+								BigDecimal am = new BigDecimal(Utils.bitcoinValueToFriendlyString(receivedValue));
+								item.callback.success(new Amount(am, Currency.BITCOIN.getCentsInCoin()));
+							}
+						}
+					} catch (ScriptException ex) {
+						logger.severe(ex.getMessage());
 					}
-				} catch (ScriptException ex) {
-					logger.severe(ex.getMessage());
 				}
-
+				
 				logger.log(Level.INFO, "Received tx for {0}: {1}", new Object[]{Utils.bitcoinValueToFriendlyString(receivedValue), tx});
 				logger.info("Transaction will be forwarded after it confirms.");
 

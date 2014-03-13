@@ -32,6 +32,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import com.google.litecoin.script.Script;
 import com.qbit.exchanger.money.model.Currency;
 import java.math.BigDecimal;
 
@@ -134,15 +135,20 @@ public class LitecoinMoneyService implements MoneyService {
 			@Override
 			public void onCoinsReceived(Wallet w, Transaction tx, BigInteger prevBalance, BigInteger newBalance) {
 				BigInteger receivedValue = tx.getValueSentToMe(w);
-				try {
-					String address = tx.getOutputs().get(0).getScriptPubKey().getToAddress(parameters).toString();
-					QueueItem item = paymentQueue.get(address);
-					if (item != null) {
-						BigDecimal am = new BigDecimal(Utils.bitcoinValueToFriendlyString(receivedValue));
-						item.callback.success(new Amount(am, Currency.LITECOIN.getCentsInCoin()));
+				for (TransactionOutput out : tx.getOutputs()) {
+					try {
+						Script scriptPubKey = out.getScriptPubKey();
+						String address = scriptPubKey.getToAddress(parameters).toString();
+						if (getWalletAddress().contains(address)) {
+							QueueItem item = paymentQueue.get(address);
+							if (item != null) {
+								BigDecimal am = new BigDecimal(Utils.bitcoinValueToFriendlyString(receivedValue));
+								item.callback.success(new Amount(am, Currency.LITECOIN.getCentsInCoin()));
+							}
+						}
+					} catch (ScriptException ex) {
+						logger.severe(ex.getMessage());
 					}
-				} catch (ScriptException ex) {
-					logger.severe(ex.getMessage());
 				}
 
 				logger.log(Level.INFO, "Received tx for {0}: {1}", new Object[]{Utils.bitcoinValueToFriendlyString(receivedValue), tx});
