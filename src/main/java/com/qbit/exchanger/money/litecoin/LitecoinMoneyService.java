@@ -33,6 +33,7 @@ import javax.inject.Singleton;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import com.google.litecoin.script.Script;
+import com.qbit.exchanger.buffer.BufferDAO;
 import com.qbit.exchanger.money.model.Currency;
 import java.math.BigDecimal;
 
@@ -58,6 +59,8 @@ public class LitecoinMoneyService implements MoneyService {
 
 	@Inject
 	private Env env;
+	@Inject
+	private BufferDAO bufferDAO;
 
 	private class QueueItem {
 
@@ -212,6 +215,8 @@ public class LitecoinMoneyService implements MoneyService {
 			throw new RuntimeException(e);
 		} catch (AddressFormatException ex) {
 			logger.severe(ex.getMessage());
+		} finally {
+			bufferDAO.deleteReservation(Currency.LITECOIN, transfer.getAmount());
 		}
 	}
 
@@ -236,7 +241,8 @@ public class LitecoinMoneyService implements MoneyService {
 		if ((transfer != null) && transfer.isValid()) {
 			BigInteger transferAmount = toNanoCoins(transfer.getAmount().getCoins(), transfer.getAmount().getCents());
 			if (transferAmount.compareTo(getWallet().getBalance().add(MIN_FEE)) == -1) {
-				result = true;
+				Amount balance = new Amount(new BigDecimal(getBalance()), Currency.LITECOIN.getCentsInCoin());
+				result = bufferDAO.reserveAmount(Currency.LITECOIN, balance, transfer.getAmount());
 			} else {
 				//("Wallet is empty");
 				result = false;

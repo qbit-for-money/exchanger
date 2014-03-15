@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import com.qbit.exchanger.buffer.BufferDAO;
 
 import com.qbit.exchanger.money.model.Amount;
 import com.qbit.exchanger.money.model.Currency;
@@ -59,6 +60,8 @@ public class BitcoinMoneyService implements MoneyService {
 
 	@Inject
 	private Env env;
+	@Inject
+	private BufferDAO bufferDAO;
 
 	private class QueueItem {
 
@@ -214,6 +217,8 @@ public class BitcoinMoneyService implements MoneyService {
 			throw new RuntimeException(e);
 		} catch (AddressFormatException ex) {
 			logger.severe(ex.getMessage());
+		} finally {
+			bufferDAO.deleteReservation(Currency.BITCOIN, transfer.getAmount());
 		}
 	}
 
@@ -233,6 +238,10 @@ public class BitcoinMoneyService implements MoneyService {
 		if ((transfer != null) && transfer.isValid()) {
 			BigInteger transferAmount = toNanoCoins(transfer.getAmount().getCoins(), transfer.getAmount().getCents());
 			result = transferAmount.compareTo(getWallet().getBalance().add(MIN_FEE)) == -1;
+			if (result) {
+				Amount balance = new Amount(new BigDecimal(getBalance()), Currency.BITCOIN.getCentsInCoin());
+				result = bufferDAO.reserveAmount(Currency.BITCOIN, balance, transfer.getAmount());
+			}
 		} else {
 			//("Invalid transfer");
 			result = false;
