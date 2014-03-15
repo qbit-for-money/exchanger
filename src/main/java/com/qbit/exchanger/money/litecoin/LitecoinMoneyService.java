@@ -241,9 +241,8 @@ public class LitecoinMoneyService implements MoneyService {
 		if ((transfer != null) && transfer.isValid()) {
 			BigInteger transferAmount = toNanoCoins(transfer.getAmount().getCoins(), transfer.getAmount().getCents());
 			if (transferAmount.compareTo(getWallet().getBalance().add(MIN_FEE)) == -1) {
-				result = true;
-				Amount amount = new Amount(new BigDecimal(getBalance()), Currency.LITECOIN.getCentsInCoin());
-				bufferDAO.reserveAmount(Currency.LITECOIN, amount, transfer.getAmount());
+				Amount balance = new Amount(new BigDecimal(getBalance()), Currency.LITECOIN.getCentsInCoin());
+				result = bufferDAO.reserveAmount(Currency.LITECOIN, balance, transfer.getAmount());
 			} else {
 				//("Wallet is empty");
 				result = false;

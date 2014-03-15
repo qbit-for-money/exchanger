@@ -239,8 +239,8 @@ public class BitcoinMoneyService implements MoneyService {
 			BigInteger transferAmount = toNanoCoins(transfer.getAmount().getCoins(), transfer.getAmount().getCents());
 			result = transferAmount.compareTo(getWallet().getBalance().add(MIN_FEE)) == -1;
 			if (result) {
-				Amount amount = new Amount(new BigDecimal(getBalance()), Currency.BITCOIN.getCentsInCoin());
-				bufferDAO.reserveAmount(Currency.BITCOIN, amount, transfer.getAmount());
+				Amount balance = new Amount(new BigDecimal(getBalance()), Currency.BITCOIN.getCentsInCoin());
+				result = bufferDAO.reserveAmount(Currency.BITCOIN, balance, transfer.getAmount());
 			}
 		} else {
 			//("Invalid transfer");
