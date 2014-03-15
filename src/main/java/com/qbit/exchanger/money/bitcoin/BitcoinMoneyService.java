@@ -106,7 +106,11 @@ public class BitcoinMoneyService implements MoneyService {
 
 	@PreDestroy
 	public void destroy() {
-		kit.stopAndWait();
+		try {
+			kit.stopAndWait();
+		} catch (Throwable ex) {
+			// Do nothing
+		}
 	}
 
 	@Override
@@ -182,7 +186,7 @@ public class BitcoinMoneyService implements MoneyService {
 	 * Example: 1 coin 2345 cents = 1.00002345
 	 */
 	private void sendMoney(Transfer transfer, MoneyTransferCallback callback) {
-		if ((transfer == null) || !transfer.isValid()) {
+		if ((transfer == null) || !transfer.isPositive()) {
 			callback.error("Empty address or wrong money value");
 		}
 		try {
@@ -219,7 +223,7 @@ public class BitcoinMoneyService implements MoneyService {
 
 	private boolean testReceive(Transfer transfer) {
 		boolean result;
-		if ((transfer != null) && transfer.isValid()) {
+		if ((transfer != null) && transfer.isPositive()) {
 			result = getWalletAddress().contains(transfer.getAddress());
 		} else {
 			//("Invalid transfer");
@@ -230,7 +234,7 @@ public class BitcoinMoneyService implements MoneyService {
 
 	private boolean testSend(Transfer transfer) {
 		boolean result;
-		if ((transfer != null) && transfer.isValid()) {
+		if ((transfer != null) && transfer.isPositive()) {
 			BigInteger transferAmount = toNanoCoins(transfer.getAmount().getCoins(), transfer.getAmount().getCents());
 			result = transferAmount.compareTo(getWallet().getBalance().add(MIN_FEE)) == -1;
 		} else {

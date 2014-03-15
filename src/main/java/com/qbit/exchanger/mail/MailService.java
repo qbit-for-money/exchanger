@@ -33,7 +33,7 @@ public class MailService {
 			email.setMsg(text);
 			email.send();
 		} catch (Exception ex) {
-			Logger.getLogger(MailService.class.getName()).log(Level.SEVERE, null, ex);
+			Logger.getLogger(MailService.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
 		}
 	}
 }

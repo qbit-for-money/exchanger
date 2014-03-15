@@ -113,7 +113,7 @@ public class YandexMoneyService implements MoneyService {
 	@Override
 	public boolean test(Transfer transfer) {
 		boolean result = false;
-		if ((transfer != null) && transfer.isValid()) {
+		if ((transfer != null) && transfer.isPositive()) {
 			String wallet;
 			String token;
 			if (TransferType.IN.equals(transfer.getType())) {

@@ -1,7 +1,8 @@
-package com.qbit.exchanger.util;
+package com.qbit.exchanger.dao.util;
 
 import java.util.List;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -12,7 +13,7 @@ import javax.persistence.criteria.CriteriaQuery;
  * @author Александр
  */
 public final class DAOUtil {
-
+	
 	private DAOUtil() {
 	}
 
@@ -51,5 +52,43 @@ public final class DAOUtil {
 		criteriaQuery.select(criteriaBuilder.count(criteriaQuery.from(entityClass)));
 		Query query = entityManager.createQuery(criteriaQuery);
 		return ((Long) query.getSingleResult()).intValue();
+	}
+	
+	public static <T> T invokeInTransaction(EntityManagerFactory entityManagerFactory,
+			TrCallable<T> callable, int maxFailCount) {
+		T result = null;
+		int failCount = 0;
+		while (failCount <= maxFailCount) {
+			try {
+				result = invokeInTransaction(entityManagerFactory, callable);
+				break;
+			} catch (Throwable ex) {
+				failCount++;
+				if (failCount > maxFailCount) {
+					throw ex;
+				}
+			}
+		}
+		return result;
+	}
+	
+	public static <T> T invokeInTransaction(EntityManagerFactory entityManagerFactory,
+			TrCallable<T> callable) {
+		T result = null;
+		EntityManager entityManager = entityManagerFactory.createEntityManager();
+		try {
+			entityManager.getTransaction().begin();
+			result = callable.call(entityManager);
+			entityManager.getTransaction().commit();
+		} catch (Throwable ex) {
+			try {
+				entityManager.getTransaction().rollback();
+			} catch (Throwable doNothing) {
+			}
+			throw ex;
+		} finally {
+			entityManager.close();
+		}
+		return result;
 	}
 }

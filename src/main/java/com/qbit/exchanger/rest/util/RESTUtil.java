@@ -1,4 +1,4 @@
-package com.qbit.exchanger.util;
+package com.qbit.exchanger.rest.util;
 
 import com.qbit.exchanger.common.model.Identifiable;
 import com.qbit.exchanger.common.model.ResourceLink;

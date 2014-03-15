@@ -1,4 +1,4 @@
-package com.qbit.exchanger.util;
+package com.qbit.exchanger.rest.util;
 
 import java.io.StringReader;
 import java.util.HashMap;
