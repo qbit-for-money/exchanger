@@ -1,31 +1,75 @@
 var userModule = angular.module("user");
 
-userModule.factory("userService", function(localStorage, usersResource) {
-	function getPublicKey() {
-		return localStorage.getItem("publicKey");
+userModule.factory("userService", function($rootScope, localStorage, usersResource) {
+	var user;
+	
+	var publicKey = localStorage.getItem("publicKey");
+	if (publicKey) {
+		var lastUser = usersResource.get({publicKey: publicKey});
+		lastUser.$promise.then(function() {
+			if (lastUser.publicKey) {
+				_set(lastUser);
+			} else {
+				create();
+			}
+		}, function() {
+			_reset();
+		});
+	} else {
+		create();
 	}
+	
 	function get() {
-		var publicKey = localStorage.getItem("publicKey");
-		return usersResource.get({publicKey: (publicKey ? publicKey : "null")});
+		return user;
 	}
 	function change(publicKey) {
-		var user = usersResource.get({publicKey: (publicKey ? publicKey : "null")}, function() {
-			if (publicKey === user.publicKey) {
-				localStorage.setItem("publicKey", user.publicKey);
+		var newUser = usersResource.get({publicKey: (publicKey ? publicKey : "null")}, function() {
+			if (publicKey === newUser.publicKey) {
+				_set(newUser);
+			} else {
+				_reset();
 			}
+		}, function() {
+			_reset();
 		});
-		return user;
+		return newUser;
 	}
 	function create() {
-		var user = usersResource.create({}, function() {
-			localStorage.setItem("publicKey", user.publicKey);
+		var newUser = usersResource.create({}, function() {
+			_set(newUser);
+		}, function() {
+			_reset();
 		});
-		return user;
+		return newUser;
 	}
+	function edit() {
+		if (!user || !user.publicKey) {
+			return;
+		}
+		user.$edit({publicKey: user.publicKey});
+	}
+	
+	function _set(newUser) {
+		if (newUser && newUser.publicKey) {
+			user = newUser;
+			$rootScope.user = newUser;
+			localStorage.setItem("publicKey", newUser.publicKey);
+			$rootScope.$broadcast("login");
+		} else {
+			_reset();
+		}
+	}
+	function _reset() {
+		user = null;
+		$rootScope.user = null;
+		localStorage.removeItem("publicKey");
+		$rootScope.$broadcast("logout");
+	}
+	
 	return {
-		getPublicKey: getPublicKey,
 		get: get,
 		change: change,
-		create: create
+		create: create,
+		edit: edit
 	};
 });

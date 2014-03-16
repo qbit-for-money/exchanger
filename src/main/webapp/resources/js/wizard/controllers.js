@@ -1,7 +1,7 @@
 var wizardModule = angular.module("wizard");
 
-wizardModule.controller("WizardController", function($rootScope, $scope, $location, wizardService,
-		restoreOrderInfoFromSession) {
+wizardModule.controller("WizardController", function($rootScope, $scope, $location,
+		wizardService, orderService) {
 	$rootScope.steps = wizardService.getSteps();
 
 	function updateCurrentStepIndex() {
@@ -19,7 +19,7 @@ wizardModule.controller("WizardController", function($rootScope, $scope, $locati
 	$rootScope.$on("$locationChangeSuccess", function() {
 		resetValidationFail();
 		resetActionFail();
-		restoreOrderInfoFromSession();
+		orderService.restoreFromSession();
 		updateCurrentStepIndex();
 	});
 	updateCurrentStepIndex();

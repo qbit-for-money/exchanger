@@ -13,11 +13,9 @@ commonModule.factory("storage", function() {
 		}
 	};
 });
-
 commonModule.factory("localStorage", function(storage) {
 	return window.localStorage || storage;
 });
-
 commonModule.factory("sessionStorage", function(storage) {
 	return window.sessionStorage || storage;
 });

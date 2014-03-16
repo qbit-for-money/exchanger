@@ -11,15 +11,14 @@ import com.qbit.exchanger.money.model.TransferType;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.yandex.money.api.YandexMoney;
 import ru.yandex.money.api.YandexMoneyImpl;
 import ru.yandex.money.api.enums.Destination;
@@ -27,18 +26,14 @@ import ru.yandex.money.api.response.AccountInfoResponse;
 import ru.yandex.money.api.response.ProcessPaymentResponse;
 import ru.yandex.money.api.response.ReceiveOAuthTokenResponse;
 import ru.yandex.money.api.response.RequestPaymentResponse;
-import ru.yandex.money.api.rights.AccountInfo;
 import ru.yandex.money.api.rights.IdentifierType;
-import ru.yandex.money.api.rights.OperationDetails;
-import ru.yandex.money.api.rights.OperationHistory;
 import ru.yandex.money.api.rights.Payment;
-import ru.yandex.money.api.rights.PaymentP2P;
 import ru.yandex.money.api.rights.Permission;
 
 @Singleton
 public class YandexMoneyService implements MoneyService {
 
-	private static final Logger LOGGER = Logger.getLogger(YandexMoneyService.class.getName());
+	private final Logger logger = LoggerFactory.getLogger(YandexMoneyService.class);
 
 	private YandexMoney yandexMoney;
 	private final Map<String, String> tokens = new ConcurrentHashMap<>();
@@ -96,9 +91,9 @@ public class YandexMoneyService implements MoneyService {
 			} else {
 				callback.error(response != null ? response.getError().getCode() : null);
 			}
-		} catch (Exception e) {
-			LOGGER.severe(e.getMessage());
-			callback.error(e.getMessage());
+		} catch (Exception ex) {
+			logger.error(ex.getMessage(), ex);
+			callback.error(ex.getMessage());
 		} finally {
 			if (TransferType.OUT.equals(transfer.getType())) {
 				bufferDAO.deleteReservation(Currency.YANDEX_RUB, transfer.getAmount());
@@ -134,8 +129,8 @@ public class YandexMoneyService implements MoneyService {
 						result = true;
 					}
 				}
-			} catch (Exception e) {
-				LOGGER.severe(e.getMessage());
+			} catch (Exception ex) {
+				logger.error(ex.getMessage(), ex);
 				result = false;
 			}
 		}
@@ -177,7 +172,7 @@ public class YandexMoneyService implements MoneyService {
 		try {
 			yandexMoney.revokeOAuthToken(token);
 		} catch (Exception ex) {
-			LOGGER.severe(ex.getMessage());
+			logger.error(ex.getMessage(), ex);
 		}
 	}
 
@@ -199,20 +194,6 @@ public class YandexMoneyService implements MoneyService {
 			throw new RuntimeException(e.getMessage());
 		}
 		return response;
-	}
-
-	/**
-	 * Creates permissions for this application.
-	 *
-	 * @return
-	 */
-	private Collection<Permission> getAppPaymentScope() {
-		List<Permission> permissions = new LinkedList<Permission>();
-		permissions.add(new PaymentP2P());
-		permissions.add(new AccountInfo());
-		permissions.add(new OperationDetails());
-		permissions.add(new OperationHistory());
-		return Collections.unmodifiableList(permissions);
 	}
 
 	private Collection<Permission> getPaymentScope(BigDecimal sum) {

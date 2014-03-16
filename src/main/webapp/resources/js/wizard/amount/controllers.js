@@ -1,25 +1,21 @@
 var amountModule = angular.module("wizard.amount");
 
 amountModule.controller("AmountController", function($rootScope, $scope,
-		wizardService, ordersResource,
+		wizardService, orderService,
 		moneyCustomModules, walletsResource,
 		exchangesResource, isAmountPositive, convertAmount) {
 	
 	function createOrder() {
-		var orderInfo = ordersResource.create({}, $rootScope.orderInfo);
-		return orderInfo.$promise.then(function() {
-			$rootScope.orderInfo = orderInfo;
-			return orderInfo;
-		});
+		return orderService.create();
 	}
 	wizardService.registerAction("amount", createOrder);
 	
-	var inTransfer = $rootScope.orderInfo.inTransfer;
-	$scope.custom = moneyCustomModules.has(inTransfer.currency);
+	$scope.custom = moneyCustomModules.has(orderService.get().inTransfer.currency);
 	
 	function generateInAddress() {
 		if (!$scope.custom) {
-			var inTransfer = $rootScope.orderInfo.inTransfer;
+			var orderInfo = orderService.get();
+			var inTransfer = orderInfo.inTransfer;
 			var walletAddress = walletsResource.generateAddress({currency: inTransfer.currency});
 			walletAddress.$promise.then(function() {
 				inTransfer.address = walletAddress.address;
@@ -34,8 +30,9 @@ amountModule.controller("AmountController", function($rootScope, $scope,
 	generateInAddress();
 	
 	function updateOutAmount() {
-		var inTransfer = $rootScope.orderInfo.inTransfer;
-		var outTransfer = $rootScope.orderInfo.outTransfer;
+		var orderInfo = orderService.get();
+		var inTransfer = orderInfo.inTransfer;
+		var outTransfer = orderInfo.outTransfer;
 		if (isAmountPositive(inTransfer.amount)) {
 			var rate = exchangesResource.rate({
 					from: inTransfer.currency,

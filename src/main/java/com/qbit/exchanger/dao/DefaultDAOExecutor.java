@@ -1,21 +1,21 @@
 package com.qbit.exchanger.dao;
 
 import com.qbit.exchanger.dao.util.DAOExecutor;
-import com.qbit.exchanger.dao.util.TrCallable;
 import static com.qbit.exchanger.dao.util.DAOUtil.invokeInTransaction;
+import com.qbit.exchanger.dao.util.TrCallable;
 import com.qbit.exchanger.env.Env;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.persistence.EntityManagerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -23,6 +23,8 @@ import javax.persistence.EntityManagerFactory;
  */
 @Singleton
 public class DefaultDAOExecutor implements DAOExecutor {
+	
+	private final Logger logger = LoggerFactory.getLogger(DefaultDAOExecutor.class);
 	
 	@Inject
 	private Env env;
@@ -63,9 +65,10 @@ public class DefaultDAOExecutor implements DAOExecutor {
 					} catch (Throwable ex) {
 						failCount++;
 						if (failCount > maxFailCount) {
-							Logger.getLogger(DefaultDAOExecutor.class.getName()).log(
-									Level.SEVERE, ex.getMessage(), ex);
+							logger.error(ex.getMessage(), ex);
 							throw ex;
+						} else {
+							logger.info(ex.getMessage(), ex);
 						}
 					}
 				}

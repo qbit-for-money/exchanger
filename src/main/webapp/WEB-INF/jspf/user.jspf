@@ -1,7 +1,7 @@
 <%@ page pageEncoding="UTF-8" %>
 <form name="userForm" class="navbar-form navbar-right" ng-controller="UserController">
-	<div class="form-group" ng-class="{'has-success': !publicKeyUnderCheck && isPublicKeyValid(),
-				'has-error': !publicKeyUnderCheck && !isPublicKeyValid()}">
+	<div class="form-group" ng-class="{'has-success': !publicKeyUnderCheck && (user.publicKey && (user.publicKey === publicKey)),
+				'has-error': !publicKeyUnderCheck && !(user.publicKey && (user.publicKey === publicKey))}">
 		<div class="input-group" style="width: 20em">
 			<div class="input-group-btn">
 				<button type="button" class="btn btn-default" title="New public key" ng-click="createUser()">
@@ -12,7 +12,7 @@
 			       ng-blur="publicKey = user.publicKey" />
 		</div>
 	</div>
-	<div class="form-group ng-hide" ng-show="isPublicKeyValid()">
+	<div class="form-group ng-hide" ng-show="user.publicKey && (user.publicKey === publicKey)">
 		<div class="input-group" style="width: 20em;" ng-class="{'has-error': userForm.email.$invalid}">
 			<div class="input-group-addon">
 				<span class="glyphicon glyphicon-envelope"></span>

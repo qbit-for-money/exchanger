@@ -17,7 +17,7 @@
 
 		<%@ include file="WEB-INF/jspf/wizard.jspf" %>
 
-		<div class="container" ng-if="currentStepIndex >= 0">
+		<div class="container" ng-if="user && orderInfo && (currentStepIndex >= 0)">
 			<div ng-view></div>
 		</div>
 

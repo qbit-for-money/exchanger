@@ -1,41 +1,38 @@
 package com.qbit.exchanger.money.litecoin;
 
-import com.google.litecoin.core.*;
+import static com.google.common.base.Preconditions.checkArgument;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.MoreExecutors;
+import com.google.litecoin.core.*;
+import com.google.litecoin.crypto.KeyCrypterException;
 import com.google.litecoin.kits.WalletAppKit;
 import com.google.litecoin.params.MainNetParams;
+import com.google.litecoin.params.TestNet2Params;
 import com.google.litecoin.params.TestNet3Params;
+import com.google.litecoin.script.Script;
 import com.google.litecoin.utils.BriefLogFormatter;
+import com.qbit.exchanger.buffer.BufferDAO;
+import com.qbit.exchanger.env.Env;
 import com.qbit.exchanger.money.core.MoneyService;
 import com.qbit.exchanger.money.core.MoneyTransferCallback;
+import com.qbit.exchanger.money.model.Amount;
+import com.qbit.exchanger.money.model.Currency;
 import com.qbit.exchanger.money.model.Transfer;
-
+import com.qbit.exchanger.money.model.TransferType;
 import java.io.File;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.google.litecoin.crypto.KeyCrypterException;
-import com.qbit.exchanger.env.Env;
-import com.qbit.exchanger.money.model.Amount;
-import com.qbit.exchanger.money.model.TransferType;
-
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.logging.Logger;
-import java.util.logging.Level;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Singleton;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import com.google.litecoin.script.Script;
-import com.qbit.exchanger.buffer.BufferDAO;
-import com.qbit.exchanger.money.model.Currency;
-import java.math.BigDecimal;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * LITECOIN
@@ -48,8 +45,8 @@ public class LitecoinMoneyService implements MoneyService {
 	private static final BigInteger COIN = new BigInteger("100000000", 10);
 
 	private static final BigInteger MIN_FEE = new BigInteger("100000", 10);
-
-	private static final Logger logger = Logger.getLogger(LitecoinMoneyService.class.getName());
+	
+	private final Logger logger = LoggerFactory.getLogger(LitecoinMoneyService.class);
 
 	private ConcurrentMap<String, QueueItem> paymentQueue;
 
@@ -93,7 +90,7 @@ public class LitecoinMoneyService implements MoneyService {
 	public void init() {
 		BriefLogFormatter.init();
 		if (env.isLitecoinTestnet()) {
-			parameters = TestNet3Params.get();
+			parameters = TestNet2Params.get();
 		} else {
 			parameters = MainNetParams.get();
 		}
@@ -154,11 +151,11 @@ public class LitecoinMoneyService implements MoneyService {
 							}
 						}
 					} catch (ScriptException ex) {
-						logger.severe(ex.getMessage());
+						logger.error(ex.getMessage(), ex);
 					}
 				}
 
-				logger.log(Level.INFO, "Received tx for {0}: {1}", new Object[]{Utils.bitcoinValueToFriendlyString(receivedValue), tx});
+				logger.info("Received tx for {}: {}", Utils.bitcoinValueToFriendlyString(receivedValue), tx);
 				logger.info("Transaction will be forwarded after it confirms.");
 
 				Futures.addCallback(tx.getConfidence().getDepthFuture(1), new FutureCallback<Transaction>() {
@@ -195,7 +192,7 @@ public class LitecoinMoneyService implements MoneyService {
 
 			final BigInteger amountToSend = toNanoCoins(transfer.getAmount().getCoins(), transfer.getAmount().getCents());
 
-			logger.log(Level.INFO, "Forwarding {0} BTC", Utils.bitcoinValueToFriendlyString(amountToSend));
+			logger.info("Forwarding {} BTC", Utils.bitcoinValueToFriendlyString(amountToSend));
 
 //			final BigInteger amountToSend = value.subtract(Transaction.REFERENCE_DEFAULT_MIN_TX_FEE);
 			final Wallet.SendResult sendResult = kit.wallet().sendCoins(kit.peerGroup(), forwardingAddress, amountToSend);
@@ -211,14 +208,14 @@ public class LitecoinMoneyService implements MoneyService {
 
 				@Override
 				public void run() {
-					logger.log(Level.INFO, "Sent coins onwards! Transaction hash is {0}", sendResult.tx.getHashAsString());
+					logger.info("Sent coins onwards! Transaction hash is {}", sendResult.tx.getHashAsString());
 				}
 			}, MoreExecutors.sameThreadExecutor());
 
 		} catch (KeyCrypterException | InsufficientMoneyException e) {
 			throw new RuntimeException(e);
 		} catch (AddressFormatException ex) {
-			logger.severe(ex.getMessage());
+			logger.error(ex.getMessage(), ex);
 		} finally {
 			bufferDAO.deleteReservation(Currency.LITECOIN, transfer.getAmount());
 		}
@@ -227,12 +224,7 @@ public class LitecoinMoneyService implements MoneyService {
 	private boolean testReceive(Transfer transfer) {
 		boolean result;
 		if ((transfer != null) && transfer.isPositive()) {
-			if (getWalletAddress().contains(transfer.getAddress())) {
-				result = true;
-			} else {
-				//("Invalid address");
-				result = false;
-			}
+			result = getWalletAddress().contains(transfer.getAddress());
 		} else {
 			//("Invalid transfer");
 			result = false;

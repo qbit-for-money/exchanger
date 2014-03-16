@@ -1,6 +1,7 @@
 package com.qbit.exchanger.order.service;
 
 import com.qbit.exchanger.dao.util.DAOExecutor;
+import com.qbit.exchanger.dao.util.TrCallable;
 import com.qbit.exchanger.external.exchange.core.Exchange;
 import com.qbit.exchanger.money.core.MoneyService;
 import com.qbit.exchanger.money.core.MoneyServiceProvider;
@@ -13,10 +14,11 @@ import com.qbit.exchanger.order.model.OrderInfo;
 import com.qbit.exchanger.order.model.OrderStatus;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import javax.persistence.EntityManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -25,15 +27,19 @@ import javax.inject.Singleton;
 @Singleton
 public class OrderFlowWorker implements Runnable {
 
+	private static final int MAX_STATUS_CHANGE_FAIL_COUNT = 2 * 60;
+
+	private final Logger logger = LoggerFactory.getLogger(OrderFlowWorker.class);
+
 	@Inject
 	private OrderDAO orderDAO;
 
 	@Inject
 	private MoneyServiceProvider moneyServiceProvider;
-	
+
 	@Inject
 	private Exchange exchange;
-	
+
 	@Inject
 	private DAOExecutor databaseExecutor;
 
@@ -46,8 +52,7 @@ public class OrderFlowWorker implements Runnable {
 				try {
 					processOrderUnderWork(orderUnderWork);
 				} catch (Exception ex) {
-					Logger.getLogger(OrderFlowWorker.class.getName()).log(Level.SEVERE,
-						ex.getMessage(), ex);
+					logger.error(ex.getMessage(), ex);
 				}
 			}
 		}
@@ -80,14 +85,28 @@ public class OrderFlowWorker implements Runnable {
 		moneyService.process(inTransfer, new MoneyTransferCallback() {
 
 			@Override
-			public void success(Amount inAmount) {
-				orderDAO.changeStatusAndAmounts(orderId, OrderStatus.PAYED, false,
-						inAmount, rate.mul(inAmount));
+			public void success(final Amount inAmount) {
+				databaseExecutor.submit(new TrCallable<Void>() {
+
+					@Override
+					public Void call(EntityManager entityManager) {
+						orderDAO.changeStatusAndAmounts(orderId, OrderStatus.PAYED, false,
+								inAmount, rate.mul(inAmount));
+						return null;
+					}
+				}, MAX_STATUS_CHANGE_FAIL_COUNT);
 			}
 
 			@Override
 			public void error(String msg) {
-				orderDAO.changeStatus(orderId, OrderStatus.IN_FAILED, false);
+				databaseExecutor.submit(new TrCallable<Void>() {
+
+					@Override
+					public Void call(EntityManager entityManager) {
+						orderDAO.changeStatus(orderId, OrderStatus.IN_FAILED, false);
+						return null;
+					}
+				}, MAX_STATUS_CHANGE_FAIL_COUNT);
 			}
 		});
 	}
@@ -100,14 +119,29 @@ public class OrderFlowWorker implements Runnable {
 		moneyService.process(outTransfer, new MoneyTransferCallback() {
 
 			@Override
-			public void success(Amount amount) {
-				orderDAO.changeStatusAndOutAmount(orderId, OrderStatus.SUCCESS, false,
-						amount);
+			public void success(final Amount outAmount) {
+				databaseExecutor.submit(new TrCallable<Void>() {
+
+					@Override
+					public Void call(EntityManager entityManager) {
+						orderDAO.changeStatusAndOutAmount(orderId, OrderStatus.SUCCESS, false,
+								outAmount);
+						return null;
+					}
+				}, MAX_STATUS_CHANGE_FAIL_COUNT);
+
 			}
 
 			@Override
 			public void error(String msg) {
-				orderDAO.changeStatus(orderId, OrderStatus.OUT_FAILED, false);
+				databaseExecutor.submit(new TrCallable<Void>() {
+
+					@Override
+					public Void call(EntityManager entityManager) {
+						orderDAO.changeStatus(orderId, OrderStatus.OUT_FAILED, false);
+						return null;
+					}
+				}, MAX_STATUS_CHANGE_FAIL_COUNT);
 			}
 		});
 	}

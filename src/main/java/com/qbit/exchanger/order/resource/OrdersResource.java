@@ -20,7 +20,7 @@ import javax.ws.rs.core.MediaType;
  */
 @Path("orders")
 public class OrdersResource {
-
+	
 	@Inject
 	private OrderService orderService;
 
