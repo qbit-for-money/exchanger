@@ -50,4 +50,9 @@
 			<alert type="'danger'" close="resetActionFail()"><h4 style="margin-bottom: 0px;">{{actionMessage}}</h4></alert>
 		</div>
 	</div>
+	<div class="row ng-hide" ng-show="redirectToResult">
+		<div class="col-xs-offset-0 col-xs-12 col-md-offset-1 col-md-10">
+			<alert type="'danger'" close="resetRedirectToResult()"><h4 style="margin-bottom: 0px;">{{actionMessage}}</h4></alert>
+		</div>
+	</div>
 </div>

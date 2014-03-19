@@ -4,14 +4,15 @@ resultModule.controller("ResultController", function($scope, $interval, orderSer
 	function actualizeOrder() {
 		orderService.actualize();
 	}
-	$scope.actualizationTimerId = $interval(actualizeOrder, 5000);
+	$scope.actualizationTimerId = $interval(actualizeOrder, 10000);
+	actualizeOrder();
 
-	$scope.$on("order-loaded", function() {
+	function handleOrderLoaded() {
 		var orderInfo = orderService.get();
 		updateInTransferStatus(orderInfo);
 		updateOutTransferStatus(orderInfo);
 		updateRate(orderInfo);
-	});
+	}
 	function updateInTransferStatus(orderInfo) {
 		if (!orderInfo || !orderInfo.status) {
 			return;
@@ -57,6 +58,7 @@ resultModule.controller("ResultController", function($scope, $interval, orderSer
 			denominator: orderInfo.outTransfer.amount
 		};
 	}
+	$scope.$on("order-loaded", handleOrderLoaded);
 
 	$scope.secondsInWaiting = 0;
 	function updateSecondsInWaiting() {
