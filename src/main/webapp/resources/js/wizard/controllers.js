@@ -19,7 +19,6 @@ wizardModule.controller("WizardController", function($rootScope, $scope, $locati
 	$rootScope.$on("$locationChangeSuccess", function() {
 		resetValidationFail();
 		resetActionFail();
-		orderService.restoreFromSession();
 		updateCurrentStepIndex();
 	});
 	updateCurrentStepIndex();
@@ -36,6 +35,11 @@ wizardModule.controller("WizardController", function($rootScope, $scope, $locati
 					$location.path(nextStep.path);
 				}, function() {
 					$scope.actionFails = true;
+					if (currentStep.actionFailMessage) {
+						$scope.actionMessage = currentStep.actionFailMessage.apply(this, arguments);
+					} else {
+						$scope.actionMessage = "Action fails.";
+					}
 				});
 			} else {
 				$location.path(nextStep.path);

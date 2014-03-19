@@ -1,7 +1,7 @@
 <div class="col-md-12" ng-controller="YandexController">
 	<div class="input-group input-group-lg" ng-class="{'has-error': inForm.inAddress.$invalid}"
 		 ng-if="authorized">
-		<input class="form-control" type="text" name="inAddress" style="cursor: text;"
+		<input class="form-control" type="text" name="inAddress"
 			   ng-model="orderInfo.inTransfer.address" ng-readonly="true"
 			   ng-required="true" ng-pattern="/^[0-9A-Za-z]+$/"
 			   title="Wallet address" placeholder="Wallet address" />

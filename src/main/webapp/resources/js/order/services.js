@@ -26,6 +26,9 @@ orderModule.factory("orderService", function($rootScope, sessionStorage, userSer
 		if (!userService.get()) {
 			return;
 		}
+		if (_restoreFromSession()) {
+			return;
+		}
 		var activeOrder = ordersResource.getActiveByUser({userPublicKey: userService.get().publicKey}, function() {
 			if (activeOrder && activeOrder.status) {
 				_set(activeOrder);
@@ -60,25 +63,15 @@ orderModule.factory("orderService", function($rootScope, sessionStorage, userSer
 		_set(newOrderInfo);
 	}
 	function create() {
-		var newOrderInfo = ordersResource.create({}, function() {
+		if (!orderInfo) {
+			return;
+		}
+		var newOrderInfo = ordersResource.create({}, orderInfo, function() {
 			_set(newOrderInfo);
 		}, function() {
 			// do nothing
 		});
 		return newOrderInfo;
-	}
-	
-	function storeInSession() {
-		if (orderInfo) {
-			sessionStorage.setItem("orderInfo", JSON.stringify(orderInfo));
-		}
-	}
-	function restoreFromSession() {
-		var orderInfoJSON = sessionStorage.getItem("orderInfo");
-		if (orderInfoJSON) {
-			sessionStorage.removeItem("orderInfo");
-			_set(JSON.parse(orderInfoJSON));
-		}
 	}
 	
 	function actualize() {
@@ -91,6 +84,26 @@ orderModule.factory("orderService", function($rootScope, sessionStorage, userSer
 			}, function() {
 				// do nothing
 			});
+		}
+	}
+	
+	function storeInSession() {
+		if (orderInfo) {
+			sessionStorage.setItem("orderInfo", JSON.stringify(orderInfo));
+		}
+	}
+	function _restoreFromSession() {
+		var orderInfoJSON = sessionStorage.getItem("orderInfo");
+		if (orderInfoJSON) {
+			sessionStorage.removeItem("orderInfo");
+			var newOrderInfo = JSON.parse(orderInfoJSON);
+			if (userService.get()) {
+				newOrderInfo.userPublicKey = userService.get().publicKey;
+			}
+			_set(newOrderInfo);
+			return true;
+		} else {
+			return false;
 		}
 	}
 	
@@ -115,7 +128,6 @@ orderModule.factory("orderService", function($rootScope, sessionStorage, userSer
 		empty: empty,
 		create: create,
 		storeInSession: storeInSession,
-		restoreFromSession: restoreFromSession,
 		actualize: actualize
 	};
 });

@@ -6,9 +6,16 @@ amountModule.controller("AmountController", function($rootScope, $scope,
 		exchangesResource, isAmountPositive, convertAmount) {
 	
 	function createOrder() {
-		return orderService.create();
+		var newOrderInfo = orderService.create();
+		return newOrderInfo.$promise;
 	}
-	wizardService.registerAction("amount", createOrder);
+	wizardService.registerAction("amount", createOrder, function(ex) {
+		if (ex && ex.data && (ex.data.indexOf("OrderTestException") > 0)) {
+			return "Not enough money is system buffer";
+		} else {
+			return "Can't create order.";
+		}
+	});
 	
 	$scope.custom = moneyCustomModules.has(orderService.get().inTransfer.currency);
 	

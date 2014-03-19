@@ -24,6 +24,6 @@ userModule.controller("UserController", function($scope, delayedProxy, userServi
 		$scope.publicKey = userService.get().publicKey;
 	});
 	$scope.$on("logout", function() {
-		//$scope.publicKey = "";
+		// do nothing
 	});
 });

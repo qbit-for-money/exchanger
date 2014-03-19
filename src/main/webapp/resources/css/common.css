@@ -11,3 +11,7 @@ div.loader-big {
 	background: url('../img/loader-big.gif') no-repeat;
 	width: 32px; height: 32px;
 }
+
+input[readonly], input[ng-readonly] {
+	cursor: text !important;
+}

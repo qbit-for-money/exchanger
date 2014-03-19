@@ -89,9 +89,10 @@ wizardModule.factory("wizardService", function() {
 		step.validator = validator;
 	}
 
-	function registerAction(stepId, action) {
+	function registerAction(stepId, action, actionFailMessage) {
 		var step = getStepById(stepId);
 		step.action = action;
+		step.actionFailMessage = actionFailMessage;
 	}
 
 	return {
