@@ -25,7 +25,7 @@ public class ExchangesResource {
 	@Path("rate")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Rate getRate(@QueryParam("from") Currency from, @QueryParam("to") Currency to) throws Exception {
-		//return exchange.getRate(from, to);
-		return new Rate(BigDecimal.ONE, from, to);
+		return exchange.getRate(from, to);
+//		return new Rate(BigDecimal.ONE, from, to);
 	}
 }

@@ -12,8 +12,15 @@ moneyModule.directive("amountInput", function() {
 		},
 		link: function(scope, element) {
 			var input = element.find("input");
+			
+			var fractionDigits;
+			if (scope.amount && scope.amount.centsInCoin) {
+				fractionDigits = Math.round(Math.log(scope.amount.centsInCoin) / Math.LN10);
+			} else {
+				fractionDigits = 2;
+			}
 			input.priceFormat({
-				prefix: "", centsLimit: 2, thousandsSeparator: ""
+				prefix: "", centsLimit: fractionDigits, thousandsSeparator: ""
 			});
 
 			function updateAmount() {

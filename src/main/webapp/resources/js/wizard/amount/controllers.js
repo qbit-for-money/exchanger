@@ -1,9 +1,9 @@
 var amountModule = angular.module("wizard.amount");
 
-amountModule.controller("AmountController", function($rootScope, $scope,
+amountModule.controller("AmountController", function($rootScope, $scope, delayedProxy,
 		wizardService, orderService,
 		moneyCustomModules, walletsResource,
-		exchangesResource, isAmountPositive, convertAmount) {
+		exchangesResource, isAmountValid, convertAmount) {
 	
 	function createOrder() {
 		var newOrderInfo = orderService.create();
@@ -36,11 +36,17 @@ amountModule.controller("AmountController", function($rootScope, $scope,
 	$scope.generateInAddress = generateInAddress;
 	generateInAddress();
 	
+	var outAmountUpdateInProgress = false;
 	function updateOutAmount() {
+		if (inAmountUpdateInProgress) {
+			inAmountUpdateInProgress = false;
+			return;
+		}
+		outAmountUpdateInProgress = true;
 		var orderInfo = orderService.get();
 		var inTransfer = orderInfo.inTransfer;
 		var outTransfer = orderInfo.outTransfer;
-		if (isAmountPositive(inTransfer.amount)) {
+		if (isAmountValid(inTransfer.amount)) {
 			var rate = exchangesResource.rate({
 					from: inTransfer.currency,
 					to: outTransfer.currency
@@ -53,9 +59,36 @@ amountModule.controller("AmountController", function($rootScope, $scope,
 			outTransfer.amount.cents = 0;
 		}
 	}
-	var destroyInAmountWatch = $rootScope.$watch("orderInfo.inTransfer.amount", updateOutAmount, true);
+	var destroyInAmountWatch = $rootScope.$watch("orderInfo.inTransfer.amount",
+			delayedProxy(updateOutAmount, 500), true);
+	var inAmountUpdateInProgress = false;
+	function updateInAmount() {
+		if (outAmountUpdateInProgress) {
+			outAmountUpdateInProgress = false;
+			return;
+		}
+		inAmountUpdateInProgress = true;
+		var orderInfo = orderService.get();
+		var outTransfer = orderInfo.outTransfer;
+		var inTransfer = orderInfo.inTransfer;
+		if (isAmountValid(outTransfer.amount)) {
+			var rate = exchangesResource.rate({
+					from: outTransfer.currency,
+					to: inTransfer.currency
+				});
+			rate.$promise.then(function() {
+				inTransfer.amount = convertAmount(outTransfer.amount, rate);
+			});
+		} else {
+			inTransfer.amount.coins = 0;
+			inTransfer.amount.cents = 0;
+		}
+	}
+	var destroyOutAmountWatch = $rootScope.$watch("orderInfo.outTransfer.amount",
+			delayedProxy(updateInAmount, 500), true);
 	
 	$scope.$on("$destroy", function() {
 		destroyInAmountWatch();
+		destroyOutAmountWatch();
 	});
 });
