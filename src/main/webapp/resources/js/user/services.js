@@ -36,7 +36,11 @@ userModule.factory("userService", function($rootScope, localStorage, usersResour
 	}
 	function create() {
 		var newUser = usersResource.create({}, function() {
-			_set(newUser);
+			if (newUser && newUser.publicKey) {
+				_set(newUser);
+			} else {
+				_reset();
+			}
 		}, function() {
 			_reset();
 		});
@@ -54,16 +58,17 @@ userModule.factory("userService", function($rootScope, localStorage, usersResour
 			user = newUser;
 			$rootScope.user = newUser;
 			localStorage.setItem("publicKey", newUser.publicKey);
-			$rootScope.$broadcast("login");
+			$rootScope.$broadcast("login", newUser);
 		} else {
 			_reset();
 		}
 	}
 	function _reset() {
+		var oldUser = user;
 		user = null;
 		$rootScope.user = null;
 		localStorage.removeItem("publicKey");
-		$rootScope.$broadcast("logout");
+		$rootScope.$broadcast("logout", oldUser);
 	}
 	
 	return {

@@ -13,6 +13,7 @@ import com.qbit.exchanger.order.dao.OrderDAO;
 import com.qbit.exchanger.order.model.OrderInfo;
 import com.qbit.exchanger.order.model.OrderStatus;
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -46,7 +47,7 @@ public class OrderFlowWorker implements Runnable {
 	@Override
 	public void run() {
 		List<OrderInfo> ordersUnderWork = orderDAO.findByFullStatus(
-				Arrays.asList(OrderStatus.INITIAL, OrderStatus.PAYED), false);
+				EnumSet.of(OrderStatus.INITIAL, OrderStatus.PAYED), false);
 		if (ordersUnderWork != null) {
 			for (OrderInfo orderUnderWork : ordersUnderWork) {
 				try {

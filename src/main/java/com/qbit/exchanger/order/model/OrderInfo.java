@@ -28,12 +28,12 @@ import javax.xml.bind.annotation.XmlTransient;
 @Entity
 @NamedQueries({
 	@NamedQuery(name = "OrderInfo.findByStatus",
-			query = "SELECT o FROM OrderInfo o WHERE o.status IN (:statuses)"),
+			query = "SELECT o FROM OrderInfo o WHERE o.status IN :statuses"),
 	@NamedQuery(name = "OrderInfo.findByFullStatus",
-			query = "SELECT o FROM OrderInfo o WHERE o.status IN (:statuses) AND o.inProcess = :inProcess"),
+			query = "SELECT o FROM OrderInfo o WHERE o.status IN :statuses AND o.inProcess = :inProcess"),
 	@NamedQuery(name = "OrderInfo.findByUserAndStatus",
 			query = "SELECT o FROM OrderInfo o WHERE o.userPublicKey = :userPublicKey"
-			+ " AND o.status IN (:statuses)"),
+			+ " AND o.status IN :statuses"),
 	@NamedQuery(name = "OrderInfo.findByUserAndTimestamp",
 			query = "SELECT o FROM OrderInfo o WHERE o.userPublicKey = :userPublicKey"
 			+ " AND o.creationDate = :creationDate")})

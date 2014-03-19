@@ -29,6 +29,8 @@ orderModule.factory("orderService", function($rootScope, sessionStorage, userSer
 		var activeOrder = ordersResource.getActiveByUser({userPublicKey: userService.get().publicKey}, function() {
 			if (activeOrder && activeOrder.status) {
 				_set(activeOrder);
+			} else {
+				empty();
 			}
 		}, function() {
 			empty();
@@ -96,15 +98,16 @@ orderModule.factory("orderService", function($rootScope, sessionStorage, userSer
 		if (newOrderInfo) {
 			orderInfo = newOrderInfo;
 			$rootScope.orderInfo = newOrderInfo;
-			$rootScope.$broadcast("order-loaded");
+			$rootScope.$broadcast("order-loaded", newOrderInfo);
 		} else {
 			_reset();
 		}
 	}
 	function _reset() {
+		var oldOrderInfo = orderInfo;
 		orderInfo = null;
 		$rootScope.orderInfo = null;
-		$rootScope.$broadcast("order-nulled");
+		$rootScope.$broadcast("order-nulled", oldOrderInfo);
 	}
 	
 	return {

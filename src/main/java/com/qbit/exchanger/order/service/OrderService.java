@@ -9,8 +9,8 @@ import com.qbit.exchanger.order.model.OrderStatus;
 import com.qbit.exchanger.order.service.exception.OrderServiceException;
 import com.qbit.exchanger.order.service.exception.OrderServiceSecurityException;
 import com.qbit.exchanger.order.service.exception.OrderTestException;
-import java.util.Arrays;
 import java.util.Date;
+import java.util.EnumSet;
 import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -30,7 +30,7 @@ public class OrderService {
 
 	public OrderInfo getActiveByUser(String userPublicKey) throws OrderServiceException {
 		List<OrderInfo> activeOrders = orderDAO.findByUserAndStatus(userPublicKey,
-				Arrays.asList(OrderStatus.INITIAL, OrderStatus.PAYED, OrderStatus.IN_FAILED, OrderStatus.OUT_FAILED));
+				EnumSet.of(OrderStatus.INITIAL, OrderStatus.PAYED, OrderStatus.IN_FAILED, OrderStatus.OUT_FAILED));
 		if ((activeOrders != null) && activeOrders.size() > 1) {
 			throw new OrderServiceSecurityException("No more than one active order per user.");
 		}

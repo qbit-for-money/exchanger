@@ -13,17 +13,17 @@ userModule.controller("UserController", function($scope, delayedProxy, userServi
 			$scope.publicKeyUnderCheck = false;
 		});
 	}
-	$scope.changeUser = changeUser;
+	$scope.changeUser = delayedProxy(changeUser, 1000);
 
 	function editUser() {
 		userService.edit();
 	}
-	$scope.editUser = delayedProxy(editUser, 2000);
+	$scope.editUser = delayedProxy(editUser, 1000);
 
-	$scope.$watch("login", function() {
+	$scope.$on("login", function() {
 		$scope.publicKey = userService.get().publicKey;
 	});
-	$scope.$watch("logout", function() {
-		$scope.publicKey = "";
+	$scope.$on("logout", function() {
+		//$scope.publicKey = "";
 	});
 });

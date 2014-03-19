@@ -9,9 +9,9 @@ import com.qbit.exchanger.money.model.TransferType;
 import com.qbit.exchanger.order.model.OrderInfo;
 import com.qbit.exchanger.order.model.OrderStatus;
 import com.qbit.exchanger.user.UserDAO;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.EnumSet;
 import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -42,7 +42,7 @@ public class OrderDAO {
 		}
 	}
 	
-	public List<OrderInfo> findByStatus(Collection<OrderStatus> statuses) {
+	public List<OrderInfo> findByStatus(EnumSet<OrderStatus> statuses) {
 		if ((statuses == null) || statuses.isEmpty()) {
 			return Collections.emptyList();
 		}
@@ -56,7 +56,7 @@ public class OrderDAO {
 		}
 	}
 	
-	public List<OrderInfo> findByFullStatus(Collection<OrderStatus> statuses, boolean inProcess) {
+	public List<OrderInfo> findByFullStatus(EnumSet<OrderStatus> statuses, boolean inProcess) {
 		if ((statuses == null) || statuses.isEmpty()) {
 			return Collections.emptyList();
 		}
@@ -71,7 +71,7 @@ public class OrderDAO {
 		}
 	}
 	
-	public List<OrderInfo> findByUserAndStatus(String userPublicKey, Collection<OrderStatus> statuses) {
+	public List<OrderInfo> findByUserAndStatus(String userPublicKey, EnumSet<OrderStatus> statuses) {
 		if ((userPublicKey == null) || userPublicKey.isEmpty() || (statuses == null) || statuses.isEmpty()) {
 			return Collections.emptyList();
 		}
