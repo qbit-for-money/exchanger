@@ -1,9 +1,6 @@
 var currencyModule = angular.module("wizard.currency");
 
-currencyModule.controller("CurrencyController", function($scope, $rootScope,
-		currencyResource, resetOrderInfo) {
-	resetOrderInfo();
-
+currencyModule.controller("CurrencyController", function($scope, currencyResource, orderService) {
 	$scope.panels = {left: {}, right: {}};
 
 	var currenciesResponse = currencyResource.findAll();
@@ -11,14 +8,13 @@ currencyModule.controller("CurrencyController", function($scope, $rootScope,
 		if (currenciesResponse && currenciesResponse.currencies) {
 			var currencies = currenciesResponse.currencies;
 			$scope.currencies = currencies;
+			var orderInfo = orderService.get();
 			for (var c = 0; c < currencies.length; c++) {
 				var currency = currencies[c];
-				if ($rootScope.orderInfo.inTransfer.currency
-						&& (currency.id === $rootScope.orderInfo.inTransfer.currency)) {
+				if (orderInfo.inTransfer.currency && (currency.id === orderInfo.inTransfer.currency)) {
 					$scope.panels.left.currency = currency;
 				}
-				if ($rootScope.orderInfo.outTransfer.currency
-						&& (currency.id === $rootScope.orderInfo.outTransfer.currency)) {
+				if (orderInfo.outTransfer.currency && (currency.id === orderInfo.outTransfer.currency)) {
 					$scope.panels.right.currency = currency;
 				}
 			}
@@ -40,13 +36,14 @@ currencyModule.controller("CurrencyController", function($scope, $rootScope,
 	};
 
 	function refreshTransfers() {
+		var orderInfo = orderService.get();
 		if ($scope.panels.left.currency) {
-			$rootScope.orderInfo.inTransfer.currency = $scope.panels.left.currency.id;
-			$rootScope.orderInfo.inTransfer.amount = createEmptyAmount($scope.panels.left.currency);
+			orderInfo.inTransfer.currency = $scope.panels.left.currency.id;
+			orderInfo.inTransfer.amount = createEmptyAmount($scope.panels.left.currency);
 		}
 		if ($scope.panels.right.currency) {
-			$rootScope.orderInfo.outTransfer.currency = $scope.panels.right.currency.id;
-			$rootScope.orderInfo.outTransfer.amount = createEmptyAmount($scope.panels.right.currency);
+			orderInfo.outTransfer.currency = $scope.panels.right.currency.id;
+			orderInfo.outTransfer.amount = createEmptyAmount($scope.panels.right.currency);
 		}
 	}
 	function createEmptyAmount(currency) {

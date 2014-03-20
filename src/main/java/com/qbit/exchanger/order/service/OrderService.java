@@ -5,10 +5,12 @@ import com.qbit.exchanger.money.core.MoneyServiceProvider;
 import com.qbit.exchanger.money.model.Transfer;
 import com.qbit.exchanger.order.dao.OrderDAO;
 import com.qbit.exchanger.order.model.OrderInfo;
+import com.qbit.exchanger.order.model.OrderStatus;
 import com.qbit.exchanger.order.service.exception.OrderServiceException;
 import com.qbit.exchanger.order.service.exception.OrderServiceSecurityException;
 import com.qbit.exchanger.order.service.exception.OrderTestException;
 import java.util.Date;
+import java.util.EnumSet;
 import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -27,7 +29,8 @@ public class OrderService {
 	private MoneyServiceProvider moneyServiceProvider;
 
 	public OrderInfo getActiveByUser(String userPublicKey) throws OrderServiceException {
-		List<OrderInfo> activeOrders = orderDAO.findActiveByUser(userPublicKey);
+		List<OrderInfo> activeOrders = orderDAO.findByUserAndStatus(userPublicKey,
+				EnumSet.of(OrderStatus.INITIAL, OrderStatus.PAYED, OrderStatus.IN_FAILED, OrderStatus.OUT_FAILED));
 		if ((activeOrders != null) && activeOrders.size() > 1) {
 			throw new OrderServiceSecurityException("No more than one active order per user.");
 		}

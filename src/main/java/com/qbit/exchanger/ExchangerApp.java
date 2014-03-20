@@ -1,14 +1,16 @@
 package com.qbit.exchanger;
 
 import com.qbit.exchanger.buffer.BufferDAO;
+import com.qbit.exchanger.dao.DefaultDAOExecutor;
+import com.qbit.exchanger.dao.util.DAOExecutor;
 import com.qbit.exchanger.env.Env;
 import com.qbit.exchanger.external.exchange.btce.BTCExchange;
 import com.qbit.exchanger.external.exchange.core.Exchange;
 import com.qbit.exchanger.external.exchange.core.ExchangeFacade;
 import com.qbit.exchanger.mail.MailService;
 import com.qbit.exchanger.money.bitcoin.BitcoinMoneyService;
-import com.qbit.exchanger.money.litecoin.LitecoinMoneyService;
 import com.qbit.exchanger.money.core.MoneyServiceProvider;
+import com.qbit.exchanger.money.litecoin.LitecoinMoneyService;
 import com.qbit.exchanger.money.yandex.YandexMoneyService;
 import com.qbit.exchanger.order.dao.OrderDAO;
 import com.qbit.exchanger.order.service.OrderFlowScheduler;
@@ -49,6 +51,8 @@ public class ExchangerApp extends Application {
 		EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("exchangerPU");
 		addBinding(newBinder(entityManagerFactory).to(EntityManagerFactory.class), configuration);
 
+		addBinding(newBinder(DefaultDAOExecutor.class).to(DAOExecutor.class).in(Singleton.class), configuration);
+		
 		addBinding(newBinder(UserDAO.class).to(UserDAO.class).in(Singleton.class), configuration);
 		addBinding(newBinder(OrderDAO.class).to(OrderDAO.class).in(Singleton.class), configuration);
 		addBinding(newBinder(BufferDAO.class).to(BufferDAO.class).in(Singleton.class), configuration);
@@ -71,12 +75,16 @@ public class ExchangerApp extends Application {
 	}
 
 	/**
-	 * Called on application shutdown. We need this workaround because
-	 * fucking Jersey 2.5.1 doesn't process @PreDestroy annotated methods in
-	 * another classes except this one.
+	 * Called on application shutdown. We need this workaround because fucking
+	 * Jersey 2.5.1 doesn't process @PreDestroy annotated methods in another
+	 * classes except this one.
 	 */
 	@PreDestroy
-	public void preDestroy() {
-		serviceLocator.shutdown();
+	public void shutdown() {
+		try {
+			serviceLocator.shutdown();
+		} catch (Throwable ex) {
+			// Do nothing
+		}
 	}
 }

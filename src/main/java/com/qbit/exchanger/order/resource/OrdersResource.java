@@ -3,7 +3,7 @@ package com.qbit.exchanger.order.resource;
 import com.qbit.exchanger.order.model.OrderInfo;
 import com.qbit.exchanger.order.service.OrderService;
 import com.qbit.exchanger.order.service.exception.OrderServiceException;
-import static com.qbit.exchanger.util.RESTUtil.*;
+import static com.qbit.exchanger.rest.util.RESTUtil.*;
 import java.text.ParseException;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
@@ -20,7 +20,7 @@ import javax.ws.rs.core.MediaType;
  */
 @Path("orders")
 public class OrdersResource {
-
+	
 	@Inject
 	private OrderService orderService;
 
@@ -34,7 +34,7 @@ public class OrdersResource {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public OrderInfo getByUserAndTimestamp(@QueryParam("userPublicKey") String userPublicKey,
-		@QueryParam("creationDate") String creationDateStr) throws OrderServiceException, ParseException {
+			@QueryParam("creationDate") String creationDateStr) throws OrderServiceException, ParseException {
 		return orderService.getByUserAndTimestamp(userPublicKey, toDate(creationDateStr));
 	}
 

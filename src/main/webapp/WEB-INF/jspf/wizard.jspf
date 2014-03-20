@@ -1,5 +1,5 @@
 <%@ page pageEncoding="UTF-8" %>
-<div class="container" ng-controller="WizardController">
+<div class="container" ng-if="user && orderInfo" ng-controller="WizardController">
 	<div class="row">
 		<div class="col-md-12">
 			<div class="wizard">
@@ -47,7 +47,12 @@
 	</div>
 	<div class="row ng-hide" ng-show="actionFails">
 		<div class="col-xs-offset-0 col-xs-12 col-md-offset-1 col-md-10">
-			<alert type="'warning'" close="resetActionFail()"><h4 style="margin-bottom: 0px;">Action fails.</h4></alert>
+			<alert type="'danger'" close="resetActionFail()"><h4 style="margin-bottom: 0px;">{{actionMessage}}</h4></alert>
+		</div>
+	</div>
+	<div class="row ng-hide" ng-show="redirectToResult">
+		<div class="col-xs-offset-0 col-xs-12 col-md-offset-1 col-md-10">
+			<alert type="'danger'" close="resetRedirectToResult()"><h4 style="margin-bottom: 0px;">{{actionMessage}}</h4></alert>
 		</div>
 	</div>
 </div>

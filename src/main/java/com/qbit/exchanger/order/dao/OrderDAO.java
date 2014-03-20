@@ -1,12 +1,17 @@
 package com.qbit.exchanger.order.dao;
 
+import com.qbit.exchanger.dao.util.DAOUtil;
+import static com.qbit.exchanger.dao.util.DAOUtil.invokeInTransaction;
+import com.qbit.exchanger.dao.util.TrCallable;
 import com.qbit.exchanger.money.model.Amount;
 import com.qbit.exchanger.money.model.Transfer;
 import com.qbit.exchanger.money.model.TransferType;
 import com.qbit.exchanger.order.model.OrderInfo;
 import com.qbit.exchanger.order.model.OrderStatus;
-import com.qbit.exchanger.util.DAOUtil;
+import com.qbit.exchanger.user.UserDAO;
+import java.util.Collections;
 import java.util.Date;
+import java.util.EnumSet;
 import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -23,6 +28,9 @@ public class OrderDAO {
 
 	@Inject
 	private EntityManagerFactory entityManagerFactory;
+	
+	@Inject
+	private UserDAO userDAO;
 
 	public OrderInfo find(String id) {
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
@@ -33,35 +41,45 @@ public class OrderDAO {
 			entityManager.close();
 		}
 	}
-
-	public List<OrderInfo> findActive() {
+	
+	public List<OrderInfo> findByStatus(EnumSet<OrderStatus> statuses) {
+		if ((statuses == null) || statuses.isEmpty()) {
+			return Collections.emptyList();
+		}
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 		try {
-			TypedQuery<OrderInfo> query = entityManager.createNamedQuery("OrderInfo.findActive", OrderInfo.class);
+			TypedQuery<OrderInfo> query = entityManager.createNamedQuery("OrderInfo.findByStatus", OrderInfo.class);
+			query.setParameter("statuses", statuses);
 			return query.getResultList();
 		} finally {
 			entityManager.close();
 		}
 	}
-
-	public List<OrderInfo> findActiveAndNotInProcess() {
+	
+	public List<OrderInfo> findByFullStatus(EnumSet<OrderStatus> statuses, boolean inProcess) {
+		if ((statuses == null) || statuses.isEmpty()) {
+			return Collections.emptyList();
+		}
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 		try {
-			TypedQuery<OrderInfo> query = entityManager.createNamedQuery("OrderInfo.findActiveAndNotInProcess", OrderInfo.class);
+			TypedQuery<OrderInfo> query = entityManager.createNamedQuery("OrderInfo.findByFullStatus", OrderInfo.class);
+			query.setParameter("statuses", statuses);
+			query.setParameter("inProcess", inProcess);
 			return query.getResultList();
 		} finally {
 			entityManager.close();
 		}
 	}
-
-	public List<OrderInfo> findActiveByUser(String userPublicKey) {
-		if (userPublicKey == null) {
-			throw new IllegalArgumentException();
+	
+	public List<OrderInfo> findByUserAndStatus(String userPublicKey, EnumSet<OrderStatus> statuses) {
+		if ((userPublicKey == null) || userPublicKey.isEmpty() || (statuses == null) || statuses.isEmpty()) {
+			return Collections.emptyList();
 		}
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 		try {
-			TypedQuery<OrderInfo> query = entityManager.createNamedQuery("OrderInfo.findActiveByUser", OrderInfo.class);
+			TypedQuery<OrderInfo> query = entityManager.createNamedQuery("OrderInfo.findByUserAndStatus", OrderInfo.class);
 			query.setParameter("userPublicKey", userPublicKey);
+			query.setParameter("statuses", statuses);
 			return query.getResultList();
 		} finally {
 			entityManager.close();
@@ -69,7 +87,7 @@ public class OrderDAO {
 	}
 
 	public List<OrderInfo> findByUserAndTimestamp(String userPublicKey, Date creationDate) {
-		if ((userPublicKey == null) || (creationDate == null)) {
+		if ((userPublicKey == null) || userPublicKey.isEmpty() || (creationDate == null)) {
 			throw new IllegalArgumentException();
 		}
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
@@ -83,134 +101,119 @@ public class OrderDAO {
 		}
 	}
 
-	public void changeStatus(String id, OrderStatus orderStatus, boolean inProcess) {
+	public void changeStatus(final String id, final OrderStatus orderStatus, final boolean inProcess) {
 		if ((id == null) || (orderStatus == null)) {
 			throw new IllegalArgumentException();
 		}
-		EntityManager entityManager = entityManagerFactory.createEntityManager();
-		try {
-			entityManager.getTransaction().begin();
-			OrderInfo orderInfo = entityManager.find(OrderInfo.class, id);
-			orderInfo.setStatus(orderStatus);
-			orderInfo.setInProcess(inProcess);
-			entityManager.getTransaction().commit();
-		} catch (Throwable ex) {
-			try {
-				entityManager.getTransaction().rollback();
-			} catch (Throwable doNothing) {
+		invokeInTransaction(entityManagerFactory, new TrCallable<Void>() {
+
+			@Override
+			public Void call(EntityManager entityManager) {
+				OrderInfo orderInfo = entityManager.find(OrderInfo.class, id);
+				if (orderInfo == null) {
+					return null;
+				}
+				orderInfo.setStatus(orderStatus);
+				orderInfo.setInProcess(inProcess);
+				return null;
 			}
-			throw ex;
-		} finally {
-			entityManager.close();
-		}
+		});
 	}
 
-	public void changeStatusAndInAmount(String id, OrderStatus orderStatus, boolean inProcess,
-			Amount inAmount) {
+	public void changeStatusAndInAmount(final String id, final OrderStatus orderStatus, final boolean inProcess,
+			final Amount inAmount) {
 		if ((id == null) || (orderStatus == null) || (inAmount == null) || !inAmount.isValid()) {
 			throw new IllegalArgumentException();
 		}
-		EntityManager entityManager = entityManagerFactory.createEntityManager();
-		try {
-			entityManager.getTransaction().begin();
-			OrderInfo orderInfo = entityManager.find(OrderInfo.class, id);
-			orderInfo.setStatus(orderStatus);
-			orderInfo.setInProcess(inProcess);
-			orderInfo.getInTransfer().setAmount(inAmount);
-			entityManager.getTransaction().commit();
-		} catch (Throwable ex) {
-			try {
-				entityManager.getTransaction().rollback();
-			} catch (Throwable doNothing) {
+		invokeInTransaction(entityManagerFactory, new TrCallable<Void>() {
+
+			@Override
+			public Void call(EntityManager entityManager) {
+				OrderInfo orderInfo = entityManager.find(OrderInfo.class, id);
+				if (orderInfo == null) {
+					return null;
+				}
+				orderInfo.setStatus(orderStatus);
+				orderInfo.setInProcess(inProcess);
+				orderInfo.getInTransfer().setAmount(inAmount);
+				return null;
 			}
-			throw ex;
-		} finally {
-			entityManager.close();
-		}
+		});
 	}
 
-	public void changeStatusAndOutAmount(String id, OrderStatus orderStatus, boolean inProcess,
-			Amount outAmount) {
+	public void changeStatusAndOutAmount(final String id, final OrderStatus orderStatus, final boolean inProcess,
+			final Amount outAmount) {
 		if ((id == null) || (orderStatus == null) || (outAmount == null) || !outAmount.isValid()) {
 			throw new IllegalArgumentException();
 		}
-		EntityManager entityManager = entityManagerFactory.createEntityManager();
-		try {
-			entityManager.getTransaction().begin();
-			OrderInfo orderInfo = entityManager.find(OrderInfo.class, id);
-			orderInfo.setStatus(orderStatus);
-			orderInfo.setInProcess(inProcess);
-			orderInfo.getOutTransfer().setAmount(outAmount);
-			entityManager.getTransaction().commit();
-		} catch (Throwable ex) {
-			try {
-				entityManager.getTransaction().rollback();
-			} catch (Throwable doNothing) {
+		invokeInTransaction(entityManagerFactory, new TrCallable<Void>() {
+
+			@Override
+			public Void call(EntityManager entityManager) {
+				OrderInfo orderInfo = entityManager.find(OrderInfo.class, id);
+				if (orderInfo == null) {
+					return null;
+				}
+				orderInfo.setStatus(orderStatus);
+				orderInfo.setInProcess(inProcess);
+				orderInfo.getOutTransfer().setAmount(outAmount);
+				return null;
 			}
-			throw ex;
-		} finally {
-			entityManager.close();
-		}
+		});
 	}
 
-	public void changeStatusAndAmounts(String id, OrderStatus orderStatus, boolean inProcess,
-			Amount inAmount, Amount outAmount) {
+	public void changeStatusAndAmounts(final String id, final OrderStatus orderStatus, final boolean inProcess,
+			final Amount inAmount, final Amount outAmount) {
 		if ((id == null) || (orderStatus == null) || (inAmount == null) || !inAmount.isValid()
 				|| (outAmount == null) || !outAmount.isValid()) {
 			throw new IllegalArgumentException();
 		}
-		EntityManager entityManager = entityManagerFactory.createEntityManager();
-		try {
-			entityManager.getTransaction().begin();
-			OrderInfo orderInfo = entityManager.find(OrderInfo.class, id);
-			orderInfo.setStatus(orderStatus);
-			orderInfo.setInProcess(inProcess);
-			orderInfo.getInTransfer().setAmount(inAmount);
-			orderInfo.getOutTransfer().setAmount(outAmount);
-			entityManager.getTransaction().commit();
-		} catch (Throwable ex) {
-			try {
-				entityManager.getTransaction().rollback();
-			} catch (Throwable doNothing) {
+		invokeInTransaction(entityManagerFactory, new TrCallable<Void>() {
+
+			@Override
+			public Void call(EntityManager entityManager) {
+				OrderInfo orderInfo = entityManager.find(OrderInfo.class, id);
+				if (orderInfo == null) {
+					return null;
+				}
+				orderInfo.setStatus(orderStatus);
+				orderInfo.setInProcess(inProcess);
+				orderInfo.getInTransfer().setAmount(inAmount);
+				orderInfo.getOutTransfer().setAmount(outAmount);
+				return null;
 			}
-			throw ex;
-		} finally {
-			entityManager.close();
-		}
+		});
 	}
 
 	public OrderInfo create(OrderInfo orderInfo) {
+		if (orderInfo == null) {
+			throw new IllegalArgumentException("Order is NULL.");
+		}
 		return create(orderInfo.getUserPublicKey(), orderInfo.getInTransfer(), orderInfo.getOutTransfer());
 	}
 
-	public OrderInfo create(String userPublicKey, Transfer inTransfer, Transfer outTransfer) {
-		if ((userPublicKey == null) || (inTransfer == null) || (outTransfer == null)
-				|| !inTransfer.isValid() || !outTransfer.isValid()
+	public OrderInfo create(final String userPublicKey, final Transfer inTransfer, final Transfer outTransfer) {
+		if ((inTransfer == null) || (outTransfer == null)
+				|| !inTransfer.isPositive() || !outTransfer.isPositive()
 				|| !TransferType.IN.equals(inTransfer.getType())
 				|| !TransferType.OUT.equals(outTransfer.getType())
-				|| inTransfer.getCurrency().equals(outTransfer.getCurrency())) {
+				|| inTransfer.getCurrency().equals(outTransfer.getCurrency())
+				|| !userDAO.isExists(userPublicKey)) {
 			throw new IllegalArgumentException("Order is inconsistent.");
 		}
-		EntityManager entityManager = entityManagerFactory.createEntityManager();
-		try {
-			entityManager.getTransaction().begin();
-			OrderInfo order = new OrderInfo();
-			order.setCreationDate(new Date());
-			order.setUserPublicKey(userPublicKey);
-			order.setInTransfer(inTransfer);
-			order.setOutTransfer(outTransfer);
-			order.setStatus(OrderStatus.INITIAL);
-			entityManager.persist(order);
-			entityManager.getTransaction().commit();
-			return order;
-		} catch (Throwable ex) {
-			try {
-				entityManager.getTransaction().rollback();
-			} catch (Throwable doNothing) {
+		return invokeInTransaction(entityManagerFactory, new TrCallable<OrderInfo>() {
+
+			@Override
+			public OrderInfo call(EntityManager entityManager) {
+				OrderInfo order = new OrderInfo();
+				order.setCreationDate(new Date());
+				order.setUserPublicKey(userPublicKey);
+				order.setInTransfer(inTransfer);
+				order.setOutTransfer(outTransfer);
+				order.setStatus(OrderStatus.INITIAL);
+				entityManager.persist(order);
+				return order;
 			}
-			throw ex;
-		} finally {
-			entityManager.close();
-		}
+		});
 	}
 }

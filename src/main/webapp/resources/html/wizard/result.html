@@ -21,7 +21,7 @@
 
 									<div class="col-xs-10 col-md-10">
 										<div class="col-xs-12 col-md-12 text-center input-group input-group-lg" style="vertical-align: top;">
-											<input class="form-control" type="text" name="inAddress" style="cursor: text;"
+											<input class="form-control" type="text" name="inAddress"
 											       ng-model="orderInfo.inTransfer.address" ng-readonly="true"
 											       ng-required="true" ng-pattern="/^[0-9A-Za-z]+$/"
 											       title="Wallet address"/>
@@ -73,7 +73,7 @@
 											<span class="glyphicon glyphicon-exclamation-sign status-sign error" ng-switch-when="ERROR"></span>
 										</div>
 										<div class="col-xs-12 col-md-12 text-center input-group input-group-lg" style="vertical-align: top;">
-											<input class="form-control" type="text" name="outAddress" style="cursor: text;"
+											<input class="form-control" type="text" name="outAddress"
 											       ng-model="orderInfo.outTransfer.address" ng-readonly="true"
 											       ng-required="true" ng-pattern="/^[0-9A-Za-z]+$/"
 											       title="Wallet address"/>

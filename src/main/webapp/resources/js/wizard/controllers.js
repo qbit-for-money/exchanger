@@ -1,9 +1,19 @@
 var wizardModule = angular.module("wizard");
 
-wizardModule.controller("WizardController", function($rootScope, $scope, $location, wizardService,
-		restoreOrderInfoFromSession) {
+wizardModule.controller("WizardController", function($rootScope, $scope, $location, wizardService, orderService) {
 	$rootScope.steps = wizardService.getSteps();
 
+	function redirectToResultIfActiveOrderExists() {
+		var currentStep = wizardService.getStepByPath($location.path());
+		if (currentStep && (currentStep.id === "result")) {
+			return;
+		}
+		var orderInfo = orderService.get();
+		if (orderInfo && orderInfo.status) {
+			var resultStep = wizardService.getStepById("result");
+			$location.path(resultStep.path);
+		}
+	}
 	function updateCurrentStepIndex() {
 		var currentStepIndex = wizardService.getStepIndexByPath($location.path());
 		if (wizardService.isStepIndexValid(currentStepIndex)) {
@@ -19,10 +29,12 @@ wizardModule.controller("WizardController", function($rootScope, $scope, $locati
 	$rootScope.$on("$locationChangeSuccess", function() {
 		resetValidationFail();
 		resetActionFail();
-		restoreOrderInfoFromSession();
 		updateCurrentStepIndex();
+		redirectToResultIfActiveOrderExists();
 	});
+	$scope.$on("order-loaded", redirectToResultIfActiveOrderExists);
 	updateCurrentStepIndex();
+	redirectToResultIfActiveOrderExists();
 
 	$rootScope.goToNextStep = function() {
 		resetValidationFail();
@@ -36,6 +48,11 @@ wizardModule.controller("WizardController", function($rootScope, $scope, $locati
 					$location.path(nextStep.path);
 				}, function() {
 					$scope.actionFails = true;
+					if (currentStep.actionFailMessage) {
+						$scope.actionMessage = currentStep.actionFailMessage.apply(this, arguments);
+					} else {
+						$scope.actionMessage = "Action fails.";
+					}
 				});
 			} else {
 				$location.path(nextStep.path);

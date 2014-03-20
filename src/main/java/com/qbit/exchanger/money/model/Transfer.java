@@ -64,10 +64,14 @@ public class Transfer implements Serializable {
 	public BigDecimal toBigDecimal() {
 		return amount.toBigDecimal();
 	}
+	
+	public boolean isPositive() {
+		return (isValid() && amount.isPositive());
+	}
 
 	public boolean isValid() {
 		return ((type != null) && (currency != null) && (address != null)
-				&& (amount != null) && amount.isPositive());
+				&& (amount != null) && amount.isValid());
 	}
 
 	@Override

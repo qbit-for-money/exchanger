@@ -8,34 +8,32 @@ import com.google.bitcoin.params.MainNetParams;
 import com.google.bitcoin.params.TestNet3Params;
 import com.google.bitcoin.script.Script;
 import com.google.bitcoin.utils.BriefLogFormatter;
+import static com.google.common.base.Preconditions.checkArgument;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.MoreExecutors;
+import com.qbit.exchanger.buffer.BufferDAO;
 import com.qbit.exchanger.env.Env;
-import com.qbit.exchanger.money.core.MoneyTransferCallback;
+
 import com.qbit.exchanger.money.core.MoneyService;
-
-import java.io.File;
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.List;
-
-import static com.google.common.base.Preconditions.checkArgument;
-
+import com.qbit.exchanger.money.core.MoneyTransferCallback;
 import com.qbit.exchanger.money.model.Amount;
 import com.qbit.exchanger.money.model.Currency;
 import com.qbit.exchanger.money.model.Transfer;
 import com.qbit.exchanger.money.model.TransferType;
+import java.io.File;
 import java.math.BigDecimal;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * BITCOIN
@@ -44,12 +42,12 @@ import javax.annotation.PreDestroy;
  */
 @Singleton
 public class BitcoinMoneyService implements MoneyService {
-
+	
 	private static final BigInteger COIN = new BigInteger("100000000", 10);
 
 	private static final BigInteger MIN_FEE = new BigInteger("10000", 10);
-
-	private static final Logger logger = Logger.getLogger(BitcoinMoneyService.class.getName());
+	
+	private final Logger logger = LoggerFactory.getLogger(BitcoinMoneyService.class);
 
 	private ConcurrentMap<String, QueueItem> paymentQueue;
 
@@ -59,6 +57,8 @@ public class BitcoinMoneyService implements MoneyService {
 
 	@Inject
 	private Env env;
+	@Inject
+	private BufferDAO bufferDAO;
 
 	private class QueueItem {
 
@@ -106,7 +106,11 @@ public class BitcoinMoneyService implements MoneyService {
 
 	@PreDestroy
 	public void destroy() {
-		kit.stopAndWait();
+		try {
+			kit.stopAndWait();
+		} catch (Throwable ex) {
+			// Do nothing
+		}
 	}
 
 	@Override
@@ -149,11 +153,11 @@ public class BitcoinMoneyService implements MoneyService {
 							}
 						}
 					} catch (ScriptException ex) {
-						logger.severe(ex.getMessage());
+						logger.error(ex.getMessage(), ex);
 					}
 				}
 				
-				logger.log(Level.INFO, "Received tx for {0}: {1}", new Object[]{Utils.bitcoinValueToFriendlyString(receivedValue), tx});
+				logger.info("Received tx for {}: {}", Utils.bitcoinValueToFriendlyString(receivedValue), tx);
 				logger.info("Transaction will be forwarded after it confirms.");
 
 				Futures.addCallback(tx.getConfidence().getDepthFuture(1), new FutureCallback<Transaction>() {
@@ -182,7 +186,7 @@ public class BitcoinMoneyService implements MoneyService {
 	 * Example: 1 coin 2345 cents = 1.00002345
 	 */
 	private void sendMoney(Transfer transfer, MoneyTransferCallback callback) {
-		if ((transfer == null) || !transfer.isValid()) {
+		if ((transfer == null) || !transfer.isPositive()) {
 			callback.error("Empty address or wrong money value");
 		}
 		try {
@@ -190,7 +194,7 @@ public class BitcoinMoneyService implements MoneyService {
 
 			final BigInteger amountToSend = toNanoCoins(transfer.getAmount().getCoins(), transfer.getAmount().getCents());
 
-			logger.log(Level.INFO, "Forwarding {0} BTC", Utils.bitcoinValueToFriendlyString(amountToSend));
+			logger.info("Forwarding {} BTC", Utils.bitcoinValueToFriendlyString(amountToSend));
 
 			// final BigInteger amountToSend = value.subtract(Transaction.REFERENCE_DEFAULT_MIN_TX_FEE);
 			final Wallet.SendResult sendResult = kit.wallet().sendCoins(kit.peerGroup(), forwardingAddress, amountToSend);
@@ -206,20 +210,22 @@ public class BitcoinMoneyService implements MoneyService {
 
 				@Override
 				public void run() {
-					logger.log(Level.INFO, "Sent coins onwards! Transaction hash is {0}", sendResult.tx.getHashAsString());
+					logger.info("Sent coins onwards! Transaction hash is {}", sendResult.tx.getHashAsString());
 				}
 			}, MoreExecutors.sameThreadExecutor());
 
 		} catch (KeyCrypterException | InsufficientMoneyException e) {
 			throw new RuntimeException(e);
 		} catch (AddressFormatException ex) {
-			logger.severe(ex.getMessage());
+			logger.error(ex.getMessage(), ex);
+		} finally {
+			bufferDAO.deleteReservation(Currency.BITCOIN, transfer.getAmount());
 		}
 	}
 
 	private boolean testReceive(Transfer transfer) {
 		boolean result;
-		if ((transfer != null) && transfer.isValid()) {
+		if ((transfer != null) && transfer.isPositive()) {
 			result = getWalletAddress().contains(transfer.getAddress());
 		} else {
 			//("Invalid transfer");
@@ -230,9 +236,13 @@ public class BitcoinMoneyService implements MoneyService {
 
 	private boolean testSend(Transfer transfer) {
 		boolean result;
-		if ((transfer != null) && transfer.isValid()) {
+		if ((transfer != null) && transfer.isPositive()) {
 			BigInteger transferAmount = toNanoCoins(transfer.getAmount().getCoins(), transfer.getAmount().getCents());
 			result = transferAmount.compareTo(getWallet().getBalance().add(MIN_FEE)) == -1;
+			if (result) {
+				Amount balance = new Amount(new BigDecimal(getBalance()), Currency.BITCOIN.getCentsInCoin());
+				result = bufferDAO.reserveAmount(Currency.BITCOIN, balance, transfer.getAmount());
+			}
 		} else {
 			//("Invalid transfer");
 			result = false;

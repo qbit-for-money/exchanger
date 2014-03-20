@@ -26,7 +26,7 @@ public class OrderFlowScheduler {
 
 	@Inject
 	private OrderFlowWorker orderFlowWorker;
-
+	
 	private ScheduledExecutorService executorService;
 
 	@PostConstruct
@@ -53,6 +53,10 @@ public class OrderFlowScheduler {
 
 	@PreDestroy
 	public void shutdown() {
-		executorService.shutdown();
+		try {
+			executorService.shutdown();
+		} catch (Throwable ex) {
+			// Do nothing
+		}
 	}
 }

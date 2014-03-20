@@ -3,7 +3,8 @@ var moneyModule = angular.module("money");
 moneyModule.factory("formatAmount", function(isAmountValid, amountToNumber) {
 	return function(amount) {
 		if (isAmountValid(amount)) {
-			return amountToNumber(amount).toFixed(2);
+			var fractionDigits = Math.round(Math.log(amount.centsInCoin) / Math.LN10);
+			return amountToNumber(amount).toFixed(fractionDigits);
 		} else {
 			return "";
 		}

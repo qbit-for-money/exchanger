@@ -1,31 +1,23 @@
 var resultModule = angular.module("wizard.result");
 
-resultModule.controller("ResultController", function($rootScope, $scope, $timeout, $interval, ordersResource) {
-	// START Test
-	//$rootScope.orderInfo.userPublicKey = "948bd81b-77b4-4b97-84d6-039c0b733637";
-	//$rootScope.orderInfo.creationDate = "2014-02-15T18:00:32.00";
-	// END Test
-
+resultModule.controller("ResultController", function($scope, $interval, orderService) {
 	function actualizeOrder() {
-		if ($rootScope.orderInfo.userPublicKey && $rootScope.orderInfo.creationDate) {
-			var orderInfo = ordersResource.getByUserAndTimestamp({
-				userPublicKey: $rootScope.orderInfo.userPublicKey,
-				creationDate: $rootScope.orderInfo.creationDate
-			}, function() {
-				$rootScope.orderInfo = orderInfo;
-				$scope.actualizationTimeout = $timeout(actualizeOrder, 10 * 1000);
-			});
-		} else {
-			$scope.actualizationTimeout = $timeout(actualizeOrder, 10 * 1000);
-		}
+		orderService.actualize();
 	}
-	$scope.actualizationTimeout = $timeout(actualizeOrder, 1000);
+	$scope.actualizationTimerId = $interval(actualizeOrder, 10000);
+	actualizeOrder();
 
-	function updateInTransferStatus() {
-		if (!$rootScope.orderInfo.status) {
+	function handleOrderLoaded() {
+		var orderInfo = orderService.get();
+		updateInTransferStatus(orderInfo);
+		updateOutTransferStatus(orderInfo);
+		updateRate(orderInfo);
+	}
+	function updateInTransferStatus(orderInfo) {
+		if (!orderInfo || !orderInfo.status) {
 			return;
 		}
-		switch ($rootScope.orderInfo.status) {
+		switch (orderInfo.status) {
 			case "INITIAL":
 				$scope.inTransferStatus = "IN_PROGRESS";
 				break;
@@ -39,11 +31,11 @@ resultModule.controller("ResultController", function($rootScope, $scope, $timeou
 				break;
 		}
 	}
-	function updateOutTransferStatus() {
-		if (!$rootScope.orderInfo.status) {
+	function updateOutTransferStatus(orderInfo) {
+		if (!orderInfo || !orderInfo.status) {
 			return;
 		}
-		switch ($rootScope.orderInfo.status) {
+		switch (orderInfo.status) {
 			case "INITIAL":
 			case "PAYED":
 			case "IN_FAILED":
@@ -57,38 +49,38 @@ resultModule.controller("ResultController", function($rootScope, $scope, $timeou
 				break;
 		}
 	}
-	function updateRate() {
-		if (!$rootScope.orderInfo.status) {
+	function updateRate(orderInfo) {
+		if (!orderInfo || !orderInfo.status) {
 			return;
 		}
 		$scope.rate = {
-			numerator: $rootScope.orderInfo.inTransfer.amount,
-			denominator: $rootScope.orderInfo.outTransfer.amount
+			numerator: orderInfo.inTransfer.amount,
+			denominator: orderInfo.outTransfer.amount
 		};
 	}
-	var destroyStatusWatch = $rootScope.$watch("orderInfo.status", function() {
-		updateInTransferStatus();
-		updateOutTransferStatus();
-		updateRate();
-	});
+	$scope.$on("order-loaded", handleOrderLoaded);
 
 	$scope.secondsInWaiting = 0;
 	function updateSecondsInWaiting() {
-		if ($rootScope.orderInfo.status && (["INITIAL", "PAYED"].indexOf($rootScope.orderInfo.status) >= 0)) {
-			$scope.secondsInWaiting++;
+		var orderInfo = orderService.get();
+		if (orderInfo && orderInfo.status) {
+			if (["INITIAL", "PAYED"].indexOf(orderInfo.status) >= 0) {
+				$scope.secondsInWaiting++;
+			} else {
+				// do nothing
+			}
 		} else {
 			$scope.secondsInWaiting = 0;
 		}
 	}
-	$scope.secondsInWaitingTimeout = $interval(updateSecondsInWaiting, 1000);
+	$scope.secondsInWaitingTimerId = $interval(updateSecondsInWaiting, 1000);
 
 	$scope.$on("$destroy", function() {
-		if ($scope.actualizationTimeout) {
-			$timeout.cancel($scope.actualizationTimeout);
+		if ($scope.actualizationTimerId) {
+			$interval.cancel($scope.actualizationTimerId);
 		}
-		if ($scope.secondsInWaitingTimeout) {
-			$interval.cancel($scope.secondsInWaitingTimeout);
+		if ($scope.secondsInWaitingTimerId) {
+			$interval.cancel($scope.secondsInWaitingTimerId);
 		}
-		destroyStatusWatch();
 	});
 });
