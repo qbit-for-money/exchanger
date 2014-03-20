@@ -11,7 +11,7 @@ amountModule.controller("AmountController", function($rootScope, $scope, delayed
 	}
 	wizardService.registerAction("amount", createOrder, function(ex) {
 		if (ex && ex.data && (ex.data.indexOf("OrderTestException") > 0)) {
-			return "Not enough money is system buffer";
+			return "Not enough money in the system buffer";
 		} else {
 			return "Can't create order.";
 		}

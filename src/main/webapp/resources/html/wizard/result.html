@@ -21,10 +21,10 @@
 
 									<div class="col-xs-10 col-md-10">
 										<div class="col-xs-12 col-md-12 text-center input-group input-group-lg" style="vertical-align: top;">
-											<input class="form-control" type="text" name="inAddress"
+											<input class="form-control overflow-hide" type="text" name="inAddress"
 											       ng-model="orderInfo.inTransfer.address" ng-readonly="true"
 											       ng-required="true" ng-pattern="/^[0-9A-Za-z]+$/"
-											       title="Wallet address"/>
+											       title="Wallet address" onclick="this.select()"/>
 											<span class="input-group-addon"><span class="glyphicon glyphicon-credit-card"></span></span>
 										</div>
 										<div class="col-xs-10 col-md-10 text-center" style="vertical-align: bottom; margin: 0 1em 0 -1em;">

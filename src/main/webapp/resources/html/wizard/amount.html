@@ -13,20 +13,6 @@
 							<form name="inForm" role="form" novalidate>
 								<div class="row" style="margin-bottom: 5px;"
 									 ng-if="custom" ng-include="'resources/html/money/' + orderInfo.inTransfer.currency + '/in-address.html'"></div>
-								<div class="input-group input-group-lg" style="margin-bottom: 5px;"
-									 ng-if="!custom" ng-class="{'has-error': inForm.inAddress.$invalid}">
-									<span class="input-group-btn">
-										<button class="btn btn-default" type="button" title="Generate address"
-												ng-click="generateInAddress()">
-											<span class="glyphicon glyphicon-random"></span>
-										</button>
-									</span>
-									<input class="form-control" type="text" name="inAddress"
-										   ng-model="orderInfo.inTransfer.address" ng-readonly="true"
-										   ng-required="true" ng-pattern="/^[0-9A-Za-z]+$/"
-										   title="Wallet address" placeholder="{{inAddressPlaceholder}}" />
-									<span class="input-group-addon"><span class="glyphicon glyphicon-credit-card"></span></span>
-								</div>
 								<div class="form-group" style="margin-bottom: 0px;">
 									<amount-input amount="orderInfo.inTransfer.amount"></amount-input>
 								</div>
