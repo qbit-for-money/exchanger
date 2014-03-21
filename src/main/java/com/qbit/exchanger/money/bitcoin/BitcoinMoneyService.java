@@ -4,7 +4,6 @@ import com.google.bitcoin.core.*;
 import com.google.bitcoin.core.Wallet;
 import com.google.bitcoin.crypto.KeyCrypterException;
 import com.google.bitcoin.kits.NewWalletAppKit;
-import com.google.bitcoin.kits.WalletAppKit;
 import com.google.bitcoin.params.MainNetParams;
 import com.google.bitcoin.params.TestNet3Params;
 import com.google.bitcoin.script.Script;
