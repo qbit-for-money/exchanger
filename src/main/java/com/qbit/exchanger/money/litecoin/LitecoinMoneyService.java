@@ -6,6 +6,7 @@ import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.litecoin.core.*;
 import com.google.litecoin.crypto.KeyCrypterException;
+import com.google.litecoin.kits.NewWalletAppKit;
 import com.google.litecoin.kits.WalletAppKit;
 import com.google.litecoin.params.MainNetParams;
 import com.google.litecoin.params.TestNet2Params;
@@ -52,7 +53,9 @@ public class LitecoinMoneyService implements MoneyService {
 
 	private NetworkParameters parameters;
 
-	private WalletAppKit kit;
+	private NewWalletAppKit kit;
+	
+	private String dbName;
 
 	@Inject
 	private Env env;
@@ -91,10 +94,19 @@ public class LitecoinMoneyService implements MoneyService {
 		BriefLogFormatter.init();
 		if (env.isLitecoinTestnet()) {
 			parameters = TestNet2Params.get();
+			dbName = env.getLitecoinTestDBName();
 		} else {
 			parameters = MainNetParams.get();
+			dbName = env.getLitecoinDBName();
 		}
-		kit = new WalletAppKit(parameters, new File(env.getLitecoinWalletPath()), "sample");
+		kit = new NewWalletAppKit(parameters, new File(env.getLitecoinWalletPath()), "sample", env.isFullChain(), true);
+		
+		kit.setDbName(dbName);
+		kit.setHostname(env.getCryptoDBHostname());
+		kit.setUsername(env.getCryptoDBUsername());
+		kit.setPassword(env.getCryptoDBPassword());
+		kit.setFullStoreDepth(1000);
+		
 		kit.startAndWait();
 		paymentQueue = new ConcurrentHashMap<>();
 

@@ -3,6 +3,7 @@ package com.qbit.exchanger.money.bitcoin;
 import com.google.bitcoin.core.*;
 import com.google.bitcoin.core.Wallet;
 import com.google.bitcoin.crypto.KeyCrypterException;
+import com.google.bitcoin.kits.NewWalletAppKit;
 import com.google.bitcoin.kits.WalletAppKit;
 import com.google.bitcoin.params.MainNetParams;
 import com.google.bitcoin.params.TestNet3Params;
@@ -53,7 +54,9 @@ public class BitcoinMoneyService implements MoneyService {
 
 	private NetworkParameters parameters;
 
-	private WalletAppKit kit;
+	private NewWalletAppKit kit;
+	
+	private String dbName;
 
 	@Inject
 	private Env env;
@@ -92,10 +95,19 @@ public class BitcoinMoneyService implements MoneyService {
 		BriefLogFormatter.init();
 		if (env.isBitcoinTestnet()) {
 			parameters = TestNet3Params.get();
+			dbName = env.getBitcoinTestDBName();
 		} else {
 			parameters = MainNetParams.get();
+			dbName = env.getBitcoinDBName();
 		}
-		kit = new WalletAppKit(parameters, new File(env.getBitcoinWalletPath()), "sample");
+		kit = new NewWalletAppKit(parameters, new File(env.getBitcoinWalletPath()), "sample", env.isFullChain(), true);
+		
+		kit.setDbName(dbName);
+		kit.setHostname(env.getCryptoDBHostname());
+		kit.setUsername(env.getCryptoDBUsername());
+		kit.setPassword(env.getCryptoDBPassword());
+		kit.setFullStoreDepth(1000);
+		
 		kit.startAndWait();
 
 		paymentQueue = new ConcurrentHashMap<>();
