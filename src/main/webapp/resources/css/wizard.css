@@ -3,6 +3,11 @@
 /* Smartphones (portrait) ----------- */
 @media only screen 
 and (max-width : 767px) {
+	.currency-picker {
+		width: 130px;
+		padding: 0 10px;
+	}
+	
 	.currency { 
 		background: url('../img/currencies-50x50.png') no-repeat top left;
 		width: 50px; height: 50px;
@@ -21,24 +26,34 @@ and (max-width : 767px) {
 	.currency.ZETACOIN { background-position: -659px 0px; } 
 
 	.currency-list-label {
-		font-size: 1.5em;
+		font-size: 1em;
 		padding: 0;
 	}
 
 	.currencies-list {
-		height: 400px;
-		max-height: 400px;
+		height: 350px;
+		max-height: 300px;
+		min-width: 120px;
+	}
+
+	.currency-list-item {
+		padding: 3px 5px !important;
 	}
 
 	.direction-control {
-		height: 60px;
-		width: 60px;
+		height: 40px;
+		width: 40px;
 		font-size: 2em;
 		padding: 0;
 	}
 
 	.convert-direction {
 		padding: 150px 0;
+	}
+	
+	.currency-list-icon {
+		width: 50px;
+		height: 50px;
 	}
 }
 
@@ -82,6 +97,11 @@ and (min-width : 768px) {
 	.convert-direction {
 		padding: 200px 0;
 	}
+	
+	.currency-list-icon {
+		width: 75px;
+		height: 75px;
+	}
 }
 
 .currency-step {
@@ -92,7 +112,6 @@ and (min-width : 768px) {
 	position: relative;
 	width: 100%;
 	overflow-y: auto;
-	overflow-x: auto;
 }
 
 .currency-list-item {
@@ -101,8 +120,6 @@ and (min-width : 768px) {
 
 .currency-list-icon {
 	min-width: 60px;
-	width: 75px;
-	height: 75px;
 	display: table-cell;
 }
 
