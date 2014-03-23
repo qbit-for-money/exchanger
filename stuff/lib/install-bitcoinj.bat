@@ -1,1 +1,1 @@
-mvn "install:install-file" "-DgroupId=com.google" "-DartifactId=bitcoinj" "-Dversion=0.11" "-Dpackaging=jar" "-Dfile=bitcoinj.jar" "-DgeneratePom=true"
+mvn "install:install-file" "-DgroupId=com.qbit" "-DartifactId=bitcoinj" "-Dversion=00.12-qbit" "-Dpackaging=jar" "-Dfile=bitcoinj.jar" "-DgeneratePom=true"

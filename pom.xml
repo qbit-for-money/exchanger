@@ -49,12 +49,12 @@
 		</resources>
 	</build>
 
-	<repositories>
+	<!--repositories>
 		<repository>
 			<id>bitcoinj</id>
 			<url>http://distribution.bitcoinj.googlecode.com/git/releases/</url>
 		</repository>
-	</repositories>
+	</repositories-->
 
 	<dependencyManagement>
 		<dependencies>
@@ -174,13 +174,25 @@
 			<artifactId>protobuf-java</artifactId>
 			<version>2.5.0</version>
 		</dependency>
+		
+		<dependency>
+			<groupId>com.madgag</groupId>
+			<artifactId>scprov-jdk15on</artifactId>
+			<version>1.47.0.1</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.lambdaworks</groupId>
+			<artifactId>scrypt</artifactId>
+			<version>1.4.0</version>
+		</dependency>
 	</dependencies>
 
 	<properties>
 		<jersey.version>2.5.1</jersey.version>
 		<yandex.version>1.2.4-SNAPSHOT</yandex.version>
-		<bitcoinj-version>0.11</bitcoinj-version>
-		<litecoinj-version>0.11</litecoinj-version>
+		<bitcoinj-version>0.12-qbit</bitcoinj-version>
+		<litecoinj-version>0.10.3.1-qbit</litecoinj-version>
 		<eclipselink.version>2.5.0</eclipselink.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
