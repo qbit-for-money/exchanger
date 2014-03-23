@@ -123,18 +123,36 @@
 			<artifactId>litecoinj</artifactId>
 			<version>${litecoinj-version}</version>
 		</dependency>
-
+		
+<!-- START bitcoinj/litecoinj dependencies -->
 		<dependency>
 			<groupId>org.jboss.netty</groupId>
 			<artifactId>netty</artifactId>
 			<version>3.2.0.Final</version>
 		</dependency>
-
 		<dependency>
-			<groupId>org.jumpmind.symmetric.jdbc</groupId>
-			<artifactId>mariadb-java-client</artifactId>
-			<version>1.1.1</version>
+			<groupId>com.google.protobuf</groupId>
+			<artifactId>protobuf-java</artifactId>
+			<version>2.5.0</version>
 		</dependency>
+		<dependency>
+			<groupId>com.madgag</groupId>
+			<artifactId>scprov-jdk15on</artifactId>
+			<version>1.47.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>com.lambdaworks</groupId>
+			<artifactId>scrypt</artifactId>
+			<version>1.4.0</version>
+		</dependency>
+<!-- START bitcoinj/litecoinj dependencies -->
+		
+		<dependency>
+			<groupId>postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>9.1-901.jdbc3</version>
+		</dependency>
+
 		<dependency>
 			<groupId>org.eclipse.persistence</groupId>
 			<artifactId>org.eclipse.persistence.jpa</artifactId>
@@ -161,30 +179,6 @@
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-jdk14</artifactId>
 			<version>1.7.6</version>
-		</dependency>
-		
-		<dependency>
-			<groupId>postgresql</groupId>
-			<artifactId>postgresql</artifactId>
-			<version>9.1-901.jdbc3</version>
-		</dependency>
-		
-		<dependency>
-			<groupId>com.google.protobuf</groupId>
-			<artifactId>protobuf-java</artifactId>
-			<version>2.5.0</version>
-		</dependency>
-		
-		<dependency>
-			<groupId>com.madgag</groupId>
-			<artifactId>scprov-jdk15on</artifactId>
-			<version>1.47.0.1</version>
-		</dependency>
-		
-		<dependency>
-			<groupId>com.lambdaworks</groupId>
-			<artifactId>scrypt</artifactId>
-			<version>1.4.0</version>
 		</dependency>
 	</dependencies>
 
