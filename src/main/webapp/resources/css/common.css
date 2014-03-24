@@ -1,3 +1,25 @@
+html, body {
+	height: 100%;
+}
+
+.wrapper {
+	min-height: 100%;
+	height: auto !important;
+	height: 100%;
+	margin: 0 auto -80px;
+}
+
+.push {
+	height: 80px;
+}
+
+.footer {
+	margin-top: 20px;
+	height: 60px;
+	text-align: center;
+	line-height: 60px;
+}
+
 span.success {
 	color: #5cb85c;
 }

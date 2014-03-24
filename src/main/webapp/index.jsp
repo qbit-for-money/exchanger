@@ -13,14 +13,17 @@
 		<link rel="stylesheet" type="text/css" href="resources/css/wizard-widget.css">
 	</head>
 	<body>
-		<%@ include file="WEB-INF/jspf/nav.jspf" %>
-
-		<%@ include file="WEB-INF/jspf/wizard.jspf" %>
-
-		<div class="container" ng-if="user && orderInfo && (currentStepIndex >= 0)">
-			<div ng-view></div>
+		<div class="wrapper">
+			<%@ include file="WEB-INF/jspf/nav.jspf" %>
+			<%@ include file="WEB-INF/jspf/wizard.jspf" %>
+			<div class="container" ng-if="user && orderInfo && (currentStepIndex >= 0)">
+				<div ng-view></div>
+			</div>
+			<div class="push"></div>
 		</div>
+		<div class="footer navbar-default">&copy; Bitgates 2014</div>
 
+		
 		<script type="text/javascript" src="resources/lib/jquery/jquery-2.1.0.min.js"></script>
 		<script type="text/javascript" src="resources/lib/jquery/jquery.price_format.2.0.min.js"></script>
 		<script type="text/javascript" src="resources/lib/angular/angular.min.js"></script>
