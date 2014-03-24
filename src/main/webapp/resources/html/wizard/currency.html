@@ -1,6 +1,6 @@
 <div class="row currency-step">
 	<div class="col-lg-2 col-md-1 hidden-sm"></div>
-	<div class="col-lg-3 col-md-4 col-sm-5 col-xs-5">
+	<div class="col-lg-3 col-md-4 col-sm-5 col-xs-5 currency-picker">
 		<div class="dropdown open">
 			<ul class="dropdown-menu currencies-list">
 				<li data-ng-repeat="currency in currencies" 
@@ -17,12 +17,12 @@
 			</ul>
 		</div>
 	</div>
-	<div class="text-center convert-direction col-md-2 col-xs-2">
+	<div class="text-center direction-control-currency-container col-md-2 col-xs-2">
 		<button class="btn btn-success btn-lg direction-control" ng-click="goToNextStep()">
 			<span class="glyphicon glyphicon-arrow-right"></span>
 		</button>
 	</div>
-	<div class="col-lg-3 col-md-4 col-sm-5 col-xs-5">
+	<div class="col-lg-3 col-md-4 col-sm-5 col-xs-5 currency-picker">
 		<div class="dropdown open">
 			<ul class="dropdown-menu currencies-list">
 				<li data-ng-repeat="currency in currencies"

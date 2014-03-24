@@ -19,17 +19,7 @@
 	list-style: none outside none;
 }
 
-.wizard ul li {
-	position: relative;
-	float: left;
-	height: 46px;
-	padding: 0 20px 0 30px;
-	margin: 0;
-	font-size: 16px;
-	line-height: 46px;
-	color: #999999;
-	background: #ededed;
-}
+
 
 .wizard ul li a {
 	outline: none;
@@ -111,10 +101,7 @@
 	margin-right: 8px;
 }
 
-.wizard ul li:first-child {
-	padding-left: 20px;
-	border-radius: 4px 0 0 4px;
-}
+
 
 .wizard .actions {
 	right: 0;
@@ -129,4 +116,47 @@
 .wizard .step-title {
 	font-size: 1.4em;
 	vertical-align: middle;
+}
+
+/* Smartphones (portrait) ----------- */
+@media only screen 
+and (max-width : 767px) {
+	.wizard .actions .btn {
+		padding: 5px  8px;
+	}
+	.wizard ul li:first-child {
+		padding-left: 10px;
+		border-radius: 4px 0 0 4px;
+	}
+	.wizard ul li {
+		position: relative;
+		float: left;
+		height: 46px;
+		padding: 0 10px 0 20px;
+		margin: 0;
+		font-size: 16px;
+		line-height: 46px;
+		color: #999999;
+		background: #ededed;
+	}
+}
+
+/* Larger screens ----------- */
+@media only screen 
+and (min-width : 768px) {
+	.wizard ul li:first-child {
+		padding-left: 20px;
+		border-radius: 4px 0 0 4px;
+	}
+	.wizard ul li {
+		position: relative;
+		float: left;
+		height: 46px;
+		padding: 0 20px 0 30px;
+		margin: 0;
+		font-size: 16px;
+		line-height: 46px;
+		color: #999999;
+		background: #ededed;
+	}
 }
