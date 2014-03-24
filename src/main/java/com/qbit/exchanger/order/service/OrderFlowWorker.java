@@ -91,8 +91,12 @@ public class OrderFlowWorker implements Runnable {
 
 					@Override
 					public Void call(EntityManager entityManager) {
-						orderDAO.changeStatusAndAmounts(orderId, OrderStatus.PAYED, false,
+						//try {
+							orderDAO.changeStatusAndAmounts(orderId, OrderStatus.PAYED, false,
 								inAmount, rate.mul(inAmount));
+						//} catch(Exception ex) {
+							//orderDAO.changeStatus(orderId, OrderStatus.IN_FAILED, false);
+						//}					
 						return null;
 					}
 				}, MAX_STATUS_CHANGE_FAIL_COUNT);

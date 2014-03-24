@@ -2,6 +2,7 @@ package com.qbit.exchanger.money.model;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Objects;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
@@ -74,7 +75,7 @@ public class Rate implements Serializable {
 			throw new IllegalArgumentException();
 		}
 		BigDecimal result = numerator.toBigDecimal().multiply(
-				amount.toBigDecimal()).divide(denominator.toBigDecimal());
+				amount.toBigDecimal()).divide(denominator.toBigDecimal(), ((int )Math.log10(amount.getCentsInCoin())), RoundingMode.HALF_UP);
 		return new Amount(result, numerator.getCentsInCoin());
 	}
 	
