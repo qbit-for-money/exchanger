@@ -7,10 +7,8 @@ import com.google.common.util.concurrent.MoreExecutors;
 import com.google.litecoin.core.*;
 import com.google.litecoin.crypto.KeyCrypterException;
 import com.google.litecoin.kits.NewWalletAppKit;
-import com.google.litecoin.kits.WalletAppKit;
 import com.google.litecoin.params.MainNetParams;
 import com.google.litecoin.params.TestNet2Params;
-import com.google.litecoin.params.TestNet3Params;
 import com.google.litecoin.script.Script;
 import com.google.litecoin.utils.BriefLogFormatter;
 import com.qbit.exchanger.buffer.BufferDAO;
@@ -46,7 +44,7 @@ public class LitecoinMoneyService implements MoneyService {
 	private static final BigInteger COIN = new BigInteger("100000000", 10);
 
 	private static final BigInteger MIN_FEE = new BigInteger("100000", 10);
-	
+
 	private final Logger logger = LoggerFactory.getLogger(LitecoinMoneyService.class);
 
 	private ConcurrentMap<String, QueueItem> paymentQueue;
@@ -54,7 +52,7 @@ public class LitecoinMoneyService implements MoneyService {
 	private NetworkParameters parameters;
 
 	private NewWalletAppKit kit;
-	
+
 	private String dbName;
 
 	@Inject
@@ -100,13 +98,13 @@ public class LitecoinMoneyService implements MoneyService {
 			dbName = env.getLitecoinDBName();
 		}
 		kit = new NewWalletAppKit(parameters, new File(env.getLitecoinWalletPath()), "sample", env.isFullChain(), true);
-		
+
 		kit.setDbName(dbName);
 		kit.setHostname(env.getCryptoDBHostname());
 		kit.setUsername(env.getCryptoDBUsername());
 		kit.setPassword(env.getCryptoDBPassword());
 		kit.setFullStoreDepth(1000);
-		
+
 		kit.startAndWait();
 		paymentQueue = new ConcurrentHashMap<>();
 
@@ -150,22 +148,7 @@ public class LitecoinMoneyService implements MoneyService {
 		AbstractWalletEventListener listener = new AbstractWalletEventListener() {
 			@Override
 			public void onCoinsReceived(Wallet w, Transaction tx, BigInteger prevBalance, BigInteger newBalance) {
-				BigInteger receivedValue = tx.getValueSentToMe(w);
-				for (TransactionOutput out : tx.getOutputs()) {
-					try {
-						Script scriptPubKey = out.getScriptPubKey();
-						String address = scriptPubKey.getToAddress(parameters).toString();
-						if (getWalletAddress().contains(address)) {
-							QueueItem item = paymentQueue.get(address);
-							if (item != null) {
-								BigDecimal am = new BigDecimal(Utils.bitcoinValueToFriendlyString(receivedValue));
-								item.callback.success(new Amount(am, Currency.LITECOIN.getCentsInCoin()));
-							}
-						}
-					} catch (ScriptException ex) {
-						logger.error(ex.getMessage(), ex);
-					}
-				}
+				final BigInteger receivedValue = tx.getValueSentToMe(w);
 
 				logger.info("Received tx for {}: {}", Utils.bitcoinValueToFriendlyString(receivedValue), tx);
 				logger.info("Transaction will be forwarded after it confirms.");
@@ -173,6 +156,22 @@ public class LitecoinMoneyService implements MoneyService {
 				Futures.addCallback(tx.getConfidence().getDepthFuture(1), new FutureCallback<Transaction>() {
 					@Override
 					public void onSuccess(Transaction result) {
+						for (TransactionOutput out : result.getOutputs()) {
+							try {
+								Script scriptPubKey = out.getScriptPubKey();
+								String address = scriptPubKey.getToAddress(parameters).toString();
+								if (getWalletAddress().contains(address)) {
+									QueueItem item = paymentQueue.remove(address);
+									if (item != null) {
+										BigDecimal am = new BigDecimal(Utils.bitcoinValueToFriendlyString(receivedValue));
+										item.callback.success(new Amount(am, Currency.LITECOIN.getCentsInCoin()));
+										break;
+									}
+								}
+							} catch (ScriptException ex) {
+								logger.error(ex.getMessage(), ex);
+							}
+						}
 						logger.info("Success");
 					}
 
@@ -198,6 +197,7 @@ public class LitecoinMoneyService implements MoneyService {
 	private void sendMoney(Transfer transfer, MoneyTransferCallback callback) {
 		if ((transfer == null) || !transfer.isPositive()) {
 			callback.error("Empty address or wrong money value");
+			return;
 		}
 		try {
 			Address forwardingAddress = new Address(parameters, transfer.getAddress());
@@ -224,8 +224,8 @@ public class LitecoinMoneyService implements MoneyService {
 				}
 			}, MoreExecutors.sameThreadExecutor());
 
-		} catch (KeyCrypterException | InsufficientMoneyException e) {
-			throw new RuntimeException(e);
+		} catch (KeyCrypterException | InsufficientMoneyException ex) {
+			throw new RuntimeException(ex);
 		} catch (AddressFormatException ex) {
 			logger.error(ex.getMessage(), ex);
 		} finally {

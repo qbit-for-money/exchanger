@@ -75,7 +75,7 @@ public class Rate implements Serializable {
 			throw new IllegalArgumentException();
 		}
 		BigDecimal result = numerator.toBigDecimal().multiply(
-				amount.toBigDecimal()).divide(denominator.toBigDecimal(), ((int )Math.log10(amount.getCentsInCoin())), RoundingMode.HALF_UP);
+				amount.toBigDecimal()).divide(denominator.toBigDecimal(), numerator.scale(), RoundingMode.HALF_UP);
 		return new Amount(result, numerator.getCentsInCoin());
 	}
 	

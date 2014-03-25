@@ -12,7 +12,6 @@ import com.qbit.exchanger.money.model.Transfer;
 import com.qbit.exchanger.order.dao.OrderDAO;
 import com.qbit.exchanger.order.model.OrderInfo;
 import com.qbit.exchanger.order.model.OrderStatus;
-import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
 import javax.inject.Inject;
@@ -47,7 +46,7 @@ public class OrderFlowWorker implements Runnable {
 	@Override
 	public void run() {
 		List<OrderInfo> ordersUnderWork = orderDAO.findByFullStatus(
-				EnumSet.of(OrderStatus.INITIAL, OrderStatus.PAYED), false);
+			EnumSet.of(OrderStatus.INITIAL, OrderStatus.PAYED), false);
 		if (ordersUnderWork != null) {
 			for (OrderInfo orderUnderWork : ordersUnderWork) {
 				try {
@@ -77,7 +76,7 @@ public class OrderFlowWorker implements Runnable {
 		final String orderId = orderUnderWork.getId();
 		Transfer inTransfer = orderUnderWork.getInTransfer();
 		final Rate rate = exchange.getRate(inTransfer.getCurrency(),
-				orderUnderWork.getOutTransfer().getCurrency());
+			orderUnderWork.getOutTransfer().getCurrency());
 		if ((rate == null) || !rate.isValid()) {
 			throw new IllegalStateException();
 		}
@@ -91,12 +90,12 @@ public class OrderFlowWorker implements Runnable {
 
 					@Override
 					public Void call(EntityManager entityManager) {
-						//try {
+						try {
 							orderDAO.changeStatusAndAmounts(orderId, OrderStatus.PAYED, false,
 								inAmount, rate.mul(inAmount));
-						//} catch(Exception ex) {
-							//orderDAO.changeStatus(orderId, OrderStatus.IN_FAILED, false);
-						//}					
+						} catch (Exception ex) {
+							orderDAO.changeStatus(orderId, OrderStatus.IN_FAILED, false);
+						}
 						return null;
 					}
 				}, MAX_STATUS_CHANGE_FAIL_COUNT);
@@ -130,11 +129,10 @@ public class OrderFlowWorker implements Runnable {
 					@Override
 					public Void call(EntityManager entityManager) {
 						orderDAO.changeStatusAndOutAmount(orderId, OrderStatus.SUCCESS, false,
-								outAmount);
+							outAmount);
 						return null;
 					}
 				}, MAX_STATUS_CHANGE_FAIL_COUNT);
-
 			}
 
 			@Override

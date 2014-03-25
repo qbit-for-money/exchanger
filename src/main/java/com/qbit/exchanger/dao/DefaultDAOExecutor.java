@@ -8,6 +8,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -23,17 +24,17 @@ import org.slf4j.LoggerFactory;
  */
 @Singleton
 public class DefaultDAOExecutor implements DAOExecutor {
-	
+
 	private final Logger logger = LoggerFactory.getLogger(DefaultDAOExecutor.class);
-	
+
 	@Inject
 	private Env env;
-	
+
 	@Inject
 	private EntityManagerFactory entityManagerFactory;
-	
+
 	private ScheduledExecutorService executorService;
-	
+
 	@PostConstruct
 	public void init() {
 		executorService = Executors.newScheduledThreadPool(10);
@@ -52,8 +53,9 @@ public class DefaultDAOExecutor implements DAOExecutor {
 
 	@Override
 	public void submit(final TrCallable<Void> callable, final int maxFailCount) {
-		executorService.scheduleWithFixedDelay(new Runnable() {
-			
+		
+		new FixedExecutionRunnable(new Runnable() {
+
 			private int failCount = 0;
 
 			@Override
@@ -73,7 +75,7 @@ public class DefaultDAOExecutor implements DAOExecutor {
 					}
 				}
 			}
-		}, 0, env.getOrderWorkerPeriodSecs(), TimeUnit.SECONDS);
+		}).scheduleWithFixedDelay(executorService, env.getOrderWorkerPeriodSecs(), TimeUnit.SECONDS);
 	}
 
 	@PreDestroy
@@ -82,6 +84,26 @@ public class DefaultDAOExecutor implements DAOExecutor {
 			executorService.shutdown();
 		} catch (Throwable ex) {
 			// Do nothing
+		}
+	}
+
+	class FixedExecutionRunnable implements Runnable {
+
+		private volatile ScheduledFuture<?> self;
+		private final Runnable task;
+
+		public FixedExecutionRunnable(Runnable task) {
+			this.task = task;
+		}
+
+		@Override
+		public void run() {
+			task.run();
+			self.cancel(false);
+		}
+
+		public void scheduleWithFixedDelay(ScheduledExecutorService executor, long delay, TimeUnit unit) {
+			self = executor.scheduleWithFixedDelay(this, 0, delay, unit);
 		}
 	}
 }

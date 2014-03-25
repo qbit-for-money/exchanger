@@ -30,7 +30,7 @@ public class OrderService {
 
 	public OrderInfo getActiveByUser(String userPublicKey) throws OrderServiceException {
 		List<OrderInfo> activeOrders = orderDAO.findByUserAndStatus(userPublicKey,
-				EnumSet.of(OrderStatus.INITIAL, OrderStatus.PAYED, OrderStatus.IN_FAILED, OrderStatus.OUT_FAILED));
+			EnumSet.of(OrderStatus.INITIAL, OrderStatus.PAYED, OrderStatus.IN_FAILED, OrderStatus.OUT_FAILED));
 		if ((activeOrders != null) && activeOrders.size() > 1) {
 			throw new OrderServiceSecurityException("No more than one active order per user.");
 		}
@@ -65,9 +65,9 @@ public class OrderService {
 
 		Transfer outTransfer = orderInfo.getOutTransfer();
 		MoneyService moneyService = moneyServiceProvider.get(outTransfer);
-		/*if (!moneyService.test(outTransfer)) {
+		if (!moneyService.test(outTransfer)) {
 			throw new OrderTestException();
-		}*/
+		}
 
 		OrderInfo result = orderDAO.create(orderInfo);
 		if (result == null) {

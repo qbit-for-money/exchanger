@@ -2,6 +2,7 @@ package com.qbit.exchanger.money.model;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import javax.persistence.Embeddable;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
@@ -66,6 +67,10 @@ public class Amount implements Serializable {
 
 	public void setCentsInCoin(long centsInCoin) {
 		this.centsInCoin = centsInCoin;
+	}
+	
+	public int scale() {
+		return (int) Math.round(Math.log10(centsInCoin));
 	}
 
 	@XmlTransient
