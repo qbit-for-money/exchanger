@@ -113,39 +113,16 @@
 		</dependency>
 
 		<dependency>
-			<groupId>com.google</groupId>
+			<groupId>com.qbit</groupId>
 			<artifactId>bitcoinj</artifactId>
 			<version>${bitcoinj-version}</version>
 		</dependency>
-
+		
 		<dependency>
-			<groupId>com.google</groupId>
+			<groupId>com.qbit</groupId>
 			<artifactId>litecoinj</artifactId>
 			<version>${litecoinj-version}</version>
 		</dependency>
-		
-<!-- START bitcoinj/litecoinj dependencies -->
-		<dependency>
-			<groupId>org.jboss.netty</groupId>
-			<artifactId>netty</artifactId>
-			<version>3.2.0.Final</version>
-		</dependency>
-		<dependency>
-			<groupId>com.google.protobuf</groupId>
-			<artifactId>protobuf-java</artifactId>
-			<version>2.5.0</version>
-		</dependency>
-		<dependency>
-			<groupId>com.madgag</groupId>
-			<artifactId>scprov-jdk15on</artifactId>
-			<version>1.47.0.1</version>
-		</dependency>
-		<dependency>
-			<groupId>com.lambdaworks</groupId>
-			<artifactId>scrypt</artifactId>
-			<version>1.4.0</version>
-		</dependency>
-<!-- START bitcoinj/litecoinj dependencies -->
 		
 		<dependency>
 			<groupId>postgresql</groupId>

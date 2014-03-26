@@ -111,6 +111,7 @@ public class OrderFlowWorker implements Runnable {
 						return null;
 					}
 				}, MAX_STATUS_CHANGE_FAIL_COUNT);
+				logger.error(msg);
 			}
 		});
 	}
@@ -136,7 +137,7 @@ public class OrderFlowWorker implements Runnable {
 			}
 
 			@Override
-			public void error(String msg) {
+			public void error(String msg) {			
 				databaseExecutor.submit(new TrCallable<Void>() {
 
 					@Override
@@ -145,6 +146,7 @@ public class OrderFlowWorker implements Runnable {
 						return null;
 					}
 				}, MAX_STATUS_CHANGE_FAIL_COUNT);
+				logger.error(msg);
 			}
 		});
 	}
