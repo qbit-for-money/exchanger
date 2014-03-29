@@ -44,15 +44,18 @@ public class UserDAO {
 		}
 	}
 
-	public UserInfo create(final String userPublicKey) {
+	public UserInfo getOrCreate(final String publicKey) {
 		return invokeInTransaction(entityManagerFactory, new TrCallable<UserInfo>() {
 
 			@Override
 			public UserInfo call(EntityManager entityManager) {
-				UserInfo user = new UserInfo();
-				user.setPublicKey(userPublicKey);
-				user.setRegistrationDate(new Date());
-				entityManager.persist(user);
+				UserInfo user = entityManager.find(UserInfo.class, publicKey, LockModeType.PESSIMISTIC_WRITE);;
+				if (user == null) {
+					user = new UserInfo();
+					user.setPublicKey(publicKey);
+					user.setRegistrationDate(new Date());
+					entityManager.persist(user);
+				}
 				return user;
 			}
 		});
