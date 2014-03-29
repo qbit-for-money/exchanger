@@ -28,10 +28,6 @@ public class UserInfo implements Identifiable<String>, Serializable {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date registrationDate;
 
-	private String name;
-
-	private String email;
-
 	@Override
 	public String getId() {
 		return publicKey;
@@ -51,22 +47,6 @@ public class UserInfo implements Identifiable<String>, Serializable {
 
 	public void setRegistrationDate(Date registrationDate) {
 		this.registrationDate = registrationDate;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
 	}
 
 	@Override
@@ -93,6 +73,6 @@ public class UserInfo implements Identifiable<String>, Serializable {
 
 	@Override
 	public String toString() {
-		return "UserInfo{" + "publicKey=" + publicKey + ", registrationDate=" + registrationDate + ", name=" + name + ", email=" + email + '}';
+		return "UserInfo{" + "publicKey=" + publicKey + ", registrationDate=" + registrationDate + '}';
 	}
 }

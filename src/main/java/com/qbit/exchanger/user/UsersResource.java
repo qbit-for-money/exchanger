@@ -21,41 +21,11 @@ public class UsersResource {
 	@Inject
 	private UserDAO userDAO;
 
-	@Inject
-	private MailService mailService;
-
 	@GET
-	@Path("{publicKey}")
+	@Path("current")
 	@Produces(MediaType.APPLICATION_JSON)
-	public UserInfo get(@PathParam("publicKey") String publicKey) {
-		return userDAO.find(publicKey);
-	}
-
-	@POST
-	@Produces(MediaType.APPLICATION_JSON)
-	public UserInfo create() {
-		return userDAO.create();
-	}
-
-	@PUT
-	@Path("{publicKey}")
-	@Consumes(MediaType.APPLICATION_JSON)
-	public void edit(@PathParam("publicKey") String publicKey, UserInfo userInfo) {
-		if (userInfo == null) {
-			return;
-		}
-		userInfo.setPublicKey(publicKey);
-		userDAO.edit(userInfo);
-		sendMailAboutUserProfileUpdate(userInfo);
-	}
-
-	private void sendMailAboutUserProfileUpdate(UserInfo userInfo) {
-		if ((userInfo.getEmail() != null) && !userInfo.getEmail().isEmpty()) {
-			mailService.send(userInfo.getEmail(), "Welcome to Bitgates",
-				"Welcome to Bitgates\n\n"
-				+ "Hello, " + userInfo.getEmail() + ".\n"
-				+ "Your public key: " + userInfo.getPublicKey() + "\n\n"
-				+ "http://bitgates.com/");
-		}
+	public UserInfo current() {
+		String userPublicKey = null; // TODO
+		return userDAO.find(userPublicKey);
 	}
 }

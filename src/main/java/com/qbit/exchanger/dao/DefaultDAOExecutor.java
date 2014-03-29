@@ -25,7 +25,46 @@ import org.slf4j.LoggerFactory;
 @Singleton
 public class DefaultDAOExecutor implements DAOExecutor {
 
-	private final Logger logger = LoggerFactory.getLogger(DefaultDAOExecutor.class);
+	private static class FailSafeRunnable implements Runnable {
+		
+		private final Logger logger = LoggerFactory.getLogger(FailSafeRunnable.class);
+
+		private final Runnable task;
+		private final int maxFailCount;
+		
+		private volatile ScheduledFuture<?> future;
+		
+		private volatile int failCount;
+
+		public FailSafeRunnable(Runnable task, int maxFailCount) {
+			this.task = task;
+			this.maxFailCount = maxFailCount;
+		}
+		
+		public void linkToFuture(ScheduledFuture<?> future) {
+			this.future = future;
+		}
+
+		@Override
+		public void run() {
+			if (failCount > maxFailCount) {
+				if (future != null) {
+					future.cancel(false);
+				}
+				return;
+			}
+			try {
+				task.run();
+			} catch (Throwable ex) {
+				failCount++;
+				if (failCount > maxFailCount) {
+					logger.error(ex.getMessage(), ex);
+				} else {
+					logger.info(ex.getMessage(), ex);
+				}
+			}
+		}
+	}
 
 	@Inject
 	private Env env;
@@ -52,30 +91,17 @@ public class DefaultDAOExecutor implements DAOExecutor {
 	}
 
 	@Override
-	public void submit(final TrCallable<Void> callable, final int maxFailCount) {
-		
-		new FixedExecutionRunnable(new Runnable() {
-
-			private int failCount = 0;
+	public void submit(final TrCallable<Void> callable, int maxFailCount) {
+		FailSafeRunnable failSafeRunnable = new FailSafeRunnable(new Runnable() {
 
 			@Override
 			public void run() {
-				while (failCount <= maxFailCount) {
-					try {
-						invokeInTransaction(entityManagerFactory, callable);
-						break;
-					} catch (Throwable ex) {
-						failCount++;
-						if (failCount > maxFailCount) {
-							logger.error(ex.getMessage(), ex);
-							throw ex;
-						} else {
-							logger.info(ex.getMessage(), ex);
-						}
-					}
-				}
+				invokeInTransaction(entityManagerFactory, callable);
 			}
-		}).scheduleWithFixedDelay(executorService, env.getOrderWorkerPeriodSecs(), TimeUnit.SECONDS);
+		}, maxFailCount);
+		ScheduledFuture<?> future = executorService.scheduleWithFixedDelay(failSafeRunnable,
+				0, env.getOrderWorkerPeriodSecs(), TimeUnit.SECONDS);
+		failSafeRunnable.linkToFuture(future);
 	}
 
 	@PreDestroy
@@ -84,26 +110,6 @@ public class DefaultDAOExecutor implements DAOExecutor {
 			executorService.shutdown();
 		} catch (Throwable ex) {
 			// Do nothing
-		}
-	}
-
-	class FixedExecutionRunnable implements Runnable {
-
-		private volatile ScheduledFuture<?> self;
-		private final Runnable task;
-
-		public FixedExecutionRunnable(Runnable task) {
-			this.task = task;
-		}
-
-		@Override
-		public void run() {
-			task.run();
-			self.cancel(false);
-		}
-
-		public void scheduleWithFixedDelay(ScheduledExecutorService executor, long delay, TimeUnit unit) {
-			self = executor.scheduleWithFixedDelay(this, 0, delay, unit);
 		}
 	}
 }

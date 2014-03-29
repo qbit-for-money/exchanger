@@ -9,6 +9,7 @@ import com.qbit.exchanger.money.model.TransferType;
 import com.qbit.exchanger.order.model.OrderInfo;
 import com.qbit.exchanger.order.model.OrderStatus;
 import com.qbit.exchanger.user.UserDAO;
+import com.qbit.exchanger.user.UserInfo;
 import java.util.Collections;
 import java.util.Date;
 import java.util.EnumSet;
@@ -197,14 +198,17 @@ public class OrderDAO {
 				|| !inTransfer.isPositive() || !outTransfer.isPositive()
 				|| !TransferType.IN.equals(inTransfer.getType())
 				|| !TransferType.OUT.equals(outTransfer.getType())
-				|| inTransfer.getCurrency().equals(outTransfer.getCurrency())
-				|| !userDAO.isExists(userPublicKey)) {
+				|| inTransfer.getCurrency().equals(outTransfer.getCurrency())) {
 			throw new IllegalArgumentException("Order is inconsistent.");
 		}
 		return invokeInTransaction(entityManagerFactory, new TrCallable<OrderInfo>() {
 
 			@Override
 			public OrderInfo call(EntityManager entityManager) {
+				UserInfo userInfo = userDAO.findAndLock(userPublicKey);
+				if (userInfo == null) {
+					return null;
+				}
 				OrderInfo order = new OrderInfo();
 				order.setCreationDate(new Date());
 				order.setUserPublicKey(userPublicKey);

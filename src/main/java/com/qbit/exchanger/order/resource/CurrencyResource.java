@@ -1,7 +1,6 @@
 package com.qbit.exchanger.order.resource;
 
 import com.qbit.exchanger.money.model.Currency;
-import java.util.Arrays;
 import java.util.List;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -66,6 +65,6 @@ public class CurrencyResource {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public CurrencyListWrapper findAll() {
-		return new CurrencyListWrapper(Arrays.asList(Currency.values()));
+		return new CurrencyListWrapper(Currency.supportedValues());
 	}
 }

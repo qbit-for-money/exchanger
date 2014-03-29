@@ -1,5 +1,9 @@
 package com.qbit.exchanger.money.model;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 /**
  *
  * @author Александр
@@ -18,6 +22,22 @@ public enum Currency {
 	ZETACOIN(new Amount(0, 1, 100 * 1000 * 1000), "ZET", false),
 	DIGITALCOIN(new Amount(0, 1, 100 * 1000 * 1000), "DGC", false),
 	STABLECOIN(new Amount(0, 1, 100 * 1000 * 1000), "SBC", false);
+	
+	private static final List<Currency> SUPPORTED_VALUES;
+	
+	static {
+		List<Currency> supportedValues = new ArrayList<>();
+		for (Currency currency : values()) {
+			if (currency.isSupported()) {
+				supportedValues.add(currency);
+			}
+		}
+		SUPPORTED_VALUES = Collections.unmodifiableList(supportedValues);
+	}
+	
+	public static List<Currency> supportedValues() {
+		return SUPPORTED_VALUES;
+	}
 	
 	private final Amount minSignificantAmount;
 	private final String code;

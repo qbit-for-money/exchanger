@@ -46,7 +46,7 @@ public class OrderFlowWorker implements Runnable {
 	@Override
 	public void run() {
 		List<OrderInfo> ordersUnderWork = orderDAO.findByFullStatus(
-			EnumSet.of(OrderStatus.INITIAL, OrderStatus.PAYED), false);
+				EnumSet.of(OrderStatus.INITIAL, OrderStatus.PAYED), false);
 		if (ordersUnderWork != null) {
 			for (OrderInfo orderUnderWork : ordersUnderWork) {
 				try {
@@ -76,7 +76,7 @@ public class OrderFlowWorker implements Runnable {
 		final String orderId = orderUnderWork.getId();
 		Transfer inTransfer = orderUnderWork.getInTransfer();
 		final Rate rate = exchange.getRate(inTransfer.getCurrency(),
-			orderUnderWork.getOutTransfer().getCurrency());
+				orderUnderWork.getOutTransfer().getCurrency());
 		if ((rate == null) || !rate.isValid()) {
 			throw new IllegalStateException();
 		}
@@ -92,7 +92,7 @@ public class OrderFlowWorker implements Runnable {
 					public Void call(EntityManager entityManager) {
 						try {
 							orderDAO.changeStatusAndAmounts(orderId, OrderStatus.PAYED, false,
-								inAmount, rate.mul(inAmount));
+									inAmount, rate.mul(inAmount));
 						} catch (Exception ex) {
 							orderDAO.changeStatus(orderId, OrderStatus.IN_FAILED, false);
 						}
@@ -130,14 +130,14 @@ public class OrderFlowWorker implements Runnable {
 					@Override
 					public Void call(EntityManager entityManager) {
 						orderDAO.changeStatusAndOutAmount(orderId, OrderStatus.SUCCESS, false,
-							outAmount);
+								outAmount);
 						return null;
 					}
 				}, MAX_STATUS_CHANGE_FAIL_COUNT);
 			}
 
 			@Override
-			public void error(String msg) {			
+			public void error(String msg) {
 				databaseExecutor.submit(new TrCallable<Void>() {
 
 					@Override
