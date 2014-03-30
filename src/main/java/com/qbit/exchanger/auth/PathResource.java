@@ -1,6 +1,7 @@
 package com.qbit.exchanger.auth;
 
 import java.net.URI;
+import javax.inject.Singleton;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -11,6 +12,7 @@ import javax.ws.rs.core.Response;
  * @author Alexander_Sergeev
  */
 @Path("index")
+@Singleton
 public class PathResource {
 	
 	@GET

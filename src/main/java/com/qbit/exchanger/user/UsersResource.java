@@ -2,6 +2,7 @@ package com.qbit.exchanger.user;
 
 import com.qbit.exchanger.auth.AuthFilter;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -14,6 +15,7 @@ import javax.ws.rs.core.MediaType;
  * @author Александр
  */
 @Path("users")
+@Singleton
 public class UsersResource {
 	
 	@Context

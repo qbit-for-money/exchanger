@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
  * @author Alexander_Sergeev
  */
 @Singleton
-public class LitecoinMoneyService implements MoneyService, CryptoService {
+public class LitecoinMoneyService implements CryptoService {
 
 	private static final BigInteger COIN = new BigInteger("100000000", 10);
 

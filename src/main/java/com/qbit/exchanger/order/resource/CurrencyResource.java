@@ -10,6 +10,7 @@ import javax.ws.rs.core.MediaType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import com.qbit.exchanger.money.model.serialization.CurrencyAdapter;
 import java.io.Serializable;
+import javax.inject.Singleton;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -17,6 +18,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author Александр
  */
 @Path("currency")
+@Singleton
 public class CurrencyResource {
 
 	@XmlRootElement

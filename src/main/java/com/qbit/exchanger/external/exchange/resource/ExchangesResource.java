@@ -3,8 +3,8 @@ package com.qbit.exchanger.external.exchange.resource;
 import com.qbit.exchanger.external.exchange.core.Exchange;
 import com.qbit.exchanger.money.model.Currency;
 import com.qbit.exchanger.money.model.Rate;
-import java.math.BigDecimal;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -16,6 +16,7 @@ import javax.ws.rs.core.MediaType;
  * @author Александр
  */
 @Path("exchanges")
+@Singleton
 public class ExchangesResource {
 
 	@Inject

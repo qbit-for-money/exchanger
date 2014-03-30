@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
 * @author Ivan_Rakitnyh
  */
 @Singleton
-public class BitcoinMoneyService implements MoneyService, CryptoService {
+public class BitcoinMoneyService implements CryptoService {
 
 	private static final BigInteger COIN = new BigInteger("100000000", 10);
 

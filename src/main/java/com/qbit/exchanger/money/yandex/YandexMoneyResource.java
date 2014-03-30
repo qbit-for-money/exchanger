@@ -3,6 +3,7 @@ package com.qbit.exchanger.money.yandex;
 import com.qbit.exchanger.env.Env;
 import java.net.URI;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -12,6 +13,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
 @Path("yandex")
+@Singleton
 public class YandexMoneyResource {
 
 	private static final String WALLET_PARAM_NAME = "wallet";

@@ -1,6 +1,5 @@
 package com.qbit.exchanger.user;
 
-import com.qbit.exchanger.dao.util.DAOUtil;
 import static com.qbit.exchanger.dao.util.DAOUtil.invokeInTransaction;
 import com.qbit.exchanger.dao.util.TrCallable;
 import java.util.Date;

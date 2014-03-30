@@ -30,7 +30,8 @@
 
 <div class="row" style="margin-bottom: 20px;">
 	<div class="text-center col-md-12">
-		<button class="btn btn-success btn-lg direction-control" ng-click="goToNextStep()">
+		<button class="btn btn-success btn-lg direction-control" ng-click="goToNextStep()"
+				ng-disabled="requestCount > 0">
 			<span class="glyphicon glyphicon-arrow-down"></span>
 		</button>
 	</div>

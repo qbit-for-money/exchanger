@@ -1,6 +1,5 @@
 package com.qbit.exchanger;
 
-import com.qbit.exchanger.admin.CryptoServiceProvider;
 import com.qbit.exchanger.buffer.BufferDAO;
 import com.qbit.exchanger.dao.DefaultDAOExecutor;
 import com.qbit.exchanger.dao.util.DAOExecutor;
@@ -63,7 +62,6 @@ public class ExchangerApp extends Application {
 		addBinding(newBinder(YandexMoneyService.class).to(YandexMoneyService.class).in(Singleton.class), configuration);
 
 		addBinding(newBinder(MoneyServiceProvider.class).to(MoneyServiceProvider.class).in(Singleton.class), configuration);
-		addBinding(newBinder(CryptoServiceProvider.class).to(CryptoServiceProvider.class).in(Singleton.class), configuration);
 
 		addBinding(newBinder(OrderService.class).to(OrderService.class).in(Singleton.class), configuration);
 		addBinding(newBinder(OrderFlowWorker.class).to(OrderFlowWorker.class).in(Singleton.class), configuration);
