@@ -41,7 +41,7 @@ public class GoogleResource {
 	private UriInfo uriInfo;
 
 	@Context
-	private HttpServletRequest hsr;
+	private HttpServletRequest httpServletRequest;
 	
 	@Inject
 	private Env env;
@@ -69,6 +69,7 @@ public class GoogleResource {
 
 	@GET
 	@Path("authorize")
+	@Produces("text/html")
 	public Response authorize(@QueryParam("code") String code, @QueryParam("state") String state) throws URISyntaxException {
 		String newURI = uriInfo.getBaseUri().toString();
 		newURI = newURI.substring(0, newURI.indexOf("webapi"));
@@ -95,7 +96,7 @@ public class GoogleResource {
 
 			String userId = getGoogleProfileEmail(resourceResponse);
 			if (userId != null) {
-				hsr.getSession().setAttribute("user_id", userId);
+				httpServletRequest.getSession().setAttribute(AuthFilter.USER_ID, userId);
 			}
 		} catch (OAuthSystemException | OAuthProblemException | IOException e) {
 			throw new WebApplicationException(e);
