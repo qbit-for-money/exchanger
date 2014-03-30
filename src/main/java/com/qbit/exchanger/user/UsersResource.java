@@ -1,5 +1,6 @@
 package com.qbit.exchanger.user;
 
+import com.qbit.exchanger.auth.AuthFilter;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
@@ -16,7 +17,7 @@ import javax.ws.rs.core.MediaType;
 public class UsersResource {
 	
 	@Context
-	HttpServletRequest hsRequest;
+	private HttpServletRequest hsRequest;
 
 	@Inject
 	private UserDAO userDAO;
@@ -26,7 +27,7 @@ public class UsersResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public UserInfo current() {
 		String userPublicKey = null;
-		Object objUserId = hsRequest.getSession().getAttribute("user_id");
+		Object objUserId = hsRequest.getSession().getAttribute(AuthFilter.USER_ID);
 		if (objUserId != null) {
 			userPublicKey = (String) objUserId;
 		}

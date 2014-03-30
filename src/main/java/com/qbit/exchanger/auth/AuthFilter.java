@@ -14,29 +14,34 @@ import javax.servlet.http.HttpServletRequest;
  * @author Alexander_Sergeev
  */
 public class AuthFilter implements Filter {
-	
-	private Env env;
 
+	private Env env;
+        public static final String USER_ID = "user_id";
 	@Override
 	public void init(FilterConfig fc) throws ServletException {
 		env = new Env();
 	}
 
 	@Override
-	public void doFilter(ServletRequest sr, ServletResponse sr1, FilterChain fc) throws IOException, ServletException {
-		HttpServletRequest req = (HttpServletRequest) sr;
-		String userId = (String) req.getSession().getAttribute("user_id");
-		if (userId != null) {
-			if (req.getRequestURI().equals("/exchanger/admin.jsp")
-					|| (req.getPathInfo() != null && req.getPathInfo().startsWith("/admin"))) {
-				if (!userId.equals(env.getGoogleUserId())) {
-					req.getRequestDispatcher("/webapi/index").forward(sr, sr1);
-				}
-			}
-		} else if (req.getPathInfo() == null || !req.getPathInfo().equals("/oauth2/authorize")) {
-			req.getRequestDispatcher("/webapi/oauth2/authenticate").forward(sr, sr1);
+	public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+		HttpServletRequest httpRequest = (HttpServletRequest) servletRequest;
+		String userId = (String) httpRequest.getSession().getAttribute(USER_ID);
+
+		boolean isRequestToAdminPage = (userId != null 
+				&& (httpRequest.getRequestURI().equals("/exchanger/admin.jsp")
+				|| ((httpRequest.getPathInfo() != null) && httpRequest.getPathInfo().startsWith("/admin"))));
+		
+		boolean isRequestToOther = userId == null 
+				&& (httpRequest.getPathInfo() == null || !httpRequest.getPathInfo().equals("/oauth2/authorize"));
+		
+		boolean isAdmin = (userId != null) ? userId.equals(env.getAdminMail()) : false;
+
+		if (isRequestToAdminPage && !isAdmin) {
+			httpRequest.getRequestDispatcher("/webapi/index").forward(servletRequest, servletResponse);
+		} else if (isRequestToOther) {
+			httpRequest.getRequestDispatcher("/webapi/oauth2/authenticate").forward(servletRequest, servletResponse);
 		}
-		fc.doFilter(sr, sr1);
+		filterChain.doFilter(servletRequest, servletResponse);
 	}
 
 	@Override
