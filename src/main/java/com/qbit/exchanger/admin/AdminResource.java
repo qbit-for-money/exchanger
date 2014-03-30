@@ -13,7 +13,6 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlList;
@@ -98,26 +97,9 @@ public class AdminResource {
 	@GET
 	@Path("{currency}/transactions")
 	@Produces(MediaType.APPLICATION_JSON)
-	public WTransactionWrapper getTransactionHisory(@PathParam("currency") Currency currency) {
+	public WTransactionWrapper getWalletTransactions(@PathParam("currency") Currency currency) {
 		CryptoService moneyService = moneyServiceProvider.get(currency, CryptoService.class);
-		return new WTransactionWrapper(moneyService.getTransactionHistory());
-	}
-
-	@GET
-	@Path("{currency}/transactionsByCoinsAndCents")
-	@Produces(MediaType.APPLICATION_JSON)
-	public List<WTransaction> getTransactionHisoryByCoinsAndCents(@PathParam("currency") Currency currency, @QueryParam("coins") long coins, @QueryParam("cents") long cents) {
-		CryptoService moneyService = moneyServiceProvider.get(currency, CryptoService.class);
-		Amount amount = new Amount(coins, cents, Currency.LITECOIN.getCentsInCoin());
-		return moneyService.getTransactionHistoryByAmount(amount);
-	}
-
-	@GET
-	@Path("{currency}/transactionsByAddress")
-	@Produces(MediaType.APPLICATION_JSON)
-	public List<WTransaction> getTransactionHistoryByAddress(@PathParam("currency") Currency currency, @QueryParam("address") String address) {
-		CryptoService moneyService = moneyServiceProvider.get(currency, CryptoService.class);
-		return moneyService.getTransactionHistoryByAddress(address);
+		return new WTransactionWrapper(moneyService.getWalletTransactions());
 	}
 
 	@POST

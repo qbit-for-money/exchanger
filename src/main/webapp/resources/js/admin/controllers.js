@@ -25,7 +25,7 @@ adminModule.controller("AdminController", function($rootScope, $scope, adminReso
 	}
 
 	function refreshTransactions() {
-		var transactionsResponse = adminResource.getTransactionHisory({currency: $scope.currency.id});
+		var transactionsResponse = adminResource.getWalletTransactions({currency: $scope.currency.id});
 		$scope.transactions = [];
 		transactionsResponse.$promise.then(function() {
 			if (transactionsResponse && transactionsResponse.transactions) {

@@ -15,8 +15,10 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class AuthFilter implements Filter {
 
+	public static final String USER_ID_KEY = "user_id";
+	
 	private Env env;
-        public static final String USER_ID = "user_id";
+        
 	@Override
 	public void init(FilterConfig fc) throws ServletException {
 		env = new Env();
@@ -25,23 +27,26 @@ public class AuthFilter implements Filter {
 	@Override
 	public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
 		HttpServletRequest httpRequest = (HttpServletRequest) servletRequest;
-		String userId = (String) httpRequest.getSession().getAttribute(USER_ID);
-
-		boolean isRequestToAdminPage = (userId != null 
-				&& (httpRequest.getRequestURI().equals("/exchanger/admin.jsp")
-				|| ((httpRequest.getPathInfo() != null) && httpRequest.getPathInfo().startsWith("/admin"))));
 		
-		boolean isRequestToOther = userId == null 
-				&& (httpRequest.getPathInfo() == null || !httpRequest.getPathInfo().equals("/oauth2/authorize"));
-		
-		boolean isAdmin = (userId != null) ? userId.equals(env.getAdminMail()) : false;
+		String userId = (String) httpRequest.getSession().getAttribute(USER_ID_KEY);
 
-		if (isRequestToAdminPage && !isAdmin) {
-			httpRequest.getRequestDispatcher("/webapi/index").forward(servletRequest, servletResponse);
-		} else if (isRequestToOther) {
+		boolean isRequestToAdminPage = (httpRequest.getRequestURI().equals("/exchanger/admin.jsp")
+				|| ((httpRequest.getPathInfo() != null) && httpRequest.getPathInfo().startsWith("/admin")));
+		boolean isRequestToAuthorization = ((httpRequest.getPathInfo() != null)
+				&& httpRequest.getPathInfo().equals("/oauth2/authorize"));
+		boolean isAdmin = env.getAdminMail().equals(userId);
+		
+		if (userId != null) {
+			if (isRequestToAdminPage && !isAdmin) {
+				httpRequest.getRequestDispatcher("/webapi/index").forward(servletRequest, servletResponse);
+			} else {
+				filterChain.doFilter(servletRequest, servletResponse);
+			}
+		} else if (isRequestToAuthorization) {
+			filterChain.doFilter(servletRequest, servletResponse);
+		} else {
 			httpRequest.getRequestDispatcher("/webapi/oauth2/authenticate").forward(servletRequest, servletResponse);
 		}
-		filterChain.doFilter(servletRequest, servletResponse);
 	}
 
 	@Override

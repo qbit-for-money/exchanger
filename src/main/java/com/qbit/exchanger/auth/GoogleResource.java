@@ -96,7 +96,7 @@ public class GoogleResource {
 
 			String userId = getGoogleProfileEmail(resourceResponse);
 			if (userId != null) {
-				httpServletRequest.getSession().setAttribute(AuthFilter.USER_ID, userId);
+				httpServletRequest.getSession().setAttribute(AuthFilter.USER_ID_KEY, userId);
 			}
 		} catch (OAuthSystemException | OAuthProblemException | IOException e) {
 			throw new WebApplicationException(e);

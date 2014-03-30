@@ -86,10 +86,7 @@ public class WTransaction implements Serializable {
 			return false;
 		}
 		final WTransaction other = (WTransaction) obj;
-		if (!Objects.equals(this.trHash, other.trHash)) {
-			return false;
-		}
-		return true;
+		return Objects.equals(this.trHash, other.trHash);
 	}
 
 	@Override

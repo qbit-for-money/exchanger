@@ -19,7 +19,7 @@ import javax.ws.rs.core.MediaType;
 public class UsersResource {
 	
 	@Context
-	private HttpServletRequest hsRequest;
+	private HttpServletRequest request;
 
 	@Inject
 	private UserDAO userDAO;
@@ -28,11 +28,7 @@ public class UsersResource {
 	@Path("current")
 	@Produces(MediaType.APPLICATION_JSON)
 	public UserInfo current() {
-		String userPublicKey = null;
-		Object objUserId = hsRequest.getSession().getAttribute(AuthFilter.USER_ID);
-		if (objUserId != null) {
-			userPublicKey = (String) objUserId;
-		}
+		String userPublicKey = (String) request.getSession().getAttribute(AuthFilter.USER_ID_KEY);
 		return userDAO.getOrCreate(userPublicKey);
 	}
 }

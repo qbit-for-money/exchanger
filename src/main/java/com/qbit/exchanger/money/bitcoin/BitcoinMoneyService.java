@@ -17,7 +17,6 @@ import com.qbit.exchanger.admin.CryptoService;
 import com.qbit.exchanger.admin.WTransaction;
 import com.qbit.exchanger.buffer.BufferDAO;
 import com.qbit.exchanger.env.Env;
-import com.qbit.exchanger.money.core.MoneyService;
 import com.qbit.exchanger.money.core.MoneyTransferCallback;
 import com.qbit.exchanger.money.model.Amount;
 import com.qbit.exchanger.money.model.Currency;
@@ -304,7 +303,7 @@ public class BitcoinMoneyService implements CryptoService {
 	}
 
 	@Override
-	public List<WTransaction> getTransactionHistory() {
+	public List<WTransaction> getWalletTransactions() {
 		Iterable<WalletTransaction> tansactions = getWallet().getWalletTransactions();
 		List<WTransaction> wTransactions = new ArrayList<>();
 		for (WalletTransaction walletTr : tansactions) {
@@ -312,35 +311,6 @@ public class BitcoinMoneyService implements CryptoService {
 			wTransactions.add(toWTransaction(tr));
 		}
 
-		return wTransactions;
-	}
-
-	@Override
-	public List<WTransaction> getTransactionHistoryByAmount(Amount amount) {
-		Iterable<WalletTransaction> tansactions = getWallet().getWalletTransactions();
-		List<WTransaction> wTransactions = new ArrayList<>();
-
-		for (WalletTransaction walletTr : tansactions) {
-			Transaction tr = walletTr.getTransaction();
-			BigInteger am = tr.getValue(getWallet());
-			if (am.equals(toNanoCoins(amount.getCoins(), amount.getCents()))) {
-				wTransactions.add(toWTransaction(tr));
-			}
-		}
-		return wTransactions;
-	}
-
-	@Override
-	public List<WTransaction> getTransactionHistoryByAddress(String address) {
-		Iterable<WalletTransaction> tansactions = getWallet().getWalletTransactions();
-		List<WTransaction> wTransactions = new ArrayList<>();
-
-		for (WalletTransaction walletTr : tansactions) {
-			Transaction tr = walletTr.getTransaction();
-			if (getTransactionAddress(tr).equals(address)) {
-				wTransactions.add(toWTransaction(tr));
-			}
-		}
 		return wTransactions;
 	}
 
