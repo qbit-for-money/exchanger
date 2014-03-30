@@ -252,15 +252,7 @@ public class BitcoinMoneyService implements CryptoService {
 		if ((transfer == null) || !transfer.isPositive()) {
 			return false;
 		}
-		boolean result;
-		BigInteger transferAmount = toNanoCoins(transfer.getAmount().getCoins(), transfer.getAmount().getCents());
-		if (transferAmount.compareTo(getWallet().getBalance().subtract(MIN_FEE)) < 0) {
-			Amount balance = new Amount(getBalance().toBigDecimal(), Currency.BITCOIN.getCentsInCoin());
-			result = bufferDAO.reserveAmount(Currency.BITCOIN, balance, transfer.getAmount());
-		} else {
-			result = false;
-		}
-		return result;
+		return bufferDAO.reserveAmount(Currency.BITCOIN, getBalance(), transfer.getAmount());
 	}
 
 	@Override
@@ -319,15 +311,6 @@ public class BitcoinMoneyService implements CryptoService {
 			logger.error("Empty address or wrong money value");
 			return;
 		}
-		BigInteger transferAmount = toNanoCoins(amount.getCoins(), amount.getCents());
-		boolean result = transferAmount.compareTo(getWallet().getBalance().add(MIN_FEE)) == -1;
-			if (result) {
-				Amount balance = new Amount(getBalance().toBigDecimal(), Currency.BITCOIN.getCentsInCoin());
-				result = bufferDAO.reserveAmount(Currency.BITCOIN, balance, amount);
-			} else {
-				logger.error("Not enough money in the system buffer");
-				return;
-			}
 		try {
 			Address forwardingAddress = new Address(parameters, address);
 

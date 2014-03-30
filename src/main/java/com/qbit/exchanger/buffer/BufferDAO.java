@@ -18,6 +18,10 @@ public class BufferDAO {
 	private EntityManagerFactory entityManagerFactory;
 
 	public boolean reserveAmount(final Currency currency, final Amount currentBalance, final Amount amount) {
+		if ((currency == null) || (currentBalance == null) || !currentBalance.isPositive()
+				|| (amount == null) || !amount.isValid() || (currentBalance.compareTo(amount) < 0)) {
+			return false;
+		}
 		return invokeInTransaction(entityManagerFactory, new TrCallable<Boolean>() {
 
 			@Override
@@ -45,6 +49,9 @@ public class BufferDAO {
 	}
 
 	public void deleteReservation(final Currency currency, final Amount amount) {
+		if ((currency == null) || (amount == null) || !amount.isValid()) {
+			return;
+		}
 		invokeInTransaction(entityManagerFactory, new TrCallable<Void>() {
 
 			@Override

@@ -2,7 +2,7 @@ package com.qbit.exchanger.money.model;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.math.BigInteger;
+import java.math.RoundingMode;
 import javax.persistence.Embeddable;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
@@ -13,7 +13,7 @@ import javax.xml.bind.annotation.XmlTransient;
  */
 @Embeddable
 @XmlRootElement
-public class Amount implements Serializable {
+public class Amount implements Serializable, Comparable<Amount> {
 
 	private long coins, cents;
 
@@ -68,7 +68,7 @@ public class Amount implements Serializable {
 	public void setCentsInCoin(long centsInCoin) {
 		this.centsInCoin = centsInCoin;
 	}
-	
+
 	public int scale() {
 		return (int) Math.round(Math.log10(centsInCoin));
 	}
@@ -77,17 +77,31 @@ public class Amount implements Serializable {
 	public boolean isValid() {
 		return (coins >= 0) && (cents >= 0) && (centsInCoin >= 0) && (cents <= centsInCoin);
 	}
-	
+
 	@XmlTransient
 	public boolean isPositive() {
 		long minCents = centsInCoin / 100;
 		return (isValid() && ((coins > 0) || (cents >= minCents)));
 	}
-	
+
 	@XmlTransient
 	public BigDecimal toBigDecimal() {
 		return BigDecimal.valueOf(coins).add(BigDecimal.valueOf(cents)
-			.divide(BigDecimal.valueOf(centsInCoin)));
+				.divide(BigDecimal.valueOf(centsInCoin), scale(), RoundingMode.HALF_UP));
+	}
+
+	@Override
+	public int compareTo(Amount o) {
+		if ((o == null) || (centsInCoin != o.centsInCoin)) {
+			throw new IllegalArgumentException();
+		}
+		if (coins < o.cents) {
+			return -1;
+		} else if (coins > o.coins) {
+			return 1;
+		} else {
+			return Long.compare(cents, o.cents);
+		}
 	}
 
 	@Override

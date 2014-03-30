@@ -250,15 +250,7 @@ public class LitecoinMoneyService implements CryptoService {
 		if ((transfer == null) || !transfer.isPositive()) {
 			return false;
 		}
-		boolean result;
-		BigInteger transferAmount = toNanoCoins(transfer.getAmount().getCoins(), transfer.getAmount().getCents());
-		if (transferAmount.compareTo(getWallet().getBalance().subtract(MIN_FEE)) < 0) {
-			Amount balance = new Amount(getBalance().toBigDecimal(), Currency.LITECOIN.getCentsInCoin());
-			result = bufferDAO.reserveAmount(Currency.LITECOIN, balance, transfer.getAmount());
-		} else {
-			result = false;
-		}
-		return result;
+		return bufferDAO.reserveAmount(Currency.LITECOIN, getBalance(), transfer.getAmount());
 	}
 
 	@Override
@@ -309,22 +301,13 @@ public class LitecoinMoneyService implements CryptoService {
 			logger.error("Empty address or wrong money value");
 			return;
 		}
-		BigInteger transferAmount = toNanoCoins(amount.getCoins(), amount.getCents());
-		boolean result = transferAmount.compareTo(getWallet().getBalance().add(MIN_FEE)) == -1;
-			if (result) {
-				Amount balance = new Amount(getBalance().toBigDecimal(), Currency.LITECOIN.getCentsInCoin());
-				result = bufferDAO.reserveAmount(Currency.LITECOIN, balance, amount);
-			} else {
-				logger.error("Not enough money in the system buffer");
-				return;
-			}
 		try {
 			Address forwardingAddress = new Address(parameters, address);
 
 			final BigInteger amountToSend = toNanoCoins(amount.getCoins(), amount.getCents());
 
 			logger.info("Forwarding {} BTC", com.google.bitcoin.core.Utils.bitcoinValueToFriendlyString(amountToSend));
-;
+
 			final Wallet.SendResult sendResult = kit.wallet().sendCoins(kit.peerGroup(), forwardingAddress, amountToSend);
 
 			logger.info("Sending coins to admin address...");
