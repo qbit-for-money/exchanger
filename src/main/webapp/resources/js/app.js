@@ -35,3 +35,15 @@ angular.module("main").config(function($routeProvider, $locationProvider) {
 }).run(function($rootScope, $location) {
 	$rootScope.location = $location;
 });
+
+angular.module("admin", ["ngRoute", "ngResource", "ui.bootstrap", "chieffancypants.loadingBar",
+	"common", "user", "money", "money.yandex"]);
+
+angular.module("admin").config(function($routeProvider) {
+	$routeProvider.when("/", {
+		templateUrl: "resources/html/admin/admin.html",
+		controller: "AdminController"
+	}).otherwise({redirectTo: "/"});
+}).run(function($rootScope, $location) {
+	$rootScope.location = $location;
+});

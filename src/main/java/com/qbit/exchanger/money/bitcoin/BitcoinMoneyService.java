@@ -8,13 +8,15 @@ import com.google.bitcoin.params.MainNetParams;
 import com.google.bitcoin.params.TestNet3Params;
 import com.google.bitcoin.script.Script;
 import com.google.bitcoin.utils.BriefLogFormatter;
+import com.google.bitcoin.wallet.WalletTransaction;
 import static com.google.common.base.Preconditions.checkArgument;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.MoreExecutors;
+import com.qbit.exchanger.admin.CryptoService;
+import com.qbit.exchanger.admin.WTransaction;
 import com.qbit.exchanger.buffer.BufferDAO;
 import com.qbit.exchanger.env.Env;
-
 import com.qbit.exchanger.money.core.MoneyService;
 import com.qbit.exchanger.money.core.MoneyTransferCallback;
 import com.qbit.exchanger.money.model.Amount;
@@ -41,7 +43,7 @@ import org.slf4j.LoggerFactory;
 * @author Ivan_Rakitnyh
  */
 @Singleton
-public class BitcoinMoneyService implements MoneyService {
+public class BitcoinMoneyService implements MoneyService, CryptoService {
 
 	private static final BigInteger COIN = new BigInteger("100000000", 10);
 
@@ -253,7 +255,7 @@ public class BitcoinMoneyService implements MoneyService {
 			BigInteger transferAmount = toNanoCoins(transfer.getAmount().getCoins(), transfer.getAmount().getCents());
 			result = transferAmount.compareTo(getWallet().getBalance().add(MIN_FEE)) == -1;
 			if (result) {
-				Amount balance = new Amount(new BigDecimal(getBalance()), Currency.BITCOIN.getCentsInCoin());
+				Amount balance = new Amount(getBalance().toBigDecimal(), Currency.BITCOIN.getCentsInCoin());
 				result = bufferDAO.reserveAmount(Currency.BITCOIN, balance, transfer.getAmount());
 			}
 		} else {
@@ -281,11 +283,6 @@ public class BitcoinMoneyService implements MoneyService {
 		return result;
 	}
 
-	public String getBalance() {
-		BigInteger balance = getWallet().getBalance();
-		return Utils.bitcoinValueToFriendlyString(balance);
-	}
-
 	private Wallet getWallet() {
 		return kit.wallet();
 	}
@@ -298,5 +295,136 @@ public class BitcoinMoneyService implements MoneyService {
 		BigInteger bi = BigInteger.valueOf(coins).multiply(COIN);
 		bi = bi.add(BigInteger.valueOf(cents));
 		return bi;
+	}
+	
+	@Override
+	public Amount getBalance() {
+		BigInteger balance = getWallet().getBalance();
+		return new Amount(new BigDecimal(Utils.bitcoinValueToFriendlyString(balance)), Currency.BITCOIN.getCentsInCoin());
+	}
+
+	@Override
+	public List<WTransaction> getTransactionHistory() {
+		Iterable<WalletTransaction> tansactions = getWallet().getWalletTransactions();
+		List<WTransaction> wTransactions = new ArrayList<>();
+		for (WalletTransaction walletTr : tansactions) {
+			Transaction tr = walletTr.getTransaction();
+			wTransactions.add(toWTransaction(tr));
+		}
+
+		return wTransactions;
+	}
+
+	@Override
+	public List<WTransaction> getTransactionHistoryByAmount(Amount amount) {
+		Iterable<WalletTransaction> tansactions = getWallet().getWalletTransactions();
+		List<WTransaction> wTransactions = new ArrayList<>();
+
+		for (WalletTransaction walletTr : tansactions) {
+			Transaction tr = walletTr.getTransaction();
+			BigInteger am = tr.getValue(getWallet());
+			if (am.equals(toNanoCoins(amount.getCoins(), amount.getCents()))) {
+				wTransactions.add(toWTransaction(tr));
+			}
+		}
+		return wTransactions;
+	}
+
+	@Override
+	public List<WTransaction> getTransactionHistoryByAddress(String address) {
+		Iterable<WalletTransaction> tansactions = getWallet().getWalletTransactions();
+		List<WTransaction> wTransactions = new ArrayList<>();
+
+		for (WalletTransaction walletTr : tansactions) {
+			Transaction tr = walletTr.getTransaction();
+			if (getTransactionAddress(tr).equals(address)) {
+				wTransactions.add(toWTransaction(tr));
+			}
+		}
+		return wTransactions;
+	}
+
+	@Override
+	public void sendMoney(Amount amount, String address) {
+		if ((amount == null) || !amount.isValid() || address == null) {
+			logger.error("Empty address or wrong money value");
+			return;
+		}
+		BigInteger transferAmount = toNanoCoins(amount.getCoins(), amount.getCents());
+		boolean result = transferAmount.compareTo(getWallet().getBalance().add(MIN_FEE)) == -1;
+			if (result) {
+				Amount balance = new Amount(getBalance().toBigDecimal(), Currency.BITCOIN.getCentsInCoin());
+				result = bufferDAO.reserveAmount(Currency.BITCOIN, balance, amount);
+			} else {
+				logger.error("Not enough money in the system buffer");
+				return;
+			}
+		try {
+			Address forwardingAddress = new Address(parameters, address);
+
+			final BigInteger amountToSend = toNanoCoins(amount.getCoins(), amount.getCents());
+
+			logger.info("Forwarding {} BTC", Utils.bitcoinValueToFriendlyString(amountToSend));
+
+			final Wallet.SendResult sendResult = kit.wallet().sendCoins(kit.peerGroup(), forwardingAddress, amountToSend);
+
+			logger.info("Sending coins to admin address...");
+
+			assert sendResult != null;		
+
+			sendResult.broadcastComplete.addListener(new Runnable() {
+
+				@Override
+				public void run() {
+					logger.info("Sent coins onwards! Transaction hash is {}", sendResult.tx.getHashAsString());
+				}
+			}, MoreExecutors.sameThreadExecutor());
+
+		} catch (KeyCrypterException | InsufficientMoneyException e) {
+			throw new RuntimeException(e);
+		} catch (AddressFormatException ex) {
+			logger.error(ex.getMessage(), ex);
+		} finally {
+			bufferDAO.deleteReservation(Currency.BITCOIN, amount);
+		}
+	}
+	
+	private WTransaction toWTransaction(Transaction tr) {
+		WTransaction wtr = new WTransaction();
+		BigInteger am = tr.getValue(getWallet());
+		wtr.setAmount(toAmount(am));
+
+		BigInteger amFromMe = tr.getValueSentFromMe(getWallet());
+		wtr.setAmountSentFromMe(toAmount(amFromMe));
+
+		BigInteger amToMe = tr.getValueSentToMe(getWallet());
+		wtr.setAmountSentToMe(toAmount(amToMe));
+
+		wtr.setTrHash(tr.getHashAsString());
+
+		wtr.setAddress(getTransactionAddress(tr));
+
+		wtr.setUpdateTime(tr.getUpdateTime());
+
+		return wtr;
+	}
+	
+	private static Amount toAmount(BigInteger nanoCoins) {
+		return new Amount(new BigDecimal(Utils.bitcoinValueToFriendlyString(nanoCoins.abs())), Currency.BITCOIN.getCentsInCoin());
+	}
+	
+	private String getTransactionAddress(Transaction tx) {
+		for (TransactionOutput out : tx.getOutputs()) {
+			try {
+				Script scriptPubKey = out.getScriptPubKey();
+				String address = scriptPubKey.getToAddress(parameters).toString();
+				if (getWalletAddress().contains(address)) {
+					return address;
+				}
+			} catch (ScriptException ex) {
+				logger.error(ex.getMessage());
+			}
+		}
+		return null;
 	}
 }
