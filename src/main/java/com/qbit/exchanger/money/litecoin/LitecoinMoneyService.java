@@ -1,6 +1,5 @@
 package com.qbit.exchanger.money.litecoin;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.MoreExecutors;
@@ -9,18 +8,15 @@ import com.google.litecoin.crypto.KeyCrypterException;
 import com.google.litecoin.kits.NewWalletAppKit;
 import com.google.litecoin.params.MainNetParams;
 import com.google.litecoin.params.TestNet2Params;
-import com.google.litecoin.script.Script;
 import com.google.litecoin.utils.BriefLogFormatter;
 import com.qbit.exchanger.buffer.BufferDAO;
 import com.qbit.exchanger.env.Env;
 import com.qbit.exchanger.money.core.MoneyService;
 import com.qbit.exchanger.money.core.MoneyTransferCallback;
 import com.qbit.exchanger.money.model.Amount;
-import com.qbit.exchanger.money.model.Currency;
 import com.qbit.exchanger.money.model.Transfer;
 import com.qbit.exchanger.money.model.TransferType;
 import java.io.File;
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +26,13 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Singleton;
+
+import static com.google.common.base.Preconditions.checkArgument;
+import com.google.litecoin.script.Script;
+import com.qbit.exchanger.admin.CryptoService;
+import com.qbit.exchanger.admin.WTransaction;
+import com.qbit.exchanger.money.model.Currency;
+import java.math.BigDecimal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,7 +42,7 @@ import org.slf4j.LoggerFactory;
  * @author Alexander_Sergeev
  */
 @Singleton
-public class LitecoinMoneyService implements MoneyService {
+public class LitecoinMoneyService implements MoneyService, CryptoService {
 
 	private static final BigInteger COIN = new BigInteger("100000000", 10);
 
@@ -249,7 +252,7 @@ public class LitecoinMoneyService implements MoneyService {
 		if ((transfer != null) && transfer.isPositive()) {
 			BigInteger transferAmount = toNanoCoins(transfer.getAmount().getCoins(), transfer.getAmount().getCents());
 			if (transferAmount.compareTo(getWallet().getBalance().add(MIN_FEE)) == -1) {
-				Amount balance = new Amount(new BigDecimal(getBalance()), Currency.LITECOIN.getCentsInCoin());
+				Amount balance = new Amount(getBalance().toBigDecimal(), Currency.LITECOIN.getCentsInCoin());
 				result = bufferDAO.reserveAmount(Currency.LITECOIN, balance, transfer.getAmount());
 			} else {
 				//("Wallet is empty");
@@ -280,9 +283,10 @@ public class LitecoinMoneyService implements MoneyService {
 		return result;
 	}
 
-	public String getBalance() {
+	@Override
+	public Amount getBalance() {
 		BigInteger balance = getWallet().getBalance();
-		return Utils.bitcoinValueToFriendlyString(balance);
+		return new Amount(new BigDecimal(Utils.bitcoinValueToFriendlyString(balance)), Currency.LITECOIN.getCentsInCoin());
 	}
 
 	private Wallet getWallet() {
@@ -297,5 +301,130 @@ public class LitecoinMoneyService implements MoneyService {
 		BigInteger bi = BigInteger.valueOf(coins).multiply(COIN);
 		bi = bi.add(BigInteger.valueOf(cents));
 		return bi;
+	}
+	
+	private static Amount toAmount(BigInteger nanoCoins) {
+		return new Amount(new BigDecimal(Utils.bitcoinValueToFriendlyString(nanoCoins.abs())), Currency.LITECOIN.getCentsInCoin());
+	}
+	
+	@Override
+	public void sendMoney(Amount amount, String address) {
+		if ((amount == null) || !amount.isValid() || address == null) {
+			logger.error("Empty address or wrong money value");
+			return;
+		}
+		BigInteger transferAmount = toNanoCoins(amount.getCoins(), amount.getCents());
+		boolean result = transferAmount.compareTo(getWallet().getBalance().add(MIN_FEE)) == -1;
+			if (result) {
+				Amount balance = new Amount(getBalance().toBigDecimal(), Currency.LITECOIN.getCentsInCoin());
+				result = bufferDAO.reserveAmount(Currency.LITECOIN, balance, amount);
+			} else {
+				logger.error("Not enough money in the system buffer");
+				return;
+			}
+		try {
+			Address forwardingAddress = new Address(parameters, address);
+
+			final BigInteger amountToSend = toNanoCoins(amount.getCoins(), amount.getCents());
+
+			logger.info("Forwarding {} BTC", com.google.bitcoin.core.Utils.bitcoinValueToFriendlyString(amountToSend));
+;
+			final Wallet.SendResult sendResult = kit.wallet().sendCoins(kit.peerGroup(), forwardingAddress, amountToSend);
+
+			logger.info("Sending coins to admin address...");
+
+			assert sendResult != null;		
+
+			sendResult.broadcastComplete.addListener(new Runnable() {
+
+				@Override
+				public void run() {
+					logger.info("Sent coins onwards! Transaction hash is {}", sendResult.tx.getHashAsString());
+				}
+			}, MoreExecutors.sameThreadExecutor());
+
+		} catch (KeyCrypterException | InsufficientMoneyException e) {
+			throw new RuntimeException(e);
+		} catch (AddressFormatException ex) {
+			logger.error(ex.getMessage(), ex);
+		} finally {
+			bufferDAO.deleteReservation(Currency.LITECOIN, amount);
+		}
+	}
+
+	@Override
+	public List<WTransaction> getTransactionHistory() {
+		Iterable<WalletTransaction> tansactions = getWallet().getWalletTransactions();	
+		List<WTransaction> wTransactions = new ArrayList<>();
+		for (WalletTransaction walletTr : tansactions) {		
+			Transaction tr = walletTr.getTransaction();
+			wTransactions.add(toWTransaction(tr));
+			//System.out.println(toWTransaction(tr));
+		}
+		return wTransactions;
+	}
+
+	@Override
+	public List<WTransaction> getTransactionHistoryByAmount(Amount amount) {
+		Iterable<WalletTransaction> tansactions = getWallet().getWalletTransactions();
+		List<WTransaction> wTransactions = new ArrayList<>();
+
+		for (WalletTransaction walletTr : tansactions) {
+			Transaction tr = walletTr.getTransaction();
+			BigInteger am = tr.getValue(getWallet());
+			if (am.equals(toNanoCoins(amount.getCoins(), amount.getCents()))) {
+				wTransactions.add(toWTransaction(tr));
+			}
+		}
+		return wTransactions;
+	}
+
+	@Override
+	public List<WTransaction> getTransactionHistoryByAddress(String address) {
+		Iterable<WalletTransaction> tansactions = getWallet().getWalletTransactions();
+		List<WTransaction> wTransactions = new ArrayList<>();
+
+		for (WalletTransaction walletTr : tansactions) {
+			Transaction tr = walletTr.getTransaction();
+			if (getTransactionAddress(tr).equals(address)) {
+				wTransactions.add(toWTransaction(tr));
+			}
+		}
+		return wTransactions;
+	}
+
+	private WTransaction toWTransaction(Transaction tr) {
+		WTransaction wtr = new WTransaction();
+		BigInteger am = tr.getValue(getWallet());
+		wtr.setAmount(toAmount(am));
+
+		BigInteger amFromMe = tr.getValueSentFromMe(getWallet());
+		wtr.setAmountSentFromMe(toAmount(amFromMe));
+
+		BigInteger amToMe = tr.getValueSentToMe(getWallet());
+		wtr.setAmountSentToMe(toAmount(amToMe));
+
+		wtr.setTrHash(tr.getHashAsString());
+
+		wtr.setAddress(getTransactionAddress(tr));
+
+		wtr.setUpdateTime(tr.getUpdateTime());
+
+		return wtr;
+	}
+
+	private String getTransactionAddress(Transaction tx) {
+		for (TransactionOutput out : tx.getOutputs()) {
+			try {
+				Script scriptPubKey = out.getScriptPubKey();
+				String address = scriptPubKey.getToAddress(parameters).toString();
+				if (getWalletAddress().contains(address)) {
+					return address;
+				}
+			} catch (ScriptException ex) {
+				logger.error(ex.getMessage());
+			}
+		}
+		return null;
 	}
 }

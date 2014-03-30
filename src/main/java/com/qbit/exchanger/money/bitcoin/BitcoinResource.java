@@ -1,5 +1,6 @@
 package com.qbit.exchanger.money.bitcoin;
 
+import com.qbit.exchanger.money.model.Amount;
 import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -14,8 +15,8 @@ public class BitcoinResource {
 
 	@GET
 	@Path("balance")
-	@Produces(MediaType.TEXT_PLAIN)
-	public String getBalance() {
+	@Produces(MediaType.APPLICATION_JSON)
+	public Amount getBalance() {
 		return bitcoinMoneyService.getBalance();
 	}
 }

@@ -146,4 +146,35 @@ public class Env {
 	public String getCryptoDBHostname() {
 		return properties.getProperty("money.crypto.hostname");
 	}
+	
+	@XmlTransient
+	public String getGoogleClientId() {
+		return properties.getProperty("auth.google.clientId");
+	}
+	
+	@XmlTransient
+	public String getGoogleClientSecret() {
+		return properties.getProperty("auth.google.clientSecret");
+	}
+	
+	@XmlTransient
+	public String getGoogleScope() {
+		return properties.getProperty("auth.google.scope");
+	}
+	
+	@XmlTransient
+	public String getGoogleUserInfoUrl() {
+		return properties.getProperty("auth.google.userInfoUrl");
+	}
+	
+	@XmlTransient
+	public String getGoogleAuthorizeRoute() {
+		return properties.getProperty("auth.google.authorizeRoute");
+	}
+	
+	@XmlTransient
+	public String getGoogleUserId() {
+
+		return properties.getProperty("auth.google.userId");
+	}
 }
