@@ -11,6 +11,8 @@ public interface CryptoService extends MoneyService {
 	
 	Amount getBalance();
 	
+	Amount getBalance(String address);
+	
 	List<WTransaction> getTransactionHistory();
 	
 	List<WTransaction> getTransactionHistoryByAmount(Amount amount);
