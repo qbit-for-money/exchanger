@@ -45,6 +45,10 @@ public class MoneyServiceProvider {
 		}
 		return moneyService;
 	}
+	
+	public <T extends MoneyService> T get(Currency currency, Class<T> type) {
+		return (T) get(currency);
+	}
 
 	private synchronized Map<Currency, MoneyService> getServicesMap() {
 		if (servicesMap == null) {

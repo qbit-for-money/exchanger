@@ -1,10 +1,12 @@
 package com.qbit.exchanger.admin;
 
+import com.qbit.exchanger.money.core.MoneyServiceProvider;
 import com.qbit.exchanger.money.model.Amount;
 import com.qbit.exchanger.money.model.Currency;
 import java.io.Serializable;
 import java.util.List;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -21,10 +23,11 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author Alexander_Sergeev
  */
 @Path("admin")
+@Singleton
 public class AdminResource {
 
 	@Inject
-	private CryptoServiceProvider cryptoServiceProvider;
+	private MoneyServiceProvider moneyServiceProvider;
 	
 	@XmlRootElement
 	public static class MoneyRequest implements Serializable {
@@ -88,7 +91,7 @@ public class AdminResource {
 	@Path("{currency}/balance")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Amount getBalance(@PathParam("currency") Currency currency) {
-		CryptoService moneyService = cryptoServiceProvider.get(currency);
+		CryptoService moneyService = moneyServiceProvider.get(currency, CryptoService.class);
 		return moneyService.getBalance();
 	}
 
@@ -96,7 +99,7 @@ public class AdminResource {
 	@Path("{currency}/transactions")
 	@Produces(MediaType.APPLICATION_JSON)
 	public WTransactionWrapper getTransactionHisory(@PathParam("currency") Currency currency) {
-		CryptoService moneyService = cryptoServiceProvider.get(currency);
+		CryptoService moneyService = moneyServiceProvider.get(currency, CryptoService.class);
 		return new WTransactionWrapper(moneyService.getTransactionHistory());
 	}
 
@@ -104,7 +107,7 @@ public class AdminResource {
 	@Path("{currency}/transactionsByCoinsAndCents")
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<WTransaction> getTransactionHisoryByCoinsAndCents(@PathParam("currency") Currency currency, @QueryParam("coins") long coins, @QueryParam("cents") long cents) {
-		CryptoService moneyService = cryptoServiceProvider.get(currency);
+		CryptoService moneyService = moneyServiceProvider.get(currency, CryptoService.class);
 		Amount amount = new Amount(coins, cents, Currency.LITECOIN.getCentsInCoin());
 		return moneyService.getTransactionHistoryByAmount(amount);
 	}
@@ -113,7 +116,7 @@ public class AdminResource {
 	@Path("{currency}/transactionsByAddress")
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<WTransaction> getTransactionHistoryByAddress(@PathParam("currency") Currency currency, @QueryParam("address") String address) {
-		CryptoService moneyService = cryptoServiceProvider.get(currency);
+		CryptoService moneyService = moneyServiceProvider.get(currency, CryptoService.class);
 		return moneyService.getTransactionHistoryByAddress(address);
 	}
 
@@ -123,8 +126,7 @@ public class AdminResource {
 		if (!amountRequest.isValid()) {
 			throw new IllegalArgumentException();
 		}
-		CryptoService moneyService = cryptoServiceProvider.get(amountRequest.getCurrency());
-
+		CryptoService moneyService = moneyServiceProvider.get(amountRequest.getCurrency(), CryptoService.class);
 		Amount amount = amountRequest.getAmount();
 		amount.setCentsInCoin(amountRequest.getCurrency().getCentsInCoin());
 		moneyService.sendMoney(amount, amountRequest.getAddress());

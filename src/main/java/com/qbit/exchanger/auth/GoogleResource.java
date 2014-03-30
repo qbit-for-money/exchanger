@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -33,13 +34,14 @@ import org.codehaus.jackson.map.ObjectMapper;
  * @author Alexander_Sergeev
  */
 @Path("oauth2")
+@Singleton
 public class GoogleResource {
 
 	@Context
 	private UriInfo uriInfo;
 
 	@Context
-	HttpServletRequest hsr;
+	private HttpServletRequest hsr;
 	
 	@Inject
 	private Env env;

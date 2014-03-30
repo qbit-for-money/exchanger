@@ -11,6 +11,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement
 public class WTransaction implements Serializable {
+	
 	private Amount amount;
 	private Amount amountSentToMe;
 	private Amount amountSentFromMe;

@@ -6,6 +6,7 @@ import com.qbit.exchanger.order.service.exception.OrderServiceException;
 import static com.qbit.exchanger.rest.util.RESTUtil.*;
 import java.text.ParseException;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -19,6 +20,7 @@ import javax.ws.rs.core.MediaType;
  * @author Александр
  */
 @Path("orders")
+@Singleton
 public class OrdersResource {
 	
 	@Inject

@@ -174,7 +174,6 @@ public class Env {
 	
 	@XmlTransient
 	public String getGoogleUserId() {
-
 		return properties.getProperty("auth.google.userId");
 	}
 }
