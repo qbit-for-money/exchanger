@@ -249,16 +249,15 @@ public class BitcoinMoneyService implements CryptoService {
 	}
 
 	private boolean testSend(Transfer transfer) {
+		if ((transfer == null) || !transfer.isPositive()) {
+			return false;
+		}
 		boolean result;
-		if ((transfer != null) && transfer.isPositive()) {
-			BigInteger transferAmount = toNanoCoins(transfer.getAmount().getCoins(), transfer.getAmount().getCents());
-			result = transferAmount.compareTo(getWallet().getBalance().add(MIN_FEE)) == -1;
-			if (result) {
-				Amount balance = new Amount(getBalance().toBigDecimal(), Currency.BITCOIN.getCentsInCoin());
-				result = bufferDAO.reserveAmount(Currency.BITCOIN, balance, transfer.getAmount());
-			}
+		BigInteger transferAmount = toNanoCoins(transfer.getAmount().getCoins(), transfer.getAmount().getCents());
+		if (transferAmount.compareTo(getWallet().getBalance().subtract(MIN_FEE)) < 0) {
+			Amount balance = new Amount(getBalance().toBigDecimal(), Currency.BITCOIN.getCentsInCoin());
+			result = bufferDAO.reserveAmount(Currency.BITCOIN, balance, transfer.getAmount());
 		} else {
-			//("Invalid transfer");
 			result = false;
 		}
 		return result;

@@ -247,18 +247,15 @@ public class LitecoinMoneyService implements CryptoService {
 	}
 
 	private boolean testSend(Transfer transfer) {
+		if ((transfer == null) || !transfer.isPositive()) {
+			return false;
+		}
 		boolean result;
-		if ((transfer != null) && transfer.isPositive()) {
-			BigInteger transferAmount = toNanoCoins(transfer.getAmount().getCoins(), transfer.getAmount().getCents());
-			if (transferAmount.compareTo(getWallet().getBalance().add(MIN_FEE)) == -1) {
-				Amount balance = new Amount(getBalance().toBigDecimal(), Currency.LITECOIN.getCentsInCoin());
-				result = bufferDAO.reserveAmount(Currency.LITECOIN, balance, transfer.getAmount());
-			} else {
-				//("Wallet is empty");
-				result = false;
-			}
+		BigInteger transferAmount = toNanoCoins(transfer.getAmount().getCoins(), transfer.getAmount().getCents());
+		if (transferAmount.compareTo(getWallet().getBalance().subtract(MIN_FEE)) < 0) {
+			Amount balance = new Amount(getBalance().toBigDecimal(), Currency.LITECOIN.getCentsInCoin());
+			result = bufferDAO.reserveAmount(Currency.LITECOIN, balance, transfer.getAmount());
 		} else {
-			//("Invalid transfer");
 			result = false;
 		}
 		return result;
