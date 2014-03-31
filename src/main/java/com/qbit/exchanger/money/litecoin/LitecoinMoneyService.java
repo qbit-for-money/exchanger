@@ -266,7 +266,7 @@ public class LitecoinMoneyService implements CryptoService {
 
 	@Override
 	public Amount getBalance() {
-		BigInteger balance = getWallet().getBalance().subtract(MIN_FEE);
+		BigInteger balance = getWallet().getBalance().subtract(MIN_FEE).max(BigInteger.ZERO);
 		return new Amount(new BigDecimal(Utils.bitcoinValueToFriendlyString(balance)), Currency.LITECOIN.getCentsInCoin());
 	}
 

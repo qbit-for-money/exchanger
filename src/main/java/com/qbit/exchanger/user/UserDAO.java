@@ -48,7 +48,7 @@ public class UserDAO {
 
 			@Override
 			public UserInfo call(EntityManager entityManager) {
-				UserInfo user = entityManager.find(UserInfo.class, publicKey, LockModeType.PESSIMISTIC_WRITE);;
+				UserInfo user = entityManager.find(UserInfo.class, publicKey, LockModeType.PESSIMISTIC_WRITE);
 				if (user == null) {
 					user = new UserInfo();
 					user.setPublicKey(publicKey);

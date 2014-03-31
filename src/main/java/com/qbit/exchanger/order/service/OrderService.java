@@ -65,9 +65,9 @@ public class OrderService {
 
 		Transfer outTransfer = orderInfo.getOutTransfer();
 		MoneyService moneyService = moneyServiceProvider.get(outTransfer);
-		if (!moneyService.test(outTransfer)) {
+		/*if (!moneyService.test(outTransfer)) {
 			throw new OrderTestException();
-		}
+		}*/
 
 		OrderInfo result = orderDAO.create(orderInfo);
 		if (result == null) {

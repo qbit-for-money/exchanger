@@ -20,7 +20,7 @@ angular.module("main", ["ngRoute", "ui.bootstrap", "chieffancypants.loadingBar",
 	"common", "user", "order", "money", "money.yandex", "exchange",
 	"wizard", "wizard.currency", "wizard.amount", "wizard.result"]);
 
-angular.module("main").config(function($routeProvider, $rootScope) {
+angular.module("main").config(function($routeProvider) {
 	$routeProvider.when("/steps/currency", {
 		templateUrl: "resources/html/wizard/currency.html",
 		controller: "CurrencyController"
@@ -31,7 +31,8 @@ angular.module("main").config(function($routeProvider, $rootScope) {
 		templateUrl: "resources/html/wizard/result.html",
 		controller: "ResultController"
 	}).otherwise({redirectTo: "/steps/currency"});
-	
+}).run(function($rootScope, $location) {
+	$rootScope.location = $location;
 	$rootScope.requestCount = 0;
 	$rootScope.$on("cfpLoadingBar:loading", function() {
 		$rootScope.requestCount++;
@@ -39,8 +40,6 @@ angular.module("main").config(function($routeProvider, $rootScope) {
 	$rootScope.$on("cfpLoadingBar:loaded", function() {
 		$rootScope.requestCount--;
 	});
-}).run(function($rootScope, $location) {
-	$rootScope.location = $location;
 });
 
 angular.module("admin", ["ngRoute", "ngResource", "ui.bootstrap", "chieffancypants.loadingBar",
