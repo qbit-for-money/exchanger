@@ -282,7 +282,7 @@ public class BitcoinMoneyService implements CryptoService {
 	
 	@Override
 	public Amount getBalance() {
-		BigInteger balance = getWallet().getBalance();
+		BigInteger balance = getWallet().getBalance().subtract(MIN_FEE);
 		return new Amount(new BigDecimal(Utils.bitcoinValueToFriendlyString(balance)), Currency.BITCOIN.getCentsInCoin());
 	}
 
