@@ -32,4 +32,14 @@ see implementation details http://jersey.java.net/nonav/documentation/latest/jax
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 	
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>Protected Context</web-resource-name>
+			<url-pattern>/*</url-pattern>
+		</web-resource-collection>
+		<user-data-constraint>
+			<transport-guarantee>CONFIDENTIAL</transport-guarantee>
+		</user-data-constraint>
+	</security-constraint>
+	
 </web-app>
