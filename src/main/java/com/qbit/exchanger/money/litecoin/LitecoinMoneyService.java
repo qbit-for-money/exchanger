@@ -236,14 +236,7 @@ public class LitecoinMoneyService implements CryptoService {
 	}
 
 	private boolean testReceive(Transfer transfer) {
-		boolean result;
-		if ((transfer != null) && transfer.isPositive()) {
-			result = getWalletAddress().contains(transfer.getAddress());
-		} else {
-			//("Invalid transfer");
-			result = false;
-		}
-		return result;
+		return ((transfer != null) && transfer.isPositive() && getWalletAddress().contains(transfer.getAddress()));
 	}
 
 	private boolean testSend(Transfer transfer) {
@@ -273,7 +266,7 @@ public class LitecoinMoneyService implements CryptoService {
 
 	@Override
 	public Amount getBalance() {
-		BigInteger balance = getWallet().getBalance();
+		BigInteger balance = getWallet().getBalance().subtract(MIN_FEE);
 		return new Amount(new BigDecimal(Utils.bitcoinValueToFriendlyString(balance)), Currency.LITECOIN.getCentsInCoin());
 	}
 
@@ -326,8 +319,6 @@ public class LitecoinMoneyService implements CryptoService {
 			throw new RuntimeException(e);
 		} catch (AddressFormatException ex) {
 			logger.error(ex.getMessage(), ex);
-		} finally {
-			bufferDAO.deleteReservation(Currency.LITECOIN, amount);
 		}
 	}
 
@@ -342,24 +333,26 @@ public class LitecoinMoneyService implements CryptoService {
 		return wTransactions;
 	}
 
-	private WTransaction toWTransaction(Transaction tr) {
-		WTransaction wtr = new WTransaction();
-		BigInteger am = tr.getValue(getWallet());
-		wtr.setAmount(toAmount(am));
+	private WTransaction toWTransaction(Transaction transaction) {
+		WTransaction result = new WTransaction();
+		BigInteger amount = transaction.getValue(getWallet());
+		result.setAmount(toAmount(amount));
 
-		BigInteger amFromMe = tr.getValueSentFromMe(getWallet());
-		wtr.setAmountSentFromMe(toAmount(amFromMe));
+		BigInteger amountFromMe = transaction.getValueSentFromMe(getWallet());
+		result.setAmountSentFromMe(toAmount(amountFromMe));
 
-		BigInteger amToMe = tr.getValueSentToMe(getWallet());
-		wtr.setAmountSentToMe(toAmount(amToMe));
+		BigInteger amountToMe = transaction.getValueSentToMe(getWallet());
+		result.setAmountSentToMe(toAmount(amountToMe));
+		
+		result.setAddress(getTransactionAddress(transaction));
+		
+		if (transaction.getConfidence() != null) {
+			result.setDepth(transaction.getConfidence().getDepthInBlocks());
+		}
 
-		wtr.setTrHash(tr.getHashAsString());
-
-		wtr.setAddress(getTransactionAddress(tr));
-
-		wtr.setUpdateTime(tr.getUpdateTime());
-
-		return wtr;
+		result.setTrHash(transaction.getHashAsString());
+		result.setUpdateTime(transaction.getUpdateTime());
+		return result;
 	}
 
 	private String getTransactionAddress(Transaction tx) {

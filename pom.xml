@@ -70,6 +70,13 @@
 
 	<dependencies>
 		<dependency>
+			<groupId>javax.servlet</groupId>
+			<!-- if your container implements Servlet API older than 3.0, use "jersey-container-servlet-core"  -->
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.0.1</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
 			<groupId>org.glassfish.jersey.containers</groupId>
 			<!-- if your container implements Servlet API older than 3.0, use "jersey-container-servlet-core"  -->
 			<artifactId>jersey-container-servlet</artifactId>

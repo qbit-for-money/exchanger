@@ -34,7 +34,7 @@ see implementation details http://jersey.java.net/nonav/documentation/latest/jax
 	
 	<security-constraint>
 		<web-resource-collection>
-			<web-resource-name>Protected Context</web-resource-name>
+			<web-resource-name>Entire Application</web-resource-name>
 			<url-pattern>/*</url-pattern>
 		</web-resource-collection>
 		<user-data-constraint>
