@@ -333,24 +333,26 @@ public class LitecoinMoneyService implements CryptoService {
 		return wTransactions;
 	}
 
-	private WTransaction toWTransaction(Transaction tr) {
-		WTransaction wtr = new WTransaction();
-		BigInteger am = tr.getValue(getWallet());
-		wtr.setAmount(toAmount(am));
+	private WTransaction toWTransaction(Transaction transaction) {
+		WTransaction result = new WTransaction();
+		BigInteger amount = transaction.getValue(getWallet());
+		result.setAmount(toAmount(amount));
 
-		BigInteger amFromMe = tr.getValueSentFromMe(getWallet());
-		wtr.setAmountSentFromMe(toAmount(amFromMe));
+		BigInteger amountFromMe = transaction.getValueSentFromMe(getWallet());
+		result.setAmountSentFromMe(toAmount(amountFromMe));
 
-		BigInteger amToMe = tr.getValueSentToMe(getWallet());
-		wtr.setAmountSentToMe(toAmount(amToMe));
+		BigInteger amountToMe = transaction.getValueSentToMe(getWallet());
+		result.setAmountSentToMe(toAmount(amountToMe));
+		
+		result.setAddress(getTransactionAddress(transaction));
+		
+		if (transaction.getConfidence() != null) {
+			result.setDepth(transaction.getConfidence().getDepthInBlocks());
+		}
 
-		wtr.setTrHash(tr.getHashAsString());
-
-		wtr.setAddress(getTransactionAddress(tr));
-
-		wtr.setUpdateTime(tr.getUpdateTime());
-
-		return wtr;
+		result.setTrHash(transaction.getHashAsString());
+		result.setUpdateTime(transaction.getUpdateTime());
+		return result;
 	}
 
 	private String getTransactionAddress(Transaction tx) {

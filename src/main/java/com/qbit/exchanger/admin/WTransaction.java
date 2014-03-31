@@ -15,10 +15,14 @@ public class WTransaction implements Serializable {
 	private Amount amount;
 	private Amount amountSentToMe;
 	private Amount amountSentFromMe;
+	
 	private String address;
+	
+	private int depth;
+	
 	private String trHash;
 	private Date updateTime;
-
+	
 	public WTransaction() {
 	}
 
@@ -45,6 +49,22 @@ public class WTransaction implements Serializable {
 	public void setAmountSentFromMe(Amount amountSentFromMe) {
 		this.amountSentFromMe = amountSentFromMe;
 	}
+	
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+	public int getDepth() {
+		return depth;
+	}
+
+	public void setDepth(int depth) {
+		this.depth = depth;
+	}
 
 	public String getTrHash() {
 		return trHash;
@@ -60,14 +80,6 @@ public class WTransaction implements Serializable {
 
 	public void setUpdateTime(Date updateTime) {
 		this.updateTime = updateTime;
-	}
-
-	public String getAddress() {
-		return address;
-	}
-
-	public void setAddress(String address) {
-		this.address = address;
 	}
 
 	@Override
@@ -91,6 +103,6 @@ public class WTransaction implements Serializable {
 
 	@Override
 	public String toString() {
-		return "WTransaction{" + "amount=" + amount + ", amountSentToMe=" + amountSentToMe + ", amountSentFromMe=" + amountSentFromMe + ", address=" + address + ", trHash=" + trHash + ", updateTime=" + updateTime + '}';
+		return "WTransaction{" + "amount=" + amount + ", amountSentToMe=" + amountSentToMe + ", amountSentFromMe=" + amountSentFromMe + ", address=" + address + ", depth=" + depth + ", trHash=" + trHash + ", updateTime=" + updateTime + '}';
 	}
 }
