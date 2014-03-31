@@ -205,7 +205,7 @@ public class OrderDAO {
 
 			@Override
 			public OrderInfo call(EntityManager entityManager) {
-				UserInfo userInfo = userDAO.findAndLock(userPublicKey);
+				UserInfo userInfo = UserDAO.findAndLock(entityManager, userPublicKey);
 				if (userInfo == null) {
 					return null;
 				}
