@@ -238,14 +238,7 @@ public class BitcoinMoneyService implements CryptoService {
 	}
 
 	private boolean testReceive(Transfer transfer) {
-		boolean result;
-		if ((transfer != null) && transfer.isPositive()) {
-			result = getWalletAddress().contains(transfer.getAddress());
-		} else {
-			//("Invalid transfer");
-			result = false;
-		}
-		return result;
+		return ((transfer != null) && transfer.isPositive() && getWalletAddress().contains(transfer.getAddress()));
 	}
 
 	private boolean testSend(Transfer transfer) {
@@ -336,8 +329,6 @@ public class BitcoinMoneyService implements CryptoService {
 			throw new RuntimeException(e);
 		} catch (AddressFormatException ex) {
 			logger.error(ex.getMessage(), ex);
-		} finally {
-			bufferDAO.deleteReservation(Currency.BITCOIN, amount);
 		}
 	}
 	
