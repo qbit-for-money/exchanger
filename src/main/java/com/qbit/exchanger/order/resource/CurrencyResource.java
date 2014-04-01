@@ -1,17 +1,18 @@
 package com.qbit.exchanger.order.resource;
 
 import com.qbit.exchanger.money.model.Currency;
+import com.qbit.exchanger.money.model.serialization.CurrencyAdapter;
+import java.io.Serializable;
+import java.util.EnumSet;
 import java.util.List;
+import javax.inject.Singleton;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import com.qbit.exchanger.money.model.serialization.CurrencyAdapter;
-import java.io.Serializable;
-import javax.inject.Singleton;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  *
@@ -43,16 +44,16 @@ public class CurrencyResource {
 	public static class CurrencyListWrapper implements Serializable {
 
 		@XmlJavaTypeAdapter(CurrencyAdapter.class)
-		private List<Currency> currencies;
+		private EnumSet<Currency> currencies;
 
 		public CurrencyListWrapper() {
 		}
 
-		public CurrencyListWrapper(List<Currency> currencies) {
+		public CurrencyListWrapper(EnumSet<Currency> currencies) {
 			this.currencies = currencies;
 		}
 
-		public List<Currency> getCurrencies() {
+		public EnumSet<Currency> getCurrencies() {
 			return currencies;
 		}
 	}

@@ -14,6 +14,10 @@ import javax.xml.bind.annotation.XmlTransient;
 @Embeddable
 @XmlRootElement
 public class Amount implements Serializable, Comparable<Amount> {
+	
+	public static Amount zero(long centsInCoin) {
+		return new Amount(0, 0, centsInCoin);
+	}
 
 	private long coins, cents;
 

@@ -19,10 +19,8 @@ public class MoneyServiceProvider {
 
 	@Inject
 	private BitcoinMoneyService bitcoinService;
-
 	@Inject
 	private YandexMoneyService yandexMoneyService;
-
 	@Inject
 	private LitecoinMoneyService litecoinService;
 
@@ -44,6 +42,10 @@ public class MoneyServiceProvider {
 			throw new UnsupportedOperationException("Currency not supported.");
 		}
 		return moneyService;
+	}
+	
+	public <T extends MoneyService> T get(Transfer transfer, Class<T> type) {
+		return (T) get(transfer);
 	}
 	
 	public <T extends MoneyService> T get(Currency currency, Class<T> type) {

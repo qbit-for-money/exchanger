@@ -1,11 +1,11 @@
 package com.qbit.exchanger.order.service;
 
+import com.qbit.exchanger.admin.CryptoService;
 import com.qbit.exchanger.dao.util.DAOExecutor;
 import com.qbit.exchanger.dao.util.TrCallable;
 import com.qbit.exchanger.external.exchange.core.Exchange;
 import com.qbit.exchanger.money.core.MoneyService;
 import com.qbit.exchanger.money.core.MoneyServiceProvider;
-import com.qbit.exchanger.money.core.MoneyTransferCallback;
 import com.qbit.exchanger.money.model.Amount;
 import com.qbit.exchanger.money.model.Rate;
 import com.qbit.exchanger.money.model.Transfer;
@@ -45,20 +45,26 @@ public class OrderFlowWorker implements Runnable {
 
 	@Override
 	public void run() {
-		List<OrderInfo> ordersUnderWork = orderDAO.findByFullStatus(
-				EnumSet.of(OrderStatus.INITIAL, OrderStatus.PAYED), false);
-		if (ordersUnderWork != null) {
-			for (OrderInfo orderUnderWork : ordersUnderWork) {
-				try {
-					processOrderUnderWork(orderUnderWork);
-				} catch (Exception ex) {
-					logger.error(ex.getMessage(), ex);
+		try {
+			List<OrderInfo> ordersUnderWork = orderDAO.findByFullStatus(EnumSet.of(OrderStatus.INITIAL, OrderStatus.PAYED), false);
+			if (ordersUnderWork != null) {
+				for (OrderInfo orderUnderWork : ordersUnderWork) {
+					try {
+						processOrderUnderWork(orderUnderWork);
+					} catch (Exception ex) {
+						logger.error(ex.getMessage(), ex);
+					}
 				}
 			}
+		} catch (Exception ex) {
+			logger.error(ex.getMessage(), ex);
 		}
 	}
 
 	private void processOrderUnderWork(OrderInfo orderUnderWork) throws Exception {
+		if (!orderUnderWork.isValid()) {
+			throw new IllegalArgumentException("Order is inconsistent.");
+		}
 		switch (orderUnderWork.getStatus()) {
 			case INITIAL:
 				processInTransfer(orderUnderWork);
@@ -70,84 +76,91 @@ public class OrderFlowWorker implements Runnable {
 	}
 
 	private void processInTransfer(final OrderInfo orderUnderWork) throws Exception {
-		if (!orderUnderWork.isValid()) {
-			throw new IllegalArgumentException("Order #" + orderUnderWork.getId() + " is inconsistent.");
-		}
-		final String orderId = orderUnderWork.getId();
 		Transfer inTransfer = orderUnderWork.getInTransfer();
-		final Rate rate = exchange.getRate(inTransfer.getCurrency(),
-				orderUnderWork.getOutTransfer().getCurrency());
+		Rate rate = exchange.getRate(inTransfer.getCurrency(), orderUnderWork.getOutTransfer().getCurrency());
 		if ((rate == null) || !rate.isValid()) {
-			throw new IllegalStateException();
+			throw new IllegalStateException("Invalid rate.");
 		}
+		String orderId = orderUnderWork.getId();
 		orderDAO.changeStatus(orderId, OrderStatus.INITIAL, true);
-		MoneyService moneyService = moneyServiceProvider.get(inTransfer);
-		moneyService.process(inTransfer, new MoneyTransferCallback() {
+		try {
+			if (inTransfer.isCrypto()) {
+				CryptoService cryptoService = moneyServiceProvider.get(inTransfer, CryptoService.class);
+				Amount amountReceived = cryptoService.getBalance(inTransfer.getAddress());
+				if ((amountReceived != null) && amountReceived.isPositive()) {
+					processPayed(orderId, rate, amountReceived);
+				}
+			} else {
+				MoneyService moneyService = moneyServiceProvider.get(inTransfer);
+				Amount amountReceived = moneyService.receiveMoney(inTransfer.getAddress(), inTransfer.getAmount());
+				if ((amountReceived != null) && amountReceived.isPositive()) {
+					processPayed(orderId, rate, amountReceived);
+				} else {
+					processInFailed(orderId);
+				}
+			}
+		} catch (Exception ex) {
+			logger.error(ex.getMessage(), ex);
+			processInFailed(orderId);
+		}
+	}
+
+	private void processPayed(final String orderId, final Rate rate, final Amount amountReceived) {
+		final Amount inAmount = amountReceived;
+		final Amount outAmount = rate.mul(amountReceived);
+		databaseExecutor.submit(new TrCallable<Void>() {
 
 			@Override
-			public void success(final Amount inAmount) {
-				databaseExecutor.submit(new TrCallable<Void>() {
-
-					@Override
-					public Void call(EntityManager entityManager) {
-						try {
-							orderDAO.changeStatusAndAmounts(orderId, OrderStatus.PAYED, false,
-									inAmount, rate.mul(inAmount));
-						} catch (Exception ex) {
-							orderDAO.changeStatus(orderId, OrderStatus.IN_FAILED, false);
-						}
-						return null;
-					}
-				}, MAX_STATUS_CHANGE_FAIL_COUNT);
+			public Void call(EntityManager entityManager) {
+				orderDAO.changeStatusAndAmounts(orderId, OrderStatus.PAYED, false, inAmount, outAmount);
+				return null;
 			}
+		}, MAX_STATUS_CHANGE_FAIL_COUNT);
+	}
+
+	private void processInFailed(final String orderId) {
+		databaseExecutor.submit(new TrCallable<Void>() {
 
 			@Override
-			public void error(String msg) {
-				databaseExecutor.submit(new TrCallable<Void>() {
-
-					@Override
-					public Void call(EntityManager entityManager) {
-						orderDAO.changeStatus(orderId, OrderStatus.IN_FAILED, false);
-						return null;
-					}
-				}, MAX_STATUS_CHANGE_FAIL_COUNT);
-				logger.error(msg);
+			public Void call(EntityManager entityManager) {
+				orderDAO.changeStatus(orderId, OrderStatus.IN_FAILED, false);
+				return null;
 			}
-		});
+		}, MAX_STATUS_CHANGE_FAIL_COUNT);
 	}
 
 	private void processOutTransfer(final OrderInfo orderUnderWork) {
-		final String orderId = orderUnderWork.getId();
-		final Transfer outTransfer = orderUnderWork.getOutTransfer();
+		Transfer outTransfer = orderUnderWork.getOutTransfer();
+		String orderId = orderUnderWork.getId();
 		orderDAO.changeStatus(orderId, OrderStatus.PAYED, true);
-		MoneyService moneyService = moneyServiceProvider.get(outTransfer);
-		moneyService.process(outTransfer, new MoneyTransferCallback() {
+		try {
+			MoneyService moneyService = moneyServiceProvider.get(outTransfer);
+			moneyService.sendMoney(outTransfer.getAddress(), outTransfer.getAmount(), true);
+			processSuccess(orderId, outTransfer.getAmount());
+		} catch (Exception ex) {
+			processOutFailed(orderId);
+		}
+	}
+
+	private void processSuccess(final String orderId, final Amount outAmount) {
+		databaseExecutor.submit(new TrCallable<Void>() {
 
 			@Override
-			public void success(final Amount outAmount) {
-				databaseExecutor.submit(new TrCallable<Void>() {
-
-					@Override
-					public Void call(EntityManager entityManager) {
-						orderDAO.changeStatusAndOutAmount(orderId, OrderStatus.SUCCESS, false,
-								outAmount);
-						return null;
-					}
-				}, MAX_STATUS_CHANGE_FAIL_COUNT);
+			public Void call(EntityManager entityManager) {
+				orderDAO.changeStatusAndOutAmount(orderId, OrderStatus.SUCCESS, false, outAmount);
+				return null;
 			}
+		}, MAX_STATUS_CHANGE_FAIL_COUNT);
+	}
+
+	private void processOutFailed(final String orderId) {
+		databaseExecutor.submit(new TrCallable<Void>() {
 
 			@Override
-			public void error(String msg) {
-				databaseExecutor.submit(new TrCallable<Void>() {
-
-					@Override
-					public Void call(EntityManager entityManager) {
-						orderDAO.changeStatus(orderId, OrderStatus.OUT_FAILED, false);
-						return null;
-					}
-				}, MAX_STATUS_CHANGE_FAIL_COUNT);
-				logger.error(msg);
+			public Void call(EntityManager entityManager) {
+				orderDAO.changeStatus(orderId, OrderStatus.OUT_FAILED, false);
+				return null;
 			}
-		});
+		}, MAX_STATUS_CHANGE_FAIL_COUNT);
 	}
 }

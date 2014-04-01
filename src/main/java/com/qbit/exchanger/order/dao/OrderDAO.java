@@ -4,6 +4,7 @@ import com.qbit.exchanger.dao.util.DAOUtil;
 import static com.qbit.exchanger.dao.util.DAOUtil.invokeInTransaction;
 import com.qbit.exchanger.dao.util.TrCallable;
 import com.qbit.exchanger.money.model.Amount;
+import com.qbit.exchanger.money.model.Currency;
 import com.qbit.exchanger.money.model.Transfer;
 import com.qbit.exchanger.money.model.TransferType;
 import com.qbit.exchanger.order.model.OrderInfo;
@@ -66,6 +67,22 @@ public class OrderDAO {
 			TypedQuery<OrderInfo> query = entityManager.createNamedQuery("OrderInfo.findByFullStatus", OrderInfo.class);
 			query.setParameter("statuses", statuses);
 			query.setParameter("inProcess", inProcess);
+			return query.getResultList();
+		} finally {
+			entityManager.close();
+		}
+	}
+	
+	public List<OrderInfo> findByFullStatusAndCurrency(EnumSet<OrderStatus> statuses, boolean inProcess, EnumSet<Currency> currencies) {
+		if ((statuses == null) || statuses.isEmpty() || (currencies == null) || currencies.isEmpty()) {
+			return Collections.emptyList();
+		}
+		EntityManager entityManager = entityManagerFactory.createEntityManager();
+		try {
+			TypedQuery<OrderInfo> query = entityManager.createNamedQuery("OrderInfo.findByFullStatusAndCurrency", OrderInfo.class);
+			query.setParameter("statuses", statuses);
+			query.setParameter("inProcess", inProcess);
+			query.setParameter("currencies", currencies);
 			return query.getResultList();
 		} finally {
 			entityManager.close();
@@ -205,7 +222,7 @@ public class OrderDAO {
 
 			@Override
 			public OrderInfo call(EntityManager entityManager) {
-				UserInfo userInfo = userDAO.findAndLock(userPublicKey);
+				UserInfo userInfo = UserDAO.findAndLock(entityManager, userPublicKey);
 				if (userInfo == null) {
 					return null;
 				}

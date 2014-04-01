@@ -18,6 +18,13 @@ public class UserDAO {
 
 	@Inject
 	private EntityManagerFactory entityManagerFactory;
+	
+	public static UserInfo findAndLock(EntityManager entityManager, String publicKey) {
+		if ((entityManager == null) || (publicKey == null) || publicKey.isEmpty()) {
+			return null;
+		}
+		return entityManager.find(UserInfo.class, publicKey, LockModeType.PESSIMISTIC_WRITE);
+	}
 
 	public UserInfo find(String publicKey) {
 		if ((publicKey == null) || publicKey.isEmpty()) {
@@ -31,18 +38,6 @@ public class UserDAO {
 		}
 	}
 	
-	public UserInfo findAndLock(String publicKey) {
-		if ((publicKey == null) || publicKey.isEmpty()) {
-			return null;
-		}
-		EntityManager entityManager = entityManagerFactory.createEntityManager();
-		try {
-			return entityManager.find(UserInfo.class, publicKey, LockModeType.PESSIMISTIC_WRITE);
-		} finally {
-			entityManager.close();
-		}
-	}
-
 	public UserInfo getOrCreate(final String publicKey) {
 		return invokeInTransaction(entityManagerFactory, new TrCallable<UserInfo>() {
 

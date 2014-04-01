@@ -73,6 +73,10 @@ public class Transfer implements Serializable {
 		return ((type != null) && (currency != null) && (address != null)
 				&& (amount != null) && amount.isValid());
 	}
+	
+	public boolean isCrypto() {
+		return ((currency != null) && currency.isCrypto());
+	}
 
 	@Override
 	public String toString() {
