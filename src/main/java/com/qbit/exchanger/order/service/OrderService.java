@@ -65,7 +65,7 @@ public class OrderService {
 
 		Transfer outTransfer = orderInfo.getOutTransfer();
 		MoneyService moneyService = moneyServiceProvider.get(outTransfer);
-		if (!moneyService.test(outTransfer)) {
+		if (!moneyService.reserve(outTransfer.getAddress(), outTransfer.getAmount())) {
 			throw new OrderTestException();
 		}
 

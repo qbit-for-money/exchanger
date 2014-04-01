@@ -9,9 +9,9 @@ import java.util.List;
  */
 public interface CryptoService extends MoneyService {
 	
-	Amount getBalance();
+	String generateAddress();
+	
+	Amount getBalance(String address);
 	
 	List<WTransaction> getWalletTransactions();
-	
-	void sendMoney(Amount amount, String address);
 }

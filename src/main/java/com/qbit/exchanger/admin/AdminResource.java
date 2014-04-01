@@ -104,13 +104,13 @@ public class AdminResource {
 
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
-	public void sendMoney(MoneyRequest amountRequest) {
+	public void sendMoney(MoneyRequest amountRequest) throws Exception {
 		if (!amountRequest.isValid()) {
 			throw new IllegalArgumentException();
 		}
 		CryptoService moneyService = moneyServiceProvider.get(amountRequest.getCurrency(), CryptoService.class);
 		Amount amount = amountRequest.getAmount();
 		amount.setCentsInCoin(amountRequest.getCurrency().getCentsInCoin());
-		moneyService.sendMoney(amount, amountRequest.getAddress());
+		moneyService.sendMoney(amountRequest.getAddress(), amount);
 	}
 }

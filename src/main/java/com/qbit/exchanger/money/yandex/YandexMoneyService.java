@@ -3,11 +3,9 @@ package com.qbit.exchanger.money.yandex;
 import com.qbit.exchanger.buffer.BufferDAO;
 import com.qbit.exchanger.env.Env;
 import com.qbit.exchanger.money.core.MoneyService;
-import com.qbit.exchanger.money.core.MoneyTransferCallback;
 import com.qbit.exchanger.money.model.Amount;
 import com.qbit.exchanger.money.model.Currency;
-import com.qbit.exchanger.money.model.Transfer;
-import com.qbit.exchanger.money.model.TransferType;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Collections;
@@ -19,6 +17,8 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.yandex.money.api.InsufficientScopeException;
+import ru.yandex.money.api.InvalidTokenException;
 import ru.yandex.money.api.YandexMoney;
 import ru.yandex.money.api.YandexMoneyImpl;
 import ru.yandex.money.api.enums.Destination;
@@ -58,86 +58,112 @@ public class YandexMoneyService implements MoneyService {
 		return yandexMoney.authorizeUri(scope, env.getYandexRedirectUrl(), mobile);
 	}
 
-	public BigDecimal getBalance() throws RuntimeException {
+	@Override
+	public Amount getBalance() {
 		try {
 			AccountInfoResponse response = yandexMoney.accountInfo(env.getYandexToken());
-			return response.getBalance();
-		} catch (Exception e) {
-			throw new RuntimeException(e.getMessage());
+			return new Amount(response.getBalance(), Currency.YANDEX_RUB.getCentsInCoin());
+		} catch (IOException | InsufficientScopeException | InvalidTokenException ex) {
+			throw new RuntimeException(ex.getMessage());
 		}
 	}
-
+	
 	@Override
-	public void process(Transfer transfer, MoneyTransferCallback callback) {
-		String wallet;
-		String token;
-		if (TransferType.IN.equals(transfer.getType())) {
-			token = tokens.get(transfer.getAddress());
-			wallet = env.getYandexWallet();
-		} else {
-			token = env.getYandexToken();
-			wallet = transfer.getAddress();
+	public void sendMoney(String address, Amount amount) throws Exception {
+		sendMoney(address, amount, false);
+	}
+	
+	@Override
+	public void sendMoney(String address, Amount amount, boolean unreserve) throws Exception {
+		if ((address == null) || (amount == null) || !amount.isPositive()) {
+			throw new IllegalArgumentException("Invalid transfer");
 		}
 
 		try {
-			RequestPaymentResponse response = requestPayment(token, wallet, transfer.getAmount().toBigDecimal(), env.getYandexOperationDescription());
-			if (response != null && response.isSuccess()) {
-				ProcessPaymentResponse paymentResponse = processPayment(token, response.getRequestId());
-				if (paymentResponse != null && paymentResponse.isSuccess()) {
-					callback.success(transfer.getAmount());
-				} else {
-					callback.error(paymentResponse != null ? paymentResponse.getError().getCode() : null);
-				}
-			} else {
-				callback.error(response != null ? response.getError().getCode() : null);
-			}
-		} catch (Exception ex) {
-			logger.error(ex.getMessage(), ex);
-			callback.error(ex.getMessage());
+			String token = env.getYandexToken();
+			RequestPaymentResponse response = requestPayment(token, address, amount.toBigDecimal(), env.getYandexOperationDescription());
+			processPayment(token, response);
 		} finally {
-			if (TransferType.OUT.equals(transfer.getType())) {
-				bufferDAO.deleteReservation(Currency.YANDEX_RUB, transfer.getAmount());
+			if (unreserve) {
+				bufferDAO.deleteReservation(Currency.YANDEX_RUB, amount);
 			}
-			String removedToken = tokens.remove(transfer.getAddress());
+			String removedToken = tokens.remove(address);
 			if (removedToken != null) {
 				revokeToken(removedToken);
 			}
 		}
 	}
-
+	
 	@Override
-	public boolean test(Transfer transfer) {
-		boolean result = false;
-		if ((transfer != null) && transfer.isPositive()) {
-			String wallet;
-			String token;
-			if (TransferType.IN.equals(transfer.getType())) {
-				token = tokens.get(transfer.getAddress());
-				wallet = env.getYandexWallet();
-			} else {
-				token = env.getYandexToken();
-				wallet = transfer.getAddress();
+	public Amount receiveMoney(String address, Amount amount) throws Exception {
+		if ((address == null) || (amount == null) || !amount.isPositive()) {
+			throw new IllegalArgumentException("Invalid transfer");
+		}
+		
+		try {
+			String token = tokens.get(address);
+			RequestPaymentResponse response = requestPayment(token, env.getYandexWallet(), amount.toBigDecimal(), env.getYandexOperationDescription());
+			processPayment(token, response);
+			return amount;
+		} finally {
+			String removedToken = tokens.remove(address);
+			if (removedToken != null) {
+				revokeToken(removedToken);
 			}
-
-			try {
-				RequestPaymentResponse response = requestPayment(token, wallet, transfer.getAmount().toBigDecimal(), env.getYandexOperationDescription());
-				if ((response != null) && response.isSuccess()) {
-					if (TransferType.OUT.equals(transfer.getType())) {
-						result = bufferDAO.reserveAmount(Currency.YANDEX_RUB,
-								new Amount(getBalance(), Currency.YANDEX_RUB.getCentsInCoin()), transfer.getAmount());
-					} else {
-						result = true;
-					}
-				}
-			} catch (Exception ex) {
-				logger.error(ex.getMessage(), ex);
+		}
+	}
+	
+	@Override
+	public boolean reserve(String address, Amount amount) {
+		if ((address == null) || (amount == null) || !amount.isPositive()) {
+			return false;
+		}
+		boolean result;
+		try {
+			String token = env.getYandexToken();
+			RequestPaymentResponse response = requestPayment(token, address, amount.toBigDecimal(), env.getYandexOperationDescription());
+			if ((response != null) && response.isSuccess()) {
+				result = bufferDAO.reserveAmount(Currency.YANDEX_RUB, getBalance(), amount);
+			} else {
 				result = false;
 			}
+		} catch (Throwable ex) {
+			logger.error(ex.getMessage(), ex);
+			result = false;
 		}
 		return result;
 	}
 
-	public String exchangeAndStoreToken(String tempCode) {
+	private void processPayment(String token, RequestPaymentResponse response) throws InsufficientScopeException, IOException, InvalidTokenException {
+		if ((response != null) && response.isSuccess()) {
+			ProcessPaymentResponse paymentResponse = processPayment(token, response.getRequestId());
+			if (paymentResponse != null) {
+				if (paymentResponse.isSuccess()) {
+					// success
+				} else {
+					if (paymentResponse.getError() != null) {
+						throw new IOException(paymentResponse.getError().getCode());
+					} else {
+						throw new IOException("Process payment response failed.");
+					}
+				}
+			} else {
+				throw new IOException("Process payment response failed.");
+			}
+		} else {
+			if (response != null) {
+				if (response.getError() != null) {
+					throw new IOException(response.getError().getCode());
+				} else {
+					throw new IOException("Payment response failed.");
+				}
+			} else {
+				throw new IOException("Payment response failed.");
+			}
+		}
+	}
+
+	public String exchangeAndStoreToken(String tempCode) throws IOException {
 		String wallet = null;
 		if (tempCode != null) {
 			String token = exchangeToken(tempCode);
@@ -147,15 +173,11 @@ public class YandexMoneyService implements MoneyService {
 		return wallet;
 	}
 
-	private String exchangeToken(String code) throws RuntimeException {
+	private String exchangeToken(String code) throws IOException {
 		String token = null;
-		try {
-			ReceiveOAuthTokenResponse tokenResponse = yandexMoney.receiveOAuthToken(code, env.getYandexRedirectUrl());
-			if (tokenResponse != null && tokenResponse.isSuccess()) {
-				token = tokenResponse.getAccessToken();
-			}
-		} catch (Exception e) {
-			throw new RuntimeException(e.getMessage());
+		ReceiveOAuthTokenResponse tokenResponse = yandexMoney.receiveOAuthToken(code, env.getYandexRedirectUrl());
+		if ((tokenResponse != null) && tokenResponse.isSuccess()) {
+			token = tokenResponse.getAccessToken();
 		}
 		return token;
 	}
@@ -168,32 +190,16 @@ public class YandexMoneyService implements MoneyService {
 		return tokenizer.nextToken();
 	}
 
-	private void revokeToken(String token) {
-		try {
-			yandexMoney.revokeOAuthToken(token);
-		} catch (Exception ex) {
-			logger.error(ex.getMessage(), ex);
-		}
+	private void revokeToken(String token) throws IOException, InvalidTokenException {
+		yandexMoney.revokeOAuthToken(token);
 	}
 
-	private RequestPaymentResponse requestPayment(String token, String wallet, BigDecimal amount, String description) throws RuntimeException {
-		RequestPaymentResponse response = null;
-		try {
-			response = yandexMoney.requestPaymentP2PDue(token, wallet, IdentifierType.account, amount, description, description, null);
-		} catch (Exception e) {
-			throw new RuntimeException(e.getMessage());
-		}
-		return response;
+	private RequestPaymentResponse requestPayment(String token, String wallet, BigDecimal amount, String description) throws IOException, InvalidTokenException, InsufficientScopeException {
+		return yandexMoney.requestPaymentP2PDue(token, wallet, IdentifierType.account, amount, description, description, null);
 	}
 
-	private ProcessPaymentResponse processPayment(String token, String requestId) throws RuntimeException {
-		ProcessPaymentResponse response = null;
-		try {
-			response = yandexMoney.processPaymentByWallet(token, requestId);
-		} catch (Exception e) {
-			throw new RuntimeException(e.getMessage());
-		}
-		return response;
+	private ProcessPaymentResponse processPayment(String token, String requestId) throws IOException, InsufficientScopeException, InvalidTokenException {
+		return yandexMoney.processPaymentByWallet(token, requestId);
 	}
 
 	private Collection<Permission> getPaymentScope(BigDecimal sum) {
@@ -206,10 +212,5 @@ public class YandexMoneyService implements MoneyService {
 		scope.toAccount(env.getYandexWallet());
 		Permission result = scope;
 		return Collections.singletonList(result);
-	}
-
-	@Override
-	public String generateAddress() {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 }

@@ -1,6 +1,7 @@
 package com.qbit.exchanger.money.yandex;
 
 import com.qbit.exchanger.env.Env;
+import java.io.IOException;
 import java.net.URI;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -35,7 +36,7 @@ public class YandexMoneyResource {
 
 	@GET
 	@Path("proceedAuth")
-	public Response proceedAuth(@QueryParam("code") String code, @QueryParam("error") String error) {
+	public Response proceedAuth(@QueryParam("code") String code, @QueryParam("error") String error) throws IOException {
 		String wallet = null;
 		if (code != null) {
 			wallet = yandexMoneyService.exchangeAndStoreToken(code);

@@ -31,6 +31,8 @@ import javax.xml.bind.annotation.XmlTransient;
 			query = "SELECT o FROM OrderInfo o WHERE o.status IN :statuses"),
 	@NamedQuery(name = "OrderInfo.findByFullStatus",
 			query = "SELECT o FROM OrderInfo o WHERE o.status IN :statuses AND o.inProcess = :inProcess"),
+	@NamedQuery(name = "OrderInfo.findByFullStatusAndCurrency",
+			query = "SELECT o FROM OrderInfo o WHERE o.status IN :statuses AND o.inProcess = :inProcess AND o.inTransfer.currency IN :currencies"),
 	@NamedQuery(name = "OrderInfo.findByUserAndStatus",
 			query = "SELECT o FROM OrderInfo o WHERE o.userPublicKey = :userPublicKey"
 			+ " AND o.status IN :statuses"),

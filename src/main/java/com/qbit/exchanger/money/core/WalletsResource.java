@@ -1,5 +1,6 @@
 package com.qbit.exchanger.money.core;
 
+import com.qbit.exchanger.admin.CryptoService;
 import com.qbit.exchanger.money.model.Currency;
 import com.qbit.exchanger.money.model.WalletAddress;
 import javax.inject.Inject;
@@ -21,7 +22,7 @@ public class WalletsResource {
 	@Path("{currency}/generated-address")
 	@Produces(MediaType.APPLICATION_JSON)
 	public WalletAddress generateAddress(@PathParam("currency") Currency currency) {
-		MoneyService moneyService = moneyServiceProvider.get(currency);
+		CryptoService moneyService = moneyServiceProvider.get(currency, CryptoService.class);
 		return new WalletAddress(moneyService.generateAddress());
 	}
 }
