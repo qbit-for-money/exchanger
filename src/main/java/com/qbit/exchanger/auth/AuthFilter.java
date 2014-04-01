@@ -9,6 +9,7 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author Alexander_Sergeev
@@ -38,7 +39,7 @@ public class AuthFilter implements Filter {
 		
 		if (userId != null) {
 			if (isRequestToAdminPage && !isAdmin) {
-				httpRequest.getRequestDispatcher("/webapi/index").forward(servletRequest, servletResponse);
+				((HttpServletResponse) servletResponse).sendRedirect("");
 			} else {
 				filterChain.doFilter(servletRequest, servletResponse);
 			}
