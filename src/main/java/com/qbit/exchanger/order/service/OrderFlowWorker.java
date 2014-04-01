@@ -46,7 +46,7 @@ public class OrderFlowWorker implements Runnable {
 	@Override
 	public void run() {
 		try {
-			List<OrderInfo> ordersUnderWork = orderDAO.findByFullStatus(EnumSet.of(OrderStatus.INITIAL, OrderStatus.PAYED), false);
+			List<OrderInfo> ordersUnderWork = orderDAO.findByStatus(EnumSet.of(OrderStatus.INITIAL, OrderStatus.PAYED));
 			if (ordersUnderWork != null) {
 				for (OrderInfo orderUnderWork : ordersUnderWork) {
 					try {
@@ -82,7 +82,6 @@ public class OrderFlowWorker implements Runnable {
 			throw new IllegalStateException("Invalid rate.");
 		}
 		String orderId = orderUnderWork.getId();
-		orderDAO.changeStatus(orderId, OrderStatus.INITIAL, true);
 		try {
 			if (inTransfer.isCrypto()) {
 				CryptoService cryptoService = moneyServiceProvider.get(inTransfer, CryptoService.class);
@@ -112,7 +111,7 @@ public class OrderFlowWorker implements Runnable {
 
 			@Override
 			public Void call(EntityManager entityManager) {
-				orderDAO.changeStatusAndAmounts(orderId, OrderStatus.PAYED, false, inAmount, outAmount);
+				orderDAO.changeStatusAndAmounts(orderId, OrderStatus.PAYED, inAmount, outAmount);
 				return null;
 			}
 		}, MAX_STATUS_CHANGE_FAIL_COUNT);
@@ -123,7 +122,7 @@ public class OrderFlowWorker implements Runnable {
 
 			@Override
 			public Void call(EntityManager entityManager) {
-				orderDAO.changeStatus(orderId, OrderStatus.IN_FAILED, false);
+				orderDAO.changeStatus(orderId, OrderStatus.IN_FAILED);
 				return null;
 			}
 		}, MAX_STATUS_CHANGE_FAIL_COUNT);
@@ -132,7 +131,6 @@ public class OrderFlowWorker implements Runnable {
 	private void processOutTransfer(final OrderInfo orderUnderWork) {
 		Transfer outTransfer = orderUnderWork.getOutTransfer();
 		String orderId = orderUnderWork.getId();
-		orderDAO.changeStatus(orderId, OrderStatus.PAYED, true);
 		try {
 			MoneyService moneyService = moneyServiceProvider.get(outTransfer);
 			moneyService.sendMoney(outTransfer.getAddress(), outTransfer.getAmount(), true);
@@ -147,7 +145,7 @@ public class OrderFlowWorker implements Runnable {
 
 			@Override
 			public Void call(EntityManager entityManager) {
-				orderDAO.changeStatusAndOutAmount(orderId, OrderStatus.SUCCESS, false, outAmount);
+				orderDAO.changeStatusAndOutAmount(orderId, OrderStatus.SUCCESS, outAmount);
 				return null;
 			}
 		}, MAX_STATUS_CHANGE_FAIL_COUNT);
@@ -158,7 +156,7 @@ public class OrderFlowWorker implements Runnable {
 
 			@Override
 			public Void call(EntityManager entityManager) {
-				orderDAO.changeStatus(orderId, OrderStatus.OUT_FAILED, false);
+				orderDAO.changeStatus(orderId, OrderStatus.OUT_FAILED);
 				return null;
 			}
 		}, MAX_STATUS_CHANGE_FAIL_COUNT);
