@@ -29,10 +29,6 @@ import javax.xml.bind.annotation.XmlTransient;
 @NamedQueries({
 	@NamedQuery(name = "OrderInfo.findByStatus",
 			query = "SELECT o FROM OrderInfo o WHERE o.status IN :statuses"),
-	@NamedQuery(name = "OrderInfo.findByFullStatus",
-			query = "SELECT o FROM OrderInfo o WHERE o.status IN :statuses AND o.inProcess = :inProcess"),
-	@NamedQuery(name = "OrderInfo.findByFullStatusAndCurrency",
-			query = "SELECT o FROM OrderInfo o WHERE o.status IN :statuses AND o.inProcess = :inProcess AND o.inTransfer.currency IN :currencies"),
 	@NamedQuery(name = "OrderInfo.findByUserAndStatus",
 			query = "SELECT o FROM OrderInfo o WHERE o.userPublicKey = :userPublicKey"
 			+ " AND o.status IN :statuses"),
@@ -74,7 +70,6 @@ public class OrderInfo implements Identifiable<String>, Serializable {
 	private Transfer outTransfer;
 
 	private OrderStatus status;
-	private boolean inProcess;
 
 	@Override
 	@XmlTransient
@@ -124,14 +119,6 @@ public class OrderInfo implements Identifiable<String>, Serializable {
 
 	public void setStatus(OrderStatus status) {
 		this.status = status;
-	}
-
-	public boolean isInProcess() {
-		return inProcess;
-	}
-
-	public void setInProcess(boolean inProcess) {
-		this.inProcess = inProcess;
 	}
 
 	public boolean isValid() {
