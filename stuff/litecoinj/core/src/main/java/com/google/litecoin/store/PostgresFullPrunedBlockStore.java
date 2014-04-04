@@ -158,7 +158,9 @@ public class PostgresFullPrunedBlockStore implements FullPrunedBlockStore {
     public synchronized void close() {
         for (Connection conn : allConnections) {
             try {
-                conn.rollback();
+		    if(!conn.getAutoCommit()) {
+			    conn.rollback();
+		    }      
             } catch (SQLException ex) {
                 throw new RuntimeException(ex);
             }

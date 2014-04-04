@@ -35,8 +35,7 @@ public class AuthFilter implements Filter {
 				|| ((httpRequest.getPathInfo() != null) && httpRequest.getPathInfo().startsWith("/admin")));
 		boolean isRequestToAuthorization = ((httpRequest.getPathInfo() != null)
 				&& httpRequest.getPathInfo().equals("/oauth2/authorize"));
-		boolean isAdmin = env.getAdminMail().equals(userId);
-		
+		boolean isAdmin = env.getAdminMail().equals(EncryptionUtil.getMD5(userId));
 		if (userId != null) {
 			if (isRequestToAdminPage && !isAdmin) {
 				((HttpServletResponse) servletResponse).sendRedirect("");
