@@ -61,7 +61,7 @@ adminModule.controller("AdminController", function($rootScope, $scope, adminReso
 	$scope.sendMoney = function() {
 		if (!$scope.amountToSend || !$scope.currency || !$scope.outAddress) {
 			return;
-		}
+		}		
 		var amount = stringToAmount($scope.amountToSend, $scope.currency.centsInCoin);
 		if (isAmountPositive(amount)) {
 			var amountTransfer = {};

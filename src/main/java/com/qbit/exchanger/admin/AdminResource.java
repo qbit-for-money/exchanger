@@ -13,6 +13,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlList;
@@ -92,6 +93,14 @@ public class AdminResource {
 	public Amount getBalance(@PathParam("currency") Currency currency) {
 		CryptoService moneyService = moneyServiceProvider.get(currency, CryptoService.class);
 		return moneyService.getBalance();
+	}
+	
+	@GET
+	@Path("{currency}/balanceByAddress")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Amount getBalanceByAddress(@PathParam("currency") Currency currency, @QueryParam("address") String address) {
+		CryptoService moneyService = moneyServiceProvider.get(currency, CryptoService.class);
+		return moneyService.getBalance(address);
 	}
 
 	@GET

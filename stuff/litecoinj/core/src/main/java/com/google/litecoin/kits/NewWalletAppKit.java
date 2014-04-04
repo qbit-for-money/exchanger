@@ -80,6 +80,7 @@ public class NewWalletAppKit extends AbstractIdleService {
 	private volatile SPVBlockStore vStore;
 	private volatile Wallet vWallet;
 	private volatile PeerGroup vPeerGroup;
+	private volatile PeerGroup vPeerGroupFull;
 
 	private final File directory;
 	private volatile File vWalletFile;
@@ -93,6 +94,7 @@ public class NewWalletAppKit extends AbstractIdleService {
 	private String userAgent, version;
 
 	private volatile AbstractBlockChain vChain;
+	private volatile AbstractBlockChain vChainFull;
 	private volatile FullPrunedBlockStore vFPBStore;
 	private final boolean isFullChain;
 	private final boolean isPostgresBdStore;
@@ -251,7 +253,8 @@ public class NewWalletAppKit extends AbstractIdleService {
 		}
 		FileInputStream walletStream = null;
 		if (isFullChain) {
-			startFull(walletStream);
+			//startFull(walletStream);
+			startJoint(walletStream);
 		} else {
 			startSPV(walletStream);
 		}
@@ -328,6 +331,120 @@ public class NewWalletAppKit extends AbstractIdleService {
 					public void onSuccess(Service.State result) {
 						final PeerEventListener l = downloadListener == null ? new DownloadListener() : downloadListener;
 						vPeerGroup.startBlockChainDownload(l);
+					}
+
+					@Override
+					public void onFailure(Throwable t) {
+						throw new RuntimeException(t);
+					}
+				});
+			}
+		} catch (BlockStoreException e) {
+			throw new IOException(e);
+		} finally {
+			if (walletStream != null) {
+				walletStream.close();
+			}
+		}
+	}
+	
+	private void startJoint(FileInputStream walletStream) throws Exception {
+		try {
+			File chainFile = new File(directory, filePrefix + ".spvchain");
+			boolean chainFileExists = chainFile.exists();
+			vWalletFile = new File(directory, filePrefix + ".wallet");
+			boolean shouldReplayWallet = vWalletFile.exists() && !chainFileExists;
+
+			vStore = new SPVBlockStore(params, chainFile);
+			vFPBStore = new PostgresFullPrunedBlockStore(params, fullStoreDepth, hostname, dbName, username, password);
+			if (!chainFileExists && checkpoints != null) {
+				// Ugly hack! We have to create the wallet once here to learn the earliest key time, and then throw it
+				// away. The reason is that wallet extensions might need access to peergroups/chains/etc so we have to
+				// create the wallet later, but we need to know the time early here before we create the BlockChain
+				// object.
+				long time = Long.MAX_VALUE;
+				if (vWalletFile.exists()) {
+					Wallet wallet = new Wallet(params);
+					FileInputStream stream = new FileInputStream(vWalletFile);
+					new WalletProtobufSerializer().readWallet(WalletProtobufSerializer.parseToProto(stream), wallet);
+					time = wallet.getEarliestKeyCreationTime();
+				}
+				CheckpointManager.checkpoint(params, checkpoints, vStore, time);
+			}
+			vChain = new BlockChain(params, vStore);
+			vPeerGroup = new PeerGroup(params, vChain);
+			
+			vChainFull = new FullPrunedBlockChain(params, vFPBStore);
+			vPeerGroupFull = new PeerGroup(params, vChainFull);
+			
+			if (this.userAgent != null) {
+				vPeerGroup.setUserAgent(userAgent, version);
+				vPeerGroupFull.setUserAgent(userAgent, version);
+			}
+			if (vWalletFile.exists()) {
+				walletStream = new FileInputStream(vWalletFile);
+				vWallet = new Wallet(params);
+				addWalletExtensions(); // All extensions must be present before we deserialize
+				new WalletProtobufSerializer().readWallet(WalletProtobufSerializer.parseToProto(walletStream), vWallet);
+				if (shouldReplayWallet) {
+					vWallet.clearTransactions(0);
+				}
+			} else {
+				vWallet = new Wallet(params);
+				vWallet.addKey(new ECKey());
+				addWalletExtensions();
+			}
+			if (useAutoSave) {
+				vWallet.autosaveToFile(vWalletFile, 1, TimeUnit.SECONDS, null);
+			}
+			// Set up peer addresses or discovery first, so if wallet extensions try to broadcast a transaction
+			// before we're actually connected the broadcast waits for an appropriate number of connections.
+			if (peerAddresses != null) {
+				for (PeerAddress addr : peerAddresses) {
+					vPeerGroup.addAddress(addr);
+					vPeerGroupFull.addAddress(addr);
+				}
+				peerAddresses = null;
+			} else {
+				vPeerGroup.addPeerDiscovery(new DnsDiscovery(params));
+				vPeerGroupFull.addPeerDiscovery(new DnsDiscovery(params));
+			}
+			vChain.addWallet(vWallet);
+			vPeerGroup.addWallet(vWallet);
+			
+			vChainFull.addWallet(vWallet);
+			vPeerGroupFull.addWallet(vWallet);
+			
+			onSetupCompleted();
+
+			if (blockingStartup) {
+				vPeerGroup.startAndWait();
+				vPeerGroupFull.startAndWait();
+				// Make sure we shut down cleanly.
+				installShutdownHook();
+				// TODO: Be able to use the provided download listener when doing a blocking startup.
+				final DownloadListener listener = new DownloadListener();
+				vPeerGroup.startBlockChainDownload(listener);
+				vPeerGroupFull.startBlockChainDownload(listener);
+				listener.await();
+			} else {
+				Futures.addCallback(vPeerGroup.start(), new FutureCallback<Service.State>() {
+					@Override
+					public void onSuccess(Service.State result) {
+						final PeerEventListener l = downloadListener == null ? new DownloadListener() : downloadListener;
+						vPeerGroup.startBlockChainDownload(l);
+					}
+
+					@Override
+					public void onFailure(Throwable t) {
+						throw new RuntimeException(t);
+					}
+				});
+				Futures.addCallback(vPeerGroupFull.start(), new FutureCallback<Service.State>() {
+					@Override
+					public void onSuccess(Service.State result) {
+						final PeerEventListener l = downloadListener == null ? new DownloadListener() : downloadListener;
+						vPeerGroupFull.startBlockChainDownload(l);
 					}
 
 					@Override
@@ -464,6 +581,7 @@ public class NewWalletAppKit extends AbstractIdleService {
 		// Runs in a separate thread.
 		try {
 			vPeerGroup.stopAndWait();
+			vPeerGroupFull.stopAndWait();
 			vWallet.saveToFile(vWalletFile);
 			if (vStore != null) {
 				vStore.close();
@@ -477,6 +595,9 @@ public class NewWalletAppKit extends AbstractIdleService {
 			vStore = null;
 			vFPBStore = null;
 			vChain = null;
+			
+			vChainFull = null;
+			vPeerGroupFull = null;
 		} catch (BlockStoreException e) {
 			throw new IOException(e);
 		}
@@ -489,6 +610,11 @@ public class NewWalletAppKit extends AbstractIdleService {
 	public AbstractBlockChain chain() {
 		checkState(state() == Service.State.STARTING || state() == Service.State.RUNNING, "Cannot call until startup is complete");
 		return vChain;
+	}
+	
+	public AbstractBlockChain chainFull() {
+		checkState(state() == Service.State.STARTING || state() == Service.State.RUNNING, "Cannot call until startup is complete");
+		return vChainFull;
 	}
 
 	public SPVBlockStore store() {
@@ -509,6 +635,11 @@ public class NewWalletAppKit extends AbstractIdleService {
 	public PeerGroup peerGroup() {
 		checkState(state() == Service.State.STARTING || state() == Service.State.RUNNING, "Cannot call until startup is complete");
 		return vPeerGroup;
+	}
+	
+	public PeerGroup peerGroupFull() {
+		checkState(state() == Service.State.STARTING || state() == Service.State.RUNNING, "Cannot call until startup is complete");
+		return vPeerGroupFull;
 	}
 
 	public File directory() {

@@ -54,7 +54,7 @@ public class BitcoinMoneyService implements CryptoService {
 	@PostConstruct
 	public void init() {
 		BriefLogFormatter.init();
-		
+
 		if (env.isBitcoinTestnet()) {
 			parameters = TestNet3Params.get();
 			dbName = env.getBitcoinTestDBName();
@@ -81,7 +81,7 @@ public class BitcoinMoneyService implements CryptoService {
 			// Do nothing
 		}
 	}
-	
+
 	@Override
 	public Amount getBalance() {
 		BigInteger balance = getWallet().getBalance().subtract(MIN_FEE).max(BigInteger.ZERO);
@@ -98,7 +98,7 @@ public class BitcoinMoneyService implements CryptoService {
 			return Amount.zero(Currency.BITCOIN.getCentsInCoin());
 		}
 	}
-	
+
 	@Override
 	public String generateAddress() {
 		ECKey key = new ECKey();
@@ -106,12 +106,12 @@ public class BitcoinMoneyService implements CryptoService {
 		Address address = key.toAddress(parameters);
 		return address.toString();
 	}
-	
+
 	@Override
 	public void sendMoney(String address, Amount amount) throws Exception {
 		sendMoney(address, amount, false);
 	}
-	
+
 	/*
 	 * 1 coin = 100 cents
 	 * 1 cent = 1000000 nanocents
@@ -122,7 +122,7 @@ public class BitcoinMoneyService implements CryptoService {
 		if ((address == null) || (amount == null) || !amount.isPositive()) {
 			throw new IllegalArgumentException("Invalid transfer");
 		}
-		
+
 		try {
 			Address forwardingAddress = new Address(parameters, address);
 
@@ -142,7 +142,7 @@ public class BitcoinMoneyService implements CryptoService {
 					@Override
 					public void run() {
 						logger.info("[{}][{}] Sent {} BTC.", address, sendResult.tx.getHashAsString(),
-								Utils.bitcoinValueToFriendlyString(amountToSend));
+							Utils.bitcoinValueToFriendlyString(amountToSend));
 					}
 				}, MoreExecutors.sameThreadExecutor());
 			}
@@ -152,12 +152,12 @@ public class BitcoinMoneyService implements CryptoService {
 			}
 		}
 	}
-	
+
 	@Override
 	public Amount receiveMoney(String address, Amount amount) throws Exception {
 		throw new UnsupportedOperationException();
 	}
-	
+
 	@Override
 	public boolean reserve(String address, Amount amount) {
 		if ((amount == null) || !amount.isPositive()) {
@@ -190,7 +190,7 @@ public class BitcoinMoneyService implements CryptoService {
 		bi = bi.add(BigInteger.valueOf(cents));
 		return bi;
 	}
-	
+
 	private WTransaction toWTransaction(Transaction transaction) {
 		WTransaction result = new WTransaction();
 		BigInteger amount = transaction.getValue(getWallet());
@@ -201,9 +201,9 @@ public class BitcoinMoneyService implements CryptoService {
 
 		BigInteger amountToMe = transaction.getValueSentToMe(getWallet());
 		result.setAmountSentToMe(toAmount(amountToMe));
-		
+
 		result.setAddress(getTransactionAddress(transaction));
-		
+
 		if (transaction.getConfidence() != null) {
 			result.setDepth(transaction.getConfidence().getDepthInBlocks());
 		}
@@ -212,11 +212,11 @@ public class BitcoinMoneyService implements CryptoService {
 		result.setUpdateTime(transaction.getUpdateTime());
 		return result;
 	}
-	
+
 	private static Amount toAmount(BigInteger nanoCoins) {
 		return new Amount(new BigDecimal(Utils.bitcoinValueToFriendlyString(nanoCoins.abs())), Currency.BITCOIN.getCentsInCoin());
 	}
-	
+
 	private String getTransactionAddress(Transaction tx) {
 		for (TransactionOutput out : tx.getOutputs()) {
 			try {
@@ -231,7 +231,7 @@ public class BitcoinMoneyService implements CryptoService {
 		}
 		return null;
 	}
-	
+
 	private List<String> getWalletAddress() {
 		List<ECKey> keys = getWallet().getKeys();
 		List<String> result = new ArrayList<>(keys.size());
