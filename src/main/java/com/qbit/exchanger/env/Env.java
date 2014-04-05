@@ -51,6 +51,11 @@ public class Env {
 	public int getOrderWorkerPeriodSecs() {
 		return Integer.parseInt(properties.getProperty("order.worker.period.secs"));
 	}
+	
+	@XmlTransient
+	public int getOrderCleanupPeriodHours() {
+		return Integer.parseInt(properties.getProperty("order.cleanup.period.hours"));
+	}
 
 	@XmlTransient
 	public String getYandexRedirectUrl() {

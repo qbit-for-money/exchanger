@@ -3,6 +3,7 @@ package com.qbit.exchanger.order.dao;
 import com.qbit.exchanger.dao.util.DAOUtil;
 import static com.qbit.exchanger.dao.util.DAOUtil.invokeInTransaction;
 import com.qbit.exchanger.dao.util.TrCallable;
+import com.qbit.exchanger.env.Env;
 import com.qbit.exchanger.money.model.Amount;
 import com.qbit.exchanger.money.model.Transfer;
 import com.qbit.exchanger.money.model.TransferType;
@@ -10,6 +11,7 @@ import com.qbit.exchanger.order.model.OrderInfo;
 import com.qbit.exchanger.order.model.OrderStatus;
 import com.qbit.exchanger.user.UserDAO;
 import com.qbit.exchanger.user.UserInfo;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.EnumSet;
@@ -18,6 +20,8 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.Query;
+import javax.persistence.TemporalType;
 import javax.persistence.TypedQuery;
 
 /**
@@ -26,12 +30,12 @@ import javax.persistence.TypedQuery;
  */
 @Singleton
 public class OrderDAO {
+	
+	@Inject
+	private Env env;
 
 	@Inject
 	private EntityManagerFactory entityManagerFactory;
-	
-	@Inject
-	private UserDAO userDAO;
 
 	public OrderInfo find(String id) {
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
@@ -195,6 +199,21 @@ public class OrderDAO {
 				order.setStatus(OrderStatus.INITIAL);
 				entityManager.persist(order);
 				return order;
+			}
+		});
+	}
+	
+	public void cleanUp() {
+		invokeInTransaction(entityManagerFactory, new TrCallable<Void>() {
+
+			@Override
+			public Void call(EntityManager entityManager) {
+				Query query = entityManager.createNamedQuery("OrderInfo.cleanUp");
+				Calendar deadline = Calendar.getInstance();
+				deadline.add(Calendar.HOUR_OF_DAY, -env.getOrderCleanupPeriodHours());
+				query.setParameter("deadline", deadline, TemporalType.TIMESTAMP);
+				query.executeUpdate();
+				return null;
 			}
 		});
 	}

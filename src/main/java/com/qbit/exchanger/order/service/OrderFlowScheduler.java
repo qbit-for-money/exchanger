@@ -1,6 +1,7 @@
 package com.qbit.exchanger.order.service;
 
 import com.qbit.exchanger.env.Env;
+import com.qbit.exchanger.order.dao.OrderDAO;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
@@ -9,7 +10,8 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import javax.persistence.EntityManagerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -17,13 +19,14 @@ import javax.persistence.EntityManagerFactory;
  */
 @Singleton
 public class OrderFlowScheduler {
+	
+	private final Logger logger = LoggerFactory.getLogger(OrderFlowScheduler.class);
 
 	@Inject
 	private Env env;
 
 	@Inject
-	private EntityManagerFactory entityManagerFactory;
-
+	private OrderDAO orderDAO;
 	@Inject
 	private OrderFlowWorker orderFlowWorker;
 	
@@ -44,11 +47,20 @@ public class OrderFlowScheduler {
 
 			@Override
 			public void run() {
-				if (entityManagerFactory.isOpen()) {
-					orderFlowWorker.run();
-				}
+				orderFlowWorker.run();
 			}
 		}, env.getOrderWorkerPeriodSecs(), env.getOrderWorkerPeriodSecs(), TimeUnit.SECONDS);
+		executorService.scheduleWithFixedDelay(new Runnable() {
+
+			@Override
+			public void run() {
+				try {
+					orderDAO.cleanUp();
+				} catch (Exception ex) {
+					logger.error(ex.getMessage(), ex);
+				}
+			}
+		}, env.getOrderCleanupPeriodHours(), env.getOrderCleanupPeriodHours(), TimeUnit.HOURS);
 	}
 
 	@PreDestroy

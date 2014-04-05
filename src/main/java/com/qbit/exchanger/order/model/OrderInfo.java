@@ -34,7 +34,10 @@ import javax.xml.bind.annotation.XmlTransient;
 			+ " AND o.status IN :statuses"),
 	@NamedQuery(name = "OrderInfo.findByUserAndTimestamp",
 			query = "SELECT o FROM OrderInfo o WHERE o.userPublicKey = :userPublicKey"
-			+ " AND o.creationDate = :creationDate")})
+			+ " AND o.creationDate = :creationDate"),
+	@NamedQuery(name = "OrderInfo.cleanUp",
+			query = "DELETE FROM OrderInfo o WHERE o.creationDate < :deadline"
+					+ " AND o.status = com.qbit.exchanger.order.model.OrderStatus.INITIAL")})
 @XmlRootElement
 public class OrderInfo implements Identifiable<String>, Serializable {
 
