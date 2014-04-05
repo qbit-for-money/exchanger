@@ -119,7 +119,6 @@ public class AdminResource {
 		}
 		CryptoService moneyService = moneyServiceProvider.get(amountRequest.getCurrency(), CryptoService.class);
 		Amount amount = amountRequest.getAmount();
-		amount.setCentsInCoin(amountRequest.getCurrency().getCentsInCoin());
 		moneyService.sendMoney(amountRequest.getAddress(), amount);
 	}
 }

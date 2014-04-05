@@ -11,7 +11,6 @@ import com.google.litecoin.store.PostgresFullPrunedBlockStore;
 import com.google.litecoin.utils.BriefLogFormatter;
 import com.qbit.exchanger.admin.CryptoService;
 import com.qbit.exchanger.admin.WTransaction;
-import com.qbit.exchanger.buffer.BufferDAO;
 import com.qbit.exchanger.env.Env;
 import com.qbit.exchanger.money.model.Amount;
 import com.qbit.exchanger.money.model.Currency;
@@ -42,8 +41,6 @@ public class LitecoinMoneyService implements CryptoService {
 
 	@Inject
 	private Env env;
-	@Inject
-	private BufferDAO bufferDAO;
 
 	private NetworkParameters parameters;
 	private NewWalletAppKit kit;
@@ -104,63 +101,44 @@ public class LitecoinMoneyService implements CryptoService {
 		return address.toString();
 	}
 	
-	@Override
-	public void sendMoney(String address, Amount amount) throws Exception {
-		sendMoney(address, amount, false);
-	}
-	
 	/*
 	 * 1 coin = 100 cents
 	 * 1 cent = 1000000 nanocents
 	 * Example: 1 coin 2345 cents = 1.00002345
 	 */
 	@Override
-	public void sendMoney(final String address, Amount amount, boolean unreserve) throws Exception {
+	public void sendMoney(final String address, Amount amount) throws Exception {
 		if ((address == null) || (amount == null) || !amount.isPositive()) {
 			throw new IllegalArgumentException("Invalid transfer");
 		}
-		
-		try {
-			Address forwardingAddress = new Address(parameters, address);
 
-			final BigInteger amountToSend = toNanoCoins(amount.getCoins(), amount.getCents());
+		Address forwardingAddress = new Address(parameters, address);
 
-			if (logger.isInfoEnabled()) {
-				logger.info("[{}] Forwarding {} LTC", address, Utils.bitcoinValueToFriendlyString(amountToSend));
-			}
+		final BigInteger amountToSend = toNanoCoins(amount.getCoins(), amount.getCents());
 
-			// final BigInteger amountToSend = value.subtract(Transaction.REFERENCE_DEFAULT_MIN_TX_FEE);
-			final Wallet.SendResult sendResult = getWallet().sendCoins(kit.peerGroup(), forwardingAddress, amountToSend);
+		if (logger.isInfoEnabled()) {
+			logger.info("[{}] Forwarding {} LTC", address, Utils.bitcoinValueToFriendlyString(amountToSend));
+		}
 
-			// A future that will complete once the transaction message has been successfully
-			if (logger.isInfoEnabled()) {
-				sendResult.broadcastComplete.addListener(new Runnable() {
+		// final BigInteger amountToSend = value.subtract(Transaction.REFERENCE_DEFAULT_MIN_TX_FEE);
+		final Wallet.SendResult sendResult = getWallet().sendCoins(kit.peerGroup(), forwardingAddress, amountToSend);
 
-					@Override
-					public void run() {
-						logger.info("[{}][{}] Sent {} LTC.", address, sendResult.tx.getHashAsString(),
-								Utils.bitcoinValueToFriendlyString(amountToSend));
-					}
-				}, MoreExecutors.sameThreadExecutor());
-			}
-		} finally {
-			if (unreserve) {
-				bufferDAO.deleteReservation(Currency.LITECOIN, amount);
-			}
+		// A future that will complete once the transaction message has been successfully
+		if (logger.isInfoEnabled()) {
+			sendResult.broadcastComplete.addListener(new Runnable() {
+
+				@Override
+				public void run() {
+					logger.info("[{}][{}] Sent {} LTC.", address, sendResult.tx.getHashAsString(),
+							Utils.bitcoinValueToFriendlyString(amountToSend));
+				}
+			}, MoreExecutors.sameThreadExecutor());
 		}
 	}
 	
 	@Override
 	public Amount receiveMoney(String address, Amount amount) throws Exception {
 		throw new UnsupportedOperationException();
-	}
-	
-	@Override
-	public boolean reserve(String address, Amount amount) {
-		if ((amount == null) || !amount.isPositive()) {
-			return false;
-		}
-		return bufferDAO.reserveAmount(Currency.LITECOIN, getBalance(), amount);
 	}
 
 	@Override

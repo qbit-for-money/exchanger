@@ -4,10 +4,14 @@ import com.qbit.exchanger.common.model.Identifiable;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
+import javax.persistence.Access;
+import javax.persistence.AccessType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -15,7 +19,9 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author Александр
  */
 @Entity
+@Access(AccessType.FIELD)
 @XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 public class UserInfo implements Identifiable<String>, Serializable {
 
 	private static final long serialVersionUID = 1L;

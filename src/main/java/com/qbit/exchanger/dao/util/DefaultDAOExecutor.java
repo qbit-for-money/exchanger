@@ -1,4 +1,4 @@
-package com.qbit.exchanger.dao;
+package com.qbit.exchanger.dao.util;
 
 import com.qbit.exchanger.dao.util.DAOExecutor;
 import static com.qbit.exchanger.dao.util.DAOUtil.invokeInTransaction;
@@ -91,7 +91,7 @@ public class DefaultDAOExecutor implements DAOExecutor {
 	}
 
 	@Override
-	public void submit(final TrCallable<Void> callable, int maxFailCount) {
+	public ScheduledFuture<?> submit(final TrCallable<Void> callable, int maxFailCount) {
 		FailSafeRunnable failSafeRunnable = new FailSafeRunnable(new Runnable() {
 
 			@Override
@@ -102,6 +102,7 @@ public class DefaultDAOExecutor implements DAOExecutor {
 		ScheduledFuture<?> future = executorService.scheduleWithFixedDelay(failSafeRunnable,
 				0, env.getOrderWorkerPeriodSecs(), TimeUnit.SECONDS);
 		failSafeRunnable.linkToFuture(future);
+		return future;
 	}
 
 	@PreDestroy

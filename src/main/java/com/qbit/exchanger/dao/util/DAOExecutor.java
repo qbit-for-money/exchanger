@@ -1,6 +1,7 @@
 package com.qbit.exchanger.dao.util;
 
 import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledFuture;
 
 /**
  *
@@ -10,5 +11,5 @@ public interface DAOExecutor {
 	
 	<T> Future<T> submit(TrCallable<T> callable);
 	
-	void submit(TrCallable<Void> callable, int maxFailCount);
+	ScheduledFuture<?> submit(TrCallable<Void> callable, int maxFailCount);
 }

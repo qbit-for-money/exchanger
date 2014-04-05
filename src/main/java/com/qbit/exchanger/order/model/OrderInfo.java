@@ -6,6 +6,8 @@ import com.qbit.exchanger.money.model.TransferType;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
+import javax.persistence.Access;
+import javax.persistence.AccessType;
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
@@ -18,6 +20,8 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -35,16 +39,30 @@ import javax.xml.bind.annotation.XmlTransient;
 	@NamedQuery(name = "OrderInfo.findByUserAndTimestamp",
 			query = "SELECT o FROM OrderInfo o WHERE o.userPublicKey = :userPublicKey"
 			+ " AND o.creationDate = :creationDate"),
+	@NamedQuery(name = "OrderInfo.changeStatus",
+			query = "UPDATE OrderInfo o SET o.status = :orderStatus WHERE o.id = :id"),
+	@NamedQuery(name = "OrderInfo.changeStatusAndInAmount",
+			query = "UPDATE OrderInfo o SET o.status = :orderStatus, o.inTransfer.amount = :inAmount"
+			+ " WHERE o.id = :id"),
+	@NamedQuery(name = "OrderInfo.changeStatusAndOutAmount",
+			query = "UPDATE OrderInfo o SET o.status = :orderStatus, o.outTransfer.amount = :outAmount"
+			+ " WHERE o.id = :id"),
+	@NamedQuery(name = "OrderInfo.changeStatusAndAmounts",
+			query = "UPDATE OrderInfo o SET o.status = :orderStatus, o.inTransfer.amount = :inAmount"
+			+ ", o.outTransfer.amount = :outAmount WHERE o.id = :id"),
 	@NamedQuery(name = "OrderInfo.cleanUp",
 			query = "DELETE FROM OrderInfo o WHERE o.creationDate < :deadline"
-					+ " AND o.status = com.qbit.exchanger.order.model.OrderStatus.INITIAL")})
+			+ " AND o.status = com.qbit.exchanger.order.model.OrderStatus.INITIAL")})
+@Access(AccessType.FIELD)
 @XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 public class OrderInfo implements Identifiable<String>, Serializable {
 
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
+	@XmlTransient
 	private String id;
 
 	@Temporal(TemporalType.TIMESTAMP)
@@ -75,7 +93,6 @@ public class OrderInfo implements Identifiable<String>, Serializable {
 	private OrderStatus status;
 
 	@Override
-	@XmlTransient
 	public String getId() {
 		return id;
 	}

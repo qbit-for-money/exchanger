@@ -3,27 +3,39 @@ package com.qbit.exchanger.money.model;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import javax.persistence.Access;
+import javax.persistence.AccessType;
 import javax.persistence.Embeddable;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
  * @author Александр
  */
 @Embeddable
+@Access(AccessType.FIELD)
 @XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Amount implements Serializable, Comparable<Amount> {
 	
 	public static Amount zero(long centsInCoin) {
 		return new Amount(0, 0, centsInCoin);
 	}
 
-	private long coins, cents;
+	private final long coins;
+	private final long cents;
 
-	private long centsInCoin;
-
-	public Amount() {
+	private final long centsInCoin;
+	
+	/**
+	 * Needed by JPA
+	 */
+	protected Amount() {
+		coins = 0;
+		cents = 0;
+		centsInCoin = 0;
 	}
 
 	public Amount(BigDecimal amount, long centsInCoin) {
@@ -41,7 +53,7 @@ public class Amount implements Serializable, Comparable<Amount> {
 	}
 
 	public Amount(long coins, long cents, long centsInCoin) {
-		if ((coins < 0) || (cents < 0) || (centsInCoin < 0) || (cents > centsInCoin)) {
+		if ((coins < 0) || (cents < 0) || (centsInCoin <= 0)) {
 			throw new IllegalArgumentException();
 		}
 		this.coins = coins;
@@ -53,42 +65,31 @@ public class Amount implements Serializable, Comparable<Amount> {
 		return coins;
 	}
 
-	public void setCoins(long coins) {
-		this.coins = coins;
-	}
-
 	public long getCents() {
 		return cents;
-	}
-
-	public void setCents(long cents) {
-		this.cents = cents;
 	}
 
 	public long getCentsInCoin() {
 		return centsInCoin;
 	}
 
-	public void setCentsInCoin(long centsInCoin) {
-		this.centsInCoin = centsInCoin;
-	}
-
 	public int scale() {
 		return (int) Math.round(Math.log10(centsInCoin));
 	}
-
-	@XmlTransient
-	public boolean isValid() {
-		return (coins >= 0) && (cents >= 0) && (centsInCoin >= 0) && (cents <= centsInCoin);
+	
+	public Amount mul(BigDecimal k) {
+		return new Amount(toBigDecimal().multiply(k), centsInCoin);
 	}
 
-	@XmlTransient
+	public boolean isValid() {
+		return ((coins >= 0) && (cents >= 0) && (centsInCoin > 0));
+	}
+
 	public boolean isPositive() {
 		long minCents = centsInCoin / 100;
 		return (isValid() && ((coins > 0) || (cents >= minCents)));
 	}
 
-	@XmlTransient
 	public BigDecimal toBigDecimal() {
 		return BigDecimal.valueOf(coins).add(BigDecimal.valueOf(cents)
 				.divide(BigDecimal.valueOf(centsInCoin), scale(), RoundingMode.HALF_UP));

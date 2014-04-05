@@ -2,14 +2,22 @@ package com.qbit.exchanger.money.model;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import javax.persistence.Access;
+import javax.persistence.AccessType;
 import javax.persistence.Embeddable;
 import javax.persistence.Embedded;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
  * @author Александр
  */
 @Embeddable
+@Access(AccessType.FIELD)
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Transfer implements Serializable {
 
 	private TransferType type;

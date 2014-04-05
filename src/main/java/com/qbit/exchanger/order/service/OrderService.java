@@ -1,7 +1,9 @@
 package com.qbit.exchanger.order.service;
 
+import com.qbit.exchanger.env.Env;
 import com.qbit.exchanger.money.core.MoneyService;
 import com.qbit.exchanger.money.core.MoneyServiceProvider;
+import com.qbit.exchanger.money.model.Amount;
 import com.qbit.exchanger.money.model.Transfer;
 import com.qbit.exchanger.order.dao.OrderDAO;
 import com.qbit.exchanger.order.model.OrderInfo;
@@ -9,6 +11,7 @@ import com.qbit.exchanger.order.model.OrderStatus;
 import com.qbit.exchanger.order.service.exception.OrderServiceException;
 import com.qbit.exchanger.order.service.exception.OrderServiceSecurityException;
 import com.qbit.exchanger.order.service.exception.OrderTestException;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.EnumSet;
 import java.util.List;
@@ -21,6 +24,9 @@ import javax.inject.Singleton;
  */
 @Singleton
 public class OrderService {
+	
+	@Inject
+	private Env env;
 
 	@Inject
 	private OrderDAO orderDAO;
@@ -65,7 +71,7 @@ public class OrderService {
 
 		Transfer outTransfer = orderInfo.getOutTransfer();
 		MoneyService moneyService = moneyServiceProvider.get(outTransfer);
-		if (!moneyService.reserve(outTransfer.getAddress(), outTransfer.getAmount())) {
+		if (!testBalanceAgainstAmount(moneyService, outTransfer.getAmount())) {
 			throw new OrderTestException();
 		}
 
@@ -74,5 +80,15 @@ public class OrderService {
 			throw new OrderServiceSecurityException("Can not create order.");
 		}
 		return result;
+	}
+	
+	private boolean testBalanceAgainstAmount(MoneyService moneyService, Amount amount) {
+		try {
+			Amount balance = moneyService.getBalance();
+			Amount maxTransactionAmount = balance.mul(env.getMaxTransactionAmountToBalanceCoef());
+			return (amount.compareTo(maxTransactionAmount) < 0);
+		} catch (Exception ex) {
+			return false;
+		}
 	}
 }

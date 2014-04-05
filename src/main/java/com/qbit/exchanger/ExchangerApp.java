@@ -1,7 +1,7 @@
 package com.qbit.exchanger;
 
 import com.qbit.exchanger.buffer.BufferDAO;
-import com.qbit.exchanger.dao.DefaultDAOExecutor;
+import com.qbit.exchanger.dao.util.DefaultDAOExecutor;
 import com.qbit.exchanger.dao.util.DAOExecutor;
 import com.qbit.exchanger.env.Env;
 import com.qbit.exchanger.external.exchange.btce.BTCExchange;

@@ -99,11 +99,10 @@ public class OrderDAO {
 
 			@Override
 			public Void call(EntityManager entityManager) {
-				OrderInfo orderInfo = entityManager.find(OrderInfo.class, id);
-				if (orderInfo == null) {
-					return null;
-				}
-				orderInfo.setStatus(orderStatus);
+				Query query = entityManager.createNamedQuery("OrderInfo.changeStatus");
+				query.setParameter("id", id);
+				query.setParameter("orderStatus", orderStatus);
+				query.executeUpdate();
 				return null;
 			}
 		});
@@ -117,12 +116,11 @@ public class OrderDAO {
 
 			@Override
 			public Void call(EntityManager entityManager) {
-				OrderInfo orderInfo = entityManager.find(OrderInfo.class, id);
-				if (orderInfo == null) {
-					return null;
-				}
-				orderInfo.setStatus(orderStatus);
-				orderInfo.getInTransfer().setAmount(inAmount);
+				Query query = entityManager.createNamedQuery("OrderInfo.changeStatusAndInAmount");
+				query.setParameter("id", id);
+				query.setParameter("orderStatus", orderStatus);
+				query.setParameter("inAmount", inAmount);
+				query.executeUpdate();
 				return null;
 			}
 		});
@@ -136,18 +134,18 @@ public class OrderDAO {
 
 			@Override
 			public Void call(EntityManager entityManager) {
-				OrderInfo orderInfo = entityManager.find(OrderInfo.class, id);
-				if (orderInfo == null) {
-					return null;
-				}
-				orderInfo.setStatus(orderStatus);
-				orderInfo.getOutTransfer().setAmount(outAmount);
+				Query query = entityManager.createNamedQuery("OrderInfo.changeStatusAndOutAmount");
+				query.setParameter("id", id);
+				query.setParameter("orderStatus", orderStatus);
+				query.setParameter("outAmount", outAmount);
+				query.executeUpdate();
 				return null;
 			}
 		});
 	}
 
-	public void changeStatusAndAmounts(final String id, final OrderStatus orderStatus, final Amount inAmount, final Amount outAmount) {
+	public void changeStatusAndAmounts(final String id, final OrderStatus orderStatus,
+			final Amount inAmount, final Amount outAmount) {
 		if ((id == null) || (orderStatus == null) || (inAmount == null) || !inAmount.isValid()
 				|| (outAmount == null) || !outAmount.isValid()) {
 			throw new IllegalArgumentException();
@@ -156,13 +154,12 @@ public class OrderDAO {
 
 			@Override
 			public Void call(EntityManager entityManager) {
-				OrderInfo orderInfo = entityManager.find(OrderInfo.class, id);
-				if (orderInfo == null) {
-					return null;
-				}
-				orderInfo.setStatus(orderStatus);
-				orderInfo.getInTransfer().setAmount(inAmount);
-				orderInfo.getOutTransfer().setAmount(outAmount);
+				Query query = entityManager.createNamedQuery("OrderInfo.changeStatusAndAmounts");
+				query.setParameter("id", id);
+				query.setParameter("orderStatus", orderStatus);
+				query.setParameter("inAmount", inAmount);
+				query.setParameter("outAmount", outAmount);
+				query.executeUpdate();
 				return null;
 			}
 		});

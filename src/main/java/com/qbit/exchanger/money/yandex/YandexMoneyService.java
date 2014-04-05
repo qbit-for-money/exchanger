@@ -1,6 +1,5 @@
 package com.qbit.exchanger.money.yandex;
 
-import com.qbit.exchanger.buffer.BufferDAO;
 import com.qbit.exchanger.env.Env;
 import com.qbit.exchanger.money.core.MoneyService;
 import com.qbit.exchanger.money.model.Amount;
@@ -40,8 +39,6 @@ public class YandexMoneyService implements MoneyService {
 
 	@Inject
 	private Env env;
-	@Inject
-	private BufferDAO bufferDAO;
 
 	@PostConstruct
 	public void init() {
@@ -67,14 +64,9 @@ public class YandexMoneyService implements MoneyService {
 			throw new RuntimeException(ex.getMessage());
 		}
 	}
-	
+
 	@Override
 	public void sendMoney(String address, Amount amount) throws Exception {
-		sendMoney(address, amount, false);
-	}
-	
-	@Override
-	public void sendMoney(String address, Amount amount, boolean unreserve) throws Exception {
 		if ((address == null) || (amount == null) || !amount.isPositive()) {
 			throw new IllegalArgumentException("Invalid transfer");
 		}
@@ -84,9 +76,6 @@ public class YandexMoneyService implements MoneyService {
 			RequestPaymentResponse response = requestPayment(token, address, amount.toBigDecimal(), env.getYandexOperationDescription());
 			processPayment(token, response);
 		} finally {
-			if (unreserve) {
-				bufferDAO.deleteReservation(Currency.YANDEX_RUB, amount);
-			}
 			String removedToken = tokens.remove(address);
 			if (removedToken != null) {
 				revokeToken(removedToken);
@@ -111,27 +100,6 @@ public class YandexMoneyService implements MoneyService {
 				revokeToken(removedToken);
 			}
 		}
-	}
-	
-	@Override
-	public boolean reserve(String address, Amount amount) {
-		if ((address == null) || (amount == null) || !amount.isPositive()) {
-			return false;
-		}
-		boolean result;
-		try {
-			String token = env.getYandexToken();
-			RequestPaymentResponse response = requestPayment(token, address, amount.toBigDecimal(), env.getYandexOperationDescription());
-			if ((response != null) && response.isSuccess()) {
-				result = bufferDAO.reserveAmount(Currency.YANDEX_RUB, getBalance(), amount);
-			} else {
-				result = false;
-			}
-		} catch (Throwable ex) {
-			logger.error(ex.getMessage(), ex);
-			result = false;
-		}
-		return result;
 	}
 
 	private void processPayment(String token, RequestPaymentResponse response) throws InsufficientScopeException, IOException, InvalidTokenException {

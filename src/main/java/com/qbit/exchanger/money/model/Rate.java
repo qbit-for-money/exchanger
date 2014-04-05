@@ -4,26 +4,24 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Objects;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
  * @author Александр
  */
 @XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Rate implements Serializable {
 
-	private Amount numerator;
-
-	private Amount denominator;
-
-	public Rate() {
-	}
+	private final Amount numerator;
+	private final Amount denominator;
 
 	public Rate(BigDecimal numerator, Currency fromCurrency, Currency toCurrency) {
 		if ((numerator == null) || (fromCurrency == null)
-			|| (toCurrency == null)) {
+				|| (toCurrency == null)) {
 			throw new IllegalArgumentException();
 		}
 		this.numerator = new Amount(numerator, toCurrency.getCentsInCoin());
@@ -31,9 +29,9 @@ public class Rate implements Serializable {
 	}
 
 	public Rate(BigDecimal numerator, BigDecimal denominator,
-		Currency fromCurrency, Currency toCurrency) {
+			Currency fromCurrency, Currency toCurrency) {
 		if ((numerator == null) || (denominator == null)
-			|| (fromCurrency == null) || (toCurrency == null)) {
+				|| (fromCurrency == null) || (toCurrency == null)) {
 			throw new IllegalArgumentException();
 		}
 		this.numerator = new Amount(numerator, toCurrency.getCentsInCoin());
@@ -42,7 +40,7 @@ public class Rate implements Serializable {
 
 	public Rate(Amount numerator, Amount denominator) {
 		if ((numerator == null) || !numerator.isPositive()
-			|| (denominator == null) || !denominator.isPositive()) {
+				|| (denominator == null) || !denominator.isPositive()) {
 			throw new IllegalArgumentException();
 		}
 		this.numerator = numerator;
@@ -53,23 +51,14 @@ public class Rate implements Serializable {
 		return numerator;
 	}
 
-	public void setNumerator(Amount numerator) {
-		this.numerator = numerator;
-	}
-
 	public Amount getDenominator() {
 		return denominator;
 	}
 
-	public void setDenominator(Amount denominator) {
-		this.denominator = denominator;
-	}
-
-	@XmlTransient
 	public Rate inv() {
 		return new Rate(denominator, numerator);
 	}
-	
+
 	public Amount mul(Amount amount) {
 		if ((amount == null) || !amount.isValid()) {
 			throw new IllegalArgumentException();
@@ -78,8 +67,11 @@ public class Rate implements Serializable {
 				amount.toBigDecimal()).divide(denominator.toBigDecimal(), numerator.scale(), RoundingMode.HALF_UP);
 		return new Amount(result, numerator.getCentsInCoin());
 	}
-	
-	@XmlTransient
+
+	public Rate mul(BigDecimal k) {
+		return new Rate(numerator.mul(k), denominator);
+	}
+
 	public boolean isValid() {
 		return ((numerator != null) && numerator.isPositive()
 				&& (denominator != null) && denominator.isPositive());

@@ -1,8 +1,6 @@
 package com.qbit.exchanger.order.service;
 
 import com.qbit.exchanger.admin.CryptoService;
-import com.qbit.exchanger.dao.util.DAOExecutor;
-import com.qbit.exchanger.dao.util.TrCallable;
 import com.qbit.exchanger.external.exchange.core.Exchange;
 import com.qbit.exchanger.money.core.MoneyService;
 import com.qbit.exchanger.money.core.MoneyServiceProvider;
@@ -16,7 +14,6 @@ import java.util.EnumSet;
 import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import javax.persistence.EntityManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,8 +23,6 @@ import org.slf4j.LoggerFactory;
  */
 @Singleton
 public class OrderFlowWorker implements Runnable {
-
-	private static final int MAX_STATUS_CHANGE_FAIL_COUNT = 2 * 60;
 
 	private final Logger logger = LoggerFactory.getLogger(OrderFlowWorker.class);
 
@@ -40,13 +35,10 @@ public class OrderFlowWorker implements Runnable {
 	@Inject
 	private Exchange exchange;
 
-	@Inject
-	private DAOExecutor databaseExecutor;
-
 	@Override
 	public void run() {
 		try {
-			List<OrderInfo> ordersUnderWork = orderDAO.findByStatus(EnumSet.of(OrderStatus.INITIAL, OrderStatus.PAYED));
+			List<OrderInfo> ordersUnderWork = orderDAO.findByStatus(EnumSet.of(OrderStatus.INITIAL));
 			if (ordersUnderWork != null) {
 				for (OrderInfo orderUnderWork : ordersUnderWork) {
 					try {
@@ -63,102 +55,96 @@ public class OrderFlowWorker implements Runnable {
 
 	private void processOrderUnderWork(OrderInfo orderUnderWork) throws Exception {
 		if (!orderUnderWork.isValid()) {
-			throw new IllegalArgumentException("Order is inconsistent.");
+			throw new IllegalArgumentException("Order #" + orderUnderWork.getId() + " is inconsistent.");
 		}
-		switch (orderUnderWork.getStatus()) {
-			case INITIAL:
-				processInTransfer(orderUnderWork);
-				break;
-			case PAYED:
-				processOutTransfer(orderUnderWork);
-				break;
+		String orderId = orderUnderWork.getId();
+		Transfer inTransfer = orderUnderWork.getInTransfer();
+		Transfer outTransfer = orderUnderWork.getOutTransfer();
+		Rate rate = exchange.getRate(inTransfer.getCurrency(), outTransfer.getCurrency());
+		if ((rate != null) && rate.isValid()) {
+			if (processInTransfer(orderId, inTransfer, rate)) {
+				processOutTransfer(orderId, outTransfer);
+			}
+		} else {
+			logger.error("Invalid rate: " + rate);
 		}
 	}
 
-	private void processInTransfer(final OrderInfo orderUnderWork) throws Exception {
-		Transfer inTransfer = orderUnderWork.getInTransfer();
-		Rate rate = exchange.getRate(inTransfer.getCurrency(), orderUnderWork.getOutTransfer().getCurrency());
-		if ((rate == null) || !rate.isValid()) {
-			throw new IllegalStateException("Invalid rate.");
+	private boolean processInTransfer(String orderId, Transfer inTransfer, Rate rate) throws Exception {
+		boolean ok;
+		if (inTransfer.isCrypto()) {
+			ok = processCryptoInTransfer(orderId, inTransfer, rate);
+		} else {
+			ok = processDefaultInTransfer(orderId, inTransfer, rate);
 		}
-		String orderId = orderUnderWork.getId();
+		return ok;
+	}
+	
+	private boolean processCryptoInTransfer(String orderId, Transfer inTransfer, Rate rate) {
+		boolean ok;
+		CryptoService cryptoService = moneyServiceProvider.get(inTransfer, CryptoService.class);
+		Amount amountReceived = cryptoService.getBalance(inTransfer.getAddress());
+		if (isReceivedAmountValid(amountReceived, rate)) {
+			processPayed(orderId, rate, amountReceived);
+			ok = true;
+		} else {
+			if (logger.isInfoEnabled()) {
+				logger.info("Too small amount received to address \"" + inTransfer.getAddress() + "\".");
+			}
+			ok = false;
+		}
+		return ok;
+	}
+	
+	private boolean processDefaultInTransfer(String orderId, Transfer inTransfer, Rate rate) {
+		boolean ok;
+		MoneyService moneyService = moneyServiceProvider.get(inTransfer);
 		try {
-			if (inTransfer.isCrypto()) {
-				CryptoService cryptoService = moneyServiceProvider.get(inTransfer, CryptoService.class);
-				Amount amountReceived = cryptoService.getBalance(inTransfer.getAddress());
-				if ((amountReceived != null) && amountReceived.isPositive()) {
-					processPayed(orderId, rate, amountReceived);
-				}
+			Amount amountReceived = moneyService.receiveMoney(inTransfer.getAddress(), inTransfer.getAmount());
+			if (isReceivedAmountValid(amountReceived, rate)) {
+				processPayed(orderId, rate, amountReceived);
+				ok = true;
 			} else {
-				MoneyService moneyService = moneyServiceProvider.get(inTransfer);
-				Amount amountReceived = moneyService.receiveMoney(inTransfer.getAddress(), inTransfer.getAmount());
-				if ((amountReceived != null) && amountReceived.isPositive()) {
-					processPayed(orderId, rate, amountReceived);
-				} else {
-					processInFailed(orderId);
-				}
+				logger.error("Too small amount received to address \"" + inTransfer.getAddress() + "\".");
+				processInFailed(orderId);
+				ok = false;
 			}
 		} catch (Exception ex) {
 			logger.error(ex.getMessage(), ex);
 			processInFailed(orderId);
+			ok = false;
 		}
+		return ok;
+	}
+	
+	private boolean isReceivedAmountValid(Amount amountReceived, Rate rate) {
+		return ((amountReceived != null) && amountReceived.isPositive()
+				&& (rate != null) && rate.isValid() && rate.mul(amountReceived).isPositive());
 	}
 
-	private void processPayed(final String orderId, final Rate rate, final Amount amountReceived) {
-		final Amount inAmount = amountReceived;
-		final Amount outAmount = rate.mul(amountReceived);
-		databaseExecutor.submit(new TrCallable<Void>() {
-
-			@Override
-			public Void call(EntityManager entityManager) {
-				orderDAO.changeStatusAndAmounts(orderId, OrderStatus.PAYED, inAmount, outAmount);
-				return null;
-			}
-		}, MAX_STATUS_CHANGE_FAIL_COUNT);
+	private void processPayed(String orderId, Rate rate, Amount amountReceived) {
+		orderDAO.changeStatusAndAmounts(orderId, OrderStatus.PAYED, amountReceived, rate.mul(amountReceived));
 	}
 
-	private void processInFailed(final String orderId) {
-		databaseExecutor.submit(new TrCallable<Void>() {
-
-			@Override
-			public Void call(EntityManager entityManager) {
-				orderDAO.changeStatus(orderId, OrderStatus.IN_FAILED);
-				return null;
-			}
-		}, MAX_STATUS_CHANGE_FAIL_COUNT);
+	private void processInFailed(String orderId) {
+		orderDAO.changeStatus(orderId, OrderStatus.IN_FAILED);
 	}
 
-	private void processOutTransfer(final OrderInfo orderUnderWork) {
-		Transfer outTransfer = orderUnderWork.getOutTransfer();
-		String orderId = orderUnderWork.getId();
+	private void processOutTransfer(String orderId, Transfer outTransfer) {
 		try {
 			MoneyService moneyService = moneyServiceProvider.get(outTransfer);
-			moneyService.sendMoney(outTransfer.getAddress(), outTransfer.getAmount(), true);
-			processSuccess(orderId, outTransfer.getAmount());
+			moneyService.sendMoney(outTransfer.getAddress(), outTransfer.getAmount());
+			processSuccess(orderId);
 		} catch (Exception ex) {
 			processOutFailed(orderId);
 		}
 	}
 
-	private void processSuccess(final String orderId, final Amount outAmount) {
-		databaseExecutor.submit(new TrCallable<Void>() {
-
-			@Override
-			public Void call(EntityManager entityManager) {
-				orderDAO.changeStatusAndOutAmount(orderId, OrderStatus.SUCCESS, outAmount);
-				return null;
-			}
-		}, MAX_STATUS_CHANGE_FAIL_COUNT);
+	private void processSuccess(String orderId) {
+		orderDAO.changeStatus(orderId, OrderStatus.SUCCESS);
 	}
 
-	private void processOutFailed(final String orderId) {
-		databaseExecutor.submit(new TrCallable<Void>() {
-
-			@Override
-			public Void call(EntityManager entityManager) {
-				orderDAO.changeStatus(orderId, OrderStatus.OUT_FAILED);
-				return null;
-			}
-		}, MAX_STATUS_CHANGE_FAIL_COUNT);
+	private void processOutFailed(String orderId) {
+		orderDAO.changeStatus(orderId, OrderStatus.OUT_FAILED);
 	}
 }

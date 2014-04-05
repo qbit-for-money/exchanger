@@ -1,8 +1,11 @@
 package com.qbit.exchanger.env;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.Properties;
 import javax.inject.Singleton;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
@@ -14,6 +17,7 @@ import javax.xml.bind.annotation.XmlTransient;
  */
 @Singleton
 @XmlRootElement
+@XmlAccessorType(XmlAccessType.PROPERTY)
 public class Env {
 
 	private final Properties properties;
@@ -36,7 +40,7 @@ public class Env {
 	public String getMailBotAddress() {
 		return properties.getProperty("mail.bot.address");
 	}
-
+	
 	@XmlTransient
 	public String getMailBotPersonal() {
 		return properties.getProperty("mail.bot.personal");
@@ -55,6 +59,16 @@ public class Env {
 	@XmlTransient
 	public int getOrderCleanupPeriodHours() {
 		return Integer.parseInt(properties.getProperty("order.cleanup.period.hours"));
+	}
+	
+	@XmlElement
+	public BigDecimal getRateMultiplier() {
+		return new BigDecimal(properties.getProperty("rate.multiplier"));
+	}
+	
+	@XmlElement
+	public BigDecimal getMaxTransactionAmountToBalanceCoef() {
+		return new BigDecimal(properties.getProperty("money.max.transaction.amount.to.balance.coef"));
 	}
 
 	@XmlTransient

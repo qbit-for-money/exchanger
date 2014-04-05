@@ -13,8 +13,6 @@ public interface MoneyService {
 	
 	void sendMoney(String address, Amount amount) throws Exception;
 	
-	void sendMoney(String address, Amount amount, boolean unreserve) throws Exception;
-	
 	/**
 	 * Optional
 	 * @param address
@@ -23,6 +21,4 @@ public interface MoneyService {
 	 * @throws Exception 
 	 */
 	Amount receiveMoney(String address, Amount amount) throws Exception;
-
-	boolean reserve(String address, Amount amount);
 }
