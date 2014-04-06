@@ -5,6 +5,7 @@ import com.qbit.exchanger.external.exchange.core.Exchange;
 import com.qbit.exchanger.money.core.MoneyService;
 import com.qbit.exchanger.money.core.MoneyServiceProvider;
 import com.qbit.exchanger.money.model.Amount;
+import com.qbit.exchanger.money.model.Currency;
 import com.qbit.exchanger.money.model.Rate;
 import com.qbit.exchanger.money.model.Transfer;
 import com.qbit.exchanger.order.dao.OrderDAO;
@@ -62,78 +63,79 @@ public class OrderFlowWorker implements Runnable {
 		Transfer outTransfer = orderUnderWork.getOutTransfer();
 		Rate rate = exchange.getRate(inTransfer.getCurrency(), outTransfer.getCurrency());
 		if ((rate != null) && rate.isValid()) {
-			if (processInTransfer(orderId, inTransfer, rate)) {
-				processOutTransfer(orderId, outTransfer);
+			Amount receivedAmount = processInTransfer(orderId, inTransfer.getCurrency(), inTransfer.getAddress(),
+					inTransfer.getAmount(), rate);
+			if (isReceivedAmountValid(receivedAmount, rate)) {
+				processOutTransfer(orderId, outTransfer.getCurrency(), outTransfer.getAddress(),
+						outTransfer.getAmount());
 			}
 		} else {
 			logger.error("Invalid rate: " + rate);
 		}
 	}
 
-	private boolean processInTransfer(String orderId, Transfer inTransfer, Rate rate) throws Exception {
-		boolean ok;
-		if (inTransfer.isCrypto()) {
-			ok = processCryptoInTransfer(orderId, inTransfer, rate);
+	private Amount processInTransfer(String orderId, Currency inCurrency, String inAddress,
+			Amount inAmount, Rate rate) throws Exception {
+		Amount receivedAmount;
+		if (inCurrency.isCrypto()) {
+			receivedAmount = processCryptoInTransfer(orderId, inCurrency, inAddress, rate);
 		} else {
-			ok = processDefaultInTransfer(orderId, inTransfer, rate);
+			receivedAmount = processDefaultInTransfer(orderId, inCurrency, inAddress, inAmount, rate);
 		}
-		return ok;
+		return receivedAmount;
 	}
 	
-	private boolean processCryptoInTransfer(String orderId, Transfer inTransfer, Rate rate) {
-		boolean ok;
-		CryptoService cryptoService = moneyServiceProvider.get(inTransfer, CryptoService.class);
-		Amount amountReceived = cryptoService.getBalance(inTransfer.getAddress());
-		if (isReceivedAmountValid(amountReceived, rate)) {
-			processPayed(orderId, rate, amountReceived);
-			ok = true;
+	private Amount processCryptoInTransfer(String orderId, Currency inCurrency, String inAddress, Rate rate) {
+		CryptoService cryptoService = moneyServiceProvider.get(inCurrency, CryptoService.class);
+		Amount receivedAmount = cryptoService.getBalance(inAddress);
+		if (isReceivedAmountValid(receivedAmount, rate)) {
+			processPayed(orderId, rate, receivedAmount);
 		} else {
 			if (logger.isInfoEnabled()) {
-				logger.info("Too small amount received to address \"" + inTransfer.getAddress() + "\".");
+				logger.info("Too small amount received to address \"" + inAddress + "\".");
 			}
-			ok = false;
 		}
-		return ok;
+		return receivedAmount;
 	}
 	
-	private boolean processDefaultInTransfer(String orderId, Transfer inTransfer, Rate rate) {
-		boolean ok;
-		MoneyService moneyService = moneyServiceProvider.get(inTransfer);
+	private Amount processDefaultInTransfer(String orderId, Currency inCurrency, String inAddress,
+			Amount inAmount, Rate rate) {
+		MoneyService moneyService = moneyServiceProvider.get(inCurrency);
+		Amount receivedAmount;
 		try {
-			Amount amountReceived = moneyService.receiveMoney(inTransfer.getAddress(), inTransfer.getAmount());
-			if (isReceivedAmountValid(amountReceived, rate)) {
-				processPayed(orderId, rate, amountReceived);
-				ok = true;
+			receivedAmount = moneyService.receiveMoney(inAddress, inAmount);
+			if (isReceivedAmountValid(receivedAmount, rate)) {
+				processPayed(orderId, rate, receivedAmount);
 			} else {
-				logger.error("Too small amount received to address \"" + inTransfer.getAddress() + "\".");
+				logger.error("Too small amount received to address \"" + inAddress + "\".");
 				processInFailed(orderId);
-				ok = false;
 			}
 		} catch (Exception ex) {
 			logger.error(ex.getMessage(), ex);
 			processInFailed(orderId);
-			ok = false;
+			receivedAmount = null;
 		}
-		return ok;
+		return receivedAmount;
 	}
 	
-	private boolean isReceivedAmountValid(Amount amountReceived, Rate rate) {
-		return ((amountReceived != null) && amountReceived.isPositive()
-				&& (rate != null) && rate.isValid() && rate.mul(amountReceived).isPositive());
+	private boolean isReceivedAmountValid(Amount receivedAmount, Rate rate) {
+		return ((receivedAmount != null) && receivedAmount.isPositive()
+				&& (rate != null) && rate.isValid() && rate.mul(receivedAmount).isPositive());
 	}
 
-	private void processPayed(String orderId, Rate rate, Amount amountReceived) {
-		orderDAO.changeStatusAndAmounts(orderId, OrderStatus.PAYED, amountReceived, rate.mul(amountReceived));
+	private void processPayed(String orderId, Rate rate, Amount receivedAmount) {
+		orderDAO.changeStatusAndAmounts(orderId, OrderStatus.PAYED, receivedAmount, rate.mul(receivedAmount));
 	}
 
 	private void processInFailed(String orderId) {
 		orderDAO.changeStatus(orderId, OrderStatus.IN_FAILED);
 	}
 
-	private void processOutTransfer(String orderId, Transfer outTransfer) {
+	private void processOutTransfer(String orderId, Currency outCurrency, String outAddress,
+			Amount outAmount) {
 		try {
-			MoneyService moneyService = moneyServiceProvider.get(outTransfer);
-			moneyService.sendMoney(outTransfer.getAddress(), outTransfer.getAmount());
+			MoneyService moneyService = moneyServiceProvider.get(outCurrency);
+			moneyService.sendMoney(outAddress, outAmount);
 			processSuccess(orderId);
 		} catch (Exception ex) {
 			processOutFailed(orderId);

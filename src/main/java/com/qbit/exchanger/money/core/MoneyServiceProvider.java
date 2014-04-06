@@ -3,7 +3,6 @@ package com.qbit.exchanger.money.core;
 import com.qbit.exchanger.money.bitcoin.BitcoinMoneyService;
 import com.qbit.exchanger.money.litecoin.LitecoinMoneyService;
 import com.qbit.exchanger.money.model.Currency;
-import com.qbit.exchanger.money.model.Transfer;
 import com.qbit.exchanger.money.yandex.YandexMoneyService;
 import java.util.EnumMap;
 import java.util.Map;
@@ -26,13 +25,6 @@ public class MoneyServiceProvider {
 
 	private Map<Currency, MoneyService> servicesMap;
 
-	public MoneyService get(Transfer transfer) {
-		if ((transfer == null) || !transfer.isValid()) {
-			throw new IllegalArgumentException("Illegal transfer.");
-		}
-		return get(transfer.getCurrency());
-	}
-
 	public MoneyService get(Currency currency) {
 		if (currency == null) {
 			throw new IllegalArgumentException("Illegal transfer.");
@@ -42,10 +34,6 @@ public class MoneyServiceProvider {
 			throw new UnsupportedOperationException("Currency not supported.");
 		}
 		return moneyService;
-	}
-	
-	public <T extends MoneyService> T get(Transfer transfer, Class<T> type) {
-		return (T) get(transfer);
 	}
 	
 	public <T extends MoneyService> T get(Currency currency, Class<T> type) {

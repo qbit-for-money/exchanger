@@ -70,7 +70,7 @@ public class OrderService {
 		}
 
 		Transfer outTransfer = orderInfo.getOutTransfer();
-		MoneyService moneyService = moneyServiceProvider.get(outTransfer);
+		MoneyService moneyService = moneyServiceProvider.get(outTransfer.getCurrency());
 		if (!testBalanceAgainstAmount(moneyService, outTransfer.getAmount())) {
 			throw new OrderTestException();
 		}
