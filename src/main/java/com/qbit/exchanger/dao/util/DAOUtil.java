@@ -13,7 +13,7 @@ import javax.persistence.criteria.CriteriaQuery;
  * @author Александр
  */
 public final class DAOUtil {
-	
+
 	private DAOUtil() {
 	}
 
@@ -53,7 +53,7 @@ public final class DAOUtil {
 		Query query = entityManager.createQuery(criteriaQuery);
 		return ((Long) query.getSingleResult()).intValue();
 	}
-	
+
 	public static <T> T invokeInTransaction(EntityManagerFactory entityManagerFactory,
 			TrCallable<T> callable) {
 		T result = null;

@@ -67,7 +67,7 @@ public class OrderFlowWorker implements Runnable {
 					inTransfer.getAmount(), rate);
 			if (isReceivedAmountValid(receivedAmount, rate)) {
 				processOutTransfer(orderId, outTransfer.getCurrency(), outTransfer.getAddress(),
-						outTransfer.getAmount());
+						rate.mul(receivedAmount));
 			}
 		} else {
 			logger.error("Invalid rate: " + rate);
