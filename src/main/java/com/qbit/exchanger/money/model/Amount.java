@@ -20,6 +20,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Amount implements Serializable, Comparable<Amount> {
 	
+	public static Amount clone(Amount amount) {
+		return new Amount(amount.getCoins(), amount.getCents(), amount.getCentsInCoin());
+	}
+	
 	public static Amount zero(long centsInCoin) {
 		return new Amount(0, 0, centsInCoin);
 	}

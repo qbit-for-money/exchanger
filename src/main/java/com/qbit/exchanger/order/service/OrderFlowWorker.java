@@ -2,6 +2,7 @@ package com.qbit.exchanger.order.service;
 
 import com.qbit.exchanger.admin.CryptoService;
 import com.qbit.exchanger.external.exchange.core.Exchange;
+import com.qbit.exchanger.mail.MailService;
 import com.qbit.exchanger.money.core.MoneyService;
 import com.qbit.exchanger.money.core.MoneyServiceProvider;
 import com.qbit.exchanger.money.model.Amount;
@@ -35,6 +36,9 @@ public class OrderFlowWorker implements Runnable {
 
 	@Inject
 	private Exchange exchange;
+	
+	@Inject
+	private MailService mailService;
 
 	@Override
 	public void run() {
@@ -63,11 +67,14 @@ public class OrderFlowWorker implements Runnable {
 		Transfer outTransfer = orderUnderWork.getOutTransfer();
 		Rate rate = exchange.getRate(inTransfer.getCurrency(), outTransfer.getCurrency());
 		if ((rate != null) && rate.isValid()) {
+			mailService.send(orderUnderWork);
 			Amount receivedAmount = processInTransfer(orderId, inTransfer.getCurrency(), inTransfer.getAddress(),
 					inTransfer.getAmount(), rate);
 			if (isReceivedAmountValid(receivedAmount, rate)) {
+				mailService.send(orderUnderWork);
 				processOutTransfer(orderId, outTransfer.getCurrency(), outTransfer.getAddress(),
 						rate.mul(receivedAmount));
+				mailService.send(orderUnderWork);
 			}
 		} else {
 			logger.error("Invalid rate: " + rate);

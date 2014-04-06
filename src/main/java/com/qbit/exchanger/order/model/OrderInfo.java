@@ -59,6 +59,17 @@ import javax.xml.bind.annotation.XmlTransient;
 public class OrderInfo implements Identifiable<String>, Serializable {
 
 	private static final long serialVersionUID = 1L;
+	
+	public static OrderInfo clone(OrderInfo orderInfo) {
+		OrderInfo result = new OrderInfo();
+		result.setId(orderInfo.getId());
+		result.setCreationDate(orderInfo.getCreationDate());
+		result.setUserPublicKey(orderInfo.getUserPublicKey());
+		result.setInTransfer(Transfer.clone(orderInfo.getInTransfer()));
+		result.setOutTransfer(Transfer.clone(orderInfo.getOutTransfer()));
+		result.setStatus(orderInfo.getStatus());
+		return result;
+	}
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

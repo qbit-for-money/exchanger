@@ -19,6 +19,15 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Transfer implements Serializable {
+	
+	public static Transfer clone(Transfer transfer) {
+		Transfer result = new Transfer();
+		result.setType(transfer.getType());
+		result.setCurrency(transfer.getCurrency());
+		result.setAddress(transfer.getAddress());
+		result.setAmount(Amount.clone(transfer.getAmount()));
+		return result;
+	}
 
 	private TransferType type;
 
