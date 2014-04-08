@@ -1,6 +1,5 @@
 package com.qbit.exchanger.mail;
 
-import com.qbit.exchanger.common.model.Identifiable;
 import com.qbit.exchanger.order.model.OrderStatus;
 import java.io.Serializable;
 import java.util.Objects;
@@ -16,19 +15,18 @@ import javax.persistence.IdClass;
 @Entity
 @IdClass(MailNotificationPK.class)
 @Access(AccessType.FIELD)
-public class MailNotification implements Identifiable<String>, Serializable {
+public class MailNotification implements Serializable {
 	
 	@Id
 	private String orderId;
 	@Id
 	private OrderStatus orderStatus;
 
-	@Override
-	public String getId() {
+	public String getOrderId() {
 		return orderId;
 	}
 	
-	public void setId(String id) {
+	public void setOrderId(String id) {
 		this.orderId = id;
 	}
 
