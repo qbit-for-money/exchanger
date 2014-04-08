@@ -39,17 +39,6 @@ import javax.xml.bind.annotation.XmlTransient;
 	@NamedQuery(name = "OrderInfo.findByUserAndTimestamp",
 			query = "SELECT o FROM OrderInfo o WHERE o.userPublicKey = :userPublicKey"
 			+ " AND o.creationDate = :creationDate"),
-	@NamedQuery(name = "OrderInfo.changeStatus",
-			query = "UPDATE OrderInfo o SET o.status = :orderStatus WHERE o.id = :id"),
-	@NamedQuery(name = "OrderInfo.changeStatusAndInAmount",
-			query = "UPDATE OrderInfo o SET o.status = :orderStatus, o.inTransfer.amount = :inAmount"
-			+ " WHERE o.id = :id"),
-	@NamedQuery(name = "OrderInfo.changeStatusAndOutAmount",
-			query = "UPDATE OrderInfo o SET o.status = :orderStatus, o.outTransfer.amount = :outAmount"
-			+ " WHERE o.id = :id"),
-	@NamedQuery(name = "OrderInfo.changeStatusAndAmounts",
-			query = "UPDATE OrderInfo o SET o.status = :orderStatus, o.inTransfer.amount = :inAmount"
-			+ ", o.outTransfer.amount = :outAmount WHERE o.id = :id"),
 	@NamedQuery(name = "OrderInfo.cleanUp",
 			query = "DELETE FROM OrderInfo o WHERE o.creationDate < :deadline"
 			+ " AND o.status = com.qbit.exchanger.order.model.OrderStatus.INITIAL")})
@@ -102,7 +91,7 @@ public class OrderInfo implements Identifiable<String>, Serializable {
 	private Transfer outTransfer;
 
 	private OrderStatus status;
-
+	
 	@Override
 	public String getId() {
 		return id;

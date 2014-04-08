@@ -2,6 +2,7 @@ package com.qbit.exchanger.mail;
 
 import com.qbit.exchanger.env.Env;
 import com.qbit.exchanger.order.model.OrderInfo;
+import com.qbit.exchanger.order.model.OrderStatus;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -33,6 +34,9 @@ public class MailService {
 
 	@Inject
 	private Env env;
+	
+	@Inject
+	private MailNotificationDAO mailNotificationDAO;
 
 	private final Executor executor = Executors.newCachedThreadPool();
 
@@ -57,11 +61,17 @@ public class MailService {
 			public void run() {
 				try {
 					String tmplPrefix;
-					if (safeOrderInfo.isValid()) {
-						tmplPrefix = safeOrderInfo.getStatus().name().toLowerCase();
-					} else {
-						tmplPrefix = "invalid";
-					}
+					//if (safeOrderInfo.isValid()) {
+					if((OrderStatus.INITIAL == safeOrderInfo.getStatus()) 
+							&& mailNotificationDAO.isNotificationSent(safeOrderInfo.getId(), safeOrderInfo.getStatus())) {
+						return;
+					} 
+					tmplPrefix = safeOrderInfo.getStatus().name().toLowerCase();
+					//} else {
+						//tmplPrefix = "invalid";
+					//}
+					mailNotificationDAO.registerNotification(safeOrderInfo.getId(), safeOrderInfo.getStatus());
+						
 					send(safeOrderInfo.getUserPublicKey(), "[INFO] Order #" + safeOrderInfo.getId(),
 							processTemplate(tmplPrefix, safeOrderInfo));
 				} catch (Exception ex) {

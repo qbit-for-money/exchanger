@@ -30,7 +30,7 @@ import javax.persistence.TypedQuery;
  */
 @Singleton
 public class OrderDAO {
-	
+
 	@Inject
 	private Env env;
 
@@ -46,7 +46,7 @@ public class OrderDAO {
 			entityManager.close();
 		}
 	}
-	
+
 	public List<OrderInfo> findByStatus(EnumSet<OrderStatus> statuses) {
 		if ((statuses == null) || statuses.isEmpty()) {
 			return Collections.emptyList();
@@ -60,7 +60,7 @@ public class OrderDAO {
 			entityManager.close();
 		}
 	}
-	
+
 	public List<OrderInfo> findByUserAndStatus(String userPublicKey, EnumSet<OrderStatus> statuses) {
 		if ((userPublicKey == null) || userPublicKey.isEmpty() || (statuses == null) || statuses.isEmpty()) {
 			return Collections.emptyList();
@@ -91,76 +91,79 @@ public class OrderDAO {
 		}
 	}
 
-	public void changeStatus(final String id, final OrderStatus orderStatus) {
+	public OrderInfo changeStatus(final String id, final OrderStatus orderStatus) {
 		if ((id == null) || (orderStatus == null)) {
 			throw new IllegalArgumentException();
 		}
-		invokeInTransaction(entityManagerFactory, new TrCallable<Void>() {
+		return invokeInTransaction(entityManagerFactory, new TrCallable<OrderInfo>() {
 
 			@Override
-			public Void call(EntityManager entityManager) {
-				Query query = entityManager.createNamedQuery("OrderInfo.changeStatus");
-				query.setParameter("id", id);
-				query.setParameter("orderStatus", orderStatus);
-				query.executeUpdate();
-				return null;
+			public OrderInfo call(EntityManager entityManager) {
+				OrderInfo orderInfo = entityManager.find(OrderInfo.class, id);
+				if (orderInfo == null) {
+					return null;
+				}
+				orderInfo.setStatus(orderStatus);
+				return orderInfo;
 			}
 		});
 	}
 
-	public void changeStatusAndInAmount(final String id, final OrderStatus orderStatus, final Amount inAmount) {
+	public OrderInfo changeStatusAndInAmount(final String id, final OrderStatus orderStatus, final Amount inAmount) {
 		if ((id == null) || (orderStatus == null) || (inAmount == null) || !inAmount.isValid()) {
 			throw new IllegalArgumentException();
 		}
-		invokeInTransaction(entityManagerFactory, new TrCallable<Void>() {
+		return invokeInTransaction(entityManagerFactory, new TrCallable<OrderInfo>() {
 
 			@Override
-			public Void call(EntityManager entityManager) {
-				Query query = entityManager.createNamedQuery("OrderInfo.changeStatusAndInAmount");
-				query.setParameter("id", id);
-				query.setParameter("orderStatus", orderStatus);
-				query.setParameter("inAmount", inAmount);
-				query.executeUpdate();
-				return null;
+			public OrderInfo call(EntityManager entityManager) {
+				OrderInfo orderInfo = entityManager.find(OrderInfo.class, id);
+				if (orderInfo == null) {
+					return null;
+				}
+				orderInfo.setStatus(orderStatus);
+				orderInfo.getInTransfer().setAmount(inAmount);
+				return orderInfo;
 			}
 		});
 	}
 
-	public void changeStatusAndOutAmount(final String id, final OrderStatus orderStatus, final Amount outAmount) {
+	public OrderInfo changeStatusAndOutAmount(final String id, final OrderStatus orderStatus, final Amount outAmount) {
 		if ((id == null) || (orderStatus == null) || (outAmount == null) || !outAmount.isValid()) {
 			throw new IllegalArgumentException();
 		}
-		invokeInTransaction(entityManagerFactory, new TrCallable<Void>() {
+		return invokeInTransaction(entityManagerFactory, new TrCallable<OrderInfo>() {
 
 			@Override
-			public Void call(EntityManager entityManager) {
-				Query query = entityManager.createNamedQuery("OrderInfo.changeStatusAndOutAmount");
-				query.setParameter("id", id);
-				query.setParameter("orderStatus", orderStatus);
-				query.setParameter("outAmount", outAmount);
-				query.executeUpdate();
-				return null;
+			public OrderInfo call(EntityManager entityManager) {
+				OrderInfo orderInfo = entityManager.find(OrderInfo.class, id);
+				if (orderInfo == null) {
+					return null;
+				}
+				orderInfo.setStatus(orderStatus);
+				orderInfo.getOutTransfer().setAmount(outAmount);
+				return orderInfo;
 			}
 		});
 	}
 
-	public void changeStatusAndAmounts(final String id, final OrderStatus orderStatus,
-			final Amount inAmount, final Amount outAmount) {
+	public OrderInfo changeStatusAndAmounts(final String id, final OrderStatus orderStatus, final Amount inAmount, final Amount outAmount) {
 		if ((id == null) || (orderStatus == null) || (inAmount == null) || !inAmount.isValid()
 				|| (outAmount == null) || !outAmount.isValid()) {
 			throw new IllegalArgumentException();
 		}
-		invokeInTransaction(entityManagerFactory, new TrCallable<Void>() {
+		return invokeInTransaction(entityManagerFactory, new TrCallable<OrderInfo>() {
 
 			@Override
-			public Void call(EntityManager entityManager) {
-				Query query = entityManager.createNamedQuery("OrderInfo.changeStatusAndAmounts");
-				query.setParameter("id", id);
-				query.setParameter("orderStatus", orderStatus);
-				query.setParameter("inAmount", inAmount);
-				query.setParameter("outAmount", outAmount);
-				query.executeUpdate();
-				return null;
+			public OrderInfo call(EntityManager entityManager) {
+				OrderInfo orderInfo = entityManager.find(OrderInfo.class, id);
+				if (orderInfo == null) {
+					return null;
+				}
+				orderInfo.setStatus(orderStatus);
+				orderInfo.getInTransfer().setAmount(inAmount);
+				orderInfo.getOutTransfer().setAmount(outAmount);
+				return orderInfo;
 			}
 		});
 	}
@@ -199,7 +202,7 @@ public class OrderDAO {
 			}
 		});
 	}
-	
+
 	public void cleanUp() {
 		invokeInTransaction(entityManagerFactory, new TrCallable<Void>() {
 

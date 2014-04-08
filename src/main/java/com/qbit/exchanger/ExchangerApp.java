@@ -7,6 +7,7 @@ import com.qbit.exchanger.env.Env;
 import com.qbit.exchanger.external.exchange.btce.BTCExchange;
 import com.qbit.exchanger.external.exchange.core.Exchange;
 import com.qbit.exchanger.external.exchange.core.ExchangeFacade;
+import com.qbit.exchanger.mail.MailNotificationDAO;
 import com.qbit.exchanger.mail.MailService;
 import com.qbit.exchanger.money.bitcoin.BitcoinMoneyService;
 import com.qbit.exchanger.money.core.MoneyServiceProvider;
@@ -56,6 +57,7 @@ public class ExchangerApp extends Application {
 		addBinding(newBinder(UserDAO.class).to(UserDAO.class).in(Singleton.class), configuration);
 		addBinding(newBinder(OrderDAO.class).to(OrderDAO.class).in(Singleton.class), configuration);
 		addBinding(newBinder(BufferDAO.class).to(BufferDAO.class).in(Singleton.class), configuration);
+		addBinding(newBinder(MailNotificationDAO.class).to(MailNotificationDAO.class).in(Singleton.class), configuration);
 
 		addBinding(newBinder(BitcoinMoneyService.class).to(BitcoinMoneyService.class).in(Singleton.class), configuration);
 		addBinding(newBinder(LitecoinMoneyService.class).to(LitecoinMoneyService.class).in(Singleton.class), configuration);

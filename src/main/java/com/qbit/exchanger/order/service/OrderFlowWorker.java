@@ -58,71 +58,68 @@ public class OrderFlowWorker implements Runnable {
 		}
 	}
 
-	private void processOrderUnderWork(OrderInfo orderUnderWork) throws Exception {
+	private void processOrderUnderWork(final OrderInfo orderUnderWork) throws Exception {
 		if (!orderUnderWork.isValid()) {
 			throw new IllegalArgumentException("Order #" + orderUnderWork.getId() + " is inconsistent.");
 		}
 		String orderId = orderUnderWork.getId();
 		Transfer inTransfer = orderUnderWork.getInTransfer();
-		Transfer outTransfer = orderUnderWork.getOutTransfer();
-		Rate rate = exchange.getRate(inTransfer.getCurrency(), outTransfer.getCurrency());
+		Rate rate = exchange.getRate(inTransfer.getCurrency(), orderUnderWork.getOutTransfer().getCurrency());
 		if ((rate != null) && rate.isValid()) {
 			mailService.send(orderUnderWork);
-			Amount receivedAmount = processInTransfer(orderId, inTransfer.getCurrency(), inTransfer.getAddress(),
+			OrderInfo payedOrder = processInTransfer(orderId, inTransfer.getCurrency(), inTransfer.getAddress(),
 					inTransfer.getAmount(), rate);
-			if (isReceivedAmountValid(receivedAmount, rate)) {
-				mailService.send(orderUnderWork);
-				processOutTransfer(orderId, outTransfer.getCurrency(), outTransfer.getAddress(),
-						rate.mul(receivedAmount));
-				mailService.send(orderUnderWork);
+			if ((payedOrder != null) && (OrderStatus.PAYED == payedOrder.getStatus())) {
+				mailService.send(payedOrder);
+				Transfer outTransfer = payedOrder.getOutTransfer();
+				OrderInfo finalOrder = processOutTransfer(orderId, outTransfer.getCurrency(), outTransfer.getAddress(),
+					outTransfer.getAmount());
+				mailService.send(finalOrder);
 			}
 		} else {
 			logger.error("Invalid rate: " + rate);
 		}
 	}
 
-	private Amount processInTransfer(String orderId, Currency inCurrency, String inAddress,
+	private OrderInfo processInTransfer(String orderId, Currency inCurrency, String inAddress,
 			Amount inAmount, Rate rate) throws Exception {
-		Amount receivedAmount;
+		OrderInfo orderInfo;
 		if (inCurrency.isCrypto()) {
-			receivedAmount = processCryptoInTransfer(orderId, inCurrency, inAddress, rate);
+			orderInfo = processCryptoInTransfer(orderId, inCurrency, inAddress, rate);
 		} else {
-			receivedAmount = processDefaultInTransfer(orderId, inCurrency, inAddress, inAmount, rate);
+			orderInfo = processDefaultInTransfer(orderId, inCurrency, inAddress, inAmount, rate);
 		}
-		return receivedAmount;
+		return orderInfo;
 	}
 	
-	private Amount processCryptoInTransfer(String orderId, Currency inCurrency, String inAddress, Rate rate) {
+	private OrderInfo processCryptoInTransfer(String orderId, Currency inCurrency, String inAddress, Rate rate) {
 		CryptoService cryptoService = moneyServiceProvider.get(inCurrency, CryptoService.class);
 		Amount receivedAmount = cryptoService.getBalance(inAddress);
 		if (isReceivedAmountValid(receivedAmount, rate)) {
-			processPayed(orderId, rate, receivedAmount);
+			return processPayed(orderId, rate, receivedAmount);
 		} else {
 			if (logger.isInfoEnabled()) {
 				logger.info("Too small amount received to address \"" + inAddress + "\".");
 			}
+			return null;
 		}
-		return receivedAmount;
 	}
 	
-	private Amount processDefaultInTransfer(String orderId, Currency inCurrency, String inAddress,
+	private OrderInfo processDefaultInTransfer(String orderId, Currency inCurrency, String inAddress,
 			Amount inAmount, Rate rate) {
 		MoneyService moneyService = moneyServiceProvider.get(inCurrency);
-		Amount receivedAmount;
 		try {
-			receivedAmount = moneyService.receiveMoney(inAddress, inAmount);
+			Amount receivedAmount = moneyService.receiveMoney(inAddress, inAmount);
 			if (isReceivedAmountValid(receivedAmount, rate)) {
-				processPayed(orderId, rate, receivedAmount);
+				return processPayed(orderId, rate, receivedAmount);
 			} else {
 				logger.error("Too small amount received to address \"" + inAddress + "\".");
-				processInFailed(orderId);
+				return processInFailed(orderId);
 			}
 		} catch (Exception ex) {
 			logger.error(ex.getMessage(), ex);
-			processInFailed(orderId);
-			receivedAmount = null;
+			return processInFailed(orderId);
 		}
-		return receivedAmount;
 	}
 	
 	private boolean isReceivedAmountValid(Amount receivedAmount, Rate rate) {
@@ -130,30 +127,31 @@ public class OrderFlowWorker implements Runnable {
 				&& (rate != null) && rate.isValid() && rate.mul(receivedAmount).isPositive());
 	}
 
-	private void processPayed(String orderId, Rate rate, Amount receivedAmount) {
-		orderDAO.changeStatusAndAmounts(orderId, OrderStatus.PAYED, receivedAmount, rate.mul(receivedAmount));
+	private OrderInfo processPayed(String orderId, Rate rate, Amount receivedAmount) {
+		return orderDAO.changeStatusAndAmounts(orderId, OrderStatus.PAYED, receivedAmount, rate.mul(receivedAmount));
 	}
 
-	private void processInFailed(String orderId) {
-		orderDAO.changeStatus(orderId, OrderStatus.IN_FAILED);
+	private OrderInfo processInFailed(String orderId) {
+		return orderDAO.changeStatus(orderId, OrderStatus.IN_FAILED);
 	}
 
-	private void processOutTransfer(String orderId, Currency outCurrency, String outAddress,
+	private OrderInfo processOutTransfer(String orderId, Currency outCurrency, String outAddress,
 			Amount outAmount) {
 		try {
 			MoneyService moneyService = moneyServiceProvider.get(outCurrency);
 			moneyService.sendMoney(outAddress, outAmount);
-			processSuccess(orderId);
+			return processSuccess(orderId);
 		} catch (Exception ex) {
-			processOutFailed(orderId);
+			logger.error(ex.getMessage(), ex);
+			return processOutFailed(orderId);
 		}
 	}
 
-	private void processSuccess(String orderId) {
-		orderDAO.changeStatus(orderId, OrderStatus.SUCCESS);
+	private OrderInfo processSuccess(String orderId) {
+		return orderDAO.changeStatus(orderId, OrderStatus.SUCCESS);
 	}
 
-	private void processOutFailed(String orderId) {
-		orderDAO.changeStatus(orderId, OrderStatus.OUT_FAILED);
+	private OrderInfo processOutFailed(String orderId) {
+		return orderDAO.changeStatus(orderId, OrderStatus.OUT_FAILED);
 	}
 }

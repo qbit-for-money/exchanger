@@ -18,6 +18,11 @@ public class Rate implements Serializable {
 
 	private final Amount numerator;
 	private final Amount denominator;
+	
+	protected Rate(){
+		numerator = null;
+		denominator = null;
+	}
 
 	public Rate(BigDecimal numerator, Currency fromCurrency, Currency toCurrency) {
 		if ((numerator == null) || (fromCurrency == null)
