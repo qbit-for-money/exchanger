@@ -34,7 +34,7 @@ public class MailService {
 
 	@Inject
 	private Env env;
-	
+
 	@Inject
 	private MailNotificationDAO mailNotificationDAO;
 
@@ -61,17 +61,17 @@ public class MailService {
 			public void run() {
 				try {
 					String tmplPrefix;
-					//if (safeOrderInfo.isValid()) {
-					if((OrderStatus.INITIAL == safeOrderInfo.getStatus()) 
-							&& mailNotificationDAO.isNotificationSent(safeOrderInfo.getId(), safeOrderInfo.getStatus())) {
-						return;
-					} 
-					tmplPrefix = safeOrderInfo.getStatus().name().toLowerCase();
-					//} else {
-						//tmplPrefix = "invalid";
-					//}
+					if (safeOrderInfo.isValid()) {
+						if ((OrderStatus.INITIAL == safeOrderInfo.getStatus())
+								&& mailNotificationDAO.isNotificationSent(safeOrderInfo.getId(), safeOrderInfo.getStatus())) {
+							return;
+						}
+						tmplPrefix = safeOrderInfo.getStatus().name().toLowerCase();
+					} else {
+						tmplPrefix = "invalid";
+					}
 					mailNotificationDAO.registerNotification(safeOrderInfo.getId(), safeOrderInfo.getStatus());
-						
+
 					send(safeOrderInfo.getUserPublicKey(), "[INFO] Order #" + safeOrderInfo.getId(),
 							processTemplate(tmplPrefix, safeOrderInfo));
 				} catch (Exception ex) {
@@ -80,7 +80,7 @@ public class MailService {
 			}
 		});
 	}
-	
+
 	private String processTemplate(String tmplPrefix, OrderInfo orderInfo) throws TemplateException, IOException {
 		Map<String, Object> templateInput = new HashMap<>();
 		templateInput.put("order", orderInfo);
