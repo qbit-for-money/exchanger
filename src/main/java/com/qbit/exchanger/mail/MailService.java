@@ -60,8 +60,13 @@ public class MailService {
 			public void run() {
 				try {
 					if (mailNotificationDAO.isNotificationSent(safeOrderInfo.getId(), safeOrderInfo.getStatus())) {
+
 						return;
 					}
+				} catch (Exception ex) {
+					logger.error(ex.getMessage(), ex);
+				}
+				try {
 					String tmplPrefix;
 
 					if (safeOrderInfo.isValid()) {
@@ -88,6 +93,8 @@ public class MailService {
 	private String processTemplate(String tmplPrefix, OrderInfo orderInfo) throws TemplateException, IOException {
 		Map<String, Object> templateInput = new HashMap<>();
 		templateInput.put("order", orderInfo);
+		templateInput.put("inAmount", orderInfo.getInTransfer().toBigDecimal());
+		templateInput.put("outAmount", orderInfo.getOutTransfer().toBigDecimal());
 		Template template = FREE_MAKER_CFG.getTemplate(tmplPrefix + "-order.tmpl");
 		Writer text = new StringWriter();
 		template.process(templateInput, text);

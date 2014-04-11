@@ -1,11 +1,16 @@
-Dear customer,
+Dear customer.
 
-Too small amount received to our address.
+Order #${order.id} outgoing transaction failed (from us to you).
 
-Order #${order.id} is failed.
+Possible reason:
+Not enought money in appropriate system buffer.
 
-Transaction details:
------------------------------------------------
-Account Number: ${order.outTransfer.address}
-Email: ${order.userPublicKey}
------------------------------------------------
+Decisions:
+Refund the order https://bitgates.com
+Contact system administrator and describe the problem bot.bitgates@gmail.com
+
+Incoming transaction details:
+${inAmount} ${order.inTransfer.currency.code} -> ${order.inTransfer.address}
+
+Outgoing transaction details:
+${order.outTransfer.address} <- ${outAmount} ${order.outTransfer.currency.code}

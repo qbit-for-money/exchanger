@@ -18,7 +18,7 @@ public class UserDAO {
 
 	@Inject
 	private EntityManagerFactory entityManagerFactory;
-	
+
 	public static UserInfo findAndLock(EntityManager entityManager, String publicKey) {
 		if ((entityManager == null) || (publicKey == null) || publicKey.isEmpty()) {
 			return null;
@@ -37,19 +37,16 @@ public class UserDAO {
 			entityManager.close();
 		}
 	}
-	
-	public UserInfo getOrCreate(final String publicKey) {
+
+	public UserInfo create(final String publicKey) {
 		return invokeInTransaction(entityManagerFactory, new TrCallable<UserInfo>() {
 
 			@Override
 			public UserInfo call(EntityManager entityManager) {
-				UserInfo user = entityManager.find(UserInfo.class, publicKey, LockModeType.PESSIMISTIC_WRITE);
-				if (user == null) {
-					user = new UserInfo();
-					user.setPublicKey(publicKey);
-					user.setRegistrationDate(new Date());
-					entityManager.persist(user);
-				}
+				UserInfo user = new UserInfo();
+				user.setPublicKey(publicKey);
+				user.setRegistrationDate(new Date());
+				entityManager.persist(user);
 				return user;
 			}
 		});

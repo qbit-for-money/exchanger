@@ -1,11 +1,11 @@
-Dear customer,
+Dear customer.
 
 Too small amount received to our address.
 
 Order #${order.id} is failed.
 
-Transaction details:
------------------------------------------------
-Account Number: ${order.outTransfer.address}
-Email: ${order.userPublicKey}
------------------------------------------------
+Incoming transaction details:
+${inAmount} ${order.inTransfer.currency.code} -> ${order.inTransfer.address}
+
+Outgoing transaction details:
+${order.outTransfer.address} <- ${outAmount} ${order.outTransfer.currency.code}
