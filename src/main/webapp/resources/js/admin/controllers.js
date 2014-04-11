@@ -10,7 +10,7 @@ adminModule.controller("AdminController", function($rootScope, $scope, adminReso
 			$scope.currency = currencies[0];
 			refreshBalance();
 			resetAmountToSend();
-			refreshTransactions();
+			//refreshTransactions();
 			generateInAddress();
 		}
 	});
