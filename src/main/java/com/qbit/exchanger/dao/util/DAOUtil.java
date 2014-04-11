@@ -3,6 +3,7 @@ package com.qbit.exchanger.dao.util;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityTransaction;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -59,15 +60,16 @@ public final class DAOUtil {
 		T result = null;
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 		try {
-			entityManager.getTransaction().begin();
-			result = callable.call(entityManager);
-			entityManager.getTransaction().commit();
-		} catch (Throwable ex) {
+			EntityTransaction transaction = entityManager.getTransaction();
 			try {
-				entityManager.getTransaction().rollback();
-			} catch (Throwable doNothing) {
+				transaction.begin();
+				result = callable.call(entityManager);
+				transaction.commit();
+			} finally {
+				if (transaction.isActive()) {
+					transaction.rollback();
+				}
 			}
-			throw ex;
 		} finally {
 			entityManager.close();
 		}

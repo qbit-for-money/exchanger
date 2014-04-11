@@ -37,6 +37,8 @@ public class ExchangerApp extends Application {
 
 	@Inject
 	private ServiceLocator serviceLocator;
+	
+	private EntityManagerFactory entityManagerFactory;
 
 	public ExchangerApp() {
 	}
@@ -49,7 +51,7 @@ public class ExchangerApp extends Application {
 
 		addBinding(newBinder(MailService.class).to(MailService.class).in(Singleton.class), configuration);
 
-		EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("exchangerPU");
+		entityManagerFactory = Persistence.createEntityManagerFactory("exchangerPU");
 		addBinding(newBinder(entityManagerFactory).to(EntityManagerFactory.class), configuration);
 
 		addBinding(newBinder(DefaultDAOExecutor.class).to(DAOExecutor.class).in(Singleton.class), configuration);
@@ -85,6 +87,11 @@ public class ExchangerApp extends Application {
 	public void shutdown() {
 		try {
 			serviceLocator.shutdown();
+		} catch (Throwable ex) {
+			// Do nothing
+		}
+		try {
+			entityManagerFactory.close();
 		} catch (Throwable ex) {
 			// Do nothing
 		}
