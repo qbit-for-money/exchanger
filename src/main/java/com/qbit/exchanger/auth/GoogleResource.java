@@ -1,6 +1,7 @@
 package com.qbit.exchanger.auth;
 
 import com.qbit.exchanger.env.Env;
+import com.qbit.exchanger.user.UserDAO;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -45,6 +46,9 @@ public class GoogleResource {
 	
 	@Inject
 	private Env env;
+	
+	@Inject
+	private UserDAO userDAO;
 
 	@GET
 	@Path("authenticate")
@@ -97,6 +101,9 @@ public class GoogleResource {
 			String userId = getGoogleProfileEmail(resourceResponse);
 			if (userId != null) {
 				httpServletRequest.getSession().setAttribute(AuthFilter.USER_ID_KEY, userId);
+				if(userDAO.find(userId) == null) {
+					userDAO.create(userId);
+				}
 			}
 		} catch (OAuthSystemException | OAuthProblemException | IOException e) {
 			throw new WebApplicationException(e);

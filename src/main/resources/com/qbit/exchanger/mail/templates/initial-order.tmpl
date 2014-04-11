@@ -1,4 +1,4 @@
-Dear customer,
+Dear customer.
 
 We have received your exchange request.
 
@@ -6,8 +6,8 @@ We will process and fulfill your request with on 3 hours.
 
 Order #${order.id}
 
-Transaction details:
------------------------------------------------
-Account Number: ${order.outTransfer.address}
-Email: ${order.userPublicKey}
------------------------------------------------
+Incoming transaction details:
+${inAmount} ${order.inTransfer.currency.code} -> ${order.inTransfer.address}
+
+Outgoing transaction details:
+${order.outTransfer.address} <- ${outAmount} ${order.outTransfer.currency.code}

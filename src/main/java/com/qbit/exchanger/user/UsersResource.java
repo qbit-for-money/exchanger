@@ -29,6 +29,6 @@ public class UsersResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public UserInfo current() {
 		String userPublicKey = (String) request.getSession().getAttribute(AuthFilter.USER_ID_KEY);
-		return userDAO.getOrCreate(userPublicKey);
+		return userDAO.find(userPublicKey);
 	}
 }
