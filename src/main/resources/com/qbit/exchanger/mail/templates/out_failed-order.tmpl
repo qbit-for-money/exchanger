@@ -1,16 +1,19 @@
 Dear customer.
 
-Order #${order.id} outgoing transaction failed (from us to you).
+Order #${order.id} outgoing transaction fail (from us to you).
 
 Possible reason:
 Not enought money in appropriate system buffer.
 
 Decisions:
-Refund the order https://bitgates.com
-Contact system administrator and describe the problem bot.bitgates@gmail.com
+- Refund the order.
+- Contact system administrator (bot.bitgates@gmail.com) and describe the problem.
 
 Incoming transaction details:
 ${inAmount} ${order.inTransfer.currency.code} -> ${order.inTransfer.address}
 
 Outgoing transaction details:
 ${order.outTransfer.address} <- ${outAmount} ${order.outTransfer.currency.code}
+
+
+Thank you for using our service https://bitgates.com

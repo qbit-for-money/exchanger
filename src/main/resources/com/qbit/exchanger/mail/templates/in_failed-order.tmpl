@@ -1,11 +1,19 @@
 Dear customer.
 
-Too small amount received to our address.
+Order #${order.id} incoming transaction fail (from you to us).
 
-Order #${order.id} is failed.
+Possible reason:
+Too small amount has been received.
+
+Decisions:
+- Send more money.
+- Refund the order.
 
 Incoming transaction details:
 ${inAmount} ${order.inTransfer.currency.code} -> ${order.inTransfer.address}
 
 Outgoing transaction details:
 ${order.outTransfer.address} <- ${outAmount} ${order.outTransfer.currency.code}
+
+
+Thank you for using our service https://bitgates.com
