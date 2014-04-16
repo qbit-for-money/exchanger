@@ -12,7 +12,7 @@ exchanger
   7. `CREATE DATABASE bitcoindb;`
   8. `CREATE DATABASE litecoindb;`
 9. Создать пользователя **redneckz**:
-  10. `CREATE USER redneckz WITH password 'redneckz_postgres883583df4b71544e3eab67f9bc8079671ee78b4c70e81137f0974a2cd543186fd1de7ba1196bbe6014ab33267785';`
+  10. `CREATE USER redneckz WITH password '*****';`
   11. `GRANT ALL privileges ON DATABASE test TO redneckz;`
   12. `GRANT ALL privileges ON DATABASE bitcoindb TO redneckz;`
   13. `GRANT ALL privileges ON DATABASE litecoindb TO redneckz;`
@@ -29,7 +29,7 @@ exchanger
 23. Для доступа к менежеру **Tomcat** завести пользователя **redneckz**.
 Для этого необходимо изменить файл /etc/tomcat7/tomcat-users.xml: 
   24. `username="redneckz"`
-  25. `password="redneckz_tomcat202335919cdda33404e909ac409fff49b0138ccb5015f1a89919d8735c823c7a9011c13be098f49606fa28f37bf730"` 
+  25. `password="*****"` 
   26. `roles="manager-gui,admin-gui"`
 
 25. Создать почтовый ящик, например, **admin@bitgates.com**
