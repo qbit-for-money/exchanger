@@ -23,11 +23,11 @@
 				</ul>
 				<div class="actions">
 					<button class="btn btn-lg btn-success" 
-							ng-disabled="(currentStepIndex === 0) || (requestCount > 0)"
-							ng-click="goToPrevStep()"><span class="glyphicon glyphicon-chevron-left"></span></button>
+						ng-disabled="(currentStepIndex === 0) || (requestCount > 0)"
+						ng-click="goToPrevStep()"><span class="glyphicon glyphicon-chevron-left"></span></button>
 					<button class="btn btn-lg btn-success" 
-							ng-disabled="(currentStepIndex === (steps.length - 1)) || (requestCount > 0)"
-							ng-click="goToNextStep()"><span class="glyphicon glyphicon-chevron-right"></span></button>
+						ng-disabled="(currentStepIndex === (steps.length - 1)) || (requestCount > 0)"
+						ng-click="goToNextStep()"><span class="glyphicon glyphicon-chevron-right"></span></button>
 				</div>
 			</div>
 		</div>
@@ -55,4 +55,37 @@
 			<alert type="'danger'" close="resetRedirectToResult()"><h4 style="margin-bottom: 0px;">{{actionMessage}}</h4></alert>
 		</div>
 	</div>
+</div>
+<div class="container" ng-if="user === null" ng-controller="ModalDialogOpeningController">
+	<!--div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+			<h3 id="myModalLabel">Modal header</h3>
+		</div>
+		<div class="modal-body">
+			<p>One fine body…</p>
+		</div>
+		<div class="modal-footer">
+			<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+			<button class="btn btn-primary">Save changes</button>
+		</div>
+	</div-->
+
+	<!--div id="myModal" class="modal fade">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title">Modal title</h4>
+				</div>
+				<div class="modal-body">
+					<p>One fine body&hellip;</p>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					<button type="button" class="btn btn-primary">Save changes</button>
+				</div>
+			</div>
+		</div>
+	</div--><!-- /.modal -->
 </div>

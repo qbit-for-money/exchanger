@@ -17,9 +17,9 @@ import javax.servlet.http.HttpServletResponse;
 public class AuthFilter implements Filter {
 
 	public static final String USER_ID_KEY = "user_id";
-	
+
 	private Env env;
-        
+
 	@Override
 	public void init(FilterConfig fc) throws ServletException {
 		env = new Env();
@@ -28,24 +28,15 @@ public class AuthFilter implements Filter {
 	@Override
 	public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
 		HttpServletRequest httpRequest = (HttpServletRequest) servletRequest;
-		
 		String userId = (String) httpRequest.getSession().getAttribute(USER_ID_KEY);
 
 		boolean isRequestToAdminPage = (httpRequest.getRequestURI().equals("/exchanger/admin.jsp")
 				|| ((httpRequest.getPathInfo() != null) && httpRequest.getPathInfo().startsWith("/admin")));
-		boolean isRequestToAuthorization = ((httpRequest.getPathInfo() != null)
-				&& httpRequest.getPathInfo().equals("/oauth2/authorize"));
 		boolean isAdmin = env.getAdminMail().equals(EncryptionUtil.getMD5(userId));
-		if (userId != null) {
-			if (isRequestToAdminPage && !isAdmin) {
-				((HttpServletResponse) servletResponse).sendRedirect("");
-			} else {
-				filterChain.doFilter(servletRequest, servletResponse);
-			}
-		} else if (isRequestToAuthorization) {
-			filterChain.doFilter(servletRequest, servletResponse);
+		if (isRequestToAdminPage && !isAdmin) {
+			((HttpServletResponse) servletResponse).sendRedirect("");
 		} else {
-			httpRequest.getRequestDispatcher("/webapi/oauth2/authenticate").forward(servletRequest, servletResponse);
+			filterChain.doFilter(servletRequest, servletResponse);
 		}
 	}
 
