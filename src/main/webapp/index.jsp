@@ -76,7 +76,7 @@
 
 		<script type="text/javascript" src="resources/js/wizard/result/controllers.js"></script>
 		
-		<script type="text/javascript" src="resources/js/wizard/modal-dialog/controllers.js"></script>
-		<script type="text/javascript" src="resources/js/wizard/modal-dialog/resources.js"></script>
+		<script type="text/javascript" src="resources/js/auth/controllers.js"></script>
+		<script type="text/javascript" src="resources/js/auth/resources.js"></script>
 	</body>
 </html>

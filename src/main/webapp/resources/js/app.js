@@ -16,9 +16,11 @@ angular.module("wizard.currency", ["common", "wizard", "user", "money", "order"]
 angular.module("wizard.amount", ["common", "wizard", "user", "money", "order", "exchange"]);
 angular.module("wizard.result", ["common", "wizard", "user", "money", "order"]);
 
+angular.module("auth", ["ngResource", "user"]);
+
 angular.module("main", ["ngRoute","ui.bootstrap", "chieffancypants.loadingBar",
 	"common", "user", "order", "money", "money.yandex", "exchange",
-	"wizard", "wizard.currency", "wizard.amount", "wizard.result"]);
+	"wizard", "wizard.currency", "wizard.amount", "wizard.result", "auth"]);
 
 angular.module("main").config(function($routeProvider) {
 	$routeProvider.when("/steps/currency", {

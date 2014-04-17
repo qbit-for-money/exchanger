@@ -5,7 +5,6 @@ import com.octo.captcha.component.image.backgroundgenerator.GradientBackgroundGe
 import com.octo.captcha.component.image.fontgenerator.FontGenerator;
 import com.octo.captcha.component.image.fontgenerator.RandomFontGenerator;
 import com.octo.captcha.component.image.textpaster.RandomTextPaster;
-import com.octo.captcha.component.image.textpaster.SimpleTextPaster;
 import com.octo.captcha.component.image.textpaster.TextPaster;
 import com.octo.captcha.component.image.wordtoimage.ComposedWordToImage;
 import com.octo.captcha.component.image.wordtoimage.WordToImage;
@@ -28,30 +27,32 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.xml.bind.annotation.XmlRootElement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Alexander_Sergeev
  */
 @Path("captcha")
 @Singleton
-public class CaptchaResource {
-	
+public class CaptchaAuthResource {
+
 	@XmlRootElement
 	public static class AuthRequest implements Serializable {
-		
-		private String publicKey;
+
+		private String encodedKey;
 		private String pin;
 		private long timestamp;
 
 		public AuthRequest() {
 		}
 
-		public String getPublicKey() {
-			return publicKey;
+		public String getEncodedKey() {
+			return encodedKey;
 		}
 
-		public void setPublicKey(String publicKey) {
-			this.publicKey = publicKey;
+		public void setEncodedKey(String encodedKey) {
+			this.encodedKey = encodedKey;
 		}
 
 		public String getPin() {
@@ -69,11 +70,17 @@ public class CaptchaResource {
 		public void setTimestamp(long timestamp) {
 			this.timestamp = timestamp;
 		}
-		
+
+		public AuthKey toAuthKey() {
+			return new AuthKey(pin, timestamp);
+		}
+
 		public boolean isValid() {
-			return (publicKey != null) && (pin != null) && (pin.length() == 4);
+			return (encodedKey != null) && (pin != null) && (pin.length() == 4);
 		}
 	}
+	
+	private final Logger logger = LoggerFactory.getLogger(CaptchaAuthResource.class);
 
 	@Context
 	private HttpServletRequest httpServletRequest;
@@ -88,7 +95,7 @@ public class CaptchaResource {
 		AuthKey authKey = new AuthKey(pin, timestamp);
 		String result = AuthKey.encode(authKey);
 		FontGenerator font = new RandomFontGenerator(18, 34);
-		BackgroundGenerator background =  new GradientBackgroundGenerator(360, 50, Color.lightGray, Color.yellow); //EllipseBackgroundGenerator(360, 50);
+		BackgroundGenerator background = new GradientBackgroundGenerator(360, 50, Color.lightGray, Color.yellow); //EllipseBackgroundGenerator(360, 50);
 		TextPaster paster = new RandomTextPaster(4, 15, Color.RED);
 		WordToImage wordToImage = new ComposedWordToImage(font, background, paster);
 		BufferedImage buffer = wordToImage.getImage(result);
@@ -101,40 +108,24 @@ public class CaptchaResource {
 		return outputStream.toByteArray();
 	}
 
-	/*@GET
-	@Path("decrypt")
-	public boolean decrypt(@QueryParam("publicKey") String publicKey, @QueryParam("pin") String pin, @QueryParam("timestamp") long timestamp) throws Exception {
-		if (publicKey.isEmpty()) {
-			throw new IllegalArgumentException();
-		}
-		AuthKey authKeyFromCaptcha = AuthKey.decode(publicKey);
-
-		AuthKey authKeyFromPinAndTimestamp = new AuthKey(pin, timestamp);
-		if (authKeyFromCaptcha.equals(authKeyFromPinAndTimestamp)) {
-			httpServletRequest.getSession().setAttribute(AuthFilter.USER_ID_KEY, publicKey);
-			if (userDAO.find(publicKey) == null) {
-				userDAO.create(publicKey);
-				return true;
-			}
-		}
-		return false;
-	}*/
-	
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	public boolean auth(AuthRequest authRequest) throws Exception {
 		if (!authRequest.isValid()) {
 			throw new IllegalArgumentException();
 		}
-		String publicKey = authRequest.getPublicKey();
-		AuthKey authKeyFromCaptcha = AuthKey.decode(publicKey);
+		String encodedKey = authRequest.getEncodedKey();
+		AuthKey authKeyFromCaptcha = AuthKey.decode(encodedKey);
 
-		AuthKey authKeyFromPinAndTimestamp = new AuthKey(authRequest.getPin(), authRequest.getTimestamp());
-		if (authKeyFromCaptcha.equals(authKeyFromPinAndTimestamp)) {
-			httpServletRequest.getSession().setAttribute(AuthFilter.USER_ID_KEY, publicKey);
-			if (userDAO.find(publicKey) == null) {
-				userDAO.create(publicKey);
-				return true;
+		if (authKeyFromCaptcha.equals(authRequest.toAuthKey())) {
+			httpServletRequest.getSession().setAttribute(AuthFilter.USER_ID_KEY, encodedKey);
+			try {
+				if (userDAO.find(encodedKey) == null) {
+					userDAO.create(encodedKey);
+					return true;
+				}
+			} catch (Exception ex) {
+				logger.error(ex.getMessage(), ex);
 			}
 		}
 		return false;

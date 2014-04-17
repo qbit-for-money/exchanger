@@ -1,8 +1,8 @@
-var wizardModule = angular.module("wizard");
+var authModule = angular.module("auth");
 
-wizardModule.controller("ModalDialogOpeningController", function($modal) {
+authModule.controller("ModalDialogOpeningController", function($modal) {
 	$modal.open({
-		templateUrl: "resources/html/dialogs/auth-dialog.html",
+		templateUrl: "resources/html/auth/dialog.html",
 		backdrop: "static",
 		keyboard: false,
 		backdropClick: false,
@@ -13,14 +13,13 @@ wizardModule.controller("ModalDialogOpeningController", function($modal) {
 	});
 });
 
-wizardModule.controller("ModalDialogController", function($scope, modalResource) {
+authModule.controller("ModalDialogController", function($scope, $rootScope, modalResource, usersResource, userService) {
 	var timestamp = new Date().getTime();
 	$scope.auth = "True";
 	$scope.pinInvalid = true;
 	$scope.model = {};
 	$scope.model.pin = "";
-	$scope.model.publicKey = "";
-
+	$scope.model.encodedKey = "";
 	var destroyPinWatch = $scope.$watch('model.pin', function(newValue, oldValue) {
 		if ((newValue.length === 4) && !isNaN(newValue)) {
 			$scope.pinInvalid = false;
@@ -31,21 +30,26 @@ wizardModule.controller("ModalDialogController", function($scope, modalResource)
 			};
 		}
 	}, true);
-
 	$scope.change = function() {
 		$scope.pinInvalid = true;
 	};
-
-	var destroyPubKeyWatch = $scope.$watch('model.publicKey', function(newValue, oldValue) {
+	var destroyPubKeyWatch = $scope.$watch("model.encodedKey", function(newValue, oldValue) {
 		if (newValue !== "") {
-			var authResponse = {publicKey: newValue, pin: $scope.model.pin, timestamp: timestamp};
-			//var encrypted = modalResource.decrypt({publicKey: newValue, pin: $scope.model.pin, timestamp: timestamp});
+			var authTransfer = {encodedKey: newValue, pin: $scope.model.pin, timestamp: timestamp};
+			var authResponse = modalResource.auth({}, authTransfer);
 			authResponse.$promise.then(function() {
+				//$rootScope.user = usersResource.current({});
+				/*var currentUser = usersResource.current({});
+				currentUser.$promise.then(function() {
+					if (currentUser.publicKey) {
+						$rootScope.user = currentUser;
+					}
+				});*/
+
 				location.reload();
 			});
 		}
 	}, true);
-
 	$scope.$on("$destroy", function() {
 		destroyPinWatch();
 		destroyPubKeyWatch();
