@@ -1,0 +1,37 @@
+<div class="modal-header">
+		<h3 id="myModalLabel">Welcome to Bitgates</h3>
+	</div>
+	<div class="modal-body">
+		<div class="container-fluid">
+			<div class="row">
+
+				<div class="col-xs-8 col-md-8" id="radioList">
+					<input type="radio" ng-model="auth" id="radio1" value="True"/>
+					<label for="radio1">
+					</label><br/>
+					<input type="radio" ng-model="auth" id="radio2" value="False">
+					<label for="radio2">no registration</label><br/>
+				</div>
+				<div class="col-xs-4 col-md-4" ng-if="auth === 'True'">
+					<a href="webapi/oauth2/authenticate">
+						<img src="resources/img/Google-Plus-Logo.png" alt="Google+" width="145" height="67">
+					</a>
+				</div>
+				<div class="col-xs-4 col-md-4" ng-if="auth === 'False'" ng-class="{'has-error': pinInvalid}">
+					<input type="text" class="form-control" placeholder="PIN" 
+					       ng-required="true" ng-model="model.pin" ng-change="change()"/>
+				</div>
+			</div>
+			<div class="row text-center" ng-if="!pinInvalid && auth === 'False'">
+				<hr>
+				<div class="col-xs-2 col-md-2"></div>
+				<div class="center col-xs-8 col-md-8" >
+					
+					<img id="captcha" src="" alt="CAPTCHA"><br/><br/>
+					<input type="text" class="form-control" placeholder="CAPTCHA" 
+					       ng-required="true"  ng-model="model.publicKey" />
+				</div>
+				<div class="col-xs-2 col-md-2"></div>
+			</div>
+		</div>
+	</div>

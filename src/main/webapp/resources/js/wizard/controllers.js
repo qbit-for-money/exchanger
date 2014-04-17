@@ -66,7 +66,7 @@ wizardModule.controller("WizardController", function($rootScope, $scope, $locati
 			$location.path(wizardService.getPrevStep($location.path()).path);
 		}
 	};
-	
+
 	function resetValidationFail() {
 		$scope.validationFails = false;
 	}

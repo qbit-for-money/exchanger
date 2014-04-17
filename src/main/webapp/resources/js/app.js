@@ -16,7 +16,7 @@ angular.module("wizard.currency", ["common", "wizard", "user", "money", "order"]
 angular.module("wizard.amount", ["common", "wizard", "user", "money", "order", "exchange"]);
 angular.module("wizard.result", ["common", "wizard", "user", "money", "order"]);
 
-angular.module("main", ["ngRoute", "ui.bootstrap", "chieffancypants.loadingBar",
+angular.module("main", ["ngRoute","ui.bootstrap", "chieffancypants.loadingBar",
 	"common", "user", "order", "money", "money.yandex", "exchange",
 	"wizard", "wizard.currency", "wizard.amount", "wizard.result"]);
 
