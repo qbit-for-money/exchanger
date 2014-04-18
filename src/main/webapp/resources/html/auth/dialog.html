@@ -6,22 +6,25 @@
 		<div class="row">
 			<div class="col-xs-12 col-md-12">
 				<input type="radio" ng-model="auth" id="radio1" value="True" ng-change="checked()"/>
-				<label for="radio1">
-					<a href="webapi/oauth2/authenticate" ng-if="auth === 'True'"
-					   popover="Login with Google+" popover-placement="right" popover-trigger="mouseenter">
-					<img src="resources/img/google-plus.png" alt="Google+">
-				</a>
-					<img src="resources/img/google-plus-disabled.png" alt="Google+" ng-if="auth === 'False'">
-				</label>
-				
 			</div>
 		</div>
+		<div class="row">
+			<div class="col-xs-1 col-md-1"></div>
+			<label for="radio1" class="col-xs-10 col-md-10">
+				<a href="webapi/oauth2/authenticate" ng-if="auth === 'True'"
+				   popover="Login with Google+" popover-placement="right" popover-trigger="mouseenter">
+					<img src="resources/img/google-plus.png" alt="Google+">
+				</a>
+				<img src="resources/img/google-plus-disabled.png" alt="Google+" ng-if="auth === 'False'" ng-click="checked()">
+			</label>
+			<div class="col-xs-1 col-md-1"></div>
+		</div>
 		<div class="row"><br>
-			<div class="col-xs-8 col-md-8">
+			<div class="col-xs-12 col-md-12">
 				<input type="radio" ng-model="auth" id="radio2" value="False">
 				<label for="radio2">No registration</label><br/>
 			</div>
-			
+
 		</div>
 		<div class="row" ng-if="auth === 'False'">
 			<div class="col-xs-3 col-md-3"></div>
@@ -35,7 +38,8 @@
 			<hr>
 			<div class="center col-xs-12 col-md-12" ng-class="{'has-error': encodedKeyInvalid}">
 
-				<img id="captcha" src="{{src}}" alt="CAPTCHA" ng-click="updateImage()">
+				<img id="captcha" src="{{src}}" alt="CAPTCHA" ng-click="updateImage()"
+				     popover="Update captcha" popover-placement="right" popover-trigger="mouseenter">
 				<input type="text" class="form-control" placeholder="CAPTCHA" 
 				       ng-required="true"  ng-model="model.encodedKey" ng-change="changeEncodedKey()"/>
 			</div>

@@ -1,6 +1,6 @@
 .modal-dialog {
 	padding-top: 13%;
-	max-width: 260px;
+	max-width: 330px;
 }
 
 .modal-dialog .center {
@@ -9,7 +9,7 @@
 
 .modal-dialog img {
 	cursor: pointer;
-	width: 100%;
+	width: 90%;
 	height: auto;
 	-moz-border-radius:    5px;
 	-webkit-border-radius: 5px;
@@ -20,15 +20,21 @@
 	text-align: center;
 }
 
-.modal-dialog label img {
-	width: 90%;
-}
-
-label{
-	margin: 5px;
+.modal-dialog label[for=radio2]{
+	margin: 10px;
+	margin-left: 15px;
+	font-family:'Times New Roman', Times, serif;
 }
 
 #captcha {
+	width: 100%;
 	margin-bottom: 10px;
-	cursor: pointer
+	cursor: pointer;
+}
+
+.popover-content {
+	font-family:'Times New Roman', Times, serif;
+	font-weight:bold;
+	font-size:18px;
+	color: graytext;
 }
