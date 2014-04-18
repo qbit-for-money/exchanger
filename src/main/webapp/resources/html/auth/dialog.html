@@ -5,7 +5,7 @@
 	<div class="container-fluid">
 		<div class="row">
 			<div class="col-xs-12 col-md-12">
-				<input type="radio" ng-model="auth" id="radio1" value="True"/>
+				<input type="radio" ng-model="auth" id="radio1" value="True" ng-change="checked()"/>
 				<label for="radio1">
 					<a href="webapi/oauth2/authenticate" class="enable-{{auth}}" ng-if="auth === 'True'"
 					   popover="Login with Google+" popover-placement="right" popover-trigger="mouseenter">

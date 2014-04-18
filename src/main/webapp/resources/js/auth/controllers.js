@@ -25,12 +25,21 @@ authModule.controller("AuthDialogController", function($scope, captchaAuthResour
 		if ($scope.model.pin && ($scope.model.pin.length === 4) && !isNaN($scope.model.pin)) {
 			$scope.pinInvalid = false;
 			$scope.updateImage();
-			angular.element(".modal-dialog").css( "padding-top", "10%" );
+			changeDialogPosition(false);
+			$scope.model.encodedKey = "";
 		} else {
 			$scope.pinInvalid = true;
-			angular.element(".modal-dialog").css( "padding-top", "13%" );
+			changeDialogPosition(true);
 		}
 	};
+	
+	function changeDialogPosition(state) {
+		if(state) {
+			angular.element(".modal-dialog").css( "padding-top", "13%" );
+		} else {
+			angular.element(".modal-dialog").css( "padding-top", "10%" );
+		}
+	}
 	
 	$scope.changeEncodedKey = function() {
 		if ($scope.model.encodedKey && ($scope.model.encodedKey !== "")) {
@@ -40,14 +49,20 @@ authModule.controller("AuthDialogController", function($scope, captchaAuthResour
 				$scope.encodedKeyInvalid = false;
 				setTimeout( function() { 
 					location.reload(); 
-				} , 1000);
+				}, 1000);
 			});
 		} else {
 			$scope.encodedKeyInvalid = true;
 		}
-	}
+	};
 
 	$scope.updateImage = function() {
 		$scope.src = window.context + "webapi/captcha-auth/image?pin=" + $scope.model.pin + "&timestamp=" + timestamp + "&rand=" + Math.round(Math.random() * 1000);
+	};
+	
+	$scope.checked = function() {
+		$scope.pinInvalid = true;
+		$scope.model.pin = "";
+		changeDialogPosition(true);
 	};
 });
