@@ -1,50 +1,35 @@
 label{
-    padding:5px;
-    color:#222;
-    font-family:corbel,sans-serif;
-    font-size: 14px;
-    margin: 10px;
+	padding:5px;
+	color:#222;
+	font-family:corbel,sans-serif;
+	font-size: 14px;
+	margin: 10px;
 }
 
 
-.modal-backdrop.am-fade {
-  opacity: .5;
-  transition: opacity .15s linear;
-  &.ng-enter {
-    opacity: 0;
-    &.ng-enter-active {
-      opacity: .5;
-    }
-  }
-  &.ng-leave {
-    opacity: .5;
-    &.ng-leave-active {
-      opacity: 0;
-    }
-  }
-}
-
-img.center {
-	display: block;
-	margin-left: auto;
-	margin-right: auto;
-}
 
 div.center {
-  text-align:center;
+	text-align:center;
 }
 
 .center {
-  text-align:center;
+	text-align:center;
 }
 
-.child {
-    position: absolute;
-    //top: 50%;
-    //left: 40%;
-    //height: 30%;
-    //width: 50%;
-    //margin: -15% 0 0 -25%;
-    //vertical-align: central;
-    //margin: -15% 0 0 -25%;
+
+
+.modal-dialog {
+	padding-top: 10%;
+}
+
+.modal-dialog img {
+	width: 100%;
+	height: auto;
+	cursor: pointer
+}
+
+img .center {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
 }

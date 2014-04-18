@@ -1,7 +1,10 @@
 package com.qbit.exchanger.auth;
 
 import com.octo.captcha.component.image.backgroundgenerator.BackgroundGenerator;
+import com.octo.captcha.component.image.backgroundgenerator.FunkyBackgroundGenerator;
 import com.octo.captcha.component.image.backgroundgenerator.GradientBackgroundGenerator;
+import com.octo.captcha.component.image.backgroundgenerator.MultipleShapeBackgroundGenerator;
+import com.octo.captcha.component.image.backgroundgenerator.UniColorBackgroundGenerator;
 import com.octo.captcha.component.image.fontgenerator.FontGenerator;
 import com.octo.captcha.component.image.fontgenerator.RandomFontGenerator;
 import com.octo.captcha.component.image.textpaster.RandomTextPaster;
@@ -14,6 +17,8 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Random;
 import javax.imageio.ImageIO;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -79,8 +84,21 @@ public class CaptchaAuthResource {
 			return (encodedKey != null) && (pin != null) && (pin.length() == 4);
 		}
 	}
-	
+
 	private final Logger logger = LoggerFactory.getLogger(CaptchaAuthResource.class);
+
+	private static final int MIN_WORD_LENGTH = 6;
+
+	private static final int MAX_WORD_LENGTH = 15;
+
+	private static final int IMAGE_WIDTH = 360;
+
+	private static final int IMAGE_HEIGHT = 50;
+
+	private static final Random rnd = new Random();
+
+	private final ArrayList<BackgroundGenerator> backgroundGeneratorList;
+	private final ArrayList<Color> colorList;
 
 	@Context
 	private HttpServletRequest httpServletRequest;
@@ -88,15 +106,34 @@ public class CaptchaAuthResource {
 	@Inject
 	private UserDAO userDAO;
 
+	public CaptchaAuthResource() {
+		colorList = new ArrayList<>();
+		backgroundGeneratorList = new ArrayList<>();
+
+		backgroundGeneratorList.add(new UniColorBackgroundGenerator(IMAGE_WIDTH, IMAGE_HEIGHT, Color.ORANGE));
+		backgroundGeneratorList.add(new MultipleShapeBackgroundGenerator(IMAGE_WIDTH, IMAGE_HEIGHT, Color.MAGENTA, Color.GREEN, 20, 10, 15, 20, Color.ORANGE, Color.cyan, 15));
+		backgroundGeneratorList.add(new FunkyBackgroundGenerator(IMAGE_WIDTH, IMAGE_HEIGHT));
+		backgroundGeneratorList.add(new GradientBackgroundGenerator(IMAGE_WIDTH, IMAGE_HEIGHT, Color.yellow, Color.green));
+		backgroundGeneratorList.add(new GradientBackgroundGenerator(IMAGE_WIDTH, IMAGE_HEIGHT, Color.LIGHT_GRAY, Color.magenta));
+		backgroundGeneratorList.add(new GradientBackgroundGenerator(IMAGE_WIDTH, IMAGE_HEIGHT, Color.orange, Color.magenta));
+
+		colorList.add(Color.red);
+		colorList.add(Color.blue);
+		colorList.add(Color.black);
+		colorList.add(Color.pink);
+	}
+
 	@GET
 	@Path("image")
 	@Produces("image/jpeg")
-	public byte[] getImage(@QueryParam("pin") String pin, @QueryParam("timestamp") long timestamp) throws Exception {
+	public byte[] getImage(@QueryParam("pin") String pin, @QueryParam("timestamp") long timestamp, @QueryParam("rand") long rand) throws Exception {
 		AuthKey authKey = new AuthKey(pin, timestamp);
 		String result = AuthKey.encode(authKey);
 		FontGenerator font = new RandomFontGenerator(18, 34);
-		BackgroundGenerator background = new GradientBackgroundGenerator(360, 50, Color.lightGray, Color.yellow); //EllipseBackgroundGenerator(360, 50);
-		TextPaster paster = new RandomTextPaster(4, 15, Color.RED);
+		BackgroundGenerator background = backgroundGeneratorList.get(rnd.nextInt(backgroundGeneratorList.size()));
+
+		TextPaster paster = new RandomTextPaster(MIN_WORD_LENGTH, MAX_WORD_LENGTH, colorList.get(rnd.nextInt(colorList.size())));
+
 		WordToImage wordToImage = new ComposedWordToImage(font, background, paster);
 		BufferedImage buffer = wordToImage.getImage(result);
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream(2048);
@@ -128,6 +165,6 @@ public class CaptchaAuthResource {
 				logger.error(ex.getMessage(), ex);
 			}
 		}
-		return false;
+		throw new Exception();
 	}
 }

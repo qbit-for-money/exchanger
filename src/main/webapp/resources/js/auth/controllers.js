@@ -1,57 +1,46 @@
 var authModule = angular.module("auth");
 
-authModule.controller("ModalDialogOpeningController", function($modal) {
+authModule.controller("AuthDialogOpeningController", function($modal) {
 	$modal.open({
 		templateUrl: "resources/html/auth/dialog.html",
 		backdrop: "static",
 		keyboard: false,
 		backdropClick: false,
 		dialogFade: false,
-		placement: "bottom",
-		controller: "ModalDialogController",
-		windowClass: "child"
+		controller: "AuthDialogController"
 	});
 });
 
-authModule.controller("ModalDialogController", function($scope, $rootScope, modalResource, usersResource, userService) {
+authModule.controller("AuthDialogController", function($scope, $rootScope, modalResource) {
 	var timestamp = new Date().getTime();
 	$scope.auth = "True";
 	$scope.pinInvalid = true;
 	$scope.model = {};
 	$scope.model.pin = "";
 	$scope.model.encodedKey = "";
-	var destroyPinWatch = $scope.$watch('model.pin', function(newValue, oldValue) {
-		if ((newValue.length === 4) && !isNaN(newValue)) {
-			$scope.pinInvalid = false;
-			var img = new Image();
-			img.src = window.context + "webapi/captcha/image?pin=" + newValue + "&timestamp=" + timestamp;
-			img.onload = function() {
-				angular.element("#captcha").attr("src", img.src);
-			};
-		}
-	}, true);
-	$scope.change = function() {
-		$scope.pinInvalid = true;
-	};
-	var destroyPubKeyWatch = $scope.$watch("model.encodedKey", function(newValue, oldValue) {
-		if (newValue !== "") {
-			var authTransfer = {encodedKey: newValue, pin: $scope.model.pin, timestamp: timestamp};
-			var authResponse = modalResource.auth({}, authTransfer);
-			authResponse.$promise.then(function() {
-				//$rootScope.user = usersResource.current({});
-				/*var currentUser = usersResource.current({});
-				currentUser.$promise.then(function() {
-					if (currentUser.publicKey) {
-						$rootScope.user = currentUser;
-					}
-				});*/
+	$scope.src = "";
 
+	$scope.changePin = function() {
+		if (($scope.model.pin.length === 4) && !isNaN($scope.model.pin)) {
+			$scope.pinInvalid = false;
+			$scope.updateImage();
+		} else {
+			$scope.pinInvalid = true;
+		}
+	};
+	$scope.$watch("model.encodedKey", auth, true);
+
+	function auth(encodedKey) {
+		if (encodedKey !== "") {
+			var authRequest = {encodedKey: encodedKey, pin: $scope.model.pin, timestamp: timestamp};
+			var authResponse = modalResource.auth({}, authRequest);
+			authResponse.$promise.then(function() {
 				location.reload();
 			});
 		}
-	}, true);
-	$scope.$on("$destroy", function() {
-		destroyPinWatch();
-		destroyPubKeyWatch();
-	});
+	}
+
+	$scope.updateImage = function() {
+		$scope.src = window.context + "webapi/captcha/image?pin=" + $scope.model.pin + "&timestamp=" + timestamp + "&rand=" + Math.round(Math.random() * 1000);
+	};
 });
