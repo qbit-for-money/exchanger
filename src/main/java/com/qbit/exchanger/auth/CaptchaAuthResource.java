@@ -101,22 +101,22 @@ public class CaptchaAuthResource {
 	private static final List<Color> COLORS_LIST;
 
 	static {
-		List<BackgroundGenerator> bacgroundGeneratorsList = new ArrayList<>();
+		List<BackgroundGenerator> backgroundGeneratorsList = new ArrayList<>();
 		List<Color> colorsList = new ArrayList<>();
 
-		bacgroundGeneratorsList.add(new UniColorBackgroundGenerator(IMAGE_WIDTH, IMAGE_HEIGHT, Color.ORANGE));
-		bacgroundGeneratorsList.add(new MultipleShapeBackgroundGenerator(IMAGE_WIDTH, IMAGE_HEIGHT, Color.MAGENTA, Color.GREEN, 20, 10, 15, 20, Color.ORANGE, Color.cyan, 15));
-		bacgroundGeneratorsList.add(new FunkyBackgroundGenerator(IMAGE_WIDTH, IMAGE_HEIGHT));
-		bacgroundGeneratorsList.add(new GradientBackgroundGenerator(IMAGE_WIDTH, IMAGE_HEIGHT, Color.yellow, Color.green));
-		bacgroundGeneratorsList.add(new GradientBackgroundGenerator(IMAGE_WIDTH, IMAGE_HEIGHT, Color.LIGHT_GRAY, Color.magenta));
-		bacgroundGeneratorsList.add(new GradientBackgroundGenerator(IMAGE_WIDTH, IMAGE_HEIGHT, Color.orange, Color.magenta));
+		backgroundGeneratorsList.add(new UniColorBackgroundGenerator(IMAGE_WIDTH, IMAGE_HEIGHT, Color.ORANGE));
+		backgroundGeneratorsList.add(new MultipleShapeBackgroundGenerator(IMAGE_WIDTH, IMAGE_HEIGHT, Color.MAGENTA, Color.GREEN, 20, 10, 15, 20, Color.ORANGE, Color.cyan, 15));
+		backgroundGeneratorsList.add(new FunkyBackgroundGenerator(IMAGE_WIDTH, IMAGE_HEIGHT));
+		backgroundGeneratorsList.add(new GradientBackgroundGenerator(IMAGE_WIDTH, IMAGE_HEIGHT, Color.yellow, Color.green));
+		backgroundGeneratorsList.add(new GradientBackgroundGenerator(IMAGE_WIDTH, IMAGE_HEIGHT, Color.LIGHT_GRAY, Color.magenta));
+		backgroundGeneratorsList.add(new GradientBackgroundGenerator(IMAGE_WIDTH, IMAGE_HEIGHT, Color.orange, Color.magenta));
 
 		colorsList.add(Color.red);
 		colorsList.add(Color.blue);
 		colorsList.add(Color.black);
 		colorsList.add(Color.pink);
 		
-		BACKGROUND_GENERATORS_LIST = Collections.unmodifiableList(bacgroundGeneratorsList);
+		BACKGROUND_GENERATORS_LIST = Collections.unmodifiableList(backgroundGeneratorsList);
 		COLORS_LIST = Collections.unmodifiableList(colorsList);
 	}
 
