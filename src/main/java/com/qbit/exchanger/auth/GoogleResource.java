@@ -97,7 +97,6 @@ public class GoogleResource {
 					.buildQueryMessage();
 			OAuthResourceResponse resourceResponse = oAuthClient.resource(bearerClientRequest, OAuth.HttpMethod.GET,
 					OAuthResourceResponse.class);
-
 			String userId = getGoogleProfileEmail(resourceResponse);
 			if (userId != null) {
 				httpServletRequest.getSession().setAttribute(AuthFilter.USER_ID_KEY, userId);

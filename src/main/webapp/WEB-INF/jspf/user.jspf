@@ -1,11 +1,11 @@
 <%@ page pageEncoding="UTF-8" %>
 <form name="userForm" class="navbar-form navbar-right" ng-controller="UserController">
-	<div class="form-group ng-hide" ng-show="user.publicKey">
+	<div class="form-group">
 		<div class="input-group" style="width: 20em;">
-			<input name="userPublicKey" type="email" class="form-control"
-				   ng-model="user.publicKey" ng-readonly="true"/>
+			<input name="userPublicKey" type="text" class="form-control"
+			       ng-model="user.publicKey" ng-readonly="true"/>
 			<div class="input-group-addon">
-				<span class="glyphicon glyphicon-envelope"></span>
+				<span class="glyphicon glyphicon-{{keyType}}"></span>
 			</div>
 		</div>
 	</div>

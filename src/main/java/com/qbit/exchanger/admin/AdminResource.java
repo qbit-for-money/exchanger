@@ -1,5 +1,7 @@
 package com.qbit.exchanger.admin;
 
+import com.qbit.exchanger.money.core.CryptoService;
+import com.qbit.exchanger.money.core.WTransaction;
 import com.qbit.exchanger.money.core.MoneyServiceProvider;
 import com.qbit.exchanger.money.model.Amount;
 import com.qbit.exchanger.money.model.Currency;

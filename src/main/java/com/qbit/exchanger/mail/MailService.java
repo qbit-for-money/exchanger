@@ -93,8 +93,12 @@ public class MailService {
 	private String processTemplate(String tmplPrefix, OrderInfo orderInfo) throws TemplateException, IOException {
 		Map<String, Object> templateInput = new HashMap<>();
 		templateInput.put("order", orderInfo);
-		templateInput.put("inAmount", orderInfo.getInTransfer().toBigDecimal());
-		templateInput.put("outAmount", orderInfo.getOutTransfer().toBigDecimal());
+		if ((orderInfo.getInTransfer() != null) && (orderInfo.getInTransfer().getAmount() != null)) {
+			templateInput.put("inAmount", orderInfo.getInTransfer().toBigDecimal());
+		}
+		if ((orderInfo.getOutTransfer() != null) && (orderInfo.getOutTransfer().getAmount() != null)) {
+			templateInput.put("outAmount", orderInfo.getOutTransfer().toBigDecimal());
+		}
 		Template template = FREE_MAKER_CFG.getTemplate(tmplPrefix + "-order.tmpl");
 		Writer text = new StringWriter();
 		template.process(templateInput, text);

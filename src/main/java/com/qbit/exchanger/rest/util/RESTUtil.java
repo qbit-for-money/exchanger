@@ -1,13 +1,9 @@
 package com.qbit.exchanger.rest.util;
 
-import com.qbit.exchanger.common.model.Identifiable;
-import com.qbit.exchanger.common.model.ResourceLink;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 /**
  *
@@ -22,17 +18,10 @@ public final class RESTUtil {
 	private RESTUtil() {
 	}
 
-	public static List<ResourceLink> toLinks(String basePath, List<? extends Identifiable<?>> objs) {
-		List<ResourceLink> result = new ArrayList<>();
-		if (objs != null) {
-			for (Identifiable<?> obj : objs) {
-				result.add(new ResourceLink(obj.getId().toString(), basePath + "/" + obj.getId().toString()));
-			}
-		}
-		return result;
-	}
-
 	public static Date toDate(String dateStr) throws ParseException {
+		if ((dateStr == null) || dateStr.isEmpty()) {
+			return null;
+		}
 		Date result;
 		try {
 			result = DATE_TIME_FORMAT_WITH_MILLIS.parse(dateStr);

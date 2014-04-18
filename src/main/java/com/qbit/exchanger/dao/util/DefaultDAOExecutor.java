@@ -1,8 +1,6 @@
 package com.qbit.exchanger.dao.util;
 
-import com.qbit.exchanger.dao.util.DAOExecutor;
 import static com.qbit.exchanger.dao.util.DAOUtil.invokeInTransaction;
-import com.qbit.exchanger.dao.util.TrCallable;
 import com.qbit.exchanger.env.Env;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;

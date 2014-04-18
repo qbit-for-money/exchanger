@@ -23,11 +23,11 @@
 				</ul>
 				<div class="actions">
 					<button class="btn btn-lg btn-success" 
-							ng-disabled="(currentStepIndex === 0) || (requestCount > 0)"
-							ng-click="goToPrevStep()"><span class="glyphicon glyphicon-chevron-left"></span></button>
+						ng-disabled="(currentStepIndex === 0) || (requestCount > 0)"
+						ng-click="goToPrevStep()"><span class="glyphicon glyphicon-chevron-left"></span></button>
 					<button class="btn btn-lg btn-success" 
-							ng-disabled="(currentStepIndex === (steps.length - 1)) || (requestCount > 0)"
-							ng-click="goToNextStep()"><span class="glyphicon glyphicon-chevron-right"></span></button>
+						ng-disabled="(currentStepIndex === (steps.length - 1)) || (requestCount > 0)"
+						ng-click="goToNextStep()"><span class="glyphicon glyphicon-chevron-right"></span></button>
 				</div>
 			</div>
 		</div>
@@ -55,4 +55,6 @@
 			<alert type="'danger'" close="resetRedirectToResult()"><h4 style="margin-bottom: 0px;">{{actionMessage}}</h4></alert>
 		</div>
 	</div>
+</div>
+<div class="container" ng-if="user === null" ng-controller="AuthDialogOpeningController">
 </div>

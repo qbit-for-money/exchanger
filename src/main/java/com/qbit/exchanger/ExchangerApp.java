@@ -1,8 +1,8 @@
 package com.qbit.exchanger;
 
 import com.qbit.exchanger.buffer.BufferDAO;
-import com.qbit.exchanger.dao.util.DefaultDAOExecutor;
 import com.qbit.exchanger.dao.util.DAOExecutor;
+import com.qbit.exchanger.dao.util.DefaultDAOExecutor;
 import com.qbit.exchanger.env.Env;
 import com.qbit.exchanger.external.exchange.btce.BTCExchange;
 import com.qbit.exchanger.external.exchange.core.Exchange;
@@ -72,7 +72,7 @@ public class ExchangerApp extends Application {
 
 		addBinding(newBinder(BTCExchange.class).to(BTCExchange.class).in(Singleton.class), configuration);
 		addBinding(newBinder(ExchangeFacade.class).to(Exchange.class).in(Singleton.class), configuration);
-
+		
 		configuration.commit();
 
 		serviceLocator.createAndInitialize(OrderFlowScheduler.class);
