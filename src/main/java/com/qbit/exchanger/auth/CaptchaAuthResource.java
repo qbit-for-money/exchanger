@@ -112,8 +112,8 @@ public class CaptchaAuthResource {
 		backgroundGeneratorsList.add(new GradientBackgroundGenerator(IMAGE_WIDTH, IMAGE_HEIGHT, Color.orange, Color.magenta));
 
 		colorsList.add(Color.red);
-		colorsList.add(Color.blue);
-		colorsList.add(Color.black);
+		colorsList.add(Color.green);
+		colorsList.add(Color.gray);
 		colorsList.add(Color.pink);
 		
 		BACKGROUND_GENERATORS_LIST = Collections.unmodifiableList(backgroundGeneratorsList);
