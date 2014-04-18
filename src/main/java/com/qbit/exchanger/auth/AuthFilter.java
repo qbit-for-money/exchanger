@@ -33,7 +33,16 @@ public class AuthFilter implements Filter {
 		boolean isRequestToAdminPage = (httpRequest.getRequestURI().equals("/exchanger/admin.jsp")
 				|| ((httpRequest.getPathInfo() != null) && httpRequest.getPathInfo().startsWith("/admin")));
 		boolean isAdmin = env.getAdminMail().equals(EncryptionUtil.getMD5(userId));
+		boolean isAuthRequest = ((httpRequest.getPathInfo() == null) 
+				|| ((httpRequest.getPathInfo() != null)
+				&& (httpRequest.getPathInfo().equals("/")
+				|| httpRequest.getPathInfo().startsWith("/users")
+				|| httpRequest.getPathInfo().startsWith("/oauth2")
+				|| httpRequest.getPathInfo().startsWith("/captcha-auth"))));
+		
 		if (isRequestToAdminPage && !isAdmin) {
+			((HttpServletResponse) servletResponse).sendRedirect("");
+		} else if ((userId == null) && !isAuthRequest) {
 			((HttpServletResponse) servletResponse).sendRedirect("");
 		} else {
 			filterChain.doFilter(servletRequest, servletResponse);

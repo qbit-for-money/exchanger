@@ -1,6 +1,5 @@
 package com.qbit.exchanger.money.core;
 
-import com.qbit.exchanger.admin.CryptoService;
 import com.qbit.exchanger.money.model.Currency;
 import com.qbit.exchanger.money.model.WalletAddress;
 import javax.inject.Inject;

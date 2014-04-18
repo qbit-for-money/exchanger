@@ -1,7 +1,8 @@
-var wizardModule = angular.module("wizard");
+var captchaAuthModule = angular.module("captcha-auth");
 
-wizardModule.factory("modalResource", function($resource) {
-	return $resource(window.context + "webapi/captcha", {}, {
+captchaAuthModule.factory("captchaAuthResource", function($resource) {
+	return $resource(window.context + "webapi/captcha-auth", {}, {
+		getImage: {method: "GET", url: window.context + "webapi/captcha-auth/image"},
 		auth: {method: "POST"}
 	});
 });

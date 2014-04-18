@@ -1,35 +1,41 @@
-label{
-	padding:5px;
-	color:#222;
-	font-family:corbel,sans-serif;
-	font-size: 14px;
-	margin: 10px;
-}
-
-
-
-div.center {
-	text-align:center;
-}
-
-.center {
-	text-align:center;
-}
-
-
-
 .modal-dialog {
-	padding-top: 10%;
+	padding-top: 13%;
+	max-width: 260px;
+}
+
+.modal-dialog .center {
+	text-align:center;
 }
 
 .modal-dialog img {
 	width: 100%;
 	height: auto;
+	-moz-border-radius:    5px;
+	-webkit-border-radius: 5px;
+	border-radius:         5px;
+}
+
+.modal-dialog label {
+	text-align: center;
+}
+
+.modal-dialog label img {
+	width: 90%;
+}
+
+.modal-dialog img .enable-True {
 	cursor: pointer
 }
 
-img .center {
-	display: block;
-	margin-left: auto;
-	margin-right: auto;
+.modal-dialog img .enable-False {
+	cursor: none
+}
+
+label{
+	margin: 5px;
+}
+
+#captcha {
+	margin-bottom: 10px;
+	cursor: pointer
 }

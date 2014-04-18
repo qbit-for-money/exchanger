@@ -1,4 +1,4 @@
-package com.qbit.exchanger.admin;
+package com.qbit.exchanger.money.core;
 
 import com.qbit.exchanger.money.model.Amount;
 import java.io.Serializable;

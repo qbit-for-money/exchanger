@@ -1,4 +1,4 @@
-var authModule = angular.module("auth");
+var authModule = angular.module("captcha-auth");
 
 authModule.controller("AuthDialogOpeningController", function($modal) {
 	$modal.open({
@@ -11,36 +11,43 @@ authModule.controller("AuthDialogOpeningController", function($modal) {
 	});
 });
 
-authModule.controller("AuthDialogController", function($scope, $rootScope, modalResource) {
+authModule.controller("AuthDialogController", function($scope, captchaAuthResource) {
 	var timestamp = new Date().getTime();
 	$scope.auth = "True";
 	$scope.pinInvalid = true;
+	$scope.encodedKeyInvalid = true;
 	$scope.model = {};
 	$scope.model.pin = "";
 	$scope.model.encodedKey = "";
 	$scope.src = "";
 
 	$scope.changePin = function() {
-		if (($scope.model.pin.length === 4) && !isNaN($scope.model.pin)) {
+		if ($scope.model.pin && ($scope.model.pin.length === 4) && !isNaN($scope.model.pin)) {
 			$scope.pinInvalid = false;
 			$scope.updateImage();
+			angular.element(".modal-dialog").css( "padding-top", "10%" );
 		} else {
 			$scope.pinInvalid = true;
+			angular.element(".modal-dialog").css( "padding-top", "13%" );
 		}
 	};
-	$scope.$watch("model.encodedKey", auth, true);
-
-	function auth(encodedKey) {
-		if (encodedKey !== "") {
-			var authRequest = {encodedKey: encodedKey, pin: $scope.model.pin, timestamp: timestamp};
-			var authResponse = modalResource.auth({}, authRequest);
+	
+	$scope.changeEncodedKey = function() {
+		if ($scope.model.encodedKey && ($scope.model.encodedKey !== "")) {
+			var authRequest = {encodedKey: $scope.model.encodedKey, pin: $scope.model.pin, timestamp: timestamp};
+			var authResponse = captchaAuthResource.auth({}, authRequest);
 			authResponse.$promise.then(function() {
-				location.reload();
+				$scope.encodedKeyInvalid = false;
+				setTimeout( function() { 
+					location.reload(); 
+				} , 1000);
 			});
+		} else {
+			$scope.encodedKeyInvalid = true;
 		}
 	}
 
 	$scope.updateImage = function() {
-		$scope.src = window.context + "webapi/captcha/image?pin=" + $scope.model.pin + "&timestamp=" + timestamp + "&rand=" + Math.round(Math.random() * 1000);
+		$scope.src = window.context + "webapi/captcha-auth/image?pin=" + $scope.model.pin + "&timestamp=" + timestamp + "&rand=" + Math.round(Math.random() * 1000);
 	};
 });
