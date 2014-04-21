@@ -10,6 +10,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.glassfish.grizzly.http.server.util.Enumerator;
 
 /**
  * @author Alexander_Sergeev
@@ -25,7 +26,7 @@ public class AuthFilter implements Filter {
 		env = new Env();
 	}
 
-	@Override
+	/*@Override
 	public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
 		HttpServletRequest httpRequest = (HttpServletRequest) servletRequest;
 		String userId = (String) httpRequest.getSession().getAttribute(USER_ID_KEY);
@@ -44,6 +45,36 @@ public class AuthFilter implements Filter {
 			((HttpServletResponse) servletResponse).sendRedirect("");
 		} else if ((userId == null) && !isAuthRequest) {
 			((HttpServletResponse) servletResponse).sendRedirect("");
+		} else {
+			filterChain.doFilter(servletRequest, servletResponse);
+		}
+	}*/
+	@Override
+	public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+		HttpServletRequest httpRequest = (HttpServletRequest) servletRequest;
+		String userId = (String) httpRequest.getSession().getAttribute(USER_ID_KEY);
+
+		boolean isRequestToAdminPage = (httpRequest.getRequestURI().endsWith("/admin.jsp")
+				|| httpRequest.getRequestURI().startsWith("/resources/js/admin/")
+				|| httpRequest.getRequestURI().startsWith("/resources/html/admin/")
+				|| ((httpRequest.getPathInfo() != null) && httpRequest.getPathInfo().startsWith("/admin")));
+		boolean isAdmin = env.getAdminMail().equals(EncryptionUtil.getMD5(userId));
+		boolean isAuthRequest = ((httpRequest.getPathInfo() == null) 
+				|| ((httpRequest.getPathInfo() != null)
+				&& (httpRequest.getPathInfo().equals("/")
+				|| httpRequest.getPathInfo().startsWith("/users")
+				|| httpRequest.getPathInfo().startsWith("/oauth2")
+				|| httpRequest.getPathInfo().startsWith("/captcha-auth"))));
+		
+		if (isRequestToAdminPage && !isAdmin) {
+			//System.out.println("!! " + ((HttpServletResponse) servletResponse).getHeader("Referrer"));
+			System.out.println("!! " + ((HttpServletRequest) servletRequest).getHeader("Referer"));
+			System.out.println("!!! " + ((HttpServletRequest) servletRequest).getHeaderNames());
+			System.out.println("!!= " + ((HttpServletRequest) servletRequest).getContextPath()); 
+			
+			((HttpServletResponse) servletResponse).sendRedirect(((HttpServletRequest) servletRequest).getContextPath());
+		} else if ((userId == null) && !isAuthRequest) {
+			((HttpServletResponse) servletResponse).sendRedirect(((HttpServletRequest) servletRequest).getContextPath());
 		} else {
 			filterChain.doFilter(servletRequest, servletResponse);
 		}
