@@ -50,7 +50,8 @@ public class MailService {
 
 	public void send(OrderInfo orderInfo) {
 		if ((orderInfo == null) || (orderInfo.getId() == null) || orderInfo.getId().isEmpty()
-				|| (orderInfo.getUserPublicKey() == null) || orderInfo.getUserPublicKey().isEmpty()) {
+				|| (orderInfo.getUserPublicKey() == null) || orderInfo.getUserPublicKey().isEmpty()
+				|| (orderInfo.getUserPublicKey().indexOf("@") == -1)) {
 			return;
 		}
 		final OrderInfo safeOrderInfo = OrderInfo.clone(orderInfo);
@@ -60,11 +61,12 @@ public class MailService {
 			public void run() {
 				try {
 					if (mailNotificationDAO.isNotificationSent(safeOrderInfo.getId(), safeOrderInfo.getStatus())) {
-
 						return;
 					}
 				} catch (Exception ex) {
-					logger.error(ex.getMessage(), ex);
+					if (logger.isErrorEnabled()) {
+						logger.error("[{}]" + ex.getMessage(), safeOrderInfo.getId(), ex);
+					}
 				}
 				try {
 					String tmplPrefix;
@@ -78,7 +80,9 @@ public class MailService {
 					send(safeOrderInfo.getUserPublicKey(), "[INFO] Order #" + safeOrderInfo.getId(),
 							processTemplate(tmplPrefix, safeOrderInfo));
 				} catch (Exception ex) {
-					logger.error(ex.getMessage(), ex);
+					if (logger.isErrorEnabled()) {
+						logger.error("[{}]" + ex.getMessage(), safeOrderInfo.getId(), ex);
+					}
 				} finally {
 					try {
 						mailNotificationDAO.registerNotification(safeOrderInfo.getId(), safeOrderInfo.getStatus());
@@ -119,7 +123,9 @@ public class MailService {
 			email.setMsg(text);
 			email.send();
 		} catch (Exception ex) {
-			logger.error(ex.getMessage(), ex);
+			if (logger.isErrorEnabled()) {
+				logger.error(ex.getMessage(), ex);
+			}
 		}
 	}
 }

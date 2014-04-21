@@ -91,7 +91,9 @@ public class BitcoinMoneyService implements CryptoService {
 			BigInteger balance = ((PostgresFullPrunedBlockStore) kit.storeFull()).calculateBalanceForAddress(new Address(parameters, address));
 			return new Amount(new BigDecimal(Utils.bitcoinValueToFriendlyString(balance)), Currency.BITCOIN.getCentsInCoin());
 		} catch (Exception ex) {
-			logger.error(ex.getMessage(), ex);
+			if(logger.isErrorEnabled()) {
+				logger.error(ex.getMessage(), ex);
+			}
 			return Amount.zero(Currency.BITCOIN.getCentsInCoin());
 		}
 	}
@@ -204,7 +206,9 @@ public class BitcoinMoneyService implements CryptoService {
 					return address;
 				}
 			} catch (ScriptException ex) {
-				logger.error(ex.getMessage());
+				if(logger.isErrorEnabled()) {
+					logger.error(ex.getMessage());
+				}
 			}
 		}
 		return null;

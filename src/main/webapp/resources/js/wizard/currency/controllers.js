@@ -22,16 +22,39 @@ currencyModule.controller("CurrencyController", function($scope, currencyResourc
 		}
 	});
 
-	$scope.selectCurrency = function(panelName, currency) {
-		if (!currency.supported) {
-			return;
+	/*$scope.selectCurrency = function(panelName, currency) {
+	 if (!currency.supported) {
+	 return;
+	 }
+	 var panel = $scope.panels[panelName];
+	 var oppositePanel = $scope.panels[panelName === "left" ? "right" : "left"];
+	 if (oppositePanel.currency && (oppositePanel.currency.id === currency.id)) {
+	 oppositePanel.currency = panel.currency;
+	 }
+	 panel.currency = currency;
+	 refreshTransfers();
+	 };*/
+
+	$scope.selectCurrency = function(panelName, currencyIndex) {
+		var panelLeft = $scope.panels["left"];
+		var panelRight = $scope.panels["right"];
+		
+		if (panelName === "left") {
+			panelLeft.currency = $scope.currencies[currencyIndex];
+			
+			if (currencyIndex === 1) {
+				panelRight.currency = $scope.currencies[2];
+			} else {
+				panelRight.currency = $scope.currencies[1];
+			}
+		} else {
+			panelRight.currency = $scope.currencies[currencyIndex];
+			if (currencyIndex === 1) {
+				panelLeft.currency = $scope.currencies[2];
+			} else {
+				panelLeft.currency = $scope.currencies[1];
+			}
 		}
-		var panel = $scope.panels[panelName];
-		var oppositePanel = $scope.panels[panelName === "left" ? "right" : "left"];
-		if (oppositePanel.currency && (oppositePanel.currency.id === currency.id)) {
-			oppositePanel.currency = panel.currency;
-		}
-		panel.currency = currency;
 		refreshTransfers();
 	};
 

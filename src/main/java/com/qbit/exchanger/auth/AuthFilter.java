@@ -41,9 +41,14 @@ public class AuthFilter implements Filter {
 				|| httpRequest.getPathInfo().startsWith("/users")
 				|| httpRequest.getPathInfo().startsWith("/oauth2")
 				|| httpRequest.getPathInfo().startsWith("/captcha-auth"))));
-		
+		String contextPath = ((HttpServletRequest) servletRequest).getContextPath();
 		if (isRequestToAdminPage && !isAdmin) {
-			((HttpServletResponse) servletResponse).sendRedirect(((HttpServletRequest) servletRequest).getContextPath());
+			if(contextPath.startsWith("/exchanger")) {
+				((HttpServletResponse) servletResponse).sendRedirect(contextPath);
+			} else {
+				((HttpServletResponse) servletResponse).sendRedirect("/");
+			}
+			
 		} else if ((userId == null) && !isAuthRequest) {
 			((HttpServletResponse) servletResponse).sendRedirect(((HttpServletRequest) servletRequest).getContextPath());
 		} else {

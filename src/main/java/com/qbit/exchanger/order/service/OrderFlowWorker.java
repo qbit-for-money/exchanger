@@ -36,7 +36,7 @@ public class OrderFlowWorker implements Runnable {
 
 	@Inject
 	private Exchange exchange;
-	
+
 	@Inject
 	private MailService mailService;
 
@@ -49,12 +49,16 @@ public class OrderFlowWorker implements Runnable {
 					try {
 						processOrderUnderWork(orderUnderWork);
 					} catch (Exception ex) {
-						logger.error(ex.getMessage(), ex);
+						if (logger.isErrorEnabled()) {
+							logger.error("[{}] " + ex.getMessage(), orderUnderWork.getId(), ex);
+						}
 					}
 				}
 			}
 		} catch (Exception ex) {
-			logger.error(ex.getMessage(), ex);
+			if (logger.isErrorEnabled()) {
+				logger.error(ex.getMessage(), ex);
+			}
 		}
 	}
 
@@ -73,11 +77,13 @@ public class OrderFlowWorker implements Runnable {
 				mailService.send(payedOrder);
 				Transfer outTransfer = payedOrder.getOutTransfer();
 				OrderInfo finalOrder = processOutTransfer(orderId, outTransfer.getCurrency(), outTransfer.getAddress(),
-					outTransfer.getAmount());
+						outTransfer.getAmount());
 				mailService.send(finalOrder);
 			}
 		} else {
-			logger.error("Invalid rate: " + rate);
+			if (logger.isErrorEnabled()) {
+				logger.error("[{}] Invalid rate: {}", orderId, rate);
+			}
 		}
 	}
 
@@ -91,7 +97,7 @@ public class OrderFlowWorker implements Runnable {
 		}
 		return orderInfo;
 	}
-	
+
 	private OrderInfo processCryptoInTransfer(String orderId, Currency inCurrency, String inAddress, Rate rate) {
 		CryptoService cryptoService = moneyServiceProvider.get(inCurrency, CryptoService.class);
 		Amount receivedAmount = cryptoService.getBalance(inAddress);
@@ -99,12 +105,12 @@ public class OrderFlowWorker implements Runnable {
 			return processPayed(orderId, rate, receivedAmount);
 		} else {
 			if (logger.isInfoEnabled()) {
-				logger.info("Too small amount received to address \"" + inAddress + "\".");
+				logger.info("[{}] Too small amount received to address \"{}\".", orderId, inAddress);
 			}
 			return null;
 		}
 	}
-	
+
 	private OrderInfo processDefaultInTransfer(String orderId, Currency inCurrency, String inAddress,
 			Amount inAmount, Rate rate) {
 		MoneyService moneyService = moneyServiceProvider.get(inCurrency);
@@ -113,15 +119,19 @@ public class OrderFlowWorker implements Runnable {
 			if (isReceivedAmountValid(receivedAmount, rate)) {
 				return processPayed(orderId, rate, receivedAmount);
 			} else {
-				logger.error("Too small amount received to address \"" + inAddress + "\".");
+				if (logger.isErrorEnabled()) {
+					logger.error("[{}] Too small amount received to address \"{}\".", orderId, inAddress);
+				}
 				return processInFailed(orderId);
 			}
 		} catch (Exception ex) {
-			logger.error(ex.getMessage(), ex);
+			if (logger.isErrorEnabled()) {
+				logger.error("[{}] " + ex.getMessage(), orderId, ex);
+			}
 			return processInFailed(orderId);
 		}
 	}
-	
+
 	private boolean isReceivedAmountValid(Amount receivedAmount, Rate rate) {
 		return ((receivedAmount != null) && receivedAmount.isPositive()
 				&& (rate != null) && rate.isValid() && rate.mul(receivedAmount).isPositive());
@@ -132,6 +142,9 @@ public class OrderFlowWorker implements Runnable {
 	}
 
 	private OrderInfo processInFailed(String orderId) {
+		if (logger.isErrorEnabled()) {
+			logger.error("[{}] Process in failed", orderId);
+		}
 		return orderDAO.changeStatus(orderId, OrderStatus.IN_FAILED);
 	}
 
@@ -140,9 +153,14 @@ public class OrderFlowWorker implements Runnable {
 		try {
 			MoneyService moneyService = moneyServiceProvider.get(outCurrency);
 			moneyService.sendMoney(outAddress, outAmount);
+			if (logger.isInfoEnabled()) {
+				logger.info("[{}] Sent money to \"{}\".", orderId, outAddress);
+			}
 			return processSuccess(orderId);
 		} catch (Exception ex) {
-			logger.error(ex.getMessage(), ex);
+			if (logger.isErrorEnabled()) {
+				logger.error("[{}] " + ex.getMessage(), orderId, ex);
+			}
 			return processOutFailed(orderId);
 		}
 	}
