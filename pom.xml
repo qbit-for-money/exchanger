@@ -1,5 +1,5 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 
@@ -51,13 +51,6 @@
 		</resources>
 	</build>
 
-	<!--repositories>
-		<repository>
-			<id>bitcoinj</id>
-			<url>http://distribution.bitcoinj.googlecode.com/git/releases/</url>
-		</repository>
-	</repositories-->
-
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
@@ -79,6 +72,17 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
+			<groupId>jstl</groupId>
+			<artifactId>jstl</artifactId>
+			<version>1.2</version>
+		</dependency>
+		
+		<!-- START Jersey-->
+		<dependency>
+			<groupId>org.glassfish.jersey.core</groupId>
+			<artifactId>jersey-client</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.glassfish.jersey.containers</groupId>
 			<!-- if your container implements Servlet API older than 3.0, use "jersey-container-servlet-core"  -->
 			<artifactId>jersey-container-servlet</artifactId>
@@ -87,16 +91,8 @@
 			<groupId>org.glassfish.jersey.media</groupId>
 			<artifactId>jersey-media-moxy</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>org.glassfish.jersey.core</groupId>
-			<artifactId>jersey-client</artifactId>
-		</dependency>
+		<!-- END Jersey-->
 		
-		<dependency>
-			<groupId>jstl</groupId>
-			<artifactId>jstl</artifactId>
-			<version>1.2</version>
-		</dependency>
 		<dependency>
 			<groupId>ru.yandex.money</groupId>
 			<artifactId>yamolib</artifactId>
@@ -139,6 +135,7 @@
 			<version>9.1-901.jdbc3</version>
 		</dependency>
 
+		<!-- START JPA -->
 		<dependency>
 			<groupId>org.eclipse.persistence</groupId>
 			<artifactId>org.eclipse.persistence.jpa</artifactId>
@@ -154,6 +151,7 @@
 			<artifactId>org.eclipse.persistence.moxy</artifactId>
 			<version>${eclipselink.version}</version>
 		</dependency>
+		<!-- END JPA -->
 
 		<dependency>
 			<groupId>org.apache.commons</groupId>
@@ -173,7 +171,7 @@
 			<version>2.3.20</version>
 		</dependency>
 		
-		<!-- OAuth2  -->
+		<!-- START OAuth2  -->
 		<dependency>
 			<groupId>org.glassfish.jersey.media</groupId>
 			<artifactId>jersey-media-json-jackson</artifactId>
@@ -192,13 +190,12 @@
 			<artifactId>org.apache.oltu.oauth2.client</artifactId>
 			<version>1.0.0</version>
 		</dependency>
-		<!-- OAuth2  -->
+		<!-- END OAuth2  -->
 		<dependency>
 			<groupId>com.octo.captcha</groupId>
 			<artifactId>jcaptcha-all</artifactId>
 			<version>1.0-RC-2.0.1</version>
 		</dependency>
-            
 	</dependencies>
 
 	<properties>
