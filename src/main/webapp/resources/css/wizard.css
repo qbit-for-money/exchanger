@@ -2,28 +2,28 @@
 
 /* Smartphones (portrait) ----------- */
 @media only screen 
-and (max-width : 767px) {
+and (max-width : 797px) {
 	.currency-picker {
 		padding: 0 5%;
 	}
-	
+
 	.currency { 
 		background: url('../img/currencies-40x40.png') no-repeat top left;
 		width: 40px; height: 40px;
 	} 
-/*	.currency.BITCOIN { background-position: 0px 0px; } 
-	.currency.DIGITALCOIN { background-position: -60px 0px; } 
-	.currency.FEATHERCOIN { background-position: -120px 0px; } 
-	.currency.LITECOIN { background-position: -180px 0px; } 
-	.currency.NAMECOIN { background-position: -240px 0px; } 
-	.currency.NOVACOIN { background-position: -300px 0px; } 
-	.currency.PEERCOIN { background-position: -359px 0px; } 
-	.currency.PRIMECOIN { background-position: -419px 0px; } 
-	.currency.QUARKCOIN { background-position: -479px 0px; } 
-	.currency.STABLECOIN { background-position: -539px 0px; } 
-	.currency.YANDEX_RUB { background-position: -599px 0px; } 
-	.currency.ZETACOIN { background-position: -659px 0px; } */
-	
+	/*	.currency.BITCOIN { background-position: 0px 0px; } 
+		.currency.DIGITALCOIN { background-position: -60px 0px; } 
+		.currency.FEATHERCOIN { background-position: -120px 0px; } 
+		.currency.LITECOIN { background-position: -180px 0px; } 
+		.currency.NAMECOIN { background-position: -240px 0px; } 
+		.currency.NOVACOIN { background-position: -300px 0px; } 
+		.currency.PEERCOIN { background-position: -359px 0px; } 
+		.currency.PRIMECOIN { background-position: -419px 0px; } 
+		.currency.QUARKCOIN { background-position: -479px 0px; } 
+		.currency.STABLECOIN { background-position: -539px 0px; } 
+		.currency.YANDEX_RUB { background-position: -599px 0px; } 
+		.currency.ZETACOIN { background-position: -659px 0px; } */
+
 	.currency.BITCOIN { background-position: 0px 0px; } 
 	.currency.DIGITALCOIN { background-position: -50px 0px; } 
 	.currency.FEATHERCOIN { background-position: -100px 0px; } 
@@ -36,7 +36,7 @@ and (max-width : 767px) {
 	.currency.STABLECOIN { background-position: -449px 0px; } 
 	.currency.YANDEX_RUB { background-position: -499px 0px; } 
 	.currency.ZETACOIN { background-position: -549px 0px; } 
-	
+
 	.currency-list-label {
 		font-size: 1em;
 	}
@@ -44,7 +44,6 @@ and (max-width : 767px) {
 	.currencies-list {
 		height: 350px;
 		max-height: 300px;
-		min-width: 100px;
 	}
 
 	.currency-list-item {
@@ -55,21 +54,26 @@ and (max-width : 767px) {
 		height: 40px;
 		width: 40px;
 		font-size: 2em;
-		
 	}
-	
+
 	.direction-control-currency-container {
 		padding-top: 150px;
 	}
-	
+
 	.transfer-address-text {
 		font-size: 20px;
+	}
+
+	.currency-list-rate {
+		overflow: hidden;
+		line-height: 40px;
+		color: #29d;
 	}
 }
 
 /* Larger screens ----------- */
 @media only screen 
-and (min-width : 768px) {
+and (min-width : 798px) {
 	.currency { 
 		background: url('../img/currencies-75x75.png') no-repeat top left;
 		width: 75px; height: 75px;
@@ -101,33 +105,35 @@ and (min-width : 768px) {
 		width: 75px;
 		font-size: 3em;
 	}
-	
+
 	.direction-control-currency-container {
 		padding-top: 200px;
 	}
-	
+
 	.currency-list-icon {
 		width: 75px;
 		height: 75px;
 	}
-	
+
 	.transfer-address-text {
 		font-size: 30px;
+	}
+
+	.currency-list-rate {
+		line-height: 75px;
+		color: #29d;
+		font-size: 2em;
 	}
 }
 
 .currency-step {
-	/* padding: 5%; */
+	padding: 5%; 
 }
 
 .currencies-list {
 	position: relative;
 	width: 100%;
 	overflow-y: auto;
-}
-
-.currency-list-item {
-	cursor: pointer;
 }
 
 .currency-list-icon {
@@ -139,6 +145,36 @@ and (min-width : 768px) {
 	vertical-align: middle;
 	display: table-cell;
 	padding: 0 10%;
+}
+
+.vertical-line {
+	border-left: solid #ccc;
+	border-right: solid #ccc;
+	border-width: 1px;
+}
+
+.vertical-left-Line {
+	border-left: solid #ccc;
+	border-width: 1px;
+}
+
+.vertical-right-Line {
+	border-right: solid #ccc;
+	border-width: 1px;
+}
+
+.currency-picker button {
+	height: auto;
+	border-radius: 13px;
+	border-color: #ccc;
+	padding: 13px;
+	background-color: white;
+	margin-top: 20px;
+	box-shadow: 0 6px 6px rgba(0, 0, 0, .2);
+}
+
+.currency-picker button:hover {
+	background-color: #eaeaea;
 }
 
 .direction-control {
@@ -161,8 +197,8 @@ span.status-sign {
 
 
 .overflow-hide {
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    width: 100%;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	width: 100%;
 }

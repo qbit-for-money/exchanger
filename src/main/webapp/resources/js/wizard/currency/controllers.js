@@ -1,7 +1,8 @@
 var currencyModule = angular.module("wizard.currency");
 
-currencyModule.controller("CurrencyController", function($scope, currencyResource, orderService) {
+currencyModule.controller("CurrencyController", function($scope, currencyResource, orderService, exchangesResource, convertAmount) {
 	$scope.panels = {left: {}, right: {}};
+	$scope.rates = {};
 
 	var currenciesResponse = currencyResource.findAll();
 	currenciesResponse.$promise.then(function() {
@@ -18,9 +19,33 @@ currencyModule.controller("CurrencyController", function($scope, currencyResourc
 					$scope.panels.right.currency = currency;
 				}
 			}
+			rates();
 			refreshTransfers();
 		}
 	});
+
+	function rates() {
+		var btcToLtcResponse = exchangesResource.rate({from: $scope.currencies[1].id, to: $scope.currencies[2].id});
+		btcToLtcResponse.$promise.then(function() {
+			var amount = {};
+			amount.cents = 0;
+			amount.coins = 1;
+			amount.centsInCoin = $scope.currencies[1].centsInCoin;
+			var resultAmount = convertAmount(amount, btcToLtcResponse);
+			$scope.rates.btcToLtc = resultAmount.coins + resultAmount.cents / resultAmount.centsInCoin;
+		});
+
+		var ltcToBtcResponse = exchangesResource.rate({from: $scope.currencies[2].id, to: $scope.currencies[1].id});
+		ltcToBtcResponse.$promise.then(function() {
+			var amount = {};
+			amount.cents = 0;
+			amount.coins = 1;
+			amount.centsInCoin = $scope.currencies[2].centsInCoin;
+			var resultAmount = convertAmount(amount, ltcToBtcResponse);
+			$scope.rates.ltcToBtc = resultAmount.coins + resultAmount.cents / resultAmount.centsInCoin;
+		});
+	}
+
 
 	/*$scope.selectCurrency = function(panelName, currency) {
 	 if (!currency.supported) {
@@ -35,27 +60,20 @@ currencyModule.controller("CurrencyController", function($scope, currencyResourc
 	 refreshTransfers();
 	 };*/
 
-	$scope.selectCurrency = function(panelName, currencyIndex) {
+	$scope.selectCurrency = function(currencyIndex) {
 		var panelLeft = $scope.panels["left"];
 		var panelRight = $scope.panels["right"];
-		
-		if (panelName === "left") {
-			panelLeft.currency = $scope.currencies[currencyIndex];
-			
-			if (currencyIndex === 1) {
-				panelRight.currency = $scope.currencies[2];
-			} else {
-				panelRight.currency = $scope.currencies[1];
-			}
+
+		panelLeft.currency = $scope.currencies[currencyIndex];
+
+		if (currencyIndex === 1) {
+			panelRight.currency = $scope.currencies[2];
 		} else {
-			panelRight.currency = $scope.currencies[currencyIndex];
-			if (currencyIndex === 1) {
-				panelLeft.currency = $scope.currencies[2];
-			} else {
-				panelLeft.currency = $scope.currencies[1];
-			}
+			panelRight.currency = $scope.currencies[1];
 		}
+
 		refreshTransfers();
+		$scope.goToNextStep();
 	};
 
 	function refreshTransfers() {

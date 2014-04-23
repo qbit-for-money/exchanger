@@ -1,84 +1,39 @@
-<div class="row currency-step">
-	<div class="col-lg-2 col-md-1 hidden-sm"></div>
-	<div class="col-lg-3 col-md-4 col-sm-5 col-xs-5 currency-picker">
-		<div class="dropdown open">
-			<ul class="dropdown-menu currencies-list">
-				<!--li data-ng-repeat="currency in currencies" 
-				    data-ng-click="selectCurrency('left', currency)"
-				    data-ng-class="{'active': panels.left.currency && (panels.left.currency.id === currency.id),
-								'disabled': !currency.supported}">
-					<a class="currency-list-item">
-						<div class="currency-list-icon">
-							<div class=" currency {{currency.id}}"></div>
-						</div>
-						<div class="text-center currency-list-label">{{currency.code}}</div>
-					</a>
-				</li-->
-				<li  
-					data-ng-click="selectCurrency('left', 1)"
-				    data-ng-class="{'active': panels.left.currency && (panels.left.currency.id === 'BITCOIN')}">
-					<a class="currency-list-item">
-						<div class="currency-list-icon">
-							<div class=" currency BITCOIN"></div>
-						</div>
-						<div class="text-center currency-list-label">BTC</div>
-					</a>
-				</li>
-				<li  
-					data-ng-click="selectCurrency('left', 2)"
-				    data-ng-class="{'active': panels.left.currency && (panels.left.currency.id === 'LITECOIN')}">
-					<a class="currency-list-item">
-						<div class="currency-list-icon">
-							<div class=" currency LITECOIN"></div>
-						</div>
-						<div class="text-center currency-list-label">LTC</div>
-					</a>
-				</li>
-			</ul>
-		</div>
-	</div>
-	<div class="text-center direction-control-currency-container col-md-2 col-xs-2">
-		<button class="btn btn-success btn-lg direction-control" ng-click="goToNextStep()"
-				ng-disabled="requestCount > 0">
-			<span class="glyphicon glyphicon-arrow-right"></span>
+<div class="row">
+	<div class="col-md-1 hidden-sm "></div>
+	<div class="col-md-10 currency-picker">
+		<button class="col-md-12 col-xs-12 form-control" data-ng-click="selectCurrency(1)">
+			<div class="col-md-3 col-sm-3 col-xs-4 vertical-right-Line">
+				<div class="currency-list-icon">
+					<div class=" currency BITCOIN"></div>
+				</div>
+				<div class="text-center currency-list-label">BTC</div>
+			</div>
+
+			<div class="col-md-6 col-sm-6 col-xs-4 text-center currency-list-rate">1/{{rates.btcToLtc}}</div>
+
+			<div class="col-md-3 col-sm-3 col-xs-4 vertical-left-Line">
+				<div class="currency-list-icon">
+					<div class=" currency LITECOIN"></div>
+				</div>
+				<div class="text-center currency-list-label">LTC</div>
+			</div>
+		</button>
+		<button class="col-md-12 col-xs-12 form-control" data-ng-click="selectCurrency(2)">
+			<div class="col-md-3 col-sm-3 col-xs-4 vertical-right-Line">
+				<div class="currency-list-icon">
+					<div class=" currency LITECOIN"></div>
+				</div>
+				<div class="text-center currency-list-label">LTC</div>
+			</div>
+
+			<div class="col-md-6 col-sm-6 col-xs-4 text-center currency-list-rate">1/{{rates.ltcToBtc}}</div>
+
+			<div class="col-md-3 col-sm-3 col-xs-4 vertical-left-Line">
+				<div class="currency-list-icon">
+					<div class=" currency BITCOIN"></div>
+				</div>
+				<div class="text-center currency-list-label">BTC</div>
+			</div>
 		</button>
 	</div>
-	<div class="col-lg-3 col-md-4 col-sm-5 col-xs-5 currency-picker">
-		<div class="dropdown open">
-			<ul class="dropdown-menu currencies-list">
-				<!--li data-ng-repeat="currency in currencies"
-				    data-ng-click="selectCurrency('right', currency)"
-				    data-ng-class="{'active': panels.right.currency && (panels.right.currency.id === currency.id),
-							'disabled': !currency.supported}">
-					<a class="currency-list-item">
-						<div class="currency-list-icon">
-							<div class="currency {{currency.id}}"></div>
-						</div>
-						<div class="text-center currency-list-label">{{currency.code}}</div>
-					</a>
-				</li-->
-				<li  
-					data-ng-click="selectCurrency('right', 2)"
-				    data-ng-class="{'active': panels.right.currency && (panels.right.currency.id === 'LITECOIN')}">
-					<a class="currency-list-item">
-						<div class="currency-list-icon">
-							<div class=" currency LITECOIN"></div>
-						</div>
-						<div class="text-center currency-list-label">LTC</div>
-					</a>
-				</li>
-				<li  
-					data-ng-click="selectCurrency('right', 1)"
-				    data-ng-class="{'active': panels.right.currency && (panels.right.currency.id === 'BITCOIN')}">
-					<a class="currency-list-item">
-						<div class="currency-list-icon">
-							<div class=" currency BITCOIN"></div>
-						</div>
-						<div class="text-center currency-list-label">BTC</div>
-					</a>
-				</li>
-			</ul>
-		</div>
-	</div>
-	<div class="col-lg-2 col-md-1 hidden-sm"></div>
-</div>
+	<div class="col-md-1 hidden-sm "></div>
