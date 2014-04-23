@@ -7,11 +7,11 @@ import com.google.litecoin.kits.NewWalletAppKit;
 import com.google.litecoin.params.MainNetParams;
 import com.google.litecoin.params.TestNet2Params;
 import com.google.litecoin.script.Script;
-import com.google.litecoin.store.PostgresFullPrunedBlockStore;
 import com.google.litecoin.utils.BriefLogFormatter;
 import com.qbit.exchanger.money.core.CryptoService;
 import com.qbit.exchanger.money.core.WTransaction;
 import com.qbit.exchanger.env.Env;
+import com.qbit.exchanger.money.core.AddressInfo;
 import com.qbit.exchanger.money.model.Amount;
 import com.qbit.exchanger.money.model.Currency;
 import java.io.File;
@@ -25,6 +25,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import static com.qbit.exchanger.rest.util.RESTClientUtil.*;
 
 /**
  * LITECOIN
@@ -36,6 +37,8 @@ public class LitecoinMoneyService implements CryptoService {
 
 	public static final BigInteger COIN = new BigInteger("100000000", 10);
 	public static final BigInteger MIN_FEE = new BigInteger("100000", 10);
+
+	public final static String BLOCKR_API_BASE_URL = "https://ltc.blockr.io/api/v1/address/balance/";
 
 	private final Logger logger = LoggerFactory.getLogger(LitecoinMoneyService.class);
 
@@ -81,14 +84,21 @@ public class LitecoinMoneyService implements CryptoService {
 		BigInteger balance = getWallet().getBalance().subtract(MIN_FEE).max(BigInteger.ZERO);
 		return new Amount(new BigDecimal(Utils.bitcoinValueToFriendlyString(balance)), Currency.LITECOIN.getCentsInCoin());
 	}
-	
+
 	@Override
 	public Amount getBalance(String address) {
+		String path = (address + "?confirmations=2");
+
 		try {
-			BigInteger balance = ((PostgresFullPrunedBlockStore) kit.storeFull()).calculateBalanceForAddress(new Address(parameters, address));
-			return new Amount(new BigDecimal(Utils.bitcoinValueToFriendlyString(balance)), Currency.BITCOIN.getCentsInCoin());
+			AddressInfo addressInfo = get(BLOCKR_API_BASE_URL, path, AddressInfo.class, true);
+			if (logger.isInfoEnabled()) {
+				logger.info("[{}] Address Info: ", addressInfo, address);
+			}
+			return new Amount(new BigDecimal(addressInfo.getData().getBalance()), Currency.LITECOIN.getCentsInCoin());
 		} catch (Exception ex) {
-			logger.error(ex.getMessage(), ex);
+			if (logger.isErrorEnabled()) {
+				logger.error(ex.getMessage(), ex);
+			}
 			return Amount.zero(Currency.LITECOIN.getCentsInCoin());
 		}
 	}
@@ -100,7 +110,7 @@ public class LitecoinMoneyService implements CryptoService {
 		Address address = key.toAddress(parameters);
 		return address.toString();
 	}
-	
+
 	/*
 	 * 1 coin = 100 cents
 	 * 1 cent = 1000000 nanocents
@@ -135,7 +145,7 @@ public class LitecoinMoneyService implements CryptoService {
 			}, MoreExecutors.sameThreadExecutor());
 		}
 	}
-	
+
 	@Override
 	public Amount receiveMoney(String address, Amount amount) throws Exception {
 		throw new UnsupportedOperationException();
@@ -143,9 +153,9 @@ public class LitecoinMoneyService implements CryptoService {
 
 	@Override
 	public List<WTransaction> getWalletTransactions() {
-		Iterable<WalletTransaction> tansactions = getWallet().getWalletTransactions();	
+		Iterable<WalletTransaction> tansactions = getWallet().getWalletTransactions();
 		List<WTransaction> wTransactions = new ArrayList<>();
-		for (WalletTransaction walletTr : tansactions) {		
+		for (WalletTransaction walletTr : tansactions) {
 			Transaction tr = walletTr.getTransaction();
 			wTransactions.add(toWTransaction(tr));
 		}
@@ -165,7 +175,7 @@ public class LitecoinMoneyService implements CryptoService {
 		bi = bi.add(BigInteger.valueOf(cents));
 		return bi;
 	}
-	
+
 	private static Amount toAmount(BigInteger nanoCoins) {
 		return new Amount(new BigDecimal(Utils.bitcoinValueToFriendlyString(nanoCoins.abs())), Currency.LITECOIN.getCentsInCoin());
 	}
@@ -180,9 +190,9 @@ public class LitecoinMoneyService implements CryptoService {
 
 		BigInteger amountToMe = transaction.getValueSentToMe(getWallet());
 		result.setAmountSentToMe(toAmount(amountToMe));
-		
+
 		result.setAddress(getTransactionAddress(transaction));
-		
+
 		if (transaction.getConfidence() != null) {
 			result.setDepth(transaction.getConfidence().getDepthInBlocks());
 		}
