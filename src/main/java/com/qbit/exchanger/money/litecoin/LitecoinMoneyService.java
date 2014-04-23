@@ -38,7 +38,7 @@ public class LitecoinMoneyService implements CryptoService {
 	public static final BigInteger COIN = new BigInteger("100000000", 10);
 	public static final BigInteger MIN_FEE = new BigInteger("100000", 10);
 
-	public final static String BLOCKR_API_BASE_URL = "http://ltc.blockr.io/api/v1/address/balance/";
+	public final static String BLOCKR_API_BASE_URL = "https://ltc.blockr.io/api/v1/address/balance/";
 
 	private final Logger logger = LoggerFactory.getLogger(LitecoinMoneyService.class);
 
