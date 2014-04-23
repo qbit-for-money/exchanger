@@ -1,12 +1,12 @@
 package com.qbit.exchanger.money.bitcoin;
 
+import com.qbit.exchanger.money.core.AddressInfo;
 import com.google.bitcoin.core.*;
 import com.google.bitcoin.core.Wallet;
 import com.google.bitcoin.kits.NewWalletAppKit;
 import com.google.bitcoin.params.MainNetParams;
 import com.google.bitcoin.params.TestNet3Params;
 import com.google.bitcoin.script.Script;
-import com.google.bitcoin.store.PostgresFullPrunedBlockStore;
 import com.google.bitcoin.utils.BriefLogFormatter;
 import com.google.bitcoin.wallet.WalletTransaction;
 import static com.google.common.base.Preconditions.checkArgument;
@@ -27,6 +27,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import static com.qbit.exchanger.rest.util.RESTClientUtil.*;
 
 /**
  * BITCOIN
@@ -38,6 +39,8 @@ public class BitcoinMoneyService implements CryptoService {
 
 	public static final BigInteger COIN = new BigInteger("100000000", 10);
 	public static final BigInteger MIN_FEE = new BigInteger("10000", 10);
+	
+	public final static String BLOCKR_API_BASE_URL = "https://btc.blockr.io/api/v1/address/balance/";
 
 	private final Logger logger = LoggerFactory.getLogger(BitcoinMoneyService.class);
 
@@ -87,9 +90,15 @@ public class BitcoinMoneyService implements CryptoService {
 
 	@Override
 	public Amount getBalance(String address) {
+		
+		String path = (address + "?confirmations=2");
+		
 		try {
-			BigInteger balance = ((PostgresFullPrunedBlockStore) kit.storeFull()).calculateBalanceForAddress(new Address(parameters, address));
-			return new Amount(new BigDecimal(Utils.bitcoinValueToFriendlyString(balance)), Currency.BITCOIN.getCentsInCoin());
+			AddressInfo addressInfo = get(BLOCKR_API_BASE_URL, path, AddressInfo.class, true);
+			if (logger.isInfoEnabled()) {
+				logger.info("[{}] Address Info: ", addressInfo, address);
+			}
+			return new Amount(new BigDecimal(addressInfo.getData().getBalance()), Currency.BITCOIN.getCentsInCoin());
 		} catch (Exception ex) {
 			if(logger.isErrorEnabled()) {
 				logger.error(ex.getMessage(), ex);

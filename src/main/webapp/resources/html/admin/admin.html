@@ -27,17 +27,17 @@
 												</li>
 											</ul>
 										</div>
-										
+
 									</div>	
 									<div class="col-xs-4 col-md-4">
-										<div class="form-control text-left" title="Balance">
-												{{balance}}
-											</div>
+										<input class="form-control overflow-hide" type="text" name="balance"
+										       ng-model="balance" ng-readonly="true" />
 									</div>
 									<div class="col-xs-4 col-md-4">
-										<div class="form-control text-left" title="Wallet address">
-												{{inAddress}}	
-											</div>
+
+										<input class="form-control overflow-hide" type="text" name="inAddress"
+										       ng-model="inAddress" ng-readonly="true" />
+
 									</div>
 								</div>							
 
@@ -56,10 +56,10 @@
 									<div class="col-xs-4 col-md-4">
 
 										<input class="form-control" type="text" name="address" style="cursor: text;"
-										       ng-model="outAddress"
+										       ng-model="outAddress" placeholder="Address to send"
 										       ng-required="true" title="Address" />
-										
-										
+
+
 									</div>
 									<div class="col-xs-4 col-md-4">
 										<input class="form-control" type="text" name="amountToSend" style="cursor: text;"
@@ -68,7 +68,7 @@
 									</div>
 
 									<div class="col-xs-4 col-md-4">
-										<button class=" btn btn-success" ng-click="sendMoney()">
+										<button class=" btn btn-success overflow-hide" ng-click="sendMoney()">
 											Send Money <span class="glyphicon glyphicon-arrow-right"></span>
 										</button>
 									</div>
