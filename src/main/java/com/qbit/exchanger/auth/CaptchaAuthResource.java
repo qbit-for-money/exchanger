@@ -149,6 +149,7 @@ public class CaptchaAuthResource {
 	}
 
 	@POST
+	@Path("auth")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public void auth(AuthRequest authRequest) throws Exception {
 		if (!authRequest.isValid()) {
@@ -167,6 +168,14 @@ public class CaptchaAuthResource {
 			}
 		} catch (Exception ex) {
 			logger.error(ex.getMessage(), ex);
+		}
+	}
+	
+	@POST
+	@Path("logout")
+	public void logout() {
+		if(httpServletRequest.getSession().getAttribute(AuthFilter.USER_ID_KEY) != null) {
+			httpServletRequest.getSession().removeAttribute(AuthFilter.USER_ID_KEY);
 		}
 	}
 }

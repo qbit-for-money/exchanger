@@ -1,6 +1,7 @@
 .modal-dialog {
 	padding-top: 13%;
 	max-width: 330px;
+	margin: 0 auto 0 auto;
 }
 
 .modal-dialog .center {
@@ -22,8 +23,7 @@
 
 .modal-dialog label[for=radio2]{
 	margin: 10px;
-	margin-left: 15px;
-	font-family:'Times New Roman', Times, serif;
+	margin-left: 9%;
 }
 
 #captcha {
@@ -32,9 +32,8 @@
 	cursor: pointer;
 }
 
-.popover-content {
-	font-family:'Times New Roman', Times, serif;
-	font-weight:bold;
-	font-size: 18px;
-	/*color: graytext;*/
+.modal-dialog .popover-content {
+	font-family:'Times New Roman', Times, sans-serif;
+	font-weight:normal;
+	font-size: 16px;
 }

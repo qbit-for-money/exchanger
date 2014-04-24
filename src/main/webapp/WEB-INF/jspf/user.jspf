@@ -2,11 +2,16 @@
 <form name="userForm" class="navbar-form navbar-right" ng-controller="UserController">
 	<div class="form-group">
 		<div class="input-group" style="width: 20em;">
-			<input name="userPublicKey" type="text" class="form-control"
-			       ng-model="user.publicKey" ng-readonly="true"/>
 			<div class="input-group-addon">
 				<span class="glyphicon glyphicon-{{keyType}}"></span>
 			</div>
+			<input name="userPublicKey" type="text" class="form-control"
+			       ng-model="user.publicKey" ng-readonly="true"/>
+			<span class="input-group-btn">
+				<button class="btn btn-default" type="button" ng-click="logout()">
+					<span class="glyphicon {{logoutButton}}"></span>
+				</button>
+			</span>
 		</div>
 	</div>
 </form>

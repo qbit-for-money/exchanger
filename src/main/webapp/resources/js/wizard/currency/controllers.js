@@ -32,7 +32,7 @@ currencyModule.controller("CurrencyController", function($scope, currencyResourc
 			amount.coins = 1;
 			amount.centsInCoin = $scope.currencies[1].centsInCoin;
 			var resultAmount = convertAmount(amount, btcToLtcResponse);
-			$scope.rates.btcToLtc = resultAmount.coins + resultAmount.cents / resultAmount.centsInCoin;
+			$scope.rates.btcToLtc = "1/" + (resultAmount.coins + resultAmount.cents / resultAmount.centsInCoin);
 		});
 
 		var ltcToBtcResponse = exchangesResource.rate({from: $scope.currencies[2].id, to: $scope.currencies[1].id});
@@ -42,7 +42,7 @@ currencyModule.controller("CurrencyController", function($scope, currencyResourc
 			amount.coins = 1;
 			amount.centsInCoin = $scope.currencies[2].centsInCoin;
 			var resultAmount = convertAmount(amount, ltcToBtcResponse);
-			$scope.rates.ltcToBtc = resultAmount.coins + resultAmount.cents / resultAmount.centsInCoin;
+			$scope.rates.ltcToBtc = "1/" + (resultAmount.coins + resultAmount.cents / resultAmount.centsInCoin);
 		});
 	}
 

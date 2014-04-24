@@ -25,8 +25,8 @@
 			a.src = g;
 			m.parentNode.insertBefore(a, m)
 		})(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
-
 		ga('create', 'UA-50199555-1', 'bitgates.com');
+		ga('require', 'displayfeatures');
 		ga('send', 'pageview');
 
 	</script>
@@ -92,6 +92,7 @@
 		<script type="text/javascript" src="resources/js/wizard/amount/validation.js"></script>
 
 		<script type="text/javascript" src="resources/js/wizard/result/controllers.js"></script>
+		<script type="text/javascript" src="resources/js/wizard/result/directives.js"></script>
 		
 		<script type="text/javascript" src="resources/js/auth/controllers.js"></script>
 		<script type="text/javascript" src="resources/js/auth/resources.js"></script>

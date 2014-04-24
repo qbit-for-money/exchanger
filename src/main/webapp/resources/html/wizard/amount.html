@@ -13,7 +13,7 @@
 
 							<form name="inForm" role="form" novalidate>
 								<div class="row" style="margin-bottom: 5px;"
-									 ng-if="custom" ng-include="'resources/html/money/' + orderInfo.inTransfer.currency + '/in-address.html'"></div>
+								     ng-if="custom" ng-include="'resources/html/money/' + orderInfo.inTransfer.currency + '/in-address.html'"></div>
 								<div class="form-group" style="margin-bottom: 0px;">
 									<amount-input amount="orderInfo.inTransfer.amount"></amount-input>
 								</div>
@@ -31,7 +31,8 @@
 <div class="row" style="margin-bottom: 20px;">
 	<div class="text-center col-md-12">
 		<button class="btn btn-success btn-lg direction-control" ng-click="goToNextStep()"
-				ng-disabled="requestCount > 0">
+			popover="{{rate}}" popover-placement="right" popover-trigger="mouseenter"
+			ng-disabled="requestCount > 0">
 			<span class="glyphicon glyphicon-arrow-down"></span>
 		</button>
 	</div>
@@ -55,18 +56,18 @@
 								</div>
 								<div class="input-group input-group-lg" ng-class="{'has-error': outForm.outAddress.$invalid}">
 									<input class="form-control" type="text" name="outAddress"
-										   ng-model="orderInfo.outTransfer.address"
-										   ng-required="true" ng-pattern="/^[0-9A-Za-z]+$/"
-										   title="Wallet address" placeholder="Wallet address" />
+									       ng-model="orderInfo.outTransfer.address"
+									       ng-required="true" ng-pattern="/^[0-9A-Za-z]+$/"
+									       title="Wallet address" placeholder="Wallet address" />
 									<span class="input-group-addon"><span class="glyphicon glyphicon-credit-card"></span></span>
 								</div>
 							</form>
 
 						</div>
 					</div>
-
 				</div>
 			</div>
+			<div style="padding-left: 10px;"> Buffer: {{buffer}}</div>
 		</div>
 	</div>
 </div>

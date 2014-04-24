@@ -193,6 +193,12 @@ span.status-sign {
 	font-size: 2em;
 }
 
+#in-address-popover {
+  position: absolute;
+  display: block;
+  margin: -51px 20% 0 0;
+}
+
 /* END RESULT STEP */
 
 

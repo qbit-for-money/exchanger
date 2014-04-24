@@ -19,12 +19,14 @@
 										<div class="currency {{orderInfo.inTransfer.currency}}"></div>
 									</div>
 									<div class="col-xs-offset-1 col-xs-9 col-md-offset-0 col-md-10">
+										<div class="popover top" id="in-address-popover">
+											<div class="arrow"></div>
+											<div class="popover-content">Send money to this wallet</div>
+										</div>
 										<div class="col-xs-12 col-md-12 text-center input-group input-group-lg" style="vertical-align: top;">
-											<input class="form-control overflow-hide" type="text" name="inAddress"
-												   ng-model="orderInfo.inTransfer.address" ng-readonly="true"
-												   title="Wallet address" onclick="this.select()"
-												   popover="Send money to this wallet"
-												   popover-placement="top" popover-trigger="mouseenter"/>
+											<input class="form-control overflow-hide" type="text" name="inAddress" id="inAddress"
+											       ng-model="orderInfo.inTransfer.address" ng-readonly="true"
+											       title="Wallet address" select-on-mouse-enter/>
 											<span class="input-group-addon"><span class="glyphicon glyphicon-credit-card"></span></span>
 										</div>
 									</div>
@@ -35,7 +37,7 @@
 										<span class="glyphicon glyphicon-ok-sign status-sign success" ng-switch-when="OK"></span>
 										<span class="glyphicon glyphicon-exclamation-sign status-sign error" ng-switch-when="ERROR"></span>
 									</div>
-									<div class="col-xs-10 col-md-10 text-center" style="vertical-align: bottom; margin: 0">
+									<div class="col-xs-8 col-md-8 text-center" style="vertical-align: bottom; margin: 0">
 										<h3>{{orderInfo.inTransfer.amount|amount}}</h3>
 									</div>
 								</div>
@@ -48,15 +50,11 @@
 
 			<div class="row" style="margin-bottom: 20px;">
 				<div class="text-center col-xs-offset-0 col-xs-12 col-md-offset-1 col-md-10">
-					<div class="col-xs-2 col-md-2"></div>
-					<div class="col-xs-offset-1 col-xs-9 col-md-offset-0 col-md-10">
-						<button class="btn btn-success btn-lg direction-control"
-								popover="{{rate|rate}}" popover-placement="right" popover-trigger="mouseenter"
-								ng-disabled="requestCount > 0">
-							<span class="glyphicon glyphicon-arrow-down"></span>
-						</button>
-					</div>
-
+					<button class="btn btn-success btn-lg direction-control"
+						popover="{{rate|rate}}" popover-placement="right" popover-trigger="mouseenter"
+						ng-disabled="requestCount > 0">
+						<span class="glyphicon glyphicon-arrow-down"></span>
+					</button>
 				</div>
 			</div>
 
@@ -72,7 +70,7 @@
 										<span class="glyphicon glyphicon-ok-sign status-sign success" ng-switch-when="OK"></span>
 										<span class="glyphicon glyphicon-exclamation-sign status-sign error" ng-switch-when="ERROR"></span>
 									</div>
-									<div class="col-xs-10 col-md-10 text-center" style="vertical-align: top; margin: -12px 1em 12px -1em;">
+									<div class="col-xs-8 col-md-8 text-center" style="vertical-align: top; margin: -2px 0 12px 0;">
 										<h3>{{orderInfo.outTransfer.amount|amount}}</h3>
 									</div>
 								</div>
@@ -83,7 +81,7 @@
 									<div class="col-xs-offset-1 col-xs-9 col-md-offset-0 col-md-10">
 										<div class="col-xs-12 col-md-12 text-center input-group input-group-lg" style="vertical-align: bottom;">
 											<input class="form-control overflow-hide" type="text" name="inAddress"
-												   ng-model="orderInfo.outTransfer.address" ng-readonly="true" />
+											       ng-model="orderInfo.outTransfer.address" ng-readonly="true" />
 											<span class="input-group-addon"><span class="glyphicon glyphicon-credit-card"></span></span>
 										</div>
 									</div>

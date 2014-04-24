@@ -104,7 +104,7 @@ public class Amount implements Serializable, Comparable<Amount> {
 		if ((o == null) || (centsInCoin != o.centsInCoin)) {
 			throw new IllegalArgumentException();
 		}
-		if (coins < o.cents) {
+		if (coins < o.coins) {
 			return -1;
 		} else if (coins > o.coins) {
 			return 1;

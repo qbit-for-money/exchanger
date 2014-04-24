@@ -1,11 +1,18 @@
 var resultModule = angular.module("wizard.result");
 
-resultModule.controller("ResultController", function($scope, $interval, orderService) {
+resultModule.controller("ResultController", function($rootScope, $scope, $interval, orderService) {
 	function actualizeOrder() {
 		orderService.actualize();
 	}
 	$scope.actualizationTimerId = $interval(actualizeOrder, 10000);
 	actualizeOrder();
+	angular.element(document).ready(function() {
+		setTimeout(function() {
+			angular.element("#inAddress").select();
+		}, 10);
+	});
+
+	$rootScope.resultGoBackDisabled = true;
 
 	function handleOrderLoaded() {
 		var orderInfo = orderService.get();
@@ -43,6 +50,7 @@ resultModule.controller("ResultController", function($scope, $interval, orderSer
 				break;
 			case "SUCCESS":
 				$scope.outTransferStatus = "OK";
+				$rootScope.resultGoBackDisabled = false;
 				break;
 			case "OUT_FAILED":
 				$scope.outTransferStatus = "ERROR";

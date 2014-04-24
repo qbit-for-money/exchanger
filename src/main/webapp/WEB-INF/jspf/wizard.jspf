@@ -23,7 +23,7 @@
 				</ul>
 				<div class="actions">
 					<button class="btn btn-lg btn-success" 
-						ng-disabled="(currentStepIndex === 0) || (requestCount > 0)"
+						ng-disabled="(currentStepIndex === 0) || (requestCount > 0) || resultGoBackDisabled"
 						ng-click="goToPrevStep()"><span class="glyphicon glyphicon-chevron-left"></span></button>
 					<button class="btn btn-lg btn-success" 
 						ng-disabled="(currentStepIndex === (steps.length - 1)) || (requestCount > 0)"
