@@ -18,6 +18,8 @@ userModule.controller("UserController", function($scope, usersResource, captchaA
 
 	$scope.logout = function() {
 		captchaAuthResource.logout({});
-		location.reload();
+		setTimeout(function() {
+			location.reload();
+		}, 100);
 	};
 });

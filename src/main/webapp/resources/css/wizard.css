@@ -120,6 +120,7 @@ and (min-width : 798px) {
 	}
 
 	.currency-list-rate {
+		overflow: hidden;
 		line-height: 75px;
 		color: #29d;
 		font-size: 2em;
