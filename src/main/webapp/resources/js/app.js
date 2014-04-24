@@ -45,7 +45,7 @@ angular.module("main").config(function($routeProvider) {
 });
 
 angular.module("admin", ["ngRoute", "ngResource", "ui.bootstrap", "chieffancypants.loadingBar",
-	"common", "user", "money", "money.yandex"]);
+	"common", "user", "money", "money.yandex", "captcha-auth"]);
 
 angular.module("admin").config(function($routeProvider) {
 	$routeProvider.when("/", {

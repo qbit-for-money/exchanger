@@ -81,4 +81,12 @@ adminModule.controller("AdminController", function($rootScope, $scope, adminReso
 			generateInAddress();
 		}
 	};
+	
+	$scope.changeAmount = function() {
+		if ($scope.amountToSend && !isNaN($scope.amountToSend)) {
+			$scope.amountInvalid = false;
+		} else {
+			$scope.amountInvalid = true;
+		}
+	};
 });

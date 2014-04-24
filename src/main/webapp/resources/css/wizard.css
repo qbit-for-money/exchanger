@@ -185,7 +185,10 @@ and (min-width : 798px) {
 /* END CURRENCY STEP */
 
 /* START ORDER STEP */
-
+#buffer {
+	padding-left: 10px;
+	font-size: 16px;
+}
 /* END ORDER STEP */
 
 /* START RESULT STEP */

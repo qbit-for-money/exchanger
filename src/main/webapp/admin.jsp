@@ -72,6 +72,9 @@
 
 		<script type="text/javascript" src="resources/js/admin/resources.js"></script>
 		<script type="text/javascript" src="resources/js/admin/controllers.js"></script>
+		
+		<script type="text/javascript" src="resources/js/auth/controllers.js"></script>
+		<script type="text/javascript" src="resources/js/auth/resources.js"></script>
 
 	</body>
 </html>
