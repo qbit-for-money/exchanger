@@ -61,6 +61,17 @@ public class OrderFlowScheduler {
 				}
 			}
 		}, env.getOrderCleanupPeriodHours(), env.getOrderCleanupPeriodHours(), TimeUnit.HOURS);
+		executorService.scheduleWithFixedDelay(new Runnable() {
+
+			@Override
+			public void run() {
+				try {
+					orderDAO.cleanUpCancellationTokens();
+				} catch (Exception ex) {
+					logger.error(ex.getMessage(), ex);
+				}
+			}
+		}, env.getOrderCancellationTokenLifetimeHours(), env.getOrderCancellationTokenLifetimeHours(), TimeUnit.HOURS);
 	}
 
 	@PreDestroy

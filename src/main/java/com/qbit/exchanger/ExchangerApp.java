@@ -7,7 +7,7 @@ import com.qbit.exchanger.env.Env;
 import com.qbit.exchanger.external.exchange.btce.BTCExchange;
 import com.qbit.exchanger.external.exchange.core.Exchange;
 import com.qbit.exchanger.external.exchange.core.ExchangeFacade;
-import com.qbit.exchanger.mail.MailNotificationDAO;
+import com.qbit.exchanger.order.dao.MailNotificationDAO;
 import com.qbit.exchanger.mail.MailService;
 import com.qbit.exchanger.money.bitcoin.BitcoinMoneyService;
 import com.qbit.exchanger.money.core.MoneyServiceProvider;

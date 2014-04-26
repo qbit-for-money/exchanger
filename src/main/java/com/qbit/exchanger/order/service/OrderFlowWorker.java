@@ -2,6 +2,7 @@ package com.qbit.exchanger.order.service;
 
 import com.qbit.exchanger.money.core.CryptoService;
 import com.qbit.exchanger.external.exchange.core.Exchange;
+import com.qbit.exchanger.order.dao.MailNotificationDAO;
 import com.qbit.exchanger.mail.MailService;
 import com.qbit.exchanger.money.core.MoneyService;
 import com.qbit.exchanger.money.core.MoneyServiceProvider;
@@ -13,7 +14,11 @@ import com.qbit.exchanger.order.dao.OrderDAO;
 import com.qbit.exchanger.order.model.OrderInfo;
 import com.qbit.exchanger.order.model.OrderStatus;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import org.slf4j.Logger;
@@ -39,6 +44,10 @@ public class OrderFlowWorker implements Runnable {
 
 	@Inject
 	private MailService mailService;
+	@Inject
+	private MailNotificationDAO mailNotificationDAO;
+
+	private final Executor executor = Executors.newCachedThreadPool();
 
 	@Override
 	public void run() {
@@ -70,15 +79,15 @@ public class OrderFlowWorker implements Runnable {
 		Transfer inTransfer = orderUnderWork.getInTransfer();
 		Rate rate = exchange.getRate(inTransfer.getCurrency(), orderUnderWork.getOutTransfer().getCurrency());
 		if ((rate != null) && rate.isValid()) {
-			mailService.send(orderUnderWork);
+			sendOrderFlowNotification(orderUnderWork);
 			OrderInfo payedOrder = processInTransfer(orderId, inTransfer.getCurrency(), inTransfer.getAddress(),
 					inTransfer.getAmount(), rate);
 			if ((payedOrder != null) && (OrderStatus.PAYED == payedOrder.getStatus())) {
-				mailService.send(payedOrder);
+				sendOrderFlowNotification(payedOrder);
 				Transfer outTransfer = payedOrder.getOutTransfer();
 				OrderInfo finalOrder = processOutTransfer(orderId, outTransfer.getCurrency(), outTransfer.getAddress(),
 						outTransfer.getAmount());
-				mailService.send(finalOrder);
+				sendOrderFlowNotification(finalOrder);
 			}
 		} else {
 			if (logger.isErrorEnabled()) {
@@ -171,5 +180,57 @@ public class OrderFlowWorker implements Runnable {
 
 	private OrderInfo processOutFailed(String orderId) {
 		return orderDAO.changeStatus(orderId, OrderStatus.OUT_FAILED);
+	}
+	
+	private void sendOrderFlowNotification(OrderInfo orderInfo) {
+		if ((orderInfo == null) || (orderInfo.getId() == null) || orderInfo.getId().isEmpty()
+				|| (orderInfo.getUserPublicKey() == null) || orderInfo.getUserPublicKey().isEmpty()
+				|| !orderInfo.getUserPublicKey().contains("@")) {
+			return;
+		}
+		final OrderInfo safeOrderInfo = OrderInfo.clone(orderInfo);
+		executor.execute(new Runnable() {
+
+			@Override
+			public void run() {
+				try {
+					if (mailNotificationDAO.isNotificationSent(safeOrderInfo.getId(), safeOrderInfo.getStatus())) {
+						return;
+					}
+				} catch (Exception ex) {
+					if (logger.isErrorEnabled()) {
+						logger.error("[{}]" + ex.getMessage(), safeOrderInfo.getId(), ex);
+					}
+				}
+				try {
+					String tmplPrefix;
+					if (safeOrderInfo.isValid()) {
+						tmplPrefix = safeOrderInfo.getStatus().name().toLowerCase();
+					} else {
+						tmplPrefix = "invalid";
+					}
+					Map<String, Object> templateInput = new HashMap<>();
+					templateInput.put("order", safeOrderInfo);
+					if ((safeOrderInfo.getInTransfer() != null) && (safeOrderInfo.getInTransfer().getAmount() != null)) {
+						templateInput.put("inAmount", safeOrderInfo.getInTransfer().toBigDecimal());
+					}
+					if ((safeOrderInfo.getOutTransfer() != null) && (safeOrderInfo.getOutTransfer().getAmount() != null)) {
+						templateInput.put("outAmount", safeOrderInfo.getOutTransfer().toBigDecimal());
+					}
+					mailService.send(safeOrderInfo.getUserPublicKey(), "[INFO] Order #" + safeOrderInfo.getId(),
+							tmplPrefix + "-order.tmpl", templateInput);
+				} catch (Exception ex) {
+					if (logger.isErrorEnabled()) {
+						logger.error("[{}]" + ex.getMessage(), safeOrderInfo.getId(), ex);
+					}
+				} finally {
+					try {
+						mailNotificationDAO.registerNotification(safeOrderInfo.getId(), safeOrderInfo.getStatus());
+					} catch (Exception ex) {
+						//
+					}
+				}
+			}
+		});
 	}
 }

@@ -29,7 +29,7 @@ orderModule.factory("orderService", function($rootScope, sessionStorage, userSer
 		if (_restoreFromSession()) {
 			return;
 		}
-		var activeOrder = ordersResource.getActiveByUser({userPublicKey: userService.get().publicKey}, function() {
+		var activeOrder = ordersResource.getActive({}, function() {
 			if (activeOrder && activeOrder.status) {
 				_set(activeOrder);
 			} else {
@@ -76,8 +76,7 @@ orderModule.factory("orderService", function($rootScope, sessionStorage, userSer
 	
 	function actualize() {
 		if (orderInfo && orderInfo.status && orderInfo.userPublicKey && orderInfo.creationDate) {
-			var newOrderInfo = ordersResource.getByUserAndTimestamp({
-				userPublicKey: orderInfo.userPublicKey,
+			var newOrderInfo = ordersResource.getByTimestamp({
 				creationDate: orderInfo.creationDate
 			}, function() {
 				_set(newOrderInfo);

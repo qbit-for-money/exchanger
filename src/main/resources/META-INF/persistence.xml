@@ -4,6 +4,9 @@
 		<provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
 		<class>com.qbit.exchanger.user.UserInfo</class>
 		<class>com.qbit.exchanger.order.model.OrderInfo</class>
+		<class>com.qbit.exchanger.order.model.OrderCancellationToken</class>
+		<class>com.qbit.exchanger.order.model.MailNotification</class>
+		<class>com.qbit.exchanger.buffer.BufferBalanceInfo</class>
 		<exclude-unlisted-classes>false</exclude-unlisted-classes>
 		<properties>
 			<property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/test?zeroDateTimeBehavior=convertToNull"/>

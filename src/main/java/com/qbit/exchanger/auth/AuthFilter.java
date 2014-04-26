@@ -19,6 +19,10 @@ public class AuthFilter implements Filter {
 	public static final String USER_ID_KEY = "user_id";
 
 	private Env env;
+	
+	public static String getUserId(HttpServletRequest request) {
+		return (String) request.getSession().getAttribute(USER_ID_KEY);
+	}
 
 	@Override
 	public void init(FilterConfig fc) throws ServletException {
@@ -43,12 +47,11 @@ public class AuthFilter implements Filter {
 				|| httpRequest.getPathInfo().startsWith("/captcha-auth"))));
 		String contextPath = ((HttpServletRequest) servletRequest).getContextPath();
 		if (isRequestToAdminPage && !isAdmin) {
-			if(contextPath.startsWith("/exchanger")) {
+			if (contextPath.startsWith("/exchanger")) {
 				((HttpServletResponse) servletResponse).sendRedirect(contextPath);
 			} else {
 				((HttpServletResponse) servletResponse).sendRedirect("/");
 			}
-			
 		} else if ((userId == null) && !isAuthRequest) {
 			((HttpServletResponse) servletResponse).sendRedirect(((HttpServletRequest) servletRequest).getContextPath());
 		} else {

@@ -7,6 +7,7 @@ import com.qbit.exchanger.env.Env;
 import com.qbit.exchanger.money.model.Amount;
 import com.qbit.exchanger.money.model.Transfer;
 import com.qbit.exchanger.money.model.TransferType;
+import com.qbit.exchanger.order.model.OrderCancellationToken;
 import com.qbit.exchanger.order.model.OrderInfo;
 import com.qbit.exchanger.order.model.OrderStatus;
 import com.qbit.exchanger.user.UserDAO;
@@ -16,6 +17,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.UUID;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.persistence.EntityManager;
@@ -202,6 +204,41 @@ public class OrderDAO {
 			}
 		});
 	}
+	
+	public List<OrderCancellationToken> findCancellationTokens(final String orderId) {
+		if (orderId == null) {
+			throw new IllegalArgumentException();
+		}
+		EntityManager entityManager = entityManagerFactory.createEntityManager();
+		try {
+			TypedQuery<OrderCancellationToken> query = entityManager.createNamedQuery("OrderCancellationToken.find", OrderCancellationToken.class);
+			query.setParameter("orderId", orderId);
+			Calendar deadline = Calendar.getInstance();
+			deadline.add(Calendar.HOUR_OF_DAY, -env.getOrderCleanupPeriodHours());
+			query.setParameter("deadline", deadline, TemporalType.TIMESTAMP);
+			return query.getResultList();
+		} finally {
+			entityManager.close();
+		}
+	}
+	
+	public OrderCancellationToken createCancellationToken(final String orderId) {
+		if (orderId == null) {
+			throw new IllegalArgumentException();
+		}
+		return invokeInTransaction(entityManagerFactory, new TrCallable<OrderCancellationToken>() {
+
+			@Override
+			public OrderCancellationToken call(EntityManager entityManager) {
+				OrderCancellationToken cancellationToken = new OrderCancellationToken();
+				cancellationToken.setToken(UUID.randomUUID().toString());
+				cancellationToken.setOrderId(orderId);
+				cancellationToken.setCreationDate(new Date());
+				entityManager.persist(cancellationToken);
+				return cancellationToken;
+			}
+		});
+	}
 
 	public void cleanUp() {
 		invokeInTransaction(entityManagerFactory, new TrCallable<Void>() {
@@ -211,6 +248,21 @@ public class OrderDAO {
 				Query query = entityManager.createNamedQuery("OrderInfo.cleanUp");
 				Calendar deadline = Calendar.getInstance();
 				deadline.add(Calendar.HOUR_OF_DAY, -env.getOrderCleanupPeriodHours());
+				query.setParameter("deadline", deadline, TemporalType.TIMESTAMP);
+				query.executeUpdate();
+				return null;
+			}
+		});
+	}
+	
+	public void cleanUpCancellationTokens() {
+		invokeInTransaction(entityManagerFactory, new TrCallable<Void>() {
+
+			@Override
+			public Void call(EntityManager entityManager) {
+				Query query = entityManager.createNamedQuery("OrderCancellationToken.cleanUp");
+				Calendar deadline = Calendar.getInstance();
+				deadline.add(Calendar.HOUR_OF_DAY, -env.getOrderCancellationTokenLifetimeHours());
 				query.setParameter("deadline", deadline, TemporalType.TIMESTAMP);
 				query.executeUpdate();
 				return null;

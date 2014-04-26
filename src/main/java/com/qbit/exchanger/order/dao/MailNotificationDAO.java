@@ -1,5 +1,7 @@
-package com.qbit.exchanger.mail;
+package com.qbit.exchanger.order.dao;
 
+import com.qbit.exchanger.order.model.MailNotificationPK;
+import com.qbit.exchanger.order.model.MailNotification;
 import static com.qbit.exchanger.dao.util.DAOUtil.invokeInTransaction;
 import com.qbit.exchanger.dao.util.TrCallable;
 import com.qbit.exchanger.order.model.OrderStatus;

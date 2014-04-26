@@ -61,6 +61,16 @@ public class Env {
 		return Integer.parseInt(properties.getProperty("order.cleanup.period.hours"));
 	}
 	
+	@XmlTransient
+	public int getOrderCancellationTokenLifetimeHours() {
+		return Integer.parseInt(properties.getProperty("order.cancellation.token.lifetime.hours"));
+	}
+	
+	@XmlTransient
+	public String getOrderCancellationURL() {
+		return properties.getProperty("order.cancellation.url");
+	}
+	
 	@XmlElement
 	public BigDecimal getRateMultiplier() {
 		return new BigDecimal(properties.getProperty("rate.multiplier"));

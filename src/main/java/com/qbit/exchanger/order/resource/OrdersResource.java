@@ -1,5 +1,6 @@
 package com.qbit.exchanger.order.resource;
 
+import com.qbit.exchanger.auth.AuthFilter;
 import com.qbit.exchanger.order.model.OrderInfo;
 import com.qbit.exchanger.order.service.OrderService;
 import com.qbit.exchanger.order.service.exception.OrderServiceException;
@@ -7,12 +8,14 @@ import static com.qbit.exchanger.rest.util.RESTUtil.*;
 import java.text.ParseException;
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 /**
@@ -23,27 +26,29 @@ import javax.ws.rs.core.MediaType;
 @Singleton
 public class OrdersResource {
 	
+	@Context
+	private HttpServletRequest request;
+	
 	@Inject
 	private OrderService orderService;
 
 	@GET
 	@Path("active")
 	@Produces(MediaType.APPLICATION_JSON)
-	public OrderInfo getActiveByUser(@QueryParam("userPublicKey") String userPublicKey) throws OrderServiceException {
-		return orderService.getActiveByUser(userPublicKey);
+	public OrderInfo getActive() throws OrderServiceException {
+		return orderService.getActiveByUser(AuthFilter.getUserId(request));
 	}
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public OrderInfo getByUserAndTimestamp(@QueryParam("userPublicKey") String userPublicKey,
-			@QueryParam("creationDate") String creationDateStr) throws OrderServiceException, ParseException {
-		return orderService.getByUserAndTimestamp(userPublicKey, toDate(creationDateStr));
+	public OrderInfo getByTimestamp(@QueryParam("creationDate") String creationDateStr) throws OrderServiceException, ParseException {
+		return orderService.getByUserAndTimestamp(AuthFilter.getUserId(request), toDate(creationDateStr));
 	}
 
-	@POST
+	@PUT
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public OrderInfo create(OrderInfo order) throws OrderServiceException {
-		return orderService.create(order);
+		return orderService.create(AuthFilter.getUserId(request), order);
 	}
 }

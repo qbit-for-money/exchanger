@@ -1,23 +1,32 @@
-package com.qbit.exchanger.mail;
+package com.qbit.exchanger.order.model;
 
-import com.qbit.exchanger.order.model.OrderStatus;
 import java.io.Serializable;
 import java.util.Objects;
+import javax.persistence.Access;
+import javax.persistence.AccessType;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.IdClass;
 
 /**
  * @author Alexander_Sergeev
  */
-public class MailNotificationPK implements Serializable {
+@Entity
+@IdClass(MailNotificationPK.class)
+@Access(AccessType.FIELD)
+public class MailNotification implements Serializable {
 	
+	@Id
 	private String orderId;
+	@Id
 	private OrderStatus orderStatus;
 
 	public String getOrderId() {
 		return orderId;
 	}
-
-	public void setOrderId(String orderId) {
-		this.orderId = orderId;
+	
+	public void setOrderId(String id) {
+		this.orderId = id;
 	}
 
 	public OrderStatus getOrderStatus() {
@@ -30,9 +39,9 @@ public class MailNotificationPK implements Serializable {
 
 	@Override
 	public int hashCode() {
-		int hash = 7;
-		hash = 17 * hash + Objects.hashCode(this.orderId);
-		hash = 17 * hash + Objects.hashCode(this.orderStatus);
+		int hash = 5;
+		hash = 23 * hash + Objects.hashCode(this.orderId);
+		hash = 23 * hash + Objects.hashCode(this.orderStatus);
 		return hash;
 	}
 
@@ -44,7 +53,7 @@ public class MailNotificationPK implements Serializable {
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		final MailNotificationPK other = (MailNotificationPK) obj;
+		final MailNotification other = (MailNotification) obj;
 		if (!Objects.equals(this.orderId, other.orderId)) {
 			return false;
 		}
@@ -52,5 +61,10 @@ public class MailNotificationPK implements Serializable {
 			return false;
 		}
 		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "MailNotification{" + "orderId=" + orderId + ", orderStatus=" + orderStatus + '}';
 	}
 }
