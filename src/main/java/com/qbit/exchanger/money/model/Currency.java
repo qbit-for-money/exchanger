@@ -10,7 +10,8 @@ import java.util.EnumSet;
  */
 public enum Currency {
 	
-	YANDEX_RUB(new Amount(0, 1, 100), "RUR", true, false), 
+	YANDEX_RUB(new Amount(0, 1, 100), "RUR", false, false), 
+	
 	BITCOIN(new Amount(0, 1, 100 * 1000 * 1000), "BTC", true),
 	LITECOIN(new Amount(0, 1, 100 * 1000 * 1000), "LTC", true),
 	
@@ -35,7 +36,11 @@ public enum Currency {
 				supportedValues.add(currency);
 			}
 		}
-		SUPPORTED_VALUES = EnumSet.copyOf(supportedValues);
+		if (supportedValues.isEmpty()) {
+			SUPPORTED_VALUES = EnumSet.noneOf(Currency.class);
+		} else {
+			SUPPORTED_VALUES = EnumSet.copyOf(supportedValues);
+		}
 		Collection<Currency> supportedCryptoValues = new ArrayList<>();
 		Collection<Currency> supportedNoncryptoValues = new ArrayList<>();
 		for (Currency currency : SUPPORTED_VALUES) {
@@ -45,8 +50,16 @@ public enum Currency {
 				supportedNoncryptoValues.add(currency);
 			}
 		}
-		SUPPORTED_CRYPTO_VALUES = EnumSet.copyOf(supportedCryptoValues);
-		SUPPORTED_NONCRYPTO_VALUES = EnumSet.copyOf(supportedNoncryptoValues);
+		if (supportedCryptoValues.isEmpty()) {
+			SUPPORTED_CRYPTO_VALUES = EnumSet.noneOf(Currency.class);
+		} else {
+			SUPPORTED_CRYPTO_VALUES = EnumSet.copyOf(supportedCryptoValues);
+		}
+		if (supportedNoncryptoValues.isEmpty()) {
+			SUPPORTED_NONCRYPTO_VALUES = EnumSet.noneOf(Currency.class);
+		} else {
+			SUPPORTED_NONCRYPTO_VALUES = EnumSet.copyOf(supportedNoncryptoValues);
+		}
 	}
 	
 	public static EnumSet<Currency> supportedValues() {
