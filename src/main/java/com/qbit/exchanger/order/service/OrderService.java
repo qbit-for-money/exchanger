@@ -122,20 +122,22 @@ public class OrderService {
 	public OrderInfo cancel(String userPublicKey, String token, String address) throws Exception {
 		OrderInfo activeOrder = getActiveByUser(userPublicKey);
 		if ((activeOrder == null) || !activeOrder.isValid() || !activeOrder.getUserPublicKey().contains("@")
-				|| (address == null)) {
+				|| !EnumSet.of(OrderStatus.INITIAL, OrderStatus.OUT_FAILED).contains(activeOrder.getStatus())
+				|| ((OrderStatus.OUT_FAILED == activeOrder.getStatus()) && (address == null))) {
 			throw new OrderServiceSecurityException("Can not cancel order. Order is inconsistent or invalid token.");
 		}
 		
-		Transfer inTransfer = activeOrder.getInTransfer();
-		MoneyService moneyService = moneyServiceProvider.get(inTransfer.getCurrency());
-		if (!testBalanceAgainstAmount(moneyService, inTransfer.getAmount())) {
-			throw new OrderTestException();
-		}
-		
-		OrderInfo canceledOrder = orderDAO.changeStatus(activeOrder.getId(), OrderStatus.CANCELED);
-		
+		OrderInfo canceledOrder;
 		if (OrderStatus.OUT_FAILED == activeOrder.getStatus()) {
+			Transfer inTransfer = activeOrder.getInTransfer();
+			MoneyService moneyService = moneyServiceProvider.get(inTransfer.getCurrency());
+			if (!testBalanceAgainstAmount(moneyService, inTransfer.getAmount())) {
+				throw new OrderTestException();
+			}
+			canceledOrder = orderDAO.changeStatus(activeOrder.getId(), OrderStatus.CANCELED);
 			moneyService.sendMoney(address, inTransfer.getAmount());
+		} else { // INITIAL
+			canceledOrder = orderDAO.changeStatus(activeOrder.getId(), OrderStatus.CANCELED);
 		}
 		
 		return canceledOrder;

@@ -214,7 +214,7 @@ public class OrderDAO {
 			TypedQuery<OrderCancellationToken> query = entityManager.createNamedQuery("OrderCancellationToken.find", OrderCancellationToken.class);
 			query.setParameter("orderId", orderId);
 			Calendar deadline = Calendar.getInstance();
-			deadline.add(Calendar.HOUR_OF_DAY, -env.getOrderCleanupPeriodHours());
+			deadline.add(Calendar.HOUR_OF_DAY, -env.getOrderCancellationTokenLifetimeHours());
 			query.setParameter("deadline", deadline, TemporalType.TIMESTAMP);
 			return query.getResultList();
 		} finally {
