@@ -137,46 +137,6 @@ public class Env {
 	}
 	
 	@XmlTransient
-	public boolean isFullChain() {
-		return Boolean.TRUE.toString().equalsIgnoreCase(properties.getProperty("money.crypto.fullChain"));
-	}
-	
-	@XmlTransient
-	public String getLitecoinDBName() {
-		return properties.getProperty("money.litecoin.dbName");
-	}
-	
-	@XmlTransient
-	public String getLitecoinTestDBName() {
-		return properties.getProperty("money.litecoin.test.dbName");
-	}
-	
-	@XmlTransient
-	public String getBitcoinDBName() {
-		return properties.getProperty("money.bitcoin.dbName");
-	}
-	
-	@XmlTransient
-	public String getBitcoinTestDBName() {
-		return properties.getProperty("money.bitcoin.test.dbName");
-	}
-	
-	@XmlTransient
-	public String getCryptoDBUsername() {
-		return properties.getProperty("money.crypto.username");
-	}
-	
-	@XmlTransient
-	public String getCryptoDBPassword() {
-		return properties.getProperty("money.crypto.password");
-	}
-	
-	@XmlTransient
-	public String getCryptoDBHostname() {
-		return properties.getProperty("money.crypto.hostname");
-	}
-	
-	@XmlTransient
 	public String getGoogleClientId() {
 		return properties.getProperty("auth.google.clientId");
 	}

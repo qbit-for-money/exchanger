@@ -49,7 +49,7 @@ wizardModule.factory("wizardService", function() {
 		}
 		if (stepIndex === 0) {
 			return true;
-		}
+		} 
 		var prevStep = steps[stepIndex - 1];
 		return (!prevStep.validator || prevStep.validator());
 	}

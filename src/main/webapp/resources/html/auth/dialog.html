@@ -5,14 +5,13 @@
 	<div class="container-fluid">
 		<div class="row">
 			<div class="col-xs-12 col-md-12">
-				<input type="radio" ng-model="auth" id="radio1" value="True" ng-change="checked()"/>
+				<input type="radio" ng-model="auth" id="radio1" value="True" ng-change="checked(true)"/>
 			</div>
 		</div>
 		<div class="row">
 			<div class="col-xs-1 col-md-1"></div>
 			<label for="radio1" class="col-xs-10 col-md-10">
-				<a href="webapi/oauth2/authenticate" ng-if="auth === 'True'"
-				   popover="Login with Google+" popover-placement="right" popover-trigger="mouseenter">
+				<a href="webapi/oauth2/authenticate" ng-if="auth === 'True'">
 					<img src="resources/img/google-plus.png" alt="Google+">
 				</a>
 				<img src="resources/img/google-plus-disabled.png" alt="Google+" ng-if="auth === 'False'" ng-click="checked()">
@@ -21,7 +20,7 @@
 		</div>
 		<div class="row">
 			<div class="col-xs-12 col-md-12">
-				<input type="radio" ng-model="auth" id="radio2" value="False">
+				<input type="radio" ng-model="auth" id="radio2" value="False" ng-change="checked(false)">
 				<label for="radio2"><h3>No registration</h3></label><br/>
 			</div>
 
@@ -29,8 +28,10 @@
 		<div class="row" ng-if="auth === 'False'">
 			<div class="col-xs-3 col-md-3"></div>
 			<div class="col-xs-6 col-md-6" ng-class="{'has-error': pinInvalid}">
-				<input type="text" class="form-control" placeholder="PIN" 
-				       ng-required="true" ng-model="model.pin" ng-change="changePin()"/>
+				<form>
+				<input type="text" class="form-control" id="pin" placeholder="PIN" 
+				       ng-required="true" ng-model="model.pin" ng-change="changePin()" number-required/>
+				<form/>
 			</div>
 			<div class="col-xs-3 col-md-3"></div>
 		</div>
@@ -38,8 +39,7 @@
 			<hr>
 			<div class="center col-xs-12 col-md-12" ng-class="{'has-error': encodedKeyInvalid}">
 
-				<img id="captcha" src="{{src}}" alt="CAPTCHA" ng-click="updateImage()"
-				     popover="Update captcha" popover-placement="right" popover-trigger="mouseenter">
+				<img id="captcha" src="{{src}}" alt="CAPTCHA" ng-click="updateImage()">
 				<input type="text" class="form-control" placeholder="CAPTCHA" 
 				       ng-required="true"  ng-model="model.encodedKey" ng-change="changeEncodedKey()"/>
 			</div>

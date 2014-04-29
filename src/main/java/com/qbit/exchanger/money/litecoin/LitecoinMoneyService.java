@@ -3,7 +3,7 @@ package com.qbit.exchanger.money.litecoin;
 import static com.google.common.base.Preconditions.checkArgument;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.litecoin.core.*;
-import com.google.litecoin.kits.NewWalletAppKit;
+import com.google.litecoin.kits.WalletAppKit;
 import com.google.litecoin.params.MainNetParams;
 import com.google.litecoin.params.TestNet2Params;
 import com.google.litecoin.script.Script;
@@ -46,7 +46,7 @@ public class LitecoinMoneyService implements CryptoService {
 	private Env env;
 
 	private NetworkParameters parameters;
-	private NewWalletAppKit kit;
+	private WalletAppKit kit;
 	private String dbName;
 
 	@PostConstruct
@@ -54,19 +54,10 @@ public class LitecoinMoneyService implements CryptoService {
 		BriefLogFormatter.init();
 		if (env.isLitecoinTestnet()) {
 			parameters = TestNet2Params.get();
-			dbName = env.getLitecoinTestDBName();
 		} else {
 			parameters = MainNetParams.get();
-			dbName = env.getLitecoinDBName();
 		}
-		kit = new NewWalletAppKit(parameters, new File(env.getLitecoinWalletPath()), "sample", env.isFullChain(), true);
-
-		kit.setDbName(dbName);
-		kit.setHostname(env.getCryptoDBHostname());
-		kit.setUsername(env.getCryptoDBUsername());
-		kit.setPassword(env.getCryptoDBPassword());
-		kit.setFullStoreDepth(1000);
-
+		kit = new WalletAppKit(parameters, new File(env.getLitecoinWalletPath()), "sample");
 		kit.startAndWait();
 	}
 

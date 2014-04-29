@@ -31,9 +31,9 @@
 <div class="row" style="margin-bottom: 20px;">
 	<div class="text-center col-md-12">
 		<button class="btn btn-success btn-lg direction-control" ng-click="goToNextStep()"
-			popover="{{rate}}" popover-placement="right" popover-trigger="mouseenter"
+			popover="{{rate|rate}}" popover-placement="right" popover-trigger="mouseenter"
 			ng-disabled="requestCount > 0">
-			<span class="glyphicon glyphicon-arrow-down"></span>
+			<span class="glyphicon glyphicon-arrow-down" style="margin-left: 6%; margin-top: 12%"></span>
 		</button>
 	</div>
 </div>
@@ -54,6 +54,11 @@
 								<div class="form-group" style="margin-bottom: 5px;">
 									<amount-input amount="orderInfo.outTransfer.amount"></amount-input>
 								</div>
+								<div class="popover bottom" id="balance-popover">
+											<div class="arrow"></div>
+											<div class="popover-content">No more then {{balance|amount}} {{outCurrencyCode}}</div>
+								</div>
+								<!--alert type="'warning'"><h5 id="available-balance">No more then {{balance|amount}} {{outCurrencyCode}}</h5></alert-->
 								<div class="input-group input-group-lg" ng-class="{'has-error': outForm.outAddress.$invalid}">
 									<input class="form-control" type="text" name="outAddress"
 									       ng-model="orderInfo.outTransfer.address"
@@ -67,7 +72,6 @@
 					</div>
 				</div>
 			</div>
-			<div id="buffer"> Buffer: {{buffer}}</div>
 		</div>
 	</div>
 </div>

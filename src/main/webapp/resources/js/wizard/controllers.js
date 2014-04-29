@@ -26,11 +26,22 @@ wizardModule.controller("WizardController", function($rootScope, $scope, $locati
 			$rootScope.currentStepIndex = 0;
 		}
 	}
+	$rootScope.isResultGoBackEnabled = function() {
+		var orderInfo = orderService.get();
+		if (!orderInfo.status || (orderInfo.status === "SUCCESS" || orderInfo.status === "CANCELED")) {
+			return true;
+		} else {
+			return false;
+		}
+	};
+
 	$rootScope.$on("$locationChangeSuccess", function() {
 		resetValidationFail();
 		resetActionFail();
 		updateCurrentStepIndex();
 		redirectToResultIfActiveOrderExists();
+		alert($scope);
+		
 	});
 	$scope.$on("order-loaded", redirectToResultIfActiveOrderExists);
 	updateCurrentStepIndex();
@@ -64,6 +75,17 @@ wizardModule.controller("WizardController", function($rootScope, $scope, $locati
 	$rootScope.goToPrevStep = function() {
 		if (wizardService.canGoToPrevStep($location.path())) {
 			$location.path(wizardService.getPrevStep($location.path()).path);
+		}
+	};
+
+	$rootScope.goToStep = function(id) {
+		if ($rootScope.isResultGoBackEnabled()) {
+			if (wizardService.canGoToStep(id)) {
+				if (wizardService.getStepIndexByPath($location.path()) <= id) {
+					return;
+				}
+				$location.path(wizardService.getStepByIndex(id).path);
+			}
 		}
 	};
 

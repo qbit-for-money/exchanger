@@ -1,10 +1,9 @@
 var userModule = angular.module("user");
 
-userModule.controller("UserController", function($scope, usersResource, captchaAuthResource, userService) {
+userModule.controller("UserController", function($scope, usersResource) {
 	$scope.keyType = "user";
 	$scope.logoutButton = "";
 	var currentUser = usersResource.current({});
-	//userService._reset();
 	currentUser.$promise.then(function() {
 		if (currentUser.publicKey) {
 			if (currentUser.publicKey.indexOf("@") !== -1) {
@@ -17,9 +16,9 @@ userModule.controller("UserController", function($scope, usersResource, captchaA
 	});
 
 	$scope.logout = function() {
-		captchaAuthResource.logout({});
-		setTimeout(function() {
+		var logoutResponse = usersResource.logout({});
+		logoutResponse.$promise.then(function() {
 			location.reload();
-		}, 100);
+		});
 	};
 });

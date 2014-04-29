@@ -20,9 +20,22 @@ authModule.controller("AuthDialogController", function($scope, captchaAuthResour
 	$scope.model.pin = "";
 	$scope.model.encodedKey = "";
 	$scope.src = "";
+	/*angular.element(document).on('focus', '#pin', function(e) {
+		angular.element("#pin").autoNumeric('init');
+
+	});*/
+
+	/*angular.element(document).on('keypress', '#pin', function(e) {
+	 //alert('fgh')
+	 return e.preventDefault();
+	 });*/
+
+
+
+
 
 	$scope.changePin = function() {
-		if ($scope.model.pin && ($scope.model.pin.length === 4) && !isNaN($scope.model.pin)) {
+		if ($scope.model.pin && ($scope.model.pin.length === 4) && !isNaN($scope.model.pin) && $scope.model.pin.indexOf(".") === -1) {
 			$scope.pinInvalid = false;
 			$scope.updateImage();
 			changeDialogPosition(false);
@@ -32,23 +45,23 @@ authModule.controller("AuthDialogController", function($scope, captchaAuthResour
 			changeDialogPosition(true);
 		}
 	};
-	
+
 	function changeDialogPosition(state) {
-		if(state) {
-			angular.element(".modal-dialog").css( "padding-top", "13%" );
+		if (state) {
+			angular.element(".modal-dialog").css("padding-top", "13%");
 		} else {
-			angular.element(".modal-dialog").css( "padding-top", "10%" );
+			angular.element(".modal-dialog").css("padding-top", "10%");
 		}
 	}
-	
+
 	$scope.changeEncodedKey = function() {
 		if ($scope.model.encodedKey && ($scope.model.encodedKey !== "")) {
 			var authRequest = {encodedKey: $scope.model.encodedKey, pin: $scope.model.pin, timestamp: timestamp};
 			var authResponse = captchaAuthResource.auth({}, authRequest);
 			authResponse.$promise.then(function() {
 				$scope.encodedKeyInvalid = false;
-				setTimeout( function() { 
-					location.reload(); 
+				setTimeout(function() {
+					location.reload();
 				}, 1000);
 			});
 		} else {
@@ -59,10 +72,12 @@ authModule.controller("AuthDialogController", function($scope, captchaAuthResour
 	$scope.updateImage = function() {
 		$scope.src = window.context + "webapi/captcha-auth/image?pin=" + $scope.model.pin + "&timestamp=" + timestamp + "&rand=" + Math.round(Math.random() * 1000);
 	};
-	
-	$scope.checked = function() {
-		$scope.pinInvalid = true;
-		$scope.model.pin = "";
-		changeDialogPosition(true);
+
+	$scope.checked = function(state) {
+		if (state) {
+			$scope.pinInvalid = true;
+			$scope.model.pin = "";
+			changeDialogPosition(true);
+		} 
 	};
 });

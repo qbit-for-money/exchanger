@@ -44,6 +44,7 @@
 
 		<script type="text/javascript" src="resources/lib/jquery/jquery-2.1.0.min.js"></script>
 		<script type="text/javascript" src="resources/lib/jquery/jquery.price_format.2.0.min.js"></script>
+		<script type="text/javascript" src="resources/lib/jquery/autoNumeric-2.0-BETA.js"></script>
 		<script type="text/javascript" src="resources/lib/angular/angular.min.js"></script>
 		<script type="text/javascript" src="resources/lib/angular/angular-route.min.js"></script>
 		<script type="text/javascript" src="resources/lib/angular/angular-resource.min.js"></script>
@@ -96,5 +97,6 @@
 		
 		<script type="text/javascript" src="resources/js/auth/controllers.js"></script>
 		<script type="text/javascript" src="resources/js/auth/resources.js"></script>
+		<script type="text/javascript" src="resources/js/auth/directives.js"></script>
 	</body>
 </html>

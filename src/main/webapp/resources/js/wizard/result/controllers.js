@@ -12,8 +12,6 @@ resultModule.controller("ResultController", function($rootScope, $scope, $interv
 		}, 10);
 	});
 
-	$rootScope.resultGoBackDisabled = true;
-
 	function handleOrderLoaded() {
 		var orderInfo = orderService.get();
 		updateInTransferStatus(orderInfo);
@@ -50,7 +48,6 @@ resultModule.controller("ResultController", function($rootScope, $scope, $interv
 				break;
 			case "SUCCESS":
 				$scope.outTransferStatus = "OK";
-				$rootScope.resultGoBackDisabled = false;
 				break;
 			case "OUT_FAILED":
 				$scope.outTransferStatus = "ERROR";

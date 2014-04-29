@@ -1,10 +1,10 @@
 var amountModule = angular.module("wizard.amount");
 
 amountModule.controller("AmountController", function($rootScope, $scope, delayedProxy,
-	wizardService, orderService,
-	moneyCustomModules, walletsResource,
+	wizardService, orderService, currencyResource,
+	moneyCustomModules, walletsResource, $interval,
 	exchangesResource, isAmountValid, convertAmount) {
-
+		
 	function createOrder() {
 		var newOrderInfo = orderService.create();
 		return newOrderInfo.$promise;
@@ -18,6 +18,18 @@ amountModule.controller("AmountController", function($rootScope, $scope, delayed
 	});
 
 	$scope.custom = moneyCustomModules.has(orderService.get().inTransfer.currency);
+
+	var currenciesResponse = currencyResource.findAll();
+	currenciesResponse.$promise.then(function() {
+		if (currenciesResponse && currenciesResponse.currencies) {
+			var currencies = currenciesResponse.currencies;
+			$scope.currencies = [];
+			for (var i = 0; i < currencies.length; i++) {
+				$scope.currencies[currencies[i].id] = currencies[i].code;
+			}
+			updateBalance();
+		}
+	});
 
 	function generateInAddress() {
 		if (!$scope.custom) {
@@ -36,7 +48,6 @@ amountModule.controller("AmountController", function($rootScope, $scope, delayed
 	$scope.generateInAddress = generateInAddress;
 	generateInAddress();
 	updateRate();
-	updateBuffer();
 
 	function updateRate() {
 		var orderInfo = orderService.get();
@@ -48,26 +59,21 @@ amountModule.controller("AmountController", function($rootScope, $scope, delayed
 		});
 
 		rate.$promise.then(function() {
-			var amount = {};
-			amount.cents = 0;
-			amount.coins = 1;
-			amount.centsInCoin = rate.denominator.centsInCoin;
-			var resultAmount = convertAmount(amount, rate);
-			$scope.rate = resultAmount.coins + resultAmount.cents / resultAmount.centsInCoin;
+			$scope.rate = rate;
 		});
 	}
-	;
 
-	function updateBuffer() {
+	function updateBalance() {
 		var orderInfo = orderService.get();
 		var outTransfer = orderInfo.outTransfer;
-		var buffer = walletsResource.getBuffer({currency: outTransfer.currency});
-		buffer.$promise.then(function() {
-			$scope.buffer = buffer.coins + buffer.cents / buffer.centsInCoin;
-
+		$scope.outCurrencyCode = $scope.currencies[outTransfer.currency];
+		var balance = walletsResource.getBalance({currency: outTransfer.currency});
+		balance.$promise.then(function() {
+			$scope.balance = balance;
 		});
 	}
-	;
+	
+	$scope.updateBalanceTimerId = $interval(updateBalance, 5000);
 
 	var outAmountUpdateInProgress = false;
 	function updateOutAmount() {
@@ -92,7 +98,7 @@ amountModule.controller("AmountController", function($rootScope, $scope, delayed
 			outTransfer.amount.cents = 0;
 		}
 		updateRate();
-		updateBuffer();
+		updateBalance();
 	}
 	var destroyInAmountWatch = $rootScope.$watch("orderInfo.inTransfer.amount",
 		delayedProxy(updateOutAmount, 500), true);
@@ -119,7 +125,7 @@ amountModule.controller("AmountController", function($rootScope, $scope, delayed
 			inTransfer.amount.cents = 0;
 		}
 		updateRate();
-		updateBuffer();
+		updateBalance();
 	}
 	var destroyOutAmountWatch = $rootScope.$watch("orderInfo.outTransfer.amount",
 		delayedProxy(updateInAmount, 500), true);
@@ -127,5 +133,8 @@ amountModule.controller("AmountController", function($rootScope, $scope, delayed
 	$scope.$on("$destroy", function() {
 		destroyInAmountWatch();
 		destroyOutAmountWatch();
+		if ($scope.updateBalanceTimerId) {
+			$interval.cancel($scope.updateBalanceTimerId);
+		}
 	});
 });

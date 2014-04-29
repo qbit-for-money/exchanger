@@ -3,32 +3,31 @@
 	<div class="row">
 		<div class="col-md-12">
 			<div class="wizard">
+
 				<ul class="steps">
-					<li ng-class="{'active': 0 === currentStepIndex, 'complete': 0 < currentStepIndex}" title="Currency">
-						<span class="badge">1</span>
-						<span class="glyphicon glyphicon-usd step-title"></span>
-						<span class="glyphicon glyphicon-euro step-title"></span>
-						<span class="chevron"></span>
+					<li ng-class="{'active': (0 === currentStepIndex) && (isResultGoBackEnabled() === true), 'complete': (0 < currentStepIndex) && (isResultGoBackEnabled() === true)}">
+						<a href="javascript:void(0)" ng-click="goToStep(0)" title="Currency" tabindex="-1">
+							<span class="badge">1</span>
+							<span class="glyphicon glyphicon-usd step-title"></span>
+							<span class="glyphicon glyphicon-euro step-title"></span>
+							<span class="chevron"></span>
+						</a>
 					</li>
-					<li ng-class="{'active': 1 === currentStepIndex, 'complete': 1 < currentStepIndex}" title="Amount">
-						<span class="badge">2</span>
-						<span class="glyphicon glyphicon-pencil step-title"></span>
-						<span class="chevron"></span>
+					<li ng-class="{'active': (1 === currentStepIndex) && (isResultGoBackEnabled() === true), 'complete': (1 < currentStepIndex) && (isResultGoBackEnabled() === true)}">
+						<a href="javascript:void(0)" ng-click="goToStep(1)" title="Amount" tabindex="-1">
+							<span class="badge">2</span>
+							<span class="glyphicon glyphicon-pencil step-title"></span>
+							<span class="chevron"></span>
+						</a>
 					</li>
-					<li ng-class="{'active': 2 === currentStepIndex, 'complete': 2 < currentStepIndex}" title="Result">
-						<span class="badge">3</span>
-						<span class="glyphicon glyphicon-ok step-title"></span>
-						<span class="chevron"></span>
+					<li ng-class="{'active': (2 === currentStepIndex), 'complete': (2 < currentStepIndex)}">
+						<a href="javascript:void(0)" title="Result" tabindex="-1">
+							<span class="badge">3</span>
+							<span class="glyphicon glyphicon-ok step-title"></span>
+							<span class="chevron"></span>
+						</a>
 					</li>
 				</ul>
-				<div class="actions">
-					<button class="btn btn-lg btn-success" 
-						ng-disabled="(currentStepIndex === 0) || (requestCount > 0) || resultGoBackDisabled"
-						ng-click="goToPrevStep()"><span class="glyphicon glyphicon-chevron-left"></span></button>
-					<button class="btn btn-lg btn-success" 
-						ng-disabled="(currentStepIndex === (steps.length - 1)) || (requestCount > 0)"
-						ng-click="goToNextStep()"><span class="glyphicon glyphicon-chevron-right"></span></button>
-				</div>
 			</div>
 		</div>
 	</div>

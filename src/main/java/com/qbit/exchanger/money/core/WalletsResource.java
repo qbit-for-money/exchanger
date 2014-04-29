@@ -31,9 +31,9 @@ public class WalletsResource {
 	}
 	
 	@GET
-	@Path("{currency}/buffer")
+	@Path("{currency}/balance")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Amount getBuffer(@PathParam("currency") Currency currency) {
+	public Amount getBalance(@PathParam("currency") Currency currency) {
 		CryptoService moneyService = moneyServiceProvider.get(currency, CryptoService.class);
 		Amount balance = moneyService.getBalance();
 		Amount maxTransactionAmount = balance.mul(env.getMaxTransactionAmountToBalanceCoef());
