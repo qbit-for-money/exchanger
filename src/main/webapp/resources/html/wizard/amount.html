@@ -56,13 +56,8 @@
 								</div>
 								<div class="popover bottom" id="balance-popover">
 											<div class="arrow"></div>
-											<div class="popover-content">No more then {{balance|amount}} {{outCurrencyCode}}</div>
+											<div class="popover-content">No more then <strong>{{balance|amount}}</strong> {{outCurrencyCode}}</div>
 								</div>
-								<div class="popover bottom" id="balance-popover">
-											<div class="arrow"></div>
-											<div class="popover-content">No more then {{balance|amount}} {{outCurrencyCode}}</div>
-								</div>
-								<!--alert type="'warning'"><h5 id="available-balance">No more then {{balance|amount}} {{outCurrencyCode}}</h5></alert-->
 								<div class="input-group input-group-lg" ng-class="{'has-error': outForm.outAddress.$invalid}">
 									<input class="form-control" type="text" name="outAddress"
 									       ng-model="orderInfo.outTransfer.address"

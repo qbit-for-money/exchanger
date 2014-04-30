@@ -196,6 +196,17 @@ and (min-width : 798px) {
 	display: inherit;
 	min-width: 100%;
 	margin-bottom: 10px;
+	color: #8a6d3b;
+	background-color: #fcf8e3;
+	border-color: #faebcc;
+}
+
+#balance-popover .arrow {
+	border-bottom-color: #faebcc;
+}
+
+#balance-popover .arrow:after {
+	border-bottom-color: #fcf8e3;
 }
 
 /* END ORDER STEP */
