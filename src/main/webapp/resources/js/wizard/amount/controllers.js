@@ -72,8 +72,8 @@ amountModule.controller("AmountController", function($rootScope, $scope, delayed
 			$scope.balance = balance;
 		});
 	}
-	
-	$scope.updateBalanceTimerId = $interval(updateBalance, 5000);
+
+	$scope.updateBalanceTimerId = $interval(updateBalance, 15000);
 
 	var outAmountUpdateInProgress = false;
 	function updateOutAmount() {
@@ -98,7 +98,6 @@ amountModule.controller("AmountController", function($rootScope, $scope, delayed
 			outTransfer.amount.cents = 0;
 		}
 		updateRate();
-		updateBalance();
 	}
 	var destroyInAmountWatch = $rootScope.$watch("orderInfo.inTransfer.amount",
 		delayedProxy(updateOutAmount, 500), true);
@@ -125,7 +124,6 @@ amountModule.controller("AmountController", function($rootScope, $scope, delayed
 			inTransfer.amount.cents = 0;
 		}
 		updateRate();
-		updateBalance();
 	}
 	var destroyOutAmountWatch = $rootScope.$watch("orderInfo.outTransfer.amount",
 		delayedProxy(updateInAmount, 500), true);

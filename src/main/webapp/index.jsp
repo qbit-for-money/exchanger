@@ -40,11 +40,15 @@
 			<div class="push"></div>
 		</div>
 		<div class="footer navbar-default">&copy; Bitgates 2014</div>
-
+		
 
 		<script type="text/javascript" src="resources/lib/jquery/jquery-2.1.0.min.js"></script>
+<<<<<<< HEAD
 		<script type="text/javascript" src="resources/lib/jquery/jquery.price_format.2.0.min.js"></script>
 		<script type="text/javascript" src="resources/lib/jquery/autoNumeric-2.0-BETA.js"></script>
+=======
+		<script type="text/javascript" src="resources/lib/jquery/jquery.mask.min.js"></script>
+>>>>>>> fix2
 		<script type="text/javascript" src="resources/lib/angular/angular.min.js"></script>
 		<script type="text/javascript" src="resources/lib/angular/angular-route.min.js"></script>
 		<script type="text/javascript" src="resources/lib/angular/angular-resource.min.js"></script>

@@ -2,15 +2,15 @@ var currencyModule = angular.module("wizard.currency");
 
 currencyModule.controller("CurrencyController", function($scope, currencyResource, orderService, exchangesResource) {
 	$scope.currencyPair = {};
-	$scope.rates = {};
+	$scope.ratesMap = {};
 
 	var currenciesResponse = currencyResource.findAll();
 	currenciesResponse.$promise.then(function() {
 		if (currenciesResponse && currenciesResponse.currencies) {
 			var currencies = currenciesResponse.currencies;
-			$scope.currencies = {};
+			$scope.currenciesMap = {};
 			for (var i = 0; i < currencies.length; i++) {
-				$scope.currencies[currencies[i].id] = currencies[i];
+				$scope.currenciesMap[currencies[i].id] = currencies[i];
 				for (var j = 0; j < currencies.length; j++) {
 					if (i !== j) {
 						rates(currencies[i], currencies[j]);
@@ -18,8 +18,8 @@ currencyModule.controller("CurrencyController", function($scope, currencyResourc
 				}
 			}
 			var orderInfo = orderService.get();
-			$scope.currencyPair.inCurrency = $scope.currencies[orderInfo.inTransfer.currency];
-			$scope.currencyPair.outCurrency = $scope.currencies[orderInfo.outTransfer.currency];
+			$scope.currencyPair.inCurrency = $scope.currenciesMap[orderInfo.inTransfer.currency];
+			$scope.currencyPair.outCurrency = $scope.currenciesMap[orderInfo.outTransfer.currency];
 			refreshTransfers();
 		}
 	});
@@ -27,14 +27,14 @@ currencyModule.controller("CurrencyController", function($scope, currencyResourc
 	function rates(inCurrency, outCurrency) {
 		var rate = exchangesResource.rate({from: inCurrency.id, to: outCurrency.id});
 		rate.$promise.then(function() {
-			$scope.rates[inCurrency.code + "_" + outCurrency.code] = rate;
+			$scope.ratesMap[inCurrency.code + "_" + outCurrency.code] = rate;
 		});
 	}
 
 	$scope.selectCurrency = function(inCurrencyId, outCurrencyId) {
 		var currencyPair = $scope.currencyPair;
-		currencyPair.inCurrency = $scope.currencies[inCurrencyId];
-		currencyPair.outCurrency = $scope.currencies[outCurrencyId];
+		currencyPair.inCurrency = $scope.currenciesMap[inCurrencyId];
+		currencyPair.outCurrency = $scope.currenciesMap[outCurrencyId];
 		refreshTransfers();
 		$scope.goToNextStep();
 	}

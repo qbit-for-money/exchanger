@@ -15,7 +15,7 @@
 								<div class="row" style="margin-bottom: 5px;"
 								     ng-if="custom" ng-include="'resources/html/money/' + orderInfo.inTransfer.currency + '/in-address.html'"></div>
 								<div class="form-group" style="margin-bottom: 0px;">
-									<amount-input amount="orderInfo.inTransfer.amount"></amount-input>
+									<amount-input amount="orderInfo.inTransfer.amount" type="'input'"></amount-input>
 								</div>
 							</form>
 
@@ -52,7 +52,11 @@
 
 							<form name="outForm" role="form" novalidate>
 								<div class="form-group" style="margin-bottom: 5px;">
-									<amount-input amount="orderInfo.outTransfer.amount"></amount-input>
+									<amount-input amount="orderInfo.outTransfer.amount" type="'output'"></amount-input>
+								</div>
+								<div class="popover bottom" id="balance-popover">
+											<div class="arrow"></div>
+											<div class="popover-content">No more then {{balance|amount}} {{outCurrencyCode}}</div>
 								</div>
 								<div class="popover bottom" id="balance-popover">
 											<div class="arrow"></div>

@@ -3,7 +3,7 @@ var moneyModule = angular.module("money");
 moneyModule.directive("amountInput", function() {
 	return {
 		restrict: "E",
-		scope: {amount: "=", readonly: "="},
+		scope: {amount: "=", readonly: "=", type: "="},
 		templateUrl: "resources/html/money/amount-input.html",
 		controller: function($scope, formatAmount, stringToAmount, isAmountPositive) {
 			$scope.formatAmount = formatAmount;
@@ -12,16 +12,9 @@ moneyModule.directive("amountInput", function() {
 		},
 		link: function(scope, element) {
 			var input = element.find("input");
-			
-			var fractionDigits;
-			if (scope.amount && scope.amount.centsInCoin) {
-				fractionDigits = Math.round(Math.log(scope.amount.centsInCoin) / Math.LN10);
-			} else {
-				fractionDigits = 2;
-			}
-			input.priceFormat({
-				prefix: "", centsLimit: fractionDigits, thousandsSeparator: ""
-			});
+			var centsInCoin = scope.amount.centsInCoin.toString();
+			input.mask("099999999999999999999999999999999." + centsInCoin.substring(1, centsInCoin.length),
+				{reverse: false, maxlength: false});
 
 			function updateAmount() {
 				scope.amount = scope.stringToAmount(input.val(), scope.amount.centsInCoin);
@@ -32,11 +25,20 @@ moneyModule.directive("amountInput", function() {
 			});
 
 			function updateInput() {
-				input.val(scope.formatAmount(scope.amount));
+				var amount = scope.amount;	
+				if (amount.coins === 0 && amount.cents === 0) {
+					input.val("");
+				} else if(amount.cents === 0) {
+					input.val(amount.coins);  
+				} else {
+					var cents = (amount.cents / amount.centsInCoin).toString();
+					var fraction = cents.substring(2, cents.length);
+					input.val(amount.coins + "." + fraction); 
+				}
 				validate();
 			}
 			scope.$watch("amount", updateInput, true);
-			
+
 			function validate() {
 				if (scope.isAmountPositive(scope.amount)) {
 					input.parent().removeClass("has-error");

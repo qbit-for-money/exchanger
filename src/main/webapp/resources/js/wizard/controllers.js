@@ -1,6 +1,7 @@
 var wizardModule = angular.module("wizard");
 
 wizardModule.controller("WizardController", function($rootScope, $scope, $location, wizardService, orderService) {
+	angular.element("#wizard-container").removeClass("hide-all");
 	$rootScope.steps = wizardService.getSteps();
 
 	function redirectToResultIfActiveOrderExists() {

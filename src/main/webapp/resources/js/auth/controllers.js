@@ -20,19 +20,6 @@ authModule.controller("AuthDialogController", function($scope, captchaAuthResour
 	$scope.model.pin = "";
 	$scope.model.encodedKey = "";
 	$scope.src = "";
-	/*angular.element(document).on('focus', '#pin', function(e) {
-		angular.element("#pin").autoNumeric('init');
-
-	});*/
-
-	/*angular.element(document).on('keypress', '#pin', function(e) {
-	 //alert('fgh')
-	 return e.preventDefault();
-	 });*/
-
-
-
-
 
 	$scope.changePin = function() {
 		if ($scope.model.pin && ($scope.model.pin.length === 4) && !isNaN($scope.model.pin) && $scope.model.pin.indexOf(".") === -1) {
@@ -46,7 +33,7 @@ authModule.controller("AuthDialogController", function($scope, captchaAuthResour
 		}
 	};
 
-	function changeDialogPosition(state) {
+	 function changeDialogPosition(state) {
 		if (state) {
 			angular.element(".modal-dialog").css("padding-top", "13%");
 		} else {
@@ -62,7 +49,7 @@ authModule.controller("AuthDialogController", function($scope, captchaAuthResour
 				$scope.encodedKeyInvalid = false;
 				setTimeout(function() {
 					location.reload();
-				}, 1000);
+				}, 2000);
 			});
 		} else {
 			$scope.encodedKeyInvalid = true;
@@ -78,6 +65,10 @@ authModule.controller("AuthDialogController", function($scope, captchaAuthResour
 			$scope.pinInvalid = true;
 			$scope.model.pin = "";
 			changeDialogPosition(true);
-		} 
+		} else {
+			angular.element(document).on("focus", "#pin", function(e) {
+				angular.element("#pin").mask("0000");
+			});
+		}
 	};
 });

@@ -38,3 +38,7 @@ input[readonly], input[ng-readonly] {
 	cursor: text !important;
 	background-color: inherit !important;
 }
+
+.hide-all {
+	display: none
+}

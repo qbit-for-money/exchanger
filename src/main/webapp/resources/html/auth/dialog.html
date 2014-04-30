@@ -4,12 +4,7 @@
 <div class="modal-body" id="modal">
 	<div class="container-fluid">
 		<div class="row">
-			<div class="col-xs-12 col-md-12">
-				<input type="radio" ng-model="auth" id="radio1" value="True" ng-change="checked(true)"/>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-xs-1 col-md-1"></div>
+			<div class="col-xs-1 col-md-1"><input type="radio" ng-model="auth" id="radio1" value="True" ng-change="checked(true)"/></div>
 			<label for="radio1" class="col-xs-10 col-md-10">
 				<a href="webapi/oauth2/authenticate" ng-if="auth === 'True'">
 					<img src="resources/img/google-plus.png" alt="Google+">
