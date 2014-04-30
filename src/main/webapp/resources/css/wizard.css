@@ -64,6 +64,7 @@ and (max-width : 797px) {
 		overflow: hidden;
 		line-height: 40px;
 		color: #29d;
+		white-space: nowrap;
 	}
 }
 
@@ -115,6 +116,7 @@ and (min-width : 798px) {
 		line-height: 75px;
 		color: #29d;
 		font-size: 2em;
+		white-space: nowrap;
 	}
 }
 
