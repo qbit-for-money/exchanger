@@ -41,8 +41,6 @@ wizardModule.controller("WizardController", function($rootScope, $scope, $locati
 		resetActionFail();
 		updateCurrentStepIndex();
 		redirectToResultIfActiveOrderExists();
-		alert($scope);
-		
 	});
 	$scope.$on("order-loaded", redirectToResultIfActiveOrderExists);
 	updateCurrentStepIndex();
