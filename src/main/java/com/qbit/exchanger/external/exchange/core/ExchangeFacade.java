@@ -26,7 +26,7 @@ public class ExchangeFacade implements Exchange {
 			return btcExchange.getRate(from, to).mul(env.getRateMultiplier());
 		} catch (Exception ex) {
 			Rate invRate = btcExchange.getRate(to, from);
-			return invRate.inv();
+			return invRate.inv().mul(env.getRateMultiplier());
 		}
 	}
 }

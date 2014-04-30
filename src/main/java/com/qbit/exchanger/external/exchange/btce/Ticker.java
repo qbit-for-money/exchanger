@@ -1,6 +1,5 @@
 package com.qbit.exchanger.external.exchange.btce;
 
-import com.qbit.exchanger.money.model.Rate;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
