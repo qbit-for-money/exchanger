@@ -13,6 +13,7 @@ import com.qbit.exchanger.money.core.WTransaction;
 import com.qbit.exchanger.env.Env;
 import com.qbit.exchanger.money.core.AddressInfo;
 import com.qbit.exchanger.money.model.Amount;
+import com.qbit.exchanger.money.model.AtomicBigDecimal;
 import com.qbit.exchanger.money.model.Currency;
 import java.io.File;
 import java.math.BigDecimal;
@@ -47,7 +48,7 @@ public class LitecoinMoneyService implements CryptoService {
 
 	private NetworkParameters parameters;
 	private WalletAppKit kit;
-	private String dbName;
+	private AtomicBigDecimal balance;
 
 	@PostConstruct
 	public void init() {
@@ -59,6 +60,7 @@ public class LitecoinMoneyService implements CryptoService {
 		}
 		kit = new WalletAppKit(parameters, new File(env.getLitecoinWalletPath()), "sample");
 		kit.startAndWait();
+		balance = new AtomicBigDecimal(getWalletBalance());
 	}
 
 	@PreDestroy
@@ -69,11 +71,15 @@ public class LitecoinMoneyService implements CryptoService {
 			// Do nothing
 		}
 	}
+	
+	private BigDecimal getWalletBalance() {
+		BigInteger walletBalance = getWallet().getBalance().subtract(MIN_FEE).max(BigInteger.ZERO);
+		return new BigDecimal(Utils.bitcoinValueToFriendlyString(walletBalance));
+	}
 
 	@Override
 	public Amount getBalance() {
-		BigInteger balance = getWallet().getBalance().subtract(MIN_FEE).max(BigInteger.ZERO);
-		return new Amount(new BigDecimal(Utils.bitcoinValueToFriendlyString(balance)), Currency.LITECOIN.getCentsInCoin());
+		return new Amount(balance.getValue(), Currency.LITECOIN.getCentsInCoin());
 	}
 
 	@Override
@@ -123,7 +129,7 @@ public class LitecoinMoneyService implements CryptoService {
 
 		// final BigInteger amountToSend = value.subtract(Transaction.REFERENCE_DEFAULT_MIN_TX_FEE);
 		final Wallet.SendResult sendResult = getWallet().sendCoins(kit.peerGroup(), forwardingAddress, amountToSend);
-
+		balance.addAndGet(amount.toBigDecimal().negate());
 		// A future that will complete once the transaction message has been successfully
 		if (logger.isInfoEnabled()) {
 			sendResult.broadcastComplete.addListener(new Runnable() {

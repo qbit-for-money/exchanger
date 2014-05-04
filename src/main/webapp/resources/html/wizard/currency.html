@@ -1,6 +1,6 @@
 <div class="row">
 	<div class="col-md-2 hidden-sm "></div>
-	<div class="col-md-8 currency-picker">
+	<!--div class="col-md-8 currency-picker">
 		<button class="col-md-12 col-xs-12 form-control" data-ng-click="selectCurrency('BITCOIN', 'LITECOIN')">
 			<div class="col-md-3 col-sm-3 col-xs-3 vertical-right-Line">
 				<div class="currency-list-icon">
@@ -31,5 +31,143 @@
 				</div>
 			</div>
 		</button>
+		<button class="col-md-12 col-xs-12 form-control" data-ng-click="selectCurrency('DOGECOIN', 'BITCOIN')">
+			<div class="col-md-3 col-sm-3 col-xs-3 vertical-right-Line">
+				<div class="currency-list-icon">
+					<div class=" currency DOGECOIN"></div>
+				</div>
+			</div>
+
+			<div class="col-md-6 col-sm-6 col-xs-6 text-center currency-list-rate">{{ratesMap.DOGE_BTC|rate}}</div>
+
+			<div class="col-md-3 col-sm-3 col-xs-3 vertical-left-Line">
+				<div class="currency-list-icon">
+					<div class=" currency BITCOIN"></div>
+				</div>
+			</div>
+		</button>
+		<button class="col-md-12 col-xs-12 form-control" data-ng-click="selectCurrency('BITCOIN', 'DOGECOIN')">
+			<div class="col-md-3 col-sm-3 col-xs-3 vertical-right-Line">
+				<div class="currency-list-icon">
+					<div class=" currency BITCOIN"></div>
+				</div>
+			</div>
+
+			<div class="col-md-6 col-sm-6 col-xs-6 text-center currency-list-rate">{{ratesMap.BTC_DOGE|rate}}</div>
+
+			<div class="col-md-3 col-sm-3 col-xs-3 vertical-left-Line">
+				<div class="currency-list-icon">
+					<div class=" currency DOGECOIN"></div>
+				</div>
+			</div>
+		</button>
+	</div-->
+	<div class="col-md-8 currency-picker">
+		<div class="dropdown open">
+			<ul class="dropdown-menu currencies-list">
+				<li>
+					<button class="col-md-12 col-xs-12 form-control" style="margin-top: 0;" data-ng-click="selectCurrency('BITCOIN', 'LITECOIN')">
+						<div class="col-md-3 col-sm-3 col-xs-3 vertical-right-Line">
+							<div class="currency-list-icon">
+								<div class=" currency BITCOIN"></div>
+							</div>
+						</div>
+
+						<div class="col-md-6 col-sm-6 col-xs-6 text-center currency-list-rate">{{ratesMap.BTC_LTC|rate}}</div>
+
+						<div class="col-md-3 col-sm-3 col-xs-3 vertical-left-Line">
+							<div class="currency-list-icon">
+								<div class=" currency LITECOIN"></div>
+							</div>
+						</div>
+					</button>
+				</li>
+				<li>
+					<button class="col-md-12 col-xs-12 form-control" data-ng-click="selectCurrency('LITECOIN', 'BITCOIN')">
+						<div class="col-md-3 col-sm-3 col-xs-3 vertical-right-Line">
+							<div class="currency-list-icon">
+								<div class=" currency LITECOIN"></div>
+							</div>
+						</div>
+
+						<div class="col-md-6 col-sm-6 col-xs-6 text-center currency-list-rate">{{ratesMap.LTC_BTC|rate}}</div>
+
+						<div class="col-md-3 col-sm-3 col-xs-3 vertical-left-Line">
+							<div class="currency-list-icon">
+								<div class=" currency BITCOIN"></div>
+							</div>
+						</div>
+					</button>
+				</li>
+				<li>
+					<button class="col-md-12 col-xs-12 form-control" data-ng-click="selectCurrency('BITCOIN', 'DOGECOIN')">
+						<div class="col-md-3 col-sm-3 col-xs-3 vertical-right-Line">
+							<div class="currency-list-icon">
+								<div class=" currency BITCOIN"></div>
+							</div>
+						</div>
+
+						<div class="col-md-6 col-sm-6 col-xs-6 text-center currency-list-rate">{{ratesMap.BTC_DOGE|rate}}</div>
+
+						<div class="col-md-3 col-sm-3 col-xs-3 vertical-left-Line">
+							<div class="currency-list-icon">
+								<div class=" currency DOGECOIN"></div>
+							</div>
+						</div>
+					</button>
+				</li>
+				<li>
+					<button class="col-md-12 col-xs-12 form-control" data-ng-click="selectCurrency('DOGECOIN', 'BITCOIN')">
+						<div class="col-md-3 col-sm-3 col-xs-3 vertical-right-Line">
+							<div class="currency-list-icon">
+								<div class=" currency DOGECOIN"></div>
+							</div>
+						</div>
+
+						<div class="col-md-6 col-sm-6 col-xs-6 text-center currency-list-rate">{{ratesMap.DOGE_BTC|rate}}</div>
+
+						<div class="col-md-3 col-sm-3 col-xs-3 vertical-left-Line">
+							<div class="currency-list-icon">
+								<div class=" currency BITCOIN"></div>
+							</div>
+						</div>
+					</button>
+				</li>
+				<li>
+					<button class="col-md-12 col-xs-12 form-control" data-ng-click="selectCurrency('LITECOIN', 'DOGECOIN')">
+						<div class="col-md-3 col-sm-3 col-xs-3 vertical-right-Line">
+							<div class="currency-list-icon">
+								<div class=" currency LITECOIN"></div>
+							</div>
+						</div>
+
+						<div class="col-md-6 col-sm-6 col-xs-6 text-center currency-list-rate">{{ratesMap.LTC_DOGE|rate}}</div>
+
+						<div class="col-md-3 col-sm-3 col-xs-3 vertical-left-Line">
+							<div class="currency-list-icon">
+								<div class=" currency DOGECOIN"></div>
+							</div>
+						</div>
+					</button>
+				</li>
+				<li>
+					<button class="col-md-12 col-xs-12 form-control" data-ng-click="selectCurrency('DOGECOIN', 'LITECOIN')">
+						<div class="col-md-3 col-sm-3 col-xs-3 vertical-right-Line">
+							<div class="currency-list-icon">
+								<div class=" currency DOGECOIN"></div>
+							</div>
+						</div>
+
+						<div class="col-md-6 col-sm-6 col-xs-6 text-center currency-list-rate">{{ratesMap.DOGE_LTC|rate}}</div>
+
+						<div class="col-md-3 col-sm-3 col-xs-3 vertical-left-Line">
+							<div class="currency-list-icon">
+								<div class=" currency LITECOIN"></div>
+							</div>
+						</div>
+					</button>
+				</li>
+			</ul>
+		</div>
 	</div>
 	<div class="col-md-2 hidden-sm "></div>

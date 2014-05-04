@@ -6,7 +6,6 @@ adminModule.controller("AdminController", function($rootScope, $scope, adminReso
 		if (currenciesResponse && currenciesResponse.currencies) {
 			var currencies = currenciesResponse.currencies;
 			$scope.currencies = currencies;
-			$scope.currencies.splice(0, 1);
 			$scope.currency = currencies[0];
 			refreshBalance();
 			resetAmountToSend();

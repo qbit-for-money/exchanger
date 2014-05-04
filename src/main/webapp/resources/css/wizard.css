@@ -27,7 +27,7 @@ and (max-width : 797px) {
 	.currency.BITCOIN { background-position: 0px 0px; } 
 	.currency.DIGITALCOIN { background-position: -50px 0px; } 
 	.currency.FEATHERCOIN { background-position: -100px 0px; } 
-	.currency.LITECOIN { background-position: -150px 0px; } 
+	.currency.LITECOIN { background-position: -149px 0px; width: 43px; } 
 	.currency.NAMECOIN { background-position: -200px 0px; } 
 	.currency.NOVACOIN { background-position: -250px 0px; width: 39px; height: 40px;  } 
 	.currency.PEERCOIN { background-position: -299px 0px; } 
@@ -36,6 +36,7 @@ and (max-width : 797px) {
 	.currency.STABLECOIN { background-position: -449px 0px; } 
 	.currency.YANDEX_RUB { background-position: -499px 0px; } 
 	.currency.ZETACOIN { background-position: -549px 0px; } 
+	.currency.DOGECOIN { background-position: -599px 0px; width: 43px; height: 42px; }
 
 	.currencies-list {
 		height: 350px;
@@ -75,10 +76,10 @@ and (min-width : 798px) {
 		background: url('../img/currencies-75x75.png') no-repeat top left;
 		width: 75px; height: 75px;
 	} 
-	.currency.BITCOIN { background-position: 0px 0px; } 
+	.currency.BITCOIN { background-position: 0px 0px; width: 76px; height: 76px; } 
 	.currency.DIGITALCOIN { background-position: -85px 0px; } 
 	.currency.FEATHERCOIN { background-position: -170px 0px; } 
-	.currency.LITECOIN { background-position: -255px 0px; } 
+	.currency.LITECOIN { background-position: -254px 0px; width: 77px; height: 78px; } 
 	.currency.NAMECOIN { background-position: -340px 0px; } 
 	.currency.NOVACOIN { background-position: -425px 0px; width: 75px; height: 76px;  } 
 	.currency.PEERCOIN { background-position: -510px 0px; } 
@@ -87,14 +88,15 @@ and (min-width : 798px) {
 	.currency.STABLECOIN { background-position: -765px 0px; } 
 	.currency.YANDEX_RUB { background-position: -850px 0px; } 
 	.currency.ZETACOIN { background-position: -935px 0px; } 
+	.currency.DOGECOIN { background-position: -1025px 0px; width: 78px; height: 76px; }
 
 	.currency-list-label {
 		font-size: 2em;
 	}
 
 	.currencies-list {
-		height: 500px;
-		max-height: 500px;
+		height: 335px;
+		max-height: 335px;
 	}
 
 	.direction-control {
@@ -161,7 +163,8 @@ and (min-width : 798px) {
 	border-color: #ccc;
 	padding: 13px;
 	background-color: white;
-	margin-top: 20px;
+	//margin-top: 20px;
+	margin-top: 5px;
 	box-shadow: 0 6px 6px rgba(0, 0, 0, .2);
 }
 

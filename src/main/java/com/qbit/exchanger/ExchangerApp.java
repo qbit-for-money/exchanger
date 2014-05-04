@@ -11,6 +11,7 @@ import com.qbit.exchanger.order.dao.MailNotificationDAO;
 import com.qbit.exchanger.mail.MailService;
 import com.qbit.exchanger.money.bitcoin.BitcoinMoneyService;
 import com.qbit.exchanger.money.core.MoneyServiceProvider;
+import com.qbit.exchanger.money.dogecoin.DogecoinMoneyService;
 import com.qbit.exchanger.money.litecoin.LitecoinMoneyService;
 import com.qbit.exchanger.money.yandex.YandexMoneyService;
 import com.qbit.exchanger.order.dao.OrderDAO;
@@ -63,6 +64,7 @@ public class ExchangerApp extends Application {
 
 		addBinding(newBinder(BitcoinMoneyService.class).to(BitcoinMoneyService.class).in(Singleton.class), configuration);
 		addBinding(newBinder(LitecoinMoneyService.class).to(LitecoinMoneyService.class).in(Singleton.class), configuration);
+		addBinding(newBinder(DogecoinMoneyService.class).to(DogecoinMoneyService.class).in(Singleton.class), configuration);
 		addBinding(newBinder(YandexMoneyService.class).to(YandexMoneyService.class).in(Singleton.class), configuration);
 
 		addBinding(newBinder(MoneyServiceProvider.class).to(MoneyServiceProvider.class).in(Singleton.class), configuration);

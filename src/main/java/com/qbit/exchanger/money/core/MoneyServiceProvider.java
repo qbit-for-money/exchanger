@@ -1,6 +1,7 @@
 package com.qbit.exchanger.money.core;
 
 import com.qbit.exchanger.money.bitcoin.BitcoinMoneyService;
+import com.qbit.exchanger.money.dogecoin.DogecoinMoneyService;
 import com.qbit.exchanger.money.litecoin.LitecoinMoneyService;
 import com.qbit.exchanger.money.model.Currency;
 import com.qbit.exchanger.money.yandex.YandexMoneyService;
@@ -22,6 +23,8 @@ public class MoneyServiceProvider {
 	private YandexMoneyService yandexMoneyService;
 	@Inject
 	private LitecoinMoneyService litecoinService;
+	@Inject
+	private DogecoinMoneyService dogecoinService;
 
 	private Map<Currency, MoneyService> servicesMap;
 
@@ -46,6 +49,7 @@ public class MoneyServiceProvider {
 			servicesMap.put(Currency.BITCOIN, bitcoinService);
 			servicesMap.put(Currency.YANDEX_RUB, yandexMoneyService);
 			servicesMap.put(Currency.LITECOIN, litecoinService);
+			servicesMap.put(Currency.DOGECOIN, dogecoinService);
 		}
 		return servicesMap;
 	}

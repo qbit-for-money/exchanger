@@ -137,6 +137,16 @@ public class Env {
 	}
 	
 	@XmlTransient
+	public String getDogecoinWalletPath() {
+		return properties.getProperty("money.dogecoin.wallet.path");
+	}
+
+	@XmlTransient
+	public boolean isDogecoinTestnet() {
+		return Boolean.TRUE.toString().equalsIgnoreCase(properties.getProperty("money.dogecoin.testnet"));
+	}
+	
+	@XmlTransient
 	public String getGoogleClientId() {
 		return properties.getProperty("auth.google.clientId");
 	}

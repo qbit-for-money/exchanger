@@ -130,6 +130,19 @@
 		</dependency>
 		
 		<dependency>
+			<groupId>com.google</groupId>
+			<artifactId>dogecoinj</artifactId>
+			<version>${dogecoinj-version}</version>
+		</dependency>  
+		
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>16.0.1</version>
+			<type>jar</type>
+		</dependency>
+		
+		<dependency>
 			<groupId>postgresql</groupId>
 			<artifactId>postgresql</artifactId>
 			<version>9.1-901.jdbc3</version>
@@ -199,6 +212,7 @@
 		<yandex.version>1.2.4-SNAPSHOT</yandex.version>
 		<bitcoinj-version>0.12-qbit</bitcoinj-version>
 		<litecoinj-version>0.10.3.1-qbit</litecoinj-version>
+		<dogecoinj-version>0.12-SNAPSHOT</dogecoinj-version>
 		<eclipselink.version>2.5.0</eclipselink.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>

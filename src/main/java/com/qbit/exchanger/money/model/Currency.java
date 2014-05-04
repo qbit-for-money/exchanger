@@ -14,6 +14,7 @@ public enum Currency {
 	
 	BITCOIN(new Amount(0, 1, 100 * 1000 * 1000), "BTC", true),
 	LITECOIN(new Amount(0, 1, 100 * 1000 * 1000), "LTC", true),
+	DOGECOIN(new Amount(0, 1, 100 * 1000 * 1000), "DOGE", true),
 	
 	PEERCOIN(new Amount(0, 1, 100 * 1000 * 1000), "PPC", false),
 	NAMECOIN(new Amount(0, 1, 100 * 1000 * 1000), "NMC", false),
