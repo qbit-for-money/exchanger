@@ -90,6 +90,11 @@ public class DogecoinMoneyService implements CryptoService {
 	}
 	
 	@Override
+	public void addBalance(Amount amount) {
+		balance.addAndGet(amount.toBigDecimal());
+	}
+	
+	@Override
 	public Amount getBalance(String address) {
 		
 		String path = (address + "?confirmations=2");

@@ -13,5 +13,7 @@ public interface CryptoService extends MoneyService {
 	
 	Amount getBalance(String address);
 	
+	void addBalance(Amount amount);
+	
 	List<WTransaction> getWalletTransactions();
 }

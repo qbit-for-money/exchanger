@@ -84,6 +84,11 @@ public class BitcoinMoneyService implements CryptoService {
 	public Amount getBalance() {
 		return new Amount(balance.getValue(), Currency.BITCOIN.getCentsInCoin());
 	}
+	
+	@Override
+	public void addBalance(Amount amount) {
+		balance.addAndGet(amount.toBigDecimal());
+	}
 
 	@Override
 	public Amount getBalance(String address) {

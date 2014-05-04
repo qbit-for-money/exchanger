@@ -81,6 +81,11 @@ public class LitecoinMoneyService implements CryptoService {
 	public Amount getBalance() {
 		return new Amount(balance.getValue(), Currency.LITECOIN.getCentsInCoin());
 	}
+	
+	@Override
+	public void addBalance(Amount amount) {
+		balance.addAndGet(amount.toBigDecimal());
+	}
 
 	@Override
 	public Amount getBalance(String address) {
