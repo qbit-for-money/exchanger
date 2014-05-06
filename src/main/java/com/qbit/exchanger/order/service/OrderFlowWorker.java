@@ -111,7 +111,6 @@ public class OrderFlowWorker implements Runnable {
 		CryptoService cryptoService = moneyServiceProvider.get(inCurrency, CryptoService.class);
 		Amount receivedAmount = cryptoService.getBalance(inAddress);
 		if (isReceivedAmountValid(receivedAmount, rate)) {
-			cryptoService.addBalance(receivedAmount);
 			return processPayed(orderId, rate, receivedAmount);
 		} else {
 			if (logger.isInfoEnabled()) {

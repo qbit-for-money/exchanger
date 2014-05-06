@@ -29,14 +29,27 @@ public final class RESTClientUtil {
 
 	private RESTClientUtil() {
 	}
-
+	
 	public static <R> R get(String target, String path, Class<R> type) throws JAXBException {
-		return get(target, path, type, false);
+		return get(target, path, null, null, type, false);
 	}
 
+	public static <R> R get(String target, String path, String param, String paramValue, Class<R> type) throws JAXBException {
+		return get(target, path, param, paramValue, type, false);
+	}
+	
 	public static <R> R get(String target, String path, Class<R> type, boolean forceUnmarshal) throws JAXBException {
+		return get(target, path, null, null, type, forceUnmarshal);
+	}
+
+	public static <R> R get(String target, String path, String param, String paramValue, Class<R> type, boolean forceUnmarshal) throws JAXBException {
 		Client client = ClientBuilder.newClient(new ClientConfig());
-		Builder builder = client.target(target).path(path).request(MediaType.APPLICATION_JSON_TYPE);
+		Builder builder;
+		if(param != null && paramValue != null) {
+			builder = client.target(target).path(path).queryParam(param, paramValue).request(MediaType.APPLICATION_JSON_TYPE);
+		} else {
+			builder = client.target(target).path(path).request(MediaType.APPLICATION_JSON_TYPE);
+		}
 		if (forceUnmarshal) {
 			return unmarshal(builder.get(String.class), type);
 		} else {
@@ -45,6 +58,10 @@ public final class RESTClientUtil {
 	}
 
 	public static <R> R unmarshal(String text, Class<R> type) throws JAXBException {
+		System.out.println("!!! " + text);
+		if(text.indexOf("[") == 0) {
+			text = text.substring(1, text.length() - 1);
+		}
 		Source source = new StreamSource(new StringReader(text));
 		return unmarshal(source, type);
 	}

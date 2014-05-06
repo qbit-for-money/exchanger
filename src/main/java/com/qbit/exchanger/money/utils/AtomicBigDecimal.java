@@ -1,4 +1,4 @@
-package com.qbit.exchanger.money.model;
+package com.qbit.exchanger.money.utils;
 
 import java.math.BigDecimal;
 import java.util.concurrent.atomic.AtomicReference;
@@ -19,7 +19,7 @@ public final class AtomicBigDecimal {
 	}
 
 	public BigDecimal addAndGet(BigDecimal value) {
-		for (;;) {
+		while (true) {
 			BigDecimal current = valueHolder.get();
 			BigDecimal next = current.add(value);
 			if (valueHolder.compareAndSet(current, next)) {

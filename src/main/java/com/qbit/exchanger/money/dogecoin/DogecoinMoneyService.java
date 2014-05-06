@@ -1,7 +1,10 @@
 package com.qbit.exchanger.money.dogecoin;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.MoreExecutors;
+import com.google.dogecoin.core.AbstractWalletEventListener;
 import com.google.dogecoin.core.Address;
 import com.google.dogecoin.core.ECKey;
 import com.google.dogecoin.core.NetworkParameters;
@@ -20,7 +23,7 @@ import com.qbit.exchanger.env.Env;
 import com.qbit.exchanger.money.core.CryptoService;
 import com.qbit.exchanger.money.core.WTransaction;
 import com.qbit.exchanger.money.model.Amount;
-import com.qbit.exchanger.money.model.AtomicBigDecimal;
+import com.qbit.exchanger.money.utils.AtomicBigDecimal;
 import com.qbit.exchanger.money.model.Currency;
 import java.io.File;
 import java.math.BigDecimal;
@@ -37,14 +40,15 @@ import javax.inject.Singleton;
 
 /**
  * DOGECOIN
- * 
+ *
  * @author Alexander_Sergeev
  */
 @Singleton
 public class DogecoinMoneyService implements CryptoService {
+
 	public static final BigInteger COIN = new BigInteger("100000000", 10);
 	public static final BigInteger MIN_FEE = new BigInteger("100000000", 10);
-	
+
 	public final static String BLOCKR_API_BASE_URL = "https://bkchain.org/doge/api/v1/address/balance/";
 
 	private final Logger logger = LoggerFactory.getLogger(DogecoinMoneyService.class);
@@ -68,8 +72,9 @@ public class DogecoinMoneyService implements CryptoService {
 		kit = new WalletAppKit(parameters, new File(env.getDogecoinWalletPath()), "sample");
 		kit.startAndWait();
 		balance = new AtomicBigDecimal(getWalletBalance());
+		getWallet().addEventListener(getPaymentListener());
 	}
-	
+
 	@PreDestroy
 	public void destroy() {
 		try {
@@ -79,6 +84,30 @@ public class DogecoinMoneyService implements CryptoService {
 		}
 	}
 	
+	private AbstractWalletEventListener getPaymentListener() {
+		AbstractWalletEventListener listener = new AbstractWalletEventListener() {
+			@Override
+			public void onCoinsReceived(Wallet wallet, Transaction tx, BigInteger prevBalance, BigInteger newBalance) {
+				final BigInteger receivedValue = tx.getValueSentToMe(wallet);
+
+				Futures.addCallback(tx.getConfidence().getDepthFuture(2), new FutureCallback<Transaction>() {
+					@Override
+					public void onSuccess(Transaction result) {
+						BigDecimal value = new BigDecimal(Utils.bitcoinValueToFriendlyString(receivedValue));
+						balance.addAndGet(value);
+					}
+
+					@Override
+					public void onFailure(Throwable t) {
+						throw new RuntimeException(t);
+					}
+				});
+			}
+		};
+		
+		return listener;
+	}
+
 	private BigDecimal getWalletBalance() {
 		BigInteger walletBalance = getWallet().getBalance().subtract(MIN_FEE).max(BigInteger.ZERO);
 		return new BigDecimal(Utils.bitcoinValueToFriendlyString(walletBalance));
@@ -88,26 +117,19 @@ public class DogecoinMoneyService implements CryptoService {
 	public Amount getBalance() {
 		return new Amount(balance.getValue(), Currency.DOGECOIN.getCentsInCoin());
 	}
-	
-	@Override
-	public void addBalance(Amount amount) {
-		balance.addAndGet(amount.toBigDecimal());
-	}
-	
+
 	@Override
 	public Amount getBalance(String address) {
-		
-		String path = (address + "?confirmations=2");
-		
+
+		String path = (address);
 		try {
-			DogeAddressInfo addressInfo = get(BLOCKR_API_BASE_URL, path, DogeAddressInfo.class, true);
+			DogeAddressInfo addressInfo = get(BLOCKR_API_BASE_URL, path, "confirmations", "2", DogeAddressInfo.class, true);
 			if (logger.isInfoEnabled()) {
 				logger.info("[{}] Address Info: ", addressInfo, address);
 			}
-			System.out.println("!!! DOGE: " + addressInfo);
-			return new Amount((new BigDecimal(addressInfo.getData().get(0).getBalance())).divide(new BigDecimal(Currency.DOGECOIN.getCentsInCoin())), Currency.DOGECOIN.getCentsInCoin());
+			return new Amount(addressInfo.getBalance().divide(new BigDecimal(Currency.DOGECOIN.getCentsInCoin())), Currency.DOGECOIN.getCentsInCoin());
 		} catch (Exception ex) {
-			if(logger.isErrorEnabled()) {
+			if (logger.isErrorEnabled()) {
 				logger.error(ex.getMessage(), ex);
 			}
 			return Amount.zero(Currency.DOGECOIN.getCentsInCoin());
@@ -121,7 +143,7 @@ public class DogecoinMoneyService implements CryptoService {
 		Address address = key.toAddress(parameters);
 		return address.toString();
 	}
-	
+
 	@Override
 	public void sendMoney(final String address, Amount amount) throws Exception {
 		if ((address == null) || (amount == null) || !amount.isPositive()) {
@@ -156,7 +178,7 @@ public class DogecoinMoneyService implements CryptoService {
 	public Amount receiveMoney(String address, Amount amount) throws Exception {
 		throw new UnsupportedOperationException();
 	}
-	
+
 	@Override
 	public List<WTransaction> getWalletTransactions() {
 		Iterable<WalletTransaction> tansactions = getWallet().getWalletTransactions();
@@ -181,7 +203,7 @@ public class DogecoinMoneyService implements CryptoService {
 		bi = bi.add(BigInteger.valueOf(cents));
 		return bi;
 	}
-	
+
 	private WTransaction toWTransaction(Transaction transaction) {
 		WTransaction result = new WTransaction();
 		BigInteger amount = transaction.getValue(getWallet());
@@ -217,7 +239,7 @@ public class DogecoinMoneyService implements CryptoService {
 					return address;
 				}
 			} catch (ScriptException ex) {
-				if(logger.isErrorEnabled()) {
+				if (logger.isErrorEnabled()) {
 					logger.error(ex.getMessage());
 				}
 			}

@@ -1,6 +1,8 @@
 package com.qbit.exchanger.money.litecoin;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.litecoin.core.*;
 import com.google.litecoin.kits.WalletAppKit;
@@ -13,7 +15,7 @@ import com.qbit.exchanger.money.core.WTransaction;
 import com.qbit.exchanger.env.Env;
 import com.qbit.exchanger.money.core.AddressInfo;
 import com.qbit.exchanger.money.model.Amount;
-import com.qbit.exchanger.money.model.AtomicBigDecimal;
+import com.qbit.exchanger.money.utils.AtomicBigDecimal;
 import com.qbit.exchanger.money.model.Currency;
 import java.io.File;
 import java.math.BigDecimal;
@@ -61,6 +63,7 @@ public class LitecoinMoneyService implements CryptoService {
 		kit = new WalletAppKit(parameters, new File(env.getLitecoinWalletPath()), "sample");
 		kit.startAndWait();
 		balance = new AtomicBigDecimal(getWalletBalance());
+		getWallet().addEventListener(getPaymentListener());
 	}
 
 	@PreDestroy
@@ -72,6 +75,30 @@ public class LitecoinMoneyService implements CryptoService {
 		}
 	}
 	
+	private AbstractWalletEventListener getPaymentListener() {
+		AbstractWalletEventListener listener = new AbstractWalletEventListener() {
+			@Override
+			public void onCoinsReceived(Wallet wallet, Transaction tx, BigInteger prevBalance, BigInteger newBalance) {
+				final BigInteger receivedValue = tx.getValueSentToMe(wallet);
+
+				Futures.addCallback(tx.getConfidence().getDepthFuture(2), new FutureCallback<Transaction>() {
+					@Override
+					public void onSuccess(Transaction result) {
+						BigDecimal value = new BigDecimal(Utils.bitcoinValueToFriendlyString(receivedValue));
+						balance.addAndGet(value);
+					}
+
+					@Override
+					public void onFailure(Throwable t) {
+						throw new RuntimeException(t);
+					}
+				});
+			}
+		};
+		
+		return listener;
+	}
+	
 	private BigDecimal getWalletBalance() {
 		BigInteger walletBalance = getWallet().getBalance().subtract(MIN_FEE).max(BigInteger.ZERO);
 		return new BigDecimal(Utils.bitcoinValueToFriendlyString(walletBalance));
@@ -81,18 +108,13 @@ public class LitecoinMoneyService implements CryptoService {
 	public Amount getBalance() {
 		return new Amount(balance.getValue(), Currency.LITECOIN.getCentsInCoin());
 	}
-	
-	@Override
-	public void addBalance(Amount amount) {
-		balance.addAndGet(amount.toBigDecimal());
-	}
 
 	@Override
 	public Amount getBalance(String address) {
-		String path = (address + "?confirmations=2");
+		String path = (address);
 
 		try {
-			AddressInfo addressInfo = get(BLOCKR_API_BASE_URL, path, AddressInfo.class, true);
+			AddressInfo addressInfo = get(BLOCKR_API_BASE_URL, path, "confirmations", "2", AddressInfo.class, true);
 			if (logger.isInfoEnabled()) {
 				logger.info("[{}] Address Info: ", addressInfo, address);
 			}

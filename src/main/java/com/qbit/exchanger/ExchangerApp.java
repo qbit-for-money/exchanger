@@ -7,6 +7,7 @@ import com.qbit.exchanger.env.Env;
 import com.qbit.exchanger.external.exchange.btce.BTCExchange;
 import com.qbit.exchanger.external.exchange.core.Exchange;
 import com.qbit.exchanger.external.exchange.core.ExchangeFacade;
+import com.qbit.exchanger.external.exchange.cryptsy.CryptsyExchange;
 import com.qbit.exchanger.order.dao.MailNotificationDAO;
 import com.qbit.exchanger.mail.MailService;
 import com.qbit.exchanger.money.bitcoin.BitcoinMoneyService;
@@ -72,7 +73,7 @@ public class ExchangerApp extends Application {
 		addBinding(newBinder(OrderService.class).to(OrderService.class).in(Singleton.class), configuration);
 		addBinding(newBinder(OrderFlowWorker.class).to(OrderFlowWorker.class).in(Singleton.class), configuration);
 
-		addBinding(newBinder(BTCExchange.class).to(BTCExchange.class).in(Singleton.class), configuration);
+		addBinding(newBinder(CryptsyExchange.class).to(CryptsyExchange.class).in(Singleton.class), configuration);
 		addBinding(newBinder(ExchangeFacade.class).to(Exchange.class).in(Singleton.class), configuration);
 		
 		configuration.commit();

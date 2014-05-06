@@ -51,5 +51,4 @@ public class ExchangesResource {
 		});
 //		return new Rate(BigDecimal.ONE, from, to);
 	}
-
 }
