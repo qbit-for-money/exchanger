@@ -95,8 +95,9 @@ and (min-width : 798px) {
 	}
 
 	.currencies-list {
-		height: 335px;
-		max-height: 335px;
+		display: block;
+		height: 40em;
+		max-height: 558px;
 	}
 
 	.direction-control {
