@@ -1,4 +1,4 @@
-package com.qbit.exchanger.money.utils;
+package com.qbit.exchanger.common.utils;
 
 import java.math.BigDecimal;
 import java.util.concurrent.atomic.AtomicReference;

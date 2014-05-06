@@ -1,6 +1,6 @@
 package com.qbit.exchanger.money.bitcoin;
 
-import com.qbit.exchanger.money.utils.AtomicBigDecimal;
+import com.qbit.exchanger.common.utils.AtomicBigDecimal;
 import com.qbit.exchanger.money.core.AddressInfo;
 import com.google.bitcoin.core.*;
 import com.google.bitcoin.core.Wallet;

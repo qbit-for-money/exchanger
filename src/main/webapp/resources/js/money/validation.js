@@ -14,9 +14,9 @@ moneyModule.factory("isAmountPositive", function(isAmountValid) {
 	};
 });
 
-moneyModule.factory("isRateValid", function(isAmountPositive) {
+moneyModule.factory("isRateValid", function(isAmountValid) {
 	return function(rate) {
-		return (rate && isAmountPositive(rate.numerator) && isAmountPositive(rate.denominator));
+		return (rate && isAmountValid(rate.numerator) && isAmountValid(rate.denominator));
 	};
 });
 

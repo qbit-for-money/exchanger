@@ -1,5 +1,6 @@
 package com.qbit.exchanger.external.exchange.cryptsy;
 
+import com.qbit.exchanger.common.model.Tuple2;
 import com.qbit.exchanger.external.exchange.core.Exchange;
 import com.qbit.exchanger.money.model.Currency;
 import com.qbit.exchanger.money.model.Rate;
@@ -7,7 +8,7 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 import javax.inject.Singleton;
-import static com.qbit.exchanger.external.exchange.cryptsy.CryptsyExchangeRestClient.*;
+import static com.qbit.exchanger.rest.util.RESTClientUtil.*;
 
 /**
  * @author Alexander_Sergeev
@@ -15,14 +16,14 @@ import static com.qbit.exchanger.external.exchange.cryptsy.CryptsyExchangeRestCl
 @Singleton
 public class CryptsyExchange implements Exchange {
 
-	public final static String CRYPTSY_API_BASE_URL = "http://pubapi.cryptsy.com/api.php?method=singlemarketdata&marketid=";
-	public Map<String, String> currensiesMap;
+	public static final String CRYPTSY_API_BASE_URL = "http://pubapi.cryptsy.com/api.php?method=singlemarketdata&marketid=";
+	private static final Map<Tuple2<Currency, Currency>, String> CURRENCIES_MAP;
 
-	public CryptsyExchange() {
-		currensiesMap = new HashMap<>();
-		currensiesMap.put("DOGE_BTC", "132");
-		currensiesMap.put("DOGE_LTC", "135");
-		currensiesMap.put("LTC_BTC", "3");
+	static {
+		CURRENCIES_MAP = new HashMap<>();
+		CURRENCIES_MAP.put(new Tuple2(Currency.DOGECOIN, Currency.BITCOIN), "132");
+		CURRENCIES_MAP.put(new Tuple2(Currency.DOGECOIN, Currency.LITECOIN), "135");
+		CURRENCIES_MAP.put(new Tuple2(Currency.LITECOIN, Currency.BITCOIN), "3");
 	}
 
 	@Override
@@ -30,14 +31,16 @@ public class CryptsyExchange implements Exchange {
 		if ((from == null) || (to == null)) {
 			throw new IllegalArgumentException();
 		}
-
 		Rate rate = null;
-		if (currensiesMap.containsKey(from.getCode() + "_" + to.getCode())) {
-			String id = currensiesMap.get(from.getCode() + "_" + to.getCode());
-			
-			CryptsyRateResponse rateResponse = get(CRYPTSY_API_BASE_URL + id, "", CryptsyRateResponse.class, true);
-			BigDecimal lastTradePrice = rateResponse.getReturnMarket().getMarkets().getCurrency().getLastTradePrice();
-			rate = new Rate(lastTradePrice.multiply(new BigDecimal("100000")), new BigDecimal("100000"), from, to);
+
+		if (CURRENCIES_MAP.containsKey(new Tuple2<>(from, to))) {
+			String id = CURRENCIES_MAP.get(new Tuple2<>(from, to));
+
+			String foundValue = getValue(CRYPTSY_API_BASE_URL + id, "", "lasttradeprice");
+			if (foundValue != null) {
+				BigDecimal lastTradePrice = new BigDecimal(foundValue);
+				rate = new Rate(lastTradePrice, from, to);
+			}
 		}
 		return rate;
 	}

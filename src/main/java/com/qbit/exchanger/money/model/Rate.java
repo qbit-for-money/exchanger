@@ -44,9 +44,8 @@ public class Rate implements Serializable {
 	}
 
 	public Rate(Amount numerator, Amount denominator) {
-		if ((numerator == null) || !numerator.isPositive()
-				|| (denominator == null) || !denominator.isPositive()) {
-			System.out.println("!! EXCEPTION IN RATE");
+		if ((numerator == null) || !numerator.isValid()
+				|| (denominator == null) || !denominator.isValid()) {
 			throw new IllegalArgumentException();
 		}
 		this.numerator = numerator;
