@@ -78,8 +78,8 @@ public class Rate implements Serializable {
 	}
 
 	public boolean isValid() {
-		return ((numerator != null) && numerator.isPositive()
-				&& (denominator != null) && denominator.isPositive());
+		return ((numerator != null) && numerator.isValid()
+				&& (denominator != null) && denominator.isValid());
 	}
 
 	@Override

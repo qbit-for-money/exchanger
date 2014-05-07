@@ -41,5 +41,8 @@ see implementation details http://jersey.java.net/nonav/documentation/latest/jax
 			<transport-guarantee>CONFIDENTIAL</transport-guarantee>
 		</user-data-constraint>
 	</security-constraint>
+	<session-config>
+		<session-timeout>60</session-timeout>
+	</session-config>
 	
 </web-app>

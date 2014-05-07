@@ -218,7 +218,7 @@ public class OrderFlowWorker implements Runnable {
 						templateInput.put("outAmount", safeOrderInfo.getOutTransfer().toBigDecimal());
 					}
 					mailService.send(safeOrderInfo.getUserPublicKey(), "[INFO] Order #" + safeOrderInfo.getId(),
-							tmplPrefix + "-order.tmpl", templateInput);
+							tmplPrefix + "-order", templateInput);
 				} catch (Exception ex) {
 					if (logger.isErrorEnabled()) {
 						logger.error("[{}]" + ex.getMessage(), safeOrderInfo.getId(), ex);
