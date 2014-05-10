@@ -17,7 +17,7 @@ moneyModule.filter("amount", function(formatAmount) {
 moneyModule.filter("rate", function(rateToNumber) {
 	return function(rate) {
 		if (!rate) {
-			return "";
+			return "1 / -.-";
 		}
 		var rateNum = rateToNumber(rate);
 		var fractionDigits = Math.round(Math.log(Math.max(rate.numerator.centsInCoin,

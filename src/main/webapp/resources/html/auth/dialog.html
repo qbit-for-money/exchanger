@@ -1,42 +1,41 @@
 <div class="modal-header">
-	<h3>Welcome to Bitgates</h3>
+	<h3>Bitgates</h3>
 </div>
-<div class="modal-body" id="modal">
+<div class="modal-body">
 	<div class="container-fluid">
 		<div class="row">
-			<div class="col-xs-1 col-md-1"><input type="radio" ng-model="auth" id="radio1" value="True" ng-change="checked(true)"/></div>
-			<label for="radio1" class="col-xs-10 col-md-10">
-				<a href="webapi/oauth2/authenticate" ng-if="auth === 'True'">
-					<img src="resources/img/google-plus.png" alt="Google+">
-				</a>
-				<img src="resources/img/google-plus-disabled.png" alt="Google+" ng-if="auth === 'False'" ng-click="checked()">
-			</label>
-			<div class="col-xs-1 col-md-1"></div>
+			<div class="col-xs-12 col-md-12">
+				<input id="googleRadio" type="radio" ng-model="auth" value="google" ng-change="changeAuthMode()"/>
+				<label for="googleRadio" style="margin-left: 10px;">
+					<a href="webapi/oauth2/authenticate" ng-if="auth === 'google'">
+						<img src="resources/img/google-plus.png" class="img-btn google" alt="Google+" class=""/>
+					</a>
+					<img src="resources/img/google-plus-disabled.png" class="img-btn google" alt="Google+"
+						 ng-if="auth === 'noReg'"/>
+				</label>
+			</div>
 		</div>
 		<div class="row">
 			<div class="col-xs-12 col-md-12">
-				<input type="radio" ng-model="auth" id="radio2" value="False" ng-change="checked(false)">
-				<label for="radio2"><h3>No registration</h3></label><br/>
+				<input id="noRegRadio" type="radio" ng-model="auth" value="noReg" ng-change="changeAuthMode()">
+				<label for="noRegRadio" style="margin-left: 10px;"><h3>No registration</h3></label>
 			</div>
-
 		</div>
-		<div class="row" ng-if="auth === 'False'">
-			<div class="col-xs-3 col-md-3"></div>
-			<div class="col-xs-6 col-md-6" ng-class="{'has-error': pinInvalid}">
-				<form>
-				<input type="text" class="form-control" id="pin" placeholder="PIN" 
-				       ng-required="true" ng-model="model.pin" ng-change="changePin()" number-required/>
-				<form/>
+		<div class="row noReg" ng-if="(auth === 'noReg') && !pinValid">
+			<div class="col-md-12" ng-class="{'has-success': pinValid, 'has-error': !pinValid}">
+				<input type="text" class="form-control input-lg" id="pin" placeholder="PIN" 
+				       ng-required="true" ng-model="model.pin" ng-change="changePin()" style="max-width: 100px;"/>
 			</div>
-			<div class="col-xs-3 col-md-3"></div>
 		</div>
-		<div class="row text-center" ng-if="!pinInvalid && auth === 'False'">
-			<hr>
-			<div class="center col-xs-12 col-md-12" ng-class="{'has-error': encodedKeyInvalid}">
-
-				<img id="captcha" src="{{src}}" alt="CAPTCHA" ng-click="updateImage()">
-				<input type="text" class="form-control" placeholder="CAPTCHA" 
-				       ng-required="true"  ng-model="model.encodedKey" ng-change="changeEncodedKey()"/>
+		<div class="row noReg" ng-if="(auth === 'noReg') && pinValid">
+			<div class="col-xs-12 col-md-12">
+				<img id="captcha" src="{{captchaSrc}}" class="img-btn" alt="CAPTCHA" ng-click="updateCaptcha()"/>
+			</div>
+		</div>
+		<div class="row noReg" ng-if="(auth === 'noReg') && pinValid" style="margin-top: 4px;">
+			<div class="col-xs-12 col-md-12" ng-class="{'has-success': encodedKeyValid, 'has-error': !encodedKeyValid}">
+				<input id="encodedKey" type="text" class="form-control input-lg" placeholder="CAPTCHA" 
+				       ng-required="true" ng-model="model.encodedKey" ng-change="changeEncodedKey()"/>
 			</div>
 		</div>
 	</div>

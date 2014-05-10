@@ -1,0 +1,29 @@
+.auth-dialog {
+}
+
+.auth-dialog div.noReg {
+	margin-left: 12px;
+}
+
+.auth-dialog img.img-btn {
+	cursor: pointer;
+	width: 100%;
+	height: auto;
+	border: 1px solid #e5e5e5;
+	-moz-border-radius:    4px;
+	-webkit-border-radius: 4px;
+	border-radius:         4px;
+}
+
+.auth-dialog img.google {
+	max-width: 254px;
+}
+
+img#captcha {
+	max-width: 360px;
+}
+
+input#encodedKey {
+	width: 100%;
+	max-width: 360px;
+}

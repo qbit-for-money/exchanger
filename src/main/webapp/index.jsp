@@ -9,9 +9,9 @@
 		<link rel="stylesheet" type="text/css" href="resources/lib/angular/loading-bar.min.css">
 
 		<link rel="stylesheet" type="text/css" href="resources/css/common.css">
+		<link rel="stylesheet" type="text/css" href="resources/css/auth-dialog.css">
 		<link rel="stylesheet" type="text/css" href="resources/css/wizard.css">
 		<link rel="stylesheet" type="text/css" href="resources/css/wizard-widget.css">
-		<link rel="stylesheet" type="text/css" href="resources/css/modal-dialog.css">
 	</head>
 	<script>
 		(function(i, s, o, g, r, a, m) {
@@ -96,6 +96,5 @@
 		
 		<script type="text/javascript" src="resources/js/auth/controllers.js"></script>
 		<script type="text/javascript" src="resources/js/auth/resources.js"></script>
-		<script type="text/javascript" src="resources/js/auth/directives.js"></script>
 	</body>
 </html>

@@ -42,3 +42,10 @@ input[readonly], input[ng-readonly] {
 .hide-all {
 	display: none
 }
+
+.overflow-hide {
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	width: 100%;
+}

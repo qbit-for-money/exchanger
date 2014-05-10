@@ -1,4 +1,4 @@
-05-01 02:37:08 jdbc[2]: exception
+05-10 10:06:35 jdbc[2]: exception
 org.h2.jdbc.JdbcSQLException: Таблица "SETTINGS" не найдена
 Table "SETTINGS" not found; SQL statement:
 SELECT * FROM settings WHERE 1 = 2 [42102-167]

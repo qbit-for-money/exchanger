@@ -13,8 +13,9 @@ moneyModule.directive("amountInput", function() {
 		link: function(scope, element) {
 			var input = element.find("input");
 			var centsInCoin = scope.amount.centsInCoin.toString();
+			// centsInCoin.substring(1, centsInCoin.length) WAT?
 			input.mask("099999999999999999999999999999999." + centsInCoin.substring(1, centsInCoin.length),
-				{reverse: false, maxlength: false});
+					{reverse: false, maxlength: false});
 
 			function updateAmount() {
 				scope.amount = scope.stringToAmount(input.val(), scope.amount.centsInCoin);

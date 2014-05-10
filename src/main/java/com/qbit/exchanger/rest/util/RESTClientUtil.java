@@ -63,24 +63,20 @@ public final class RESTClientUtil {
 
 	public static String getValue(String target, String path, String nodeName) throws JAXBException, IOException {
 		Client client = ClientBuilder.newClient(new ClientConfig());
-		Invocation.Builder builder;
-		builder = client.target(target).path(path).request(MediaType.APPLICATION_JSON_TYPE);
+		Invocation.Builder builder = client.target(target).path(path).request(MediaType.APPLICATION_JSON_TYPE);
 		return unmarshal(builder.get(String.class), nodeName);
 	}
 
 	public static String unmarshal(String text, String nodeName) throws JAXBException, IOException {
-
 		ObjectMapper objectMapper = new ObjectMapper();
 		JsonNode jsonNode = objectMapper.readTree(text);
-		JsonNode jsonFindNode = jsonNode.findValue(nodeName);
-		if (jsonFindNode != null) {
-			return jsonFindNode.getTextValue();
-		}
-		return null;
+		JsonNode jsonTargetNode = jsonNode.findValue(nodeName);
+		return ((jsonTargetNode != null) ? jsonTargetNode.getTextValue() : null);
 	}
 
-	public static <R> R unmarshal(String text, Class<R> type) throws JAXBException {
-		if (text.indexOf("[") == 0) {
+	public static <R> R unmarshal(String rawText, Class<R> type) throws JAXBException {
+		String text = rawText.trim();
+		if (text.startsWith("[") && text.endsWith("]")) {
 			text = text.substring(1, text.length() - 1);
 		}
 		Source source = new StreamSource(new StringReader(text));

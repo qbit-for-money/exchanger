@@ -6,22 +6,23 @@ currencyModule.controller("CurrencyController", function($scope, currencyResourc
 
 	var currenciesResponse = currencyResource.findAll();
 	currenciesResponse.$promise.then(function() {
-		if (currenciesResponse && currenciesResponse.currencies) {
-			var currencies = currenciesResponse.currencies;
-			$scope.currenciesMap = {};
-			for (var i = 0; i < currencies.length; i++) {
-				$scope.currenciesMap[currencies[i].id] = currencies[i];
-				for (var j = 0; j < currencies.length; j++) {
-					if (i !== j) {
-						rates(currencies[i], currencies[j]);
-					}
+		if (!currenciesResponse.currencies) {
+			return;
+		}
+		var currencies = currenciesResponse.currencies;
+		$scope.currenciesMap = {};
+		for (var i = 0; i < currencies.length; i++) {
+			$scope.currenciesMap[currencies[i].id] = currencies[i];
+			for (var j = 0; j < currencies.length; j++) {
+				if (i !== j) {
+					rates(currencies[i], currencies[j]);
 				}
 			}
-			var orderInfo = orderService.get();
-			$scope.currencyPair.inCurrency = $scope.currenciesMap[orderInfo.inTransfer.currency];
-			$scope.currencyPair.outCurrency = $scope.currenciesMap[orderInfo.outTransfer.currency];
-			refreshTransfers();
 		}
+		var orderInfo = orderService.get();
+		$scope.currencyPair.inCurrency = $scope.currenciesMap[orderInfo.inTransfer.currency];
+		$scope.currencyPair.outCurrency = $scope.currenciesMap[orderInfo.outTransfer.currency];
+		refreshTransfers();
 	});
 
 	function rates(inCurrency, outCurrency) {

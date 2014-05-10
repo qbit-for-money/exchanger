@@ -2,73 +2,61 @@ var authModule = angular.module("captcha-auth");
 
 authModule.controller("AuthDialogOpeningController", function($modal) {
 	$modal.open({
+		controller: "AuthDialogController",
 		templateUrl: "resources/html/auth/dialog.html",
-		backdrop: "static",
-		keyboard: false,
-		backdropClick: false,
-		dialogFade: false,
-		controller: "AuthDialogController"
+		windowClass: "auth-dialog",
+		backdrop: "static", keyboard: false, backdropClick: false, dialogFade: false
 	});
 });
 
 authModule.controller("AuthDialogController", function($scope, captchaAuthResource) {
 	var timestamp = new Date().getTime();
-	$scope.auth = "True";
-	$scope.pinInvalid = true;
-	$scope.encodedKeyInvalid = true;
+	$scope.auth = "google";
 	$scope.model = {};
 	$scope.model.pin = "";
 	$scope.model.encodedKey = "";
-	$scope.src = "";
+	$scope.captchaSrc = "";
 
-	$scope.changePin = function() {
-		if ($scope.model.pin && ($scope.model.pin.length === 4) && !isNaN($scope.model.pin) && $scope.model.pin.indexOf(".") === -1) {
-			$scope.pinInvalid = false;
-			$scope.updateImage();
-			changeDialogPosition(false);
+	function changePin() {
+		var pin = $scope.model.pin;
+		$scope.pinValid = (pin && /\d{4}/.test(pin));
+		if ($scope.pinValid) {
 			$scope.model.encodedKey = "";
-		} else {
-			$scope.pinInvalid = true;
-			changeDialogPosition(true);
-		}
-	};
-
-	 function changeDialogPosition(state) {
-		if (state) {
-			angular.element(".modal-dialog").css("padding-top", "13%");
-		} else {
-			angular.element(".modal-dialog").css("padding-top", "10%");
+			updateCaptcha();
 		}
 	}
+	$scope.changePin = changePin;
 
-	$scope.changeEncodedKey = function() {
-		if ($scope.model.encodedKey && ($scope.model.encodedKey !== "")) {
+	function changeEncodedKey() {
+		if ($scope.model.encodedKey) {
 			var authRequest = {encodedKey: $scope.model.encodedKey, pin: $scope.model.pin, timestamp: timestamp};
 			var authResponse = captchaAuthResource.auth({}, authRequest);
 			authResponse.$promise.then(function() {
-				$scope.encodedKeyInvalid = false;
+				$scope.encodedKeyValid = true;
 				setTimeout(function() {
 					location.reload();
 				}, 2000);
 			});
 		} else {
-			$scope.encodedKeyInvalid = true;
+			$scope.encodedKeyValid = false;
 		}
 	};
+	$scope.changeEncodedKey = changeEncodedKey;
 
-	$scope.updateImage = function() {
-		$scope.src = window.context + "webapi/captcha-auth/image?pin=" + $scope.model.pin + "&timestamp=" + timestamp + "&rand=" + Math.round(Math.random() * 1000);
+	function updateCaptcha() {
+		$scope.captchaSrc = window.context + "webapi/captcha-auth/image?pin=" + $scope.model.pin + "&timestamp=" + timestamp + "&rand=" + Math.round(Math.random() * 1000);
 	};
+	$scope.updateCaptcha = updateCaptcha;
 
-	$scope.checked = function(state) {
-		if (state) {
-			$scope.pinInvalid = true;
+	function changeAuthMode() {
+		if ($scope.auth === "google") {
 			$scope.model.pin = "";
-			changeDialogPosition(true);
-		} else {
-			angular.element(document).on("focus", "#pin", function(e) {
-				angular.element("#pin").mask("0000");
-			});
+			$scope.pinValid = false;
 		}
-	};
+	}
+	$scope.changeAuthMode = changeAuthMode;
+	
+	angular.element(document).on("focus", "#pin", function() {
+		angular.element(this).mask("0000");
+	});
 });

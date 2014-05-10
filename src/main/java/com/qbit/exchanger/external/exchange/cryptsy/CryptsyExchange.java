@@ -32,13 +32,11 @@ public class CryptsyExchange implements Exchange {
 			throw new IllegalArgumentException();
 		}
 		Rate rate = null;
-
 		if (CURRENCIES_MAP.containsKey(new Tuple2<>(from, to))) {
 			String id = CURRENCIES_MAP.get(new Tuple2<>(from, to));
-
-			String foundValue = getValue(CRYPTSY_API_BASE_URL + id, "", "lasttradeprice");
-			if (foundValue != null) {
-				BigDecimal lastTradePrice = new BigDecimal(foundValue);
+			String lastTradePriceStr = getValue(CRYPTSY_API_BASE_URL + id, "", "lasttradeprice");
+			if (lastTradePriceStr != null) {
+				BigDecimal lastTradePrice = new BigDecimal(lastTradePriceStr);
 				rate = new Rate(lastTradePrice, from, to);
 			}
 		}

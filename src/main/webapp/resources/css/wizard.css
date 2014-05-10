@@ -3,27 +3,10 @@
 /* Smartphones (portrait) ----------- */
 @media only screen 
 and (max-width : 797px) {
-	.currency-picker {
-		padding: 0 5%;
-	}
-
 	.currency { 
 		background: url('../img/currencies-40x40.png') no-repeat top left;
 		width: 40px; height: 40px;
 	} 
-	/*	.currency.BITCOIN { background-position: 0px 0px; } 
-		.currency.DIGITALCOIN { background-position: -60px 0px; } 
-		.currency.FEATHERCOIN { background-position: -120px 0px; } 
-		.currency.LITECOIN { background-position: -180px 0px; } 
-		.currency.NAMECOIN { background-position: -240px 0px; } 
-		.currency.NOVACOIN { background-position: -300px 0px; } 
-		.currency.PEERCOIN { background-position: -359px 0px; } 
-		.currency.PRIMECOIN { background-position: -419px 0px; } 
-		.currency.QUARKCOIN { background-position: -479px 0px; } 
-		.currency.STABLECOIN { background-position: -539px 0px; } 
-		.currency.YANDEX_RUB { background-position: -599px 0px; } 
-		.currency.ZETACOIN { background-position: -659px 0px; } */
-
 	.currency.BITCOIN { background-position: 0px 0px; } 
 	.currency.DIGITALCOIN { background-position: -50px 0px; } 
 	.currency.FEATHERCOIN { background-position: -100px 0px; } 
@@ -38,27 +21,18 @@ and (max-width : 797px) {
 	.currency.ZETACOIN { background-position: -549px 0px; } 
 	.currency.DOGECOIN { background-position: -599px 0px; width: 43px; height: 42px; }
 
-	.currencies-list {
-		height: 226px;
-		max-height: 226px;
-	}
-
 	.currency-list-item {
 		padding: 2% 10% !important;
+	}
+
+	.currency-list-icon {
+		margin-left: -12px;
 	}
 
 	.direction-control {
 		height: 40px;
 		width: 40px;
 		font-size: 2em;
-	}
-
-	.direction-control-currency-container {
-		padding-top: 150px;
-	}
-
-	.transfer-address-text {
-		font-size: 20px;
 	}
 
 	.currency-list-rate {
@@ -94,24 +68,10 @@ and (min-width : 798px) {
 		font-size: 2em;
 	}
 
-	.currencies-list {
-		display: block;
-		height: 40em;
-		max-height: 447px;
-	}
-
 	.direction-control {
 		height: 75px;
 		width: 75px;
 		font-size: 3em;
-	}
-
-	.direction-control-currency-container {
-		padding-top: 200px;
-	}
-
-	.transfer-address-text {
-		font-size: 30px;
 	}
 
 	.currency-list-rate {
@@ -128,16 +88,6 @@ and (min-width : 798px) {
 	margin: 0 auto 0 auto;
 }
 
-.currency-step {
-	padding: 5%; 
-}
-
-.currencies-list {
-	position: relative;
-	width: 100%;
-	overflow-y: auto;
-}
-
 .currency-list-icon {
 	min-width: 40px;
 }
@@ -148,28 +98,28 @@ and (min-width : 798px) {
 	border-width: 1px;
 }
 
-.vertical-left-Line {
+.vertical-left-line {
 	border-left: solid #ccc;
 	border-width: 1px;
 }
 
-.vertical-right-Line {
+.vertical-right-line {
 	border-right: solid #ccc;
 	border-width: 1px;
 }
 
-.currency-picker button {
+.currency-picker div.currency-button {
+	cursor: pointer;
 	height: auto;
-	border-radius: 13px;
-	border-color: #ccc;
-	padding: 13px;
+	border: 1px solid #ccc;
+	border-radius: 12px;
+	padding: 12px;
 	background-color: white;
-	//margin-top: 20px;
-	margin-top: 5px;
-	box-shadow: 0 6px 6px rgba(0, 0, 0, .2);
+	margin-top: 6px;
+	box-shadow: 0 4px 4px rgba(0, 0, 0, .2);
 }
 
-.currency-picker button:hover {
+.currency-picker div.currency-button:hover {
 	background-color: #eaeaea;
 }
 
@@ -177,25 +127,9 @@ and (min-width : 798px) {
 	padding: 0;
 }
 
-#captcha {
-	max-height: 50px;
-}
-
 /* END CURRENCY STEP */
 
 /* START ORDER STEP */
-#buffer {
-	padding-left: 10px;
-	font-size: 16px;
-}
-
-#available-balance {
-	margin-top: -25px; 
-	margin-bottom: -25px; 
-	padding-top: 18px; 
-	white-space: nowrap; 
-	overflow: hidden;
-}
 
 #balance-popover {
 	position: relative;
@@ -231,11 +165,3 @@ span.status-sign {
 }
 
 /* END RESULT STEP */
-
-
-.overflow-hide {
-	overflow: hidden;
-	white-space: nowrap;
-	text-overflow: ellipsis;
-	width: 100%;
-}
