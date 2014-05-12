@@ -120,7 +120,7 @@ public class BitcoinMoneyService implements CryptoService {
 		try {
 			AddressInfo addressInfo = get(BLOCKR_API_BASE_URL, path, "confirmations", "2", AddressInfo.class, true);
 			if (logger.isInfoEnabled()) {
-				logger.info("[{}] Address Info: ", addressInfo, address);
+				logger.info("Address Info: [{}]", addressInfo);
 			}
 			return new Amount(new BigDecimal(addressInfo.getData().getBalance()), Currency.BITCOIN.getCentsInCoin());
 		} catch (Exception ex) {

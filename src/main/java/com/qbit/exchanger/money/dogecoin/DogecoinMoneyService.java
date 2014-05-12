@@ -125,7 +125,7 @@ public class DogecoinMoneyService implements CryptoService {
 		try {
 			DogeAddressInfo addressInfo = get(BLOCKR_API_BASE_URL, path, "confirmations", "2", DogeAddressInfo.class, true);
 			if (logger.isInfoEnabled()) {
-				logger.info("[{}] Address Info: ", addressInfo, address);
+				logger.info("Address Info: [{}]", addressInfo);
 			}
 			return new Amount(addressInfo.getBalance().divide(new BigDecimal(Currency.DOGECOIN.getCentsInCoin())), Currency.DOGECOIN.getCentsInCoin());
 		} catch (Exception ex) {

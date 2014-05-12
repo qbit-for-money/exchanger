@@ -1,9 +1,35 @@
+/* Smartphones (portrait) ----------- */
+@media only screen 
+and (max-width : 797px) {
+	.modal-dialog {
+		padding-top: 17%;
+	}
+}
+
+/* Larger screens ----------- */
+@media only screen 
+and (min-width : 798px) {
+	.modal-dialog {
+		height: 35%;	
+	}
+}
+
+.modal-dialog {
+	position: absolute;
+	max-width: 345px;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	margin: auto;
+}
+
 .auth-dialog {
 }
 
-.auth-dialog div.noReg {
+/*.auth-dialog div.noReg {
 	margin-left: 12px;
-}
+}*/
 
 .auth-dialog img.img-btn {
 	cursor: pointer;
@@ -17,6 +43,10 @@
 
 .auth-dialog img.google {
 	max-width: 254px;
+}
+
+#pin {
+	margin: 0 auto 0 auto;
 }
 
 img#captcha {
