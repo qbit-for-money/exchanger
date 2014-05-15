@@ -1,6 +1,6 @@
 package com.qbit.exchanger.external.exchange.cryptsy;
 
-import com.qbit.exchanger.common.model.Tuple2;
+import com.qbit.commons.model.Tuple2;
 import com.qbit.exchanger.external.exchange.core.Exchange;
 import com.qbit.exchanger.money.model.Currency;
 import com.qbit.exchanger.money.model.Rate;
@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 import javax.inject.Singleton;
-import static com.qbit.exchanger.rest.util.RESTClientUtil.*;
+import static com.qbit.commons.rest.util.RESTClientUtil.*;
 
 /**
  * @author Alexander_Sergeev

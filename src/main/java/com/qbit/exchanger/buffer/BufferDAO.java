@@ -1,7 +1,7 @@
 package com.qbit.exchanger.buffer;
 
-import static com.qbit.exchanger.dao.util.DAOUtil.invokeInTransaction;
-import com.qbit.exchanger.dao.util.TrCallable;
+import static com.qbit.commons.dao.util.DAOUtil.invokeInTransaction;
+import com.qbit.commons.dao.util.TrCallable;
 import com.qbit.exchanger.money.model.Amount;
 import com.qbit.exchanger.money.model.Currency;
 import java.math.BigDecimal;

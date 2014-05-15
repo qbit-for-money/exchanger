@@ -1,10 +1,10 @@
 package com.qbit.exchanger.order.resource;
 
-import com.qbit.exchanger.auth.AuthFilter;
+import com.qbit.commons.auth.AuthFilter;
 import com.qbit.exchanger.order.model.OrderInfo;
 import com.qbit.exchanger.order.service.OrderService;
 import com.qbit.exchanger.order.service.exception.OrderServiceException;
-import static com.qbit.exchanger.rest.util.RESTUtil.*;
+import static com.qbit.commons.rest.util.RESTUtil.*;
 import java.text.ParseException;
 import javax.inject.Inject;
 import javax.inject.Singleton;

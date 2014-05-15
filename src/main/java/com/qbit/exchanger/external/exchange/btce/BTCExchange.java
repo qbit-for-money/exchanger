@@ -4,7 +4,7 @@ import com.qbit.exchanger.external.exchange.core.Exchange;
 import com.qbit.exchanger.money.model.Currency;
 import com.qbit.exchanger.money.model.Rate;
 import javax.inject.Singleton;
-import static com.qbit.exchanger.rest.util.RESTClientUtil.*;
+import static com.qbit.commons.rest.util.RESTClientUtil.*;
 
 /**
  *

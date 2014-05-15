@@ -1,15 +1,15 @@
 package com.qbit.exchanger;
 
 import com.qbit.exchanger.buffer.BufferDAO;
-import com.qbit.exchanger.dao.util.DAOExecutor;
-import com.qbit.exchanger.dao.util.DefaultDAOExecutor;
+import com.qbit.commons.dao.util.DAOExecutor;
+import com.qbit.commons.dao.util.DefaultDAOExecutor;
+import com.qbit.commons.env.EnvUtil;
 import com.qbit.exchanger.env.Env;
-import com.qbit.exchanger.external.exchange.btce.BTCExchange;
 import com.qbit.exchanger.external.exchange.core.Exchange;
 import com.qbit.exchanger.external.exchange.core.ExchangeFacade;
 import com.qbit.exchanger.external.exchange.cryptsy.CryptsyExchange;
 import com.qbit.exchanger.order.dao.MailNotificationDAO;
-import com.qbit.exchanger.mail.MailService;
+import com.qbit.commons.mail.MailService;
 import com.qbit.exchanger.money.bitcoin.BitcoinMoneyService;
 import com.qbit.exchanger.money.core.MoneyServiceProvider;
 import com.qbit.exchanger.money.dogecoin.DogecoinMoneyService;
@@ -19,7 +19,7 @@ import com.qbit.exchanger.order.dao.OrderDAO;
 import com.qbit.exchanger.order.service.OrderFlowScheduler;
 import com.qbit.exchanger.order.service.OrderFlowWorker;
 import com.qbit.exchanger.order.service.OrderService;
-import com.qbit.exchanger.user.UserDAO;
+import com.qbit.commons.user.UserDAO;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
@@ -49,6 +49,7 @@ public class ExchangerApp extends Application {
 	public void init() {
 		DynamicConfiguration configuration = getConfiguration(serviceLocator);
 
+		addBinding(newBinder(EnvUtil.class).to(EnvUtil.class).in(Singleton.class), configuration);
 		addBinding(newBinder(Env.class).to(Env.class).in(Singleton.class), configuration);
 
 		addBinding(newBinder(MailService.class).to(MailService.class).in(Singleton.class), configuration);

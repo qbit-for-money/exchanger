@@ -2,8 +2,8 @@ package com.qbit.exchanger.order.dao;
 
 import com.qbit.exchanger.order.model.MailNotificationPK;
 import com.qbit.exchanger.order.model.MailNotification;
-import static com.qbit.exchanger.dao.util.DAOUtil.invokeInTransaction;
-import com.qbit.exchanger.dao.util.TrCallable;
+import static com.qbit.commons.dao.util.DAOUtil.invokeInTransaction;
+import com.qbit.commons.dao.util.TrCallable;
 import com.qbit.exchanger.order.model.OrderStatus;
 import javax.inject.Inject;
 import javax.inject.Singleton;

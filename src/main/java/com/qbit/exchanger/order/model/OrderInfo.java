@@ -1,6 +1,6 @@
 package com.qbit.exchanger.order.model;
 
-import com.qbit.exchanger.common.model.Identifiable;
+import com.qbit.commons.model.Identifiable;
 import com.qbit.exchanger.money.model.Transfer;
 import com.qbit.exchanger.money.model.TransferType;
 import java.io.Serializable;

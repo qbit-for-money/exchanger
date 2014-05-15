@@ -12,7 +12,7 @@ see implementation details http://jersey.java.net/nonav/documentation/latest/jax
 		</init-param>
 		<init-param>
 			<param-name>jersey.config.server.provider.packages</param-name>
-			<param-value>com.qbit.exchanger</param-value>
+			<param-value>com.qbit</param-value>
 		</init-param>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
@@ -24,7 +24,31 @@ see implementation details http://jersey.java.net/nonav/documentation/latest/jax
 	
 	<filter>
 		<filter-name>auth-filter</filter-name>
-		<filter-class>com.qbit.exchanger.auth.AuthFilter</filter-class>
+		<filter-class>com.qbit.commons.auth.AuthFilter</filter-class>
+		<init-param>
+			<param-name>admin-starts-js</param-name>
+			<param-value>/resources/js/admin/</param-value>
+		</init-param>
+		<init-param>
+			<param-name>admin-starts-html</param-name>
+			<param-value>/resources/html/admin/</param-value>
+		</init-param>
+		<init-param>
+			<param-name>admin-ends-jsp</param-name>
+			<param-value>/admin.jsp</param-value>
+		</init-param>
+		<init-param>
+			<param-name>auth-users</param-name>
+			<param-value>/users</param-value>
+		</init-param>
+		<init-param>
+			<param-name>auth-oauth2</param-name>
+			<param-value>/oauth2</param-value>
+		</init-param>
+		<init-param>
+			<param-name>auth-captcha</param-name>
+			<param-value>/captcha-auth</param-value>
+		</init-param>
 	</filter>
 	
 	<filter-mapping>

@@ -15,7 +15,7 @@ import com.qbit.exchanger.money.core.WTransaction;
 import com.qbit.exchanger.env.Env;
 import com.qbit.exchanger.money.core.AddressInfo;
 import com.qbit.exchanger.money.model.Amount;
-import com.qbit.exchanger.common.utils.AtomicBigDecimal;
+import com.qbit.commons.util.AtomicBigDecimal;
 import com.qbit.exchanger.money.model.Currency;
 import java.io.File;
 import java.math.BigDecimal;
@@ -28,7 +28,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import static com.qbit.exchanger.rest.util.RESTClientUtil.*;
+import static com.qbit.commons.rest.util.RESTClientUtil.*;
 
 /**
  * LITECOIN

@@ -12,8 +12,8 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  * Exchanger properties
- *
- * @author Alexander_Alexandrov
+ * 
+* @author Alexander_Alexandrov
  */
 @Singleton
 @XmlRootElement
@@ -35,47 +35,32 @@ public class Env {
 	public boolean isDemoEnabled() {
 		return Boolean.TRUE.toString().equalsIgnoreCase(properties.getProperty("demo.enabled"));
 	}
-
-	@XmlElement
-	public String getMailBotAddress() {
-		return properties.getProperty("mail.bot.address");
-	}
 	
-	@XmlTransient
-	public String getMailBotPersonal() {
-		return properties.getProperty("mail.bot.personal");
-	}
-
-	@XmlTransient
-	public String getMailHost() {
-		return properties.getProperty("mail.host");
-	}
-
 	@XmlTransient
 	public int getOrderWorkerPeriodSecs() {
 		return Integer.parseInt(properties.getProperty("order.worker.period.secs"));
 	}
-	
+
 	@XmlTransient
 	public int getOrderCleanupPeriodHours() {
 		return Integer.parseInt(properties.getProperty("order.cleanup.period.hours"));
 	}
-	
+
 	@XmlTransient
 	public int getOrderCancellationTokenLifetimeHours() {
 		return Integer.parseInt(properties.getProperty("order.cancellation.token.lifetime.hours"));
 	}
-	
+
 	@XmlTransient
 	public String getOrderCancellationURL() {
 		return properties.getProperty("order.cancellation.url");
 	}
-	
+
 	@XmlElement
 	public BigDecimal getRateMultiplier() {
 		return new BigDecimal(properties.getProperty("rate.multiplier"));
 	}
-	
+
 	@XmlElement
 	public BigDecimal getMaxTransactionAmountToBalanceCoef() {
 		return new BigDecimal(properties.getProperty("money.max.transaction.amount.to.balance.coef"));
@@ -125,7 +110,7 @@ public class Env {
 	public boolean isBitcoinTestnet() {
 		return Boolean.TRUE.toString().equalsIgnoreCase(properties.getProperty("money.bitcoin.testnet"));
 	}
-	
+
 	@XmlTransient
 	public String getLitecoinWalletPath() {
 		return properties.getProperty("money.litecoin.wallet.path");
@@ -135,7 +120,7 @@ public class Env {
 	public boolean isLitecoinTestnet() {
 		return Boolean.TRUE.toString().equalsIgnoreCase(properties.getProperty("money.litecoin.testnet"));
 	}
-	
+
 	@XmlTransient
 	public String getDogecoinWalletPath() {
 		return properties.getProperty("money.dogecoin.wallet.path");
@@ -144,35 +129,5 @@ public class Env {
 	@XmlTransient
 	public boolean isDogecoinTestnet() {
 		return Boolean.TRUE.toString().equalsIgnoreCase(properties.getProperty("money.dogecoin.testnet"));
-	}
-	
-	@XmlTransient
-	public String getGoogleClientId() {
-		return properties.getProperty("auth.google.clientId");
-	}
-	
-	@XmlTransient
-	public String getGoogleClientSecret() {
-		return properties.getProperty("auth.google.clientSecret");
-	}
-	
-	@XmlTransient
-	public String getGoogleScope() {
-		return properties.getProperty("auth.google.scope");
-	}
-	
-	@XmlTransient
-	public String getGoogleUserInfoUrl() {
-		return properties.getProperty("auth.google.userInfoUrl");
-	}
-	
-	@XmlTransient
-	public String getGoogleAuthorizeRoute() {
-		return properties.getProperty("auth.google.authorizeRoute");
-	}
-	
-	@XmlTransient
-	public String getAdminMail() {
-		return properties.getProperty("admin.mail");
 	}
 }

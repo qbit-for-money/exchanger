@@ -3,7 +3,7 @@ package com.qbit.exchanger.order.service;
 import com.qbit.exchanger.money.core.CryptoService;
 import com.qbit.exchanger.external.exchange.core.Exchange;
 import com.qbit.exchanger.order.dao.MailNotificationDAO;
-import com.qbit.exchanger.mail.MailService;
+import com.qbit.commons.mail.MailService;
 import com.qbit.exchanger.money.core.MoneyService;
 import com.qbit.exchanger.money.core.MoneyServiceProvider;
 import com.qbit.exchanger.money.model.Amount;

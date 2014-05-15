@@ -1,6 +1,6 @@
 package com.qbit.exchanger.order.resource;
 
-import com.qbit.exchanger.auth.AuthFilter;
+import com.qbit.commons.auth.AuthFilter;
 import com.qbit.exchanger.order.model.OrderInfo;
 import com.qbit.exchanger.order.service.OrderService;
 import com.qbit.exchanger.order.service.exception.OrderServiceException;

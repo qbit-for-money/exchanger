@@ -1,8 +1,8 @@
 package com.qbit.exchanger.order.dao;
 
-import com.qbit.exchanger.dao.util.DAOUtil;
-import static com.qbit.exchanger.dao.util.DAOUtil.invokeInTransaction;
-import com.qbit.exchanger.dao.util.TrCallable;
+import com.qbit.commons.dao.util.DAOUtil;
+import static com.qbit.commons.dao.util.DAOUtil.invokeInTransaction;
+import com.qbit.commons.dao.util.TrCallable;
 import com.qbit.exchanger.env.Env;
 import com.qbit.exchanger.money.model.Amount;
 import com.qbit.exchanger.money.model.Transfer;
@@ -10,8 +10,8 @@ import com.qbit.exchanger.money.model.TransferType;
 import com.qbit.exchanger.order.model.OrderCancellationToken;
 import com.qbit.exchanger.order.model.OrderInfo;
 import com.qbit.exchanger.order.model.OrderStatus;
-import com.qbit.exchanger.user.UserDAO;
-import com.qbit.exchanger.user.UserInfo;
+import com.qbit.commons.user.UserDAO;
+import com.qbit.commons.user.UserInfo;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;

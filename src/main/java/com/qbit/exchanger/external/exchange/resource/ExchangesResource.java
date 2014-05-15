@@ -2,7 +2,7 @@ package com.qbit.exchanger.external.exchange.resource;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.qbit.exchanger.common.model.Tuple2;
+import com.qbit.commons.model.Tuple2;
 import com.qbit.exchanger.external.exchange.core.Exchange;
 import com.qbit.exchanger.money.model.Currency;
 import com.qbit.exchanger.money.model.Rate;
