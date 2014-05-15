@@ -166,10 +166,48 @@
 		</dependency>
 		<!-- END JPA -->
 		
+		<!-- START OAuth2  -->
+		<dependency>
+			<groupId>org.glassfish.jersey.media</groupId>
+			<artifactId>jersey-media-json-jackson</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish.jersey.containers</groupId>
+			<artifactId>jersey-container-grizzly2-servlet</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.oltu.oauth2</groupId>
+			<artifactId>org.apache.oltu.oauth2.common</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.oltu.oauth2</groupId>
+			<artifactId>org.apache.oltu.oauth2.client</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<!-- END OAuth2  -->
+		<dependency>
+			<groupId>com.octo.captcha</groupId>
+			<artifactId>jcaptcha-all</artifactId>
+			<version>1.0-RC-2.0.1</version>
+		</dependency>
+		
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-jdk14</artifactId>
 			<version>1.7.6</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.freemarker</groupId>
+			<artifactId>freemarker</artifactId>
+			<version>2.3.20</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-email</artifactId>
+			<version>1.1</version>
 		</dependency>
 		
 		<dependency>
