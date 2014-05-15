@@ -3,7 +3,7 @@ package com.qbit.exchanger;
 import com.qbit.exchanger.buffer.BufferDAO;
 import com.qbit.commons.dao.util.DAOExecutor;
 import com.qbit.commons.dao.util.DefaultDAOExecutor;
-import com.qbit.commons.env.EnvUtil;
+import com.qbit.commons.env.CommonsEnv;
 import com.qbit.exchanger.env.Env;
 import com.qbit.exchanger.external.exchange.core.Exchange;
 import com.qbit.exchanger.external.exchange.core.ExchangeFacade;
@@ -49,7 +49,7 @@ public class ExchangerApp extends Application {
 	public void init() {
 		DynamicConfiguration configuration = getConfiguration(serviceLocator);
 
-		addBinding(newBinder(EnvUtil.class).to(EnvUtil.class).in(Singleton.class), configuration);
+		addBinding(newBinder(CommonsEnv.class).to(CommonsEnv.class).in(Singleton.class), configuration);
 		addBinding(newBinder(Env.class).to(Env.class).in(Singleton.class), configuration);
 
 		addBinding(newBinder(MailService.class).to(MailService.class).in(Singleton.class), configuration);
